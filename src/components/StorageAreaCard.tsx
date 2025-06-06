@@ -1,0 +1,51 @@
+
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ArrowRight } from 'lucide-react';
+
+interface StorageArea {
+  id: number;
+  name: string;
+  emoji: string;
+  itemCount: number;
+  lowStockCount: number;
+}
+
+interface StorageAreaCardProps {
+  area: StorageArea;
+  onClick: () => void;
+}
+
+const StorageAreaCard = ({ area, onClick }: StorageAreaCardProps) => {
+  return (
+    <Card
+      className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-102 cursor-pointer"
+      onClick={onClick}
+    >
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gradient-to-r from-green-100 to-orange-100 rounded-xl flex items-center justify-center">
+              <span className="text-2xl">{area.emoji}</span>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900">{area.name}</h3>
+              <p className="text-sm text-gray-600">{area.itemCount} items</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {area.lowStockCount > 0 && (
+              <Badge variant="destructive" className="bg-orange-500 hover:bg-orange-600">
+                {area.lowStockCount} low
+              </Badge>
+            )}
+            <ArrowRight className="h-5 w-5 text-gray-400" />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default StorageAreaCard;

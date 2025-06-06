@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowRight, Plus, Users } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ArrowRight, Plus, Users, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Onboarding = () => {
@@ -12,9 +13,28 @@ const Onboarding = () => {
   const [step, setStep] = useState(1);
   const [householdName, setHouseholdName] = useState('');
   const [joinCode, setJoinCode] = useState('');
+  const [selectedStorageAreas, setSelectedStorageAreas] = useState<string[]>([]);
+
+  const storageOptions = [
+    { id: 'fridge', name: 'Refrigerator', emoji: '🥬', description: 'Main fridge compartment' },
+    { id: 'freezer', name: 'Freezer', emoji: '🧊', description: 'Frozen food storage' },
+    { id: 'pantry', name: 'Pantry', emoji: '🏺', description: 'Dry goods and canned items' },
+    { id: 'wine-fridge', name: 'Wine Fridge', emoji: '🍷', description: 'Wine and beverage cooler' },
+    { id: 'garage-fridge', name: 'Garage Fridge', emoji: '🏠', description: 'Secondary refrigerator' },
+    { id: 'cabinet', name: 'Kitchen Cabinet', emoji: '🗄️', description: 'Spices and small items' },
+  ];
+
+  const handleStorageToggle = (storageId: string) => {
+    setSelectedStorageAreas(prev => 
+      prev.includes(storageId) 
+        ? prev.filter(id => id !== storageId)
+        : [...prev, storageId]
+    );
+  };
 
   const handleCreateHousehold = () => {
     console.log('Creating household:', householdName);
+    console.log('Selected storage areas:', selectedStorageAreas);
     navigate('/dashboard');
   };
 
@@ -55,7 +75,7 @@ const Onboarding = () => {
               </Button>
 
               <Button
-                onClick={() => setStep(3)}
+                onClick={() => setStep(4)}
                 variant="outline"
                 className="w-full h-16 border-green-600 text-green-600 hover:bg-green-50 text-left justify-start px-6"
               >
@@ -103,11 +123,70 @@ const Onboarding = () => {
                   onClick={() => setStep(1)}
                   className="flex-1"
                 >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back
+                </Button>
+                <Button
+                  onClick={() => setStep(3)}
+                  disabled={!householdName.trim()}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                >
+                  Next <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {step === 3 && (
+          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl">
+            <CardHeader className="text-center space-y-4">
+              <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-500 to-orange-500 rounded-2xl flex items-center justify-center">
+                <span className="text-2xl">🏺</span>
+              </div>
+              <CardTitle className="text-2xl">Set Up Storage Areas</CardTitle>
+              <CardDescription>
+                Select the storage areas you have in your kitchen
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="space-y-6">
+              <div className="space-y-3 max-h-80 overflow-y-auto">
+                {storageOptions.map((storage) => (
+                  <div
+                    key={storage.id}
+                    className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                    onClick={() => handleStorageToggle(storage.id)}
+                  >
+                    <Checkbox
+                      checked={selectedStorageAreas.includes(storage.id)}
+                      onChange={() => handleStorageToggle(storage.id)}
+                    />
+                    <div className="flex items-center space-x-3 flex-1">
+                      <div className="w-10 h-10 bg-gradient-to-r from-green-100 to-orange-100 rounded-lg flex items-center justify-center">
+                        <span className="text-lg">{storage.emoji}</span>
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-900">{storage.name}</div>
+                        <div className="text-sm text-gray-600">{storage.description}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setStep(2)}
+                  className="flex-1"
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
                   Back
                 </Button>
                 <Button
                   onClick={handleCreateHousehold}
-                  disabled={!householdName.trim()}
+                  disabled={selectedStorageAreas.length === 0}
                   className="flex-1 bg-green-600 hover:bg-green-700"
                 >
                   Create <ArrowRight className="ml-2 h-4 w-4" />
@@ -117,7 +196,7 @@ const Onboarding = () => {
           </Card>
         )}
 
-        {step === 3 && (
+        {step === 4 && (
           <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl">
             <CardHeader className="text-center space-y-4">
               <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center">
@@ -148,6 +227,7 @@ const Onboarding = () => {
                   onClick={() => setStep(1)}
                   className="flex-1"
                 >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
                   Back
                 </Button>
                 <Button

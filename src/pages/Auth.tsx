@@ -1,27 +1,16 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Auth = () => {
   const navigate = useNavigate();
-  const [isSignUp, setIsSignUp] = useState(true);
 
   const handleGoogleAuth = () => {
     // TODO: Implement Google OAuth when Supabase is connected
     console.log('Google auth clicked');
-    // For now, navigate to onboarding
-    navigate('/onboarding');
-  };
-
-  const handleEmailAuth = () => {
-    // TODO: Implement email/password auth when Supabase is connected
-    console.log('Email auth clicked');
     // For now, navigate to onboarding
     navigate('/onboarding');
   };
@@ -42,14 +31,9 @@ const Auth = () => {
             <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-500 to-orange-500 rounded-2xl flex items-center justify-center">
               <span className="text-2xl">🍃</span>
             </div>
-            <CardTitle className="text-2xl">
-              {isSignUp ? 'Join MyFridge' : 'Welcome Back'}
-            </CardTitle>
+            <CardTitle className="text-2xl">Welcome to MyFridge</CardTitle>
             <CardDescription>
-              {isSignUp 
-                ? 'Start managing your household food inventory today'
-                : 'Sign in to access your household dashboard'
-              }
+              Sign in to start managing your household food inventory
             </CardDescription>
           </CardHeader>
 
@@ -68,54 +52,6 @@ const Auth = () => {
               </svg>
               Continue with Google
             </Button>
-
-            <div className="relative">
-              <Separator />
-              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-sm text-gray-500">
-                or
-              </span>
-            </div>
-
-            {/* Email Form */}
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  className="h-12"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  className="h-12"
-                />
-              </div>
-              <Button 
-                onClick={handleEmailAuth}
-                className="w-full h-12 bg-green-600 hover:bg-green-700"
-              >
-                {isSignUp ? 'Create Account' : 'Sign In'}
-              </Button>
-            </div>
-
-            <div className="text-center">
-              <Button
-                variant="link"
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-green-600 hover:text-green-700"
-              >
-                {isSignUp 
-                  ? 'Already have an account? Sign in'
-                  : "Don't have an account? Sign up"
-                }
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>

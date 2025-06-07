@@ -82,14 +82,14 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
       </div>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-input rounded-md shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
           {searchResults.length > 0 && (
             <div className="p-1">
               {searchResults.slice(0, 8).map((item) => (
                 <button
                   key={item.id}
                   onClick={() => handleItemSelect(item)}
-                  className="w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-sm"
+                  className="w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-gray-100 rounded-sm"
                 >
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{item.name}</span>
@@ -98,7 +98,7 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
                     </Badge>
                   </div>
                   {item.usageCount > 1 && (
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-gray-500">
                       Used {item.usageCount}x
                     </span>
                   )}
@@ -108,10 +108,10 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
           )}
 
           {query.trim() && !exactMatch && (
-            <div className="border-t p-1">
+            <div className="border-t border-gray-200 p-1">
               <button
                 onClick={handleCreateNew}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-sm text-green-600"
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 rounded-sm text-green-600"
               >
                 <Plus className="h-4 w-4" />
                 <span>Create "{query}"</span>
@@ -120,7 +120,7 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
           )}
 
           {searchResults.length === 0 && !query.trim() && (
-            <div className="p-4 text-center text-sm text-muted-foreground">
+            <div className="p-4 text-center text-sm text-gray-500">
               Start typing to search items...
             </div>
           )}

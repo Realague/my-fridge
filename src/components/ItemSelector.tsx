@@ -82,7 +82,7 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
       </div>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 z-[100] mt-1 bg-white border border-gray-200 rounded-md shadow-xl max-h-60 overflow-y-auto backdrop-blur-sm">
+        <div className="fixed inset-x-0 z-[9999] mt-1 mx-4 bg-white border border-gray-200 rounded-md shadow-2xl max-h-60 overflow-y-auto">
           {searchResults.length > 0 && (
             <div className="p-1">
               {searchResults.slice(0, 8).map((item) => (

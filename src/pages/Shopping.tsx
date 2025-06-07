@@ -6,43 +6,76 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Check, GripVertical, Trash2, Users } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
+import { ItemSelector } from '@/components/ItemSelector';
+import { useItems, FoodItem } from '@/contexts/ItemContext';
 
 interface ShoppingItem {
   id: string;
-  name: string;
+  item: FoodItem;
   quantity: string;
-  category: string;
   completed: boolean;
   addedBy: string;
 }
 
 const Shopping = () => {
-  const [items, setItems] = useState<ShoppingItem[]>([
-    { id: '1', name: 'Milk', quantity: '1 gallon', category: 'Dairy', completed: false, addedBy: 'Sarah' },
-    { id: '2', name: 'Bread', quantity: '1 loaf', category: 'Bakery', completed: false, addedBy: 'John' },
-    { id: '3', name: 'Eggs', quantity: '12 count', category: 'Dairy', completed: true, addedBy: 'Sarah' },
-    { id: '4', name: 'Tomatoes', quantity: '2 lbs', category: 'Produce', completed: false, addedBy: 'Auto-added from meal plan' },
-    { id: '5', name: 'Chicken breast', quantity: '1 lb', category: 'Meat', completed: false, addedBy: 'Auto-added from meal plan' },
-  ]);
+  const { getItemById, updateItemUsage } = useItems();
   
-  const [newItemName, setNewItemName] = useState('');
+  // Initialize with items from the item context
+  const [items, setItems] = useState<ShoppingItem[]>([
+    { 
+      id: '1', 
+      item: getItemById('1')!, 
+      quantity: '1 gallon', 
+      completed: false, 
+      addedBy: 'Sarah' 
+    },
+    { 
+      id: '2', 
+      item: getItemById('2')!, 
+      quantity: '1 loaf', 
+      completed: false, 
+      addedBy: 'John' 
+    },
+    { 
+      id: '3', 
+      item: getItemById('3')!, 
+      quantity: '12 count', 
+      completed: true, 
+      addedBy: 'Sarah' 
+    },
+    { 
+      id: '4', 
+      item: getItemById('4')!, 
+      quantity: '2 lbs', 
+      completed: false, 
+      addedBy: 'Auto-added from meal plan' 
+    },
+    { 
+      id: '5', 
+      item: getItemById('5')!, 
+      quantity: '1 lb', 
+      completed: false, 
+      addedBy: 'Auto-added from meal plan' 
+    },
+  ].filter(item => item.item)); // Filter out any undefined items
+  
   const [newItemQuantity, setNewItemQuantity] = useState('');
   const [showCompleted, setShowCompleted] = useState(false);
 
-  const handleAddItem = () => {
-    if (newItemName.trim()) {
-      const newItem: ShoppingItem = {
-        id: Date.now().toString(),
-        name: newItemName.trim(),
-        quantity: newItemQuantity.trim() || '1',
-        category: 'Other',
-        completed: false,
-        addedBy: 'You'
-      };
-      setItems([...items, newItem]);
-      setNewItemName('');
-      setNewItemQuantity('');
-    }
+  const handleAddItem = (selectedItem: FoodItem) => {
+    const quantity = newItemQuantity.trim() || selectedItem.commonQuantities[0] || '1';
+    
+    const newShoppingItem: ShoppingItem = {
+      id: Date.now().toString(),
+      item: selectedItem,
+      quantity,
+      completed: false,
+      addedBy: 'You'
+    };
+    
+    setItems([...items, newShoppingItem]);
+    setNewItemQuantity('');
+    updateItemUsage(selectedItem.id);
   };
 
   const toggleItemComplete = (id: string) => {
@@ -66,6 +99,7 @@ const Shopping = () => {
       'Produce': 'bg-green-100 text-green-800',
       'Meat': 'bg-red-100 text-red-800',
       'Bakery': 'bg-orange-100 text-orange-800',
+      'Grains': 'bg-yellow-100 text-yellow-800',
       'Other': 'bg-gray-100 text-gray-800'
     };
     return colors[category] || colors['Other'];
@@ -110,27 +144,17 @@ const Shopping = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex gap-2">
-              <Input
-                placeholder="Item name"
-                value={newItemName}
-                onChange={(e) => setNewItemName(e.target.value)}
+              <ItemSelector
+                onItemSelect={handleAddItem}
+                placeholder="Search or add item..."
                 className="flex-1"
-                onKeyPress={(e) => e.key === 'Enter' && handleAddItem()}
               />
               <Input
                 placeholder="Qty"
                 value={newItemQuantity}
                 onChange={(e) => setNewItemQuantity(e.target.value)}
-                className="w-20"
-                onKeyPress={(e) => e.key === 'Enter' && handleAddItem()}
+                className="w-24"
               />
-              <Button 
-                onClick={handleAddItem}
-                disabled={!newItemName.trim()}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
             </div>
           </CardContent>
         </Card>
@@ -142,34 +166,34 @@ const Shopping = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {pendingItems.map((item) => (
+              {pendingItems.map((shoppingItem) => (
                 <div
-                  key={item.id}
+                  key={shoppingItem.id}
                   className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   <GripVertical className="h-4 w-4 text-gray-400 cursor-grab" />
                   
                   <button
-                    onClick={() => toggleItemComplete(item.id)}
+                    onClick={() => toggleItemComplete(shoppingItem.id)}
                     className="flex-shrink-0 w-6 h-6 border-2 border-gray-300 rounded-full hover:border-green-500 transition-colors"
                   />
                   
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-gray-900">{item.name}</span>
-                      <Badge className={getCategoryColor(item.category)}>
-                        {item.category}
+                      <span className="font-medium text-gray-900">{shoppingItem.item.name}</span>
+                      <Badge className={getCategoryColor(shoppingItem.item.category)}>
+                        {shoppingItem.item.category}
                       </Badge>
                     </div>
                     <div className="text-sm text-gray-600">
-                      {item.quantity} • Added by {item.addedBy}
+                      {shoppingItem.quantity} • Added by {shoppingItem.addedBy}
                     </div>
                   </div>
                   
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => deleteItem(item.id)}
+                    onClick={() => deleteItem(shoppingItem.id)}
                     className="text-red-500 hover:text-red-700 hover:bg-red-50"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -206,13 +230,13 @@ const Shopping = () => {
             {showCompleted && (
               <CardContent>
                 <div className="space-y-3">
-                  {completedItems.map((item) => (
+                  {completedItems.map((shoppingItem) => (
                     <div
-                      key={item.id}
+                      key={shoppingItem.id}
                       className="flex items-center gap-3 p-3 bg-green-50 rounded-lg opacity-75"
                     >
                       <button
-                        onClick={() => toggleItemComplete(item.id)}
+                        onClick={() => toggleItemComplete(shoppingItem.id)}
                         className="flex-shrink-0 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center"
                       >
                         <Check className="h-4 w-4 text-white" />
@@ -220,20 +244,20 @@ const Shopping = () => {
                       
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-gray-700 line-through">{item.name}</span>
-                          <Badge className={getCategoryColor(item.category)}>
-                            {item.category}
+                          <span className="font-medium text-gray-700 line-through">{shoppingItem.item.name}</span>
+                          <Badge className={getCategoryColor(shoppingItem.item.category)}>
+                            {shoppingItem.item.category}
                           </Badge>
                         </div>
                         <div className="text-sm text-gray-500">
-                          {item.quantity} • Added by {item.addedBy}
+                          {shoppingItem.quantity} • Added by {shoppingItem.addedBy}
                         </div>
                       </div>
                       
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => deleteItem(item.id)}
+                        onClick={() => deleteItem(shoppingItem.id)}
                         className="text-red-500 hover:text-red-700 hover:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4" />

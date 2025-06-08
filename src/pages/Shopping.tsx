@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Check, GripVertical, Trash2, Users } from 'lucide-react';
+import { Plus, Check, GripVertical, Trash2, Users, Edit, Save, X } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
 import { QuantitySelector } from '@/components/QuantitySelector';
@@ -69,6 +69,7 @@ const Shopping = () => {
   const [newItemQuantity, setNewItemQuantity] = useState('1');
   const [newItemUnit, setNewItemUnit] = useState('');
   const [showCompleted, setShowCompleted] = useState(false);
+  const [editingItem, setEditingItem] = useState<string | null>(null);
 
   const handleItemSelect = (item: FoodItem) => {
     setSelectedItem(item);
@@ -109,6 +110,21 @@ const Shopping = () => {
     setItems(items.filter(item => item.id !== id));
   };
 
+  const startEditingItem = (id: string) => {
+    setEditingItem(id);
+  };
+
+  const saveItemEdit = (id: string, newQuantity: string, newUnit: string) => {
+    setItems(items.map(item => 
+      item.id === id ? { ...item, quantity: newQuantity, unit: newUnit } : item
+    ));
+    setEditingItem(null);
+  };
+
+  const cancelItemEdit = () => {
+    setEditingItem(null);
+  };
+
   const pendingItems = items.filter(item => !item.completed);
   const completedItems = items.filter(item => item.completed);
   const totalItems = items.length;
@@ -124,6 +140,110 @@ const Shopping = () => {
       'Other': 'bg-gray-100 text-gray-800'
     };
     return colors[category] || colors['Other'];
+  };
+
+  const ShoppingItemRow = ({ shoppingItem, isCompleted = false }: { shoppingItem: ShoppingItem; isCompleted?: boolean }) => {
+    const [editQuantity, setEditQuantity] = useState(shoppingItem.quantity);
+    const [editUnit, setEditUnit] = useState(shoppingItem.unit);
+    const isEditing = editingItem === shoppingItem.id;
+
+    const handleSave = () => {
+      saveItemEdit(shoppingItem.id, editQuantity, editUnit);
+    };
+
+    const handleCancel = () => {
+      setEditQuantity(shoppingItem.quantity);
+      setEditUnit(shoppingItem.unit);
+      cancelItemEdit();
+    };
+
+    return (
+      <div
+        className={`flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors ${
+          isCompleted ? 'bg-green-50 opacity-75' : 'bg-gray-50'
+        }`}
+      >
+        <GripVertical className="h-4 w-4 text-gray-400 cursor-grab" />
+        
+        <button
+          onClick={() => toggleItemComplete(shoppingItem.id)}
+          className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
+            isCompleted 
+              ? 'bg-green-500' 
+              : 'border-2 border-gray-300 hover:border-green-500'
+          }`}
+        >
+          {isCompleted && <Check className="h-4 w-4 text-white" />}
+        </button>
+        
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <span className={`font-medium ${isCompleted ? 'text-gray-700 line-through' : 'text-gray-900'}`}>
+              {shoppingItem.item.name}
+            </span>
+            <Badge className={getCategoryColor(shoppingItem.item.category)}>
+              {shoppingItem.item.category}
+            </Badge>
+          </div>
+          <div className="text-sm text-gray-600">
+            {isEditing ? (
+              <div className="flex items-center gap-2 mt-1">
+                <QuantitySelector
+                  item={shoppingItem.item}
+                  initialQuantity={editQuantity}
+                  initialUnit={editUnit}
+                  onQuantityChange={(quantity, unit) => {
+                    setEditQuantity(quantity);
+                    setEditUnit(unit);
+                  }}
+                  className="flex-1"
+                />
+                <Button
+                  size="sm"
+                  onClick={handleSave}
+                  className="h-8 px-2"
+                >
+                  <Save className="h-3 w-3" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCancel}
+                  className="h-8 px-2"
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <span>{shoppingItem.quantity} {shoppingItem.unit}</span>
+                <span>•</span>
+                <span>Added by {shoppingItem.addedBy}</span>
+                {!isCompleted && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => startEditingItem(shoppingItem.id)}
+                    className="h-6 px-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <Edit className="h-3 w-3" />
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => deleteItem(shoppingItem.id)}
+          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+    );
   };
 
   return (
@@ -199,37 +319,8 @@ const Shopping = () => {
           <CardContent>
             <div className="space-y-3">
               {pendingItems.map((shoppingItem) => (
-                <div
-                  key={shoppingItem.id}
-                  className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <GripVertical className="h-4 w-4 text-gray-400 cursor-grab" />
-                  
-                  <button
-                    onClick={() => toggleItemComplete(shoppingItem.id)}
-                    className="flex-shrink-0 w-6 h-6 border-2 border-gray-300 rounded-full hover:border-green-500 transition-colors"
-                  />
-                  
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-gray-900">{shoppingItem.item.name}</span>
-                      <Badge className={getCategoryColor(shoppingItem.item.category)}>
-                        {shoppingItem.item.category}
-                      </Badge>
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      {shoppingItem.quantity} {shoppingItem.unit} • Added by {shoppingItem.addedBy}
-                    </div>
-                  </div>
-                  
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => deleteItem(shoppingItem.id)}
-                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                <div key={shoppingItem.id} className="group">
+                  <ShoppingItemRow shoppingItem={shoppingItem} />
                 </div>
               ))}
               
@@ -263,38 +354,11 @@ const Shopping = () => {
               <CardContent>
                 <div className="space-y-3">
                   {completedItems.map((shoppingItem) => (
-                    <div
-                      key={shoppingItem.id}
-                      className="flex items-center gap-3 p-3 bg-green-50 rounded-lg opacity-75"
-                    >
-                      <button
-                        onClick={() => toggleItemComplete(shoppingItem.id)}
-                        className="flex-shrink-0 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center"
-                      >
-                        <Check className="h-4 w-4 text-white" />
-                      </button>
-                      
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-gray-700 line-through">{shoppingItem.item.name}</span>
-                          <Badge className={getCategoryColor(shoppingItem.item.category)}>
-                            {shoppingItem.item.category}
-                          </Badge>
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {shoppingItem.quantity} {shoppingItem.unit} • Added by {shoppingItem.addedBy}
-                        </div>
-                      </div>
-                      
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteItem(shoppingItem.id)}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <ShoppingItemRow 
+                      key={shoppingItem.id} 
+                      shoppingItem={shoppingItem} 
+                      isCompleted={true} 
+                    />
                   ))}
                 </div>
               </CardContent>

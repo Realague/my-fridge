@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Check, GripVertical, Trash2, Users, Edit, Save, X } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, Check, GripVertical, Trash2, Users, Edit, Save, X, Filter } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
 import { QuantitySelector } from '@/components/QuantitySelector';
@@ -70,6 +71,8 @@ const Shopping = () => {
   const [newItemUnit, setNewItemUnit] = useState('');
   const [showCompleted, setShowCompleted] = useState(false);
   const [editingItem, setEditingItem] = useState<string | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<string>('All');
+  const [draggedItem, setDraggedItem] = useState<string | null>(null);
 
   const handleItemSelect = (item: FoodItem) => {
     setSelectedItem(item);
@@ -125,10 +128,47 @@ const Shopping = () => {
     setEditingItem(null);
   };
 
-  const pendingItems = items.filter(item => !item.completed);
-  const completedItems = items.filter(item => item.completed);
+  // Drag and drop handlers
+  const handleDragStart = (e: React.DragEvent, itemId: string) => {
+    setDraggedItem(itemId);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    if (!draggedItem || draggedItem === targetId) return;
+
+    const draggedIndex = items.findIndex(item => item.id === draggedItem);
+    const targetIndex = items.findIndex(item => item.id === targetId);
+    
+    if (draggedIndex === -1 || targetIndex === -1) return;
+
+    const newItems = [...items];
+    const [draggedElement] = newItems.splice(draggedIndex, 1);
+    newItems.splice(targetIndex, 0, draggedElement);
+    
+    setItems(newItems);
+    setDraggedItem(null);
+  };
+
+  // Filter items by category
+  const filterItemsByCategory = (itemsList: ShoppingItem[]) => {
+    if (categoryFilter === 'All') return itemsList;
+    return itemsList.filter(item => item.item.category === categoryFilter);
+  };
+
+  const pendingItems = filterItemsByCategory(items.filter(item => !item.completed));
+  const completedItems = filterItemsByCategory(items.filter(item => item.completed));
   const totalItems = items.length;
   const completedCount = completedItems.length;
+
+  // Get unique categories from items
+  const categories = ['All', ...Array.from(new Set(items.map(item => item.item.category)))];
 
   const getCategoryColor = (category: string) => {
     const colors: { [key: string]: string } = {
@@ -159,11 +199,15 @@ const Shopping = () => {
 
     return (
       <div
-        className={`flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors ${
+        draggable={!isEditing}
+        onDragStart={(e) => handleDragStart(e, shoppingItem.id)}
+        onDragOver={handleDragOver}
+        onDrop={(e) => handleDrop(e, shoppingItem.id)}
+        className={`flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors cursor-move ${
           isCompleted ? 'bg-green-50 opacity-75' : 'bg-gray-50'
-        }`}
+        } ${draggedItem === shoppingItem.id ? 'opacity-50' : ''}`}
       >
-        <GripVertical className="h-4 w-4 text-gray-400 cursor-grab" />
+        <GripVertical className="h-4 w-4 text-gray-400 cursor-grab flex-shrink-0" />
         
         <button
           onClick={() => toggleItemComplete(shoppingItem.id)}
@@ -176,7 +220,7 @@ const Shopping = () => {
           {isCompleted && <Check className="h-4 w-4 text-white" />}
         </button>
         
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className={`font-medium ${isCompleted ? 'text-gray-700 line-through' : 'text-gray-900'}`}>
               {shoppingItem.item.name}
@@ -219,29 +263,31 @@ const Shopping = () => {
                 <span>{shoppingItem.quantity} {shoppingItem.unit}</span>
                 <span>•</span>
                 <span>Added by {shoppingItem.addedBy}</span>
-                {!isCompleted && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => startEditingItem(shoppingItem.id)}
-                    className="h-6 px-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <Edit className="h-3 w-3" />
-                  </Button>
-                )}
               </div>
             )}
           </div>
         </div>
         
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => deleteItem(shoppingItem.id)}
-          className="text-red-500 hover:text-red-700 hover:bg-red-50"
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {!isCompleted && !isEditing && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => startEditingItem(shoppingItem.id)}
+              className="h-8 w-8 p-0 opacity-70 hover:opacity-100 transition-opacity"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => deleteItem(shoppingItem.id)}
+            className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     );
   };
@@ -311,24 +357,72 @@ const Shopping = () => {
           </CardContent>
         </Card>
 
+        {/* Category Filter */}
+        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <Filter className="h-5 w-5 text-gray-600" />
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Filter by category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {categoryFilter !== 'All' && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setCategoryFilter('All')}
+                  className="text-gray-500"
+                >
+                  Clear filter
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Pending Items */}
         <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
-            <CardTitle className="text-lg">To Buy ({pendingItems.length})</CardTitle>
+            <CardTitle className="text-lg">
+              To Buy ({pendingItems.length})
+              {categoryFilter !== 'All' && (
+                <span className="text-sm font-normal text-gray-600 ml-2">
+                  • {categoryFilter}
+                </span>
+              )}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {pendingItems.map((shoppingItem) => (
-                <div key={shoppingItem.id} className="group">
-                  <ShoppingItemRow shoppingItem={shoppingItem} />
-                </div>
+                <ShoppingItemRow key={shoppingItem.id} shoppingItem={shoppingItem} />
               ))}
               
               {pendingItems.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
-                  <div className="text-4xl mb-2">🎉</div>
-                  <p>All items completed!</p>
-                  <p className="text-sm">Add new items to get started</p>
+                  <div className="text-4xl mb-2">
+                    {categoryFilter === 'All' ? '🎉' : '📋'}
+                  </div>
+                  <p>
+                    {categoryFilter === 'All' 
+                      ? 'All items completed!' 
+                      : `No ${categoryFilter.toLowerCase()} items to buy`
+                    }
+                  </p>
+                  <p className="text-sm">
+                    {categoryFilter === 'All' 
+                      ? 'Add new items to get started' 
+                      : 'Try a different category filter'
+                    }
+                  </p>
                 </div>
               )}
             </div>
@@ -340,7 +434,14 @@ const Shopping = () => {
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">Completed ({completedItems.length})</CardTitle>
+                <CardTitle className="text-lg">
+                  Completed ({completedItems.length})
+                  {categoryFilter !== 'All' && (
+                    <span className="text-sm font-normal text-gray-600 ml-2">
+                      • {categoryFilter}
+                    </span>
+                  )}
+                </CardTitle>
                 <Button
                   variant="ghost"
                   size="sm"

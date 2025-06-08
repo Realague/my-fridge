@@ -1,18 +1,25 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Clock, Users, Heart, Edit } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, Plus } from 'lucide-react';
 import { useRecipes } from '@/contexts/RecipeContext';
+import { useMealPlan } from '@/contexts/MealPlanContext';
 import { useToast } from '@/hooks/use-toast';
 
 const RecipeDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getRecipeById, toggleFavorite, deleteRecipe } = useRecipes();
+  const { addToMealPlan } = useMealPlan();
   const { toast } = useToast();
+  
+  const [showMealPlanDialog, setShowMealPlanDialog] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner'>('lunch');
   
   const recipe = id ? getRecipeById(id) : undefined;
 
@@ -48,8 +55,57 @@ const RecipeDetails = () => {
     navigate('/recipes');
   };
 
+  const handleAddToMealPlan = () => {
+    addToMealPlan(recipe.id, selectedDate, selectedMealType);
+    setShowMealPlanDialog(false);
+    toast({
+      title: "Added to meal plan",
+      description: `${recipe.title} has been added to your ${selectedMealType} on ${new Date(selectedDate).toLocaleDateString()}.`,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
+      {/* Meal Plan Dialog */}
+      <Dialog open={showMealPlanDialog} onOpenChange={setShowMealPlanDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add to Meal Plan</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="bg-gray-50 p-3 rounded-lg">
+              <div className="font-medium">{recipe.title}</div>
+              <div className="text-sm text-gray-600">{recipe.servings} servings</div>
+            </div>
+            <div>
+              <label className="text-sm font-medium">Date</label>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="w-full mt-1 px-3 py-2 border rounded-md"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Meal Type</label>
+              <Select value={selectedMealType} onValueChange={(value: 'breakfast' | 'lunch' | 'dinner') => setSelectedMealType(value)}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="breakfast">🌅 Breakfast</SelectItem>
+                  <SelectItem value="lunch">☀️ Lunch</SelectItem>
+                  <SelectItem value="dinner">🌙 Dinner</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button onClick={handleAddToMealPlan} className="w-full">
+              Add to Meal Plan
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
@@ -72,6 +128,17 @@ const RecipeDetails = () => {
                   className={`h-4 w-4 ${recipe.isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} 
                 />
               </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowMealPlanDialog(true)}
+                  >
+                    <Calendar className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+              </Dialog>
               <Button
                 variant="ghost"
                 size="sm"
@@ -122,6 +189,14 @@ const RecipeDetails = () => {
                   {tag}
                 </Badge>
               ))}
+            </div>
+
+            {/* Add to Meal Plan Button */}
+            <div className="pt-4">
+              <Button onClick={() => setShowMealPlanDialog(true)} className="w-full md:w-auto">
+                <Calendar className="h-4 w-4 mr-2" />
+                Add to Meal Plan
+              </Button>
             </div>
           </CardHeader>
         </Card>

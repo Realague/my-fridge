@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ItemProvider } from "@/contexts/ItemContext";
 import { StorageProvider } from "@/contexts/StorageContext";
 import { RecipeProvider } from "@/contexts/RecipeContext";
+import { MealPlanProvider } from "@/contexts/MealPlanContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
@@ -16,6 +17,7 @@ import StorageArea from "./pages/StorageArea";
 import Recipes from "./pages/Recipes";
 import RecipeDetails from "./pages/RecipeDetails";
 import AddRecipe from "./pages/AddRecipe";
+import MealPlans from "./pages/MealPlans";
 import Demo from "./pages/Demo";
 import NotFound from "./pages/NotFound";
 
@@ -27,24 +29,27 @@ const App = () => (
       <ItemProvider>
         <StorageProvider>
           <RecipeProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/onboarding" element={<Onboarding />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/shopping" element={<Shopping />} />
-                <Route path="/storage/:areaId" element={<StorageArea />} />
-                <Route path="/recipes" element={<Recipes />} />
-                <Route path="/recipes/new" element={<AddRecipe />} />
-                <Route path="/recipes/:id" element={<RecipeDetails />} />
-                <Route path="/demo" element={<Demo />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
+            <MealPlanProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/onboarding" element={<Onboarding />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/shopping" element={<Shopping />} />
+                  <Route path="/storage/:areaId" element={<StorageArea />} />
+                  <Route path="/recipes" element={<Recipes />} />
+                  <Route path="/recipes/new" element={<AddRecipe />} />
+                  <Route path="/recipes/:id" element={<RecipeDetails />} />
+                  <Route path="/meal-plans" element={<MealPlans />} />
+                  <Route path="/demo" element={<Demo />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </MealPlanProvider>
           </RecipeProvider>
         </StorageProvider>
       </ItemProvider>

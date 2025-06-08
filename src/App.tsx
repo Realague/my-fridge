@@ -6,12 +6,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ItemProvider } from "@/contexts/ItemContext";
 import { StorageProvider } from "@/contexts/StorageContext";
+import { RecipeProvider } from "@/contexts/RecipeContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Shopping from "./pages/Shopping";
 import StorageArea from "./pages/StorageArea";
+import Recipes from "./pages/Recipes";
 import Demo from "./pages/Demo";
 import NotFound from "./pages/NotFound";
 
@@ -22,21 +24,24 @@ const App = () => (
     <TooltipProvider>
       <ItemProvider>
         <StorageProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/onboarding" element={<Onboarding />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/shopping" element={<Shopping />} />
-              <Route path="/storage/:areaId" element={<StorageArea />} />
-              <Route path="/demo" element={<Demo />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
+          <RecipeProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/onboarding" element={<Onboarding />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/shopping" element={<Shopping />} />
+                <Route path="/storage/:areaId" element={<StorageArea />} />
+                <Route path="/recipes" element={<Recipes />} />
+                <Route path="/demo" element={<Demo />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </RecipeProvider>
         </StorageProvider>
       </ItemProvider>
     </TooltipProvider>

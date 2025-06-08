@@ -34,8 +34,8 @@ export const useMealPlan = () => {
 
 export const MealPlanProvider = ({ children }: { children: ReactNode }) => {
   const [mealPlans, setMealPlans] = useState<MealPlanEntry[]>([]);
-  const { getItemByName, items } = useItems();
-  const { storageItems, getItemById } = useStorage();
+  const { getItemById, items } = useItems();
+  const { storageItems } = useStorage();
 
   const addToMealPlan = (recipeId: string, date: string, mealType: 'breakfast' | 'lunch' | 'dinner', servings = 1) => {
     const newMealPlan: MealPlanEntry = {

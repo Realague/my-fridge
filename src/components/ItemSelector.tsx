@@ -1,10 +1,11 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Check, ChevronDown, Plus } from 'lucide-react';
+import { Check, ChevronDown, Plus, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useItems, FoodItem } from '@/contexts/ItemContext';
+import { ItemEditor } from '@/components/ItemEditor';
 import { cn } from '@/lib/utils';
 
 interface ItemSelectorProps {
@@ -16,7 +17,8 @@ interface ItemSelectorProps {
 export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item...", className }: ItemSelectorProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const { searchItems, addItem } = useItems();
+  const [editingItem, setEditingItem] = useState<FoodItem | null>(null);
+  const { searchItems, addItem, updateItem } = useItems();
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -51,6 +53,19 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
     }
   };
 
+  const handleEditItem = (item: FoodItem, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingItem(item);
+    setIsOpen(false);
+  };
+
+  const handleSaveEdit = (updates: Partial<FoodItem>) => {
+    if (editingItem) {
+      updateItem(editingItem.id, updates);
+      setEditingItem(null);
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
     setIsOpen(true);
@@ -59,6 +74,18 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
   const handleInputFocus = () => {
     setIsOpen(true);
   };
+
+  if (editingItem) {
+    return (
+      <div className={className}>
+        <ItemEditor
+          item={editingItem}
+          onSave={handleSaveEdit}
+          onCancel={() => setEditingItem(null)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={cn("relative", className)} ref={dropdownRef}>
@@ -86,12 +113,14 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
           {searchResults.length > 0 && (
             <div className="p-1">
               {searchResults.slice(0, 8).map((item) => (
-                <button
+                <div
                   key={item.id}
-                  onClick={() => handleItemSelect(item)}
-                  className="w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-gray-100 rounded-sm bg-white"
+                  className="flex items-center justify-between px-3 py-2 text-sm hover:bg-gray-100 rounded-sm bg-white group"
                 >
-                  <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleItemSelect(item)}
+                    className="flex-1 flex items-center gap-2 text-left"
+                  >
                     <span className="font-medium text-gray-900">{item.name}</span>
                     <Badge variant="secondary" className="text-xs">
                       {item.category}
@@ -99,13 +128,23 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
                     <Badge variant="outline" className="text-xs text-gray-600">
                       per {item.defaultUnit}
                     </Badge>
+                  </button>
+                  <div className="flex items-center gap-2">
+                    {item.usageCount > 1 && (
+                      <span className="text-xs text-gray-500">
+                        Used {item.usageCount}x
+                      </span>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => handleEditItem(item, e)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 h-auto"
+                    >
+                      <Edit className="h-3 w-3" />
+                    </Button>
                   </div>
-                  {item.usageCount > 1 && (
-                    <span className="text-xs text-gray-500">
-                      Used {item.usageCount}x
-                    </span>
-                  )}
-                </button>
+                </div>
               ))}
             </div>
           )}

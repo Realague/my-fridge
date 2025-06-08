@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { getUnitsForCategory } from '@/utils/unitSystem';
 
 export interface FoodItem {
   id: string;
@@ -15,6 +16,7 @@ export interface FoodItem {
 interface ItemContextType {
   items: FoodItem[];
   addItem: (name: string, category?: string, defaultUnit?: string, availableUnits?: string[]) => FoodItem;
+  updateItem: (id: string, updates: Partial<FoodItem>) => void;
   updateItemUsage: (id: string) => void;
   searchItems: (query: string) => FoodItem[];
   getItemById: (id: string) => FoodItem | undefined;
@@ -22,14 +24,14 @@ interface ItemContextType {
 
 const ItemContext = createContext<ItemContextType | undefined>(undefined);
 
-// Pre-populated with common items including units
+// Updated pre-populated items with proper units from the unit system
 const initialItems: FoodItem[] = [
   { 
     id: '1', 
     name: 'Milk', 
     category: 'Dairy', 
     defaultUnit: 'gallon',
-    availableUnits: ['gallon', 'half gallon', 'quart', 'pint'],
+    availableUnits: ['gallon', 'half gallon', 'quart', 'pint', 'cup', 'fl oz'],
     commonQuantities: ['1 gallon', '1/2 gallon', '1 quart'], 
     createdAt: new Date(), 
     usageCount: 5 
@@ -39,7 +41,7 @@ const initialItems: FoodItem[] = [
     name: 'Bread', 
     category: 'Bakery', 
     defaultUnit: 'loaf',
-    availableUnits: ['loaf', 'slice'],
+    availableUnits: ['loaf', 'piece', 'dozen', 'package', 'bag'],
     commonQuantities: ['1 loaf', '2 loaves'], 
     createdAt: new Date(), 
     usageCount: 3 
@@ -49,7 +51,7 @@ const initialItems: FoodItem[] = [
     name: 'Eggs', 
     category: 'Dairy', 
     defaultUnit: 'dozen',
-    availableUnits: ['dozen', 'count'],
+    availableUnits: ['dozen', 'count', 'piece'],
     commonQuantities: ['12 count', '18 count', '6 count'], 
     createdAt: new Date(), 
     usageCount: 4 
@@ -59,7 +61,7 @@ const initialItems: FoodItem[] = [
     name: 'Tomatoes', 
     category: 'Produce', 
     defaultUnit: 'lb',
-    availableUnits: ['lb', 'oz', 'piece'],
+    availableUnits: ['lb', 'oz', 'kg', 'g', 'piece', 'bunch', 'bag'],
     commonQuantities: ['1 lb', '2 lbs', '1 piece'], 
     createdAt: new Date(), 
     usageCount: 2 
@@ -69,7 +71,7 @@ const initialItems: FoodItem[] = [
     name: 'Chicken breast', 
     category: 'Meat', 
     defaultUnit: 'lb',
-    availableUnits: ['lb', 'oz', 'piece'],
+    availableUnits: ['lb', 'oz', 'kg', 'g', 'piece', 'package'],
     commonQuantities: ['1 lb', '2 lbs', '1 piece'], 
     createdAt: new Date(), 
     usageCount: 3 
@@ -79,7 +81,7 @@ const initialItems: FoodItem[] = [
     name: 'Bananas', 
     category: 'Produce', 
     defaultUnit: 'bunch',
-    availableUnits: ['bunch', 'piece'],
+    availableUnits: ['bunch', 'piece', 'lb', 'oz'],
     commonQuantities: ['1 bunch', '6 pieces'], 
     createdAt: new Date(), 
     usageCount: 2 
@@ -89,7 +91,7 @@ const initialItems: FoodItem[] = [
     name: 'Rice', 
     category: 'Grains', 
     defaultUnit: 'lb',
-    availableUnits: ['lb', 'oz', 'cup'],
+    availableUnits: ['lb', 'oz', 'kg', 'g', 'cup', 'bag', 'box'],
     commonQuantities: ['1 lb', '2 lbs', '5 lbs'], 
     createdAt: new Date(), 
     usageCount: 1 
@@ -99,13 +101,15 @@ const initialItems: FoodItem[] = [
 export const ItemProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<FoodItem[]>(initialItems);
 
-  const addItem = (name: string, category: string = 'Other', defaultUnit: string = 'piece', availableUnits: string[] = ['piece']): FoodItem => {
+  const addItem = (name: string, category: string = 'Other', defaultUnit?: string, availableUnits?: string[]): FoodItem => {
+    const categoryUnits = getUnitsForCategory(category);
+    
     const newItem: FoodItem = {
       id: Date.now().toString(),
       name: name.trim(),
       category,
-      defaultUnit,
-      availableUnits,
+      defaultUnit: defaultUnit || categoryUnits.defaultUnit,
+      availableUnits: availableUnits || categoryUnits.availableUnits,
       commonQuantities: ['1'],
       createdAt: new Date(),
       usageCount: 1
@@ -113,6 +117,12 @@ export const ItemProvider = ({ children }: { children: ReactNode }) => {
     
     setItems(prev => [...prev, newItem]);
     return newItem;
+  };
+
+  const updateItem = (id: string, updates: Partial<FoodItem>) => {
+    setItems(prev => prev.map(item => 
+      item.id === id ? { ...item, ...updates } : item
+    ));
   };
 
   const updateItemUsage = (id: string) => {
@@ -145,6 +155,7 @@ export const ItemProvider = ({ children }: { children: ReactNode }) => {
     <ItemContext.Provider value={{
       items,
       addItem,
+      updateItem,
       updateItemUsage,
       searchItems,
       getItemById

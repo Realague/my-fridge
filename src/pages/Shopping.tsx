@@ -1,14 +1,17 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Check, GripVertical, Trash2, Users, Edit, Save, X, Filter } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Plus, Check, GripVertical, Trash2, Users, Edit, Save, X, Filter, Package } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
 import { QuantitySelector } from '@/components/QuantitySelector';
 import { useItems, FoodItem } from '@/contexts/ItemContext';
+import { useStorage } from '@/contexts/StorageContext';
 
 interface ShoppingItem {
   id: string;
@@ -21,6 +24,7 @@ interface ShoppingItem {
 
 const Shopping = () => {
   const { getItemById, updateItemUsage } = useItems();
+  const { storageAreas, addStorageItem } = useStorage();
   
   // Initialize with items from the item context
   const [items, setItems] = useState<ShoppingItem[]>([
@@ -74,6 +78,13 @@ const Shopping = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
 
+  // New state for storage dialog
+  const [showStorageDialog, setShowStorageDialog] = useState(false);
+  const [itemToStore, setItemToStore] = useState<ShoppingItem | null>(null);
+  const [selectedStorageArea, setSelectedStorageArea] = useState('');
+  const [storageLocation, setStorageLocation] = useState('');
+  const [storageExpirationDate, setStorageExpirationDate] = useState('');
+
   const handleItemSelect = (item: FoodItem) => {
     setSelectedItem(item);
     setNewItemUnit(item.defaultUnit);
@@ -104,9 +115,62 @@ const Shopping = () => {
   };
 
   const toggleItemComplete = (id: string) => {
+    const item = items.find(item => item.id === id);
+    if (!item) return;
+
+    if (!item.completed) {
+      // Item is being marked as completed - show storage dialog
+      setItemToStore(item);
+      setSelectedStorageArea('');
+      setStorageLocation('');
+      setStorageExpirationDate('');
+      setShowStorageDialog(true);
+    } else {
+      // Item is being unchecked - just toggle
+      setItems(items.map(item => 
+        item.id === id ? { ...item, completed: !item.completed } : item
+      ));
+    }
+  };
+
+  const handleAddToStorage = () => {
+    if (!itemToStore || !selectedStorageArea) return;
+
+    // Add to storage
+    addStorageItem({
+      itemId: itemToStore.item.id,
+      storageAreaId: selectedStorageArea,
+      quantity: itemToStore.quantity,
+      unit: itemToStore.unit,
+      purchaseDate: new Date(),
+      expirationDate: storageExpirationDate ? new Date(storageExpirationDate) : undefined,
+      location: storageLocation.trim() || undefined,
+    });
+
+    // Mark as completed
     setItems(items.map(item => 
-      item.id === id ? { ...item, completed: !item.completed } : item
+      item.id === itemToStore.id ? { ...item, completed: true } : item
     ));
+
+    // Close dialog and reset state
+    setShowStorageDialog(false);
+    setItemToStore(null);
+    setSelectedStorageArea('');
+    setStorageLocation('');
+    setStorageExpirationDate('');
+  };
+
+  const handleSkipStorage = () => {
+    if (!itemToStore) return;
+
+    // Just mark as completed without adding to storage
+    setItems(items.map(item => 
+      item.id === itemToStore.id ? { ...item, completed: true } : item
+    ));
+
+    // Close dialog and reset state
+    setShowStorageDialog(false);
+    setItemToStore(null);
   };
 
   const deleteItem = (id: string) => {
@@ -231,7 +295,7 @@ const Shopping = () => {
               </Badge>
             </div>
             {isEditing && (
-              <div className="flex gap-1 flex-shrink-0">
+              <div className="flex gap-1 flex-shrink-0 md:hidden">
                 <Button
                   size="sm"
                   onClick={handleSave}
@@ -275,6 +339,25 @@ const Shopping = () => {
         </div>
         
         <div className="flex items-center gap-2 flex-shrink-0">
+          {isEditing && (
+            <div className="hidden md:flex gap-1">
+              <Button
+                size="sm"
+                onClick={handleSave}
+                className="h-8 px-2"
+              >
+                <Save className="h-3 w-3" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCancel}
+                className="h-8 px-2"
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
+          )}
           {!isCompleted && !isEditing && (
             <Button
               variant="ghost"
@@ -302,6 +385,90 @@ const Shopping = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
+      {/* Storage Dialog */}
+      <Dialog open={showStorageDialog} onOpenChange={setShowStorageDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Package className="h-5 w-5 text-green-600" />
+              Add to Storage
+            </DialogTitle>
+          </DialogHeader>
+          
+          {itemToStore && (
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-medium">{itemToStore.item.name}</span>
+                  <Badge className={getCategoryColor(itemToStore.item.category)}>
+                    {itemToStore.item.category}
+                  </Badge>
+                </div>
+                <p className="text-sm text-gray-600">
+                  {itemToStore.quantity} {itemToStore.unit}
+                </p>
+              </div>
+              
+              <div>
+                <Label className="text-sm">Storage Area</Label>
+                <Select value={selectedStorageArea} onValueChange={setSelectedStorageArea}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select storage area" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {storageAreas.map((area) => (
+                      <SelectItem key={area.id} value={area.id}>
+                        <div className="flex items-center gap-2">
+                          <span>{area.emoji}</span>
+                          <span>{area.name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label className="text-sm">Location (optional)</Label>
+                <Input
+                  value={storageLocation}
+                  onChange={(e) => setStorageLocation(e.target.value)}
+                  placeholder="e.g., Main shelf, Door"
+                  className="mt-1"
+                />
+              </div>
+              
+              <div>
+                <Label className="text-sm">Expiration Date (optional)</Label>
+                <Input
+                  type="date"
+                  value={storageExpirationDate}
+                  onChange={(e) => setStorageExpirationDate(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              
+              <div className="flex gap-2 pt-2">
+                <Button 
+                  onClick={handleAddToStorage} 
+                  disabled={!selectedStorageArea}
+                  className="flex-1"
+                >
+                  Add to Storage
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={handleSkipStorage}
+                  className="flex-1"
+                >
+                  Skip Storage
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">

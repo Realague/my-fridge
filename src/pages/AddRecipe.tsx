@@ -9,8 +9,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ArrowLeft, Plus, X } from 'lucide-react';
-import { useRecipes } from '@/contexts/RecipeContext';
+import { useRecipes, RecipeIngredient } from '@/contexts/RecipeContext';
 import { useToast } from '@/hooks/use-toast';
+import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
 
 interface RecipeFormData {
   title: string;
@@ -19,7 +20,7 @@ interface RecipeFormData {
   cookTime: number;
   servings: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
-  ingredients: string[];
+  ingredients: RecipeIngredient[];
   instructions: string[];
   tags: string[];
 }
@@ -37,30 +38,16 @@ const AddRecipe = () => {
       cookTime: 20,
       servings: 4,
       difficulty: 'Easy',
-      ingredients: [''],
+      ingredients: [],
       instructions: [''],
       tags: [],
     },
   });
 
-  const [ingredients, setIngredients] = React.useState(['']);
+  const [ingredients, setIngredients] = React.useState<RecipeIngredient[]>([]);
   const [instructions, setInstructions] = React.useState(['']);
   const [tags, setTags] = React.useState<string[]>([]);
   const [newTag, setNewTag] = React.useState('');
-
-  const addIngredient = () => {
-    setIngredients([...ingredients, '']);
-  };
-
-  const removeIngredient = (index: number) => {
-    setIngredients(ingredients.filter((_, i) => i !== index));
-  };
-
-  const updateIngredient = (index: number, value: string) => {
-    const updated = [...ingredients];
-    updated[index] = value;
-    setIngredients(updated);
-  };
 
   const addInstruction = () => {
     setInstructions([...instructions, '']);
@@ -88,10 +75,10 @@ const AddRecipe = () => {
   };
 
   const onSubmit = (data: RecipeFormData) => {
-    const filteredIngredients = ingredients.filter(ing => ing.trim() !== '');
+    const validIngredients = ingredients.filter(ing => ing.itemId && ing.quantity > 0);
     const filteredInstructions = instructions.filter(inst => inst.trim() !== '');
     
-    if (filteredIngredients.length === 0) {
+    if (validIngredients.length === 0) {
       toast({
         title: "Error",
         description: "Please add at least one ingredient.",
@@ -111,7 +98,7 @@ const AddRecipe = () => {
 
     const recipeData = {
       ...data,
-      ingredients: filteredIngredients,
+      ingredients: validIngredients,
       instructions: filteredInstructions,
       tags,
       isFavorite: false,
@@ -275,43 +262,11 @@ const AddRecipe = () => {
               </CardContent>
             </Card>
 
-            {/* Ingredients */}
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Ingredients</CardTitle>
-                    <CardDescription>List all ingredients needed</CardDescription>
-                  </div>
-                  <Button type="button" onClick={addIngredient} size="sm">
-                    <Plus className="h-4 w-4 mr-1" />
-                    Add
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {ingredients.map((ingredient, index) => (
-                  <div key={index} className="flex gap-2">
-                    <Input
-                      placeholder={`Ingredient ${index + 1}`}
-                      value={ingredient}
-                      onChange={(e) => updateIngredient(index, e.target.value)}
-                      className="flex-1"
-                    />
-                    {ingredients.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => removeIngredient(index)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+            {/* Structured Ingredients */}
+            <StructuredIngredientInput
+              ingredients={ingredients}
+              onIngredientsChange={setIngredients}
+            />
 
             {/* Instructions */}
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">

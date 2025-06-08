@@ -1,6 +1,14 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+export interface RecipeIngredient {
+  id: string;
+  itemId: string; // Reference to FoodItem
+  quantity: number;
+  unit: string;
+  notes?: string; // For additional info like "chopped", "fresh", etc.
+}
+
 export interface Recipe {
   id: string;
   title: string;
@@ -9,7 +17,7 @@ export interface Recipe {
   cookTime: number; // in minutes
   servings: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
-  ingredients: string[];
+  ingredients: RecipeIngredient[];
   instructions: string[];
   tags: string[];
   image?: string;
@@ -46,12 +54,10 @@ const sampleRecipes: Recipe[] = [
     servings: 4,
     difficulty: 'Medium',
     ingredients: [
-      '400g spaghetti',
-      '200g pancetta or guanciale',
-      '4 large eggs',
-      '100g Pecorino Romano cheese',
-      'Black pepper',
-      'Salt'
+      { id: '1', itemId: 'pasta-1', quantity: 400, unit: 'g', notes: 'spaghetti' },
+      { id: '2', itemId: 'meat-1', quantity: 200, unit: 'g', notes: 'pancetta or guanciale' },
+      { id: '3', itemId: 'eggs-1', quantity: 4, unit: 'pieces', notes: 'large' },
+      { id: '4', itemId: 'cheese-1', quantity: 100, unit: 'g', notes: 'Pecorino Romano' },
     ],
     instructions: [
       'Bring a large pot of salted water to boil and cook spaghetti until al dente',
@@ -75,15 +81,11 @@ const sampleRecipes: Recipe[] = [
     servings: 3,
     difficulty: 'Easy',
     ingredients: [
-      '500g chicken breast, sliced',
-      '2 bell peppers',
-      '1 onion',
-      '2 carrots',
-      '3 cloves garlic',
-      '2 tbsp soy sauce',
-      '1 tbsp sesame oil',
-      '1 tsp ginger',
-      'Green onions for garnish'
+      { id: '1', itemId: 'chicken-1', quantity: 500, unit: 'g', notes: 'breast, sliced' },
+      { id: '2', itemId: 'peppers-1', quantity: 2, unit: 'pieces', notes: 'bell peppers' },
+      { id: '3', itemId: 'onion-1', quantity: 1, unit: 'pieces' },
+      { id: '4', itemId: 'carrots-1', quantity: 2, unit: 'pieces' },
+      { id: '5', itemId: 'garlic-1', quantity: 3, unit: 'cloves' },
     ],
     instructions: [
       'Cut all vegetables into bite-sized pieces',

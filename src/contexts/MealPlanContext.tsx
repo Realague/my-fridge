@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Recipe } from './RecipeContext';
+import { Recipe, RecipeIngredient } from './RecipeContext';
 import { useItems } from './ItemContext';
 import { useStorage } from './StorageContext';
 
@@ -19,7 +19,7 @@ interface MealPlanContextType {
   removeMealPlan: (id: string) => void;
   getMealPlansForDate: (date: string) => MealPlanEntry[];
   getMealPlansForWeek: (startDate: string) => MealPlanEntry[];
-  generateShoppingListFromMealPlan: (startDate: string, endDate: string, onItemsAdded: (items: Array<{item: any, quantity: string, unit: string, source: string}>) => void) => void;
+  generateShoppingListFromMealPlan: (startDate: string, endDate: string, recipes: Recipe[], onItemsAdded: (items: Array<{item: any, quantity: string, unit: string, source: string}>) => void) => void;
 }
 
 const MealPlanContext = createContext<MealPlanContextType | undefined>(undefined);
@@ -68,57 +68,73 @@ export const MealPlanProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const findMatchingStorageItem = (ingredient: string) => {
-    // First try exact match
-    const exactMatch = items.find(item => 
-      item.name.toLowerCase() === ingredient.toLowerCase()
-    );
-    if (exactMatch) {
-      return storageItems.find(storage => storage.itemId === exactMatch.id);
-    }
+  const checkIngredientAvailability = (ingredient: RecipeIngredient, neededQuantity: number) => {
+    const item = getItemById(ingredient.itemId);
+    if (!item) return null;
 
-    // Then try fuzzy matching
-    const fuzzyMatch = items.find(item => {
-      const itemName = item.name.toLowerCase();
-      const ingredientName = ingredient.toLowerCase();
-      return itemName.includes(ingredientName) || ingredientName.includes(itemName);
-    });
-    if (fuzzyMatch) {
-      return storageItems.find(storage => storage.itemId === fuzzyMatch.id);
-    }
+    const storage = storageItems.find(storage => storage.itemId === ingredient.itemId);
+    if (!storage) return null;
 
-    return null;
-  };
-
-  const parseIngredientQuantity = (ingredient: string) => {
-    // Simple regex to extract quantity and unit from ingredients like "2 lbs chicken breast"
-    const match = ingredient.match(/^(\d+(?:\.\d+)?)\s*(\w+)\s+(.+)$/);
-    if (match) {
-      return {
-        quantity: parseFloat(match[1]),
-        unit: match[2],
-        name: match[3]
-      };
-    }
-    // If no quantity found, assume 1 unit
+    // Simple quantity comparison - in a real app you'd need unit conversion
+    const availableQuantity = parseFloat(storage.quantity);
     return {
-      quantity: 1,
-      unit: 'unit',
-      name: ingredient
+      item,
+      storage,
+      available: availableQuantity >= neededQuantity,
+      shortfall: Math.max(0, neededQuantity - availableQuantity)
     };
   };
 
   const generateShoppingListFromMealPlan = (
     startDate: string, 
     endDate: string, 
+    recipes: Recipe[],
     onItemsAdded: (items: Array<{item: any, quantity: string, unit: string, source: string}>) => void
   ) => {
     const weekMealPlans = getMealPlansForWeek(startDate);
     const missingItems: Array<{item: any, quantity: string, unit: string, source: string}> = [];
+    
+    // Group ingredients by item ID to calculate total needed quantities
+    const ingredientTotals = new Map<string, { ingredient: RecipeIngredient, totalQuantity: number, recipes: string[] }>();
 
     weekMealPlans.forEach(mealPlan => {
-      // Note: We'll need to get the recipe from RecipeContext
-      // For now, we'll structure this to be called with recipes passed in
+      const recipe = recipes.find(r => r.id === mealPlan.recipeId);
+      if (!recipe) return;
+
+      recipe.ingredients.forEach(ingredient => {
+        const key = ingredient.itemId;
+        const neededQuantity = ingredient.quantity * mealPlan.servings;
+        
+        if (ingredientTotals.has(key)) {
+          const existing = ingredientTotals.get(key)!;
+          existing.totalQuantity += neededQuantity;
+          existing.recipes.push(recipe.title);
+        } else {
+          ingredientTotals.set(key, {
+            ingredient,
+            totalQuantity: neededQuantity,
+            recipes: [recipe.title]
+          });
+        }
+      });
+    });
+
+    // Check availability and create shopping list
+    ingredientTotals.forEach(({ ingredient, totalQuantity, recipes }) => {
+      const availability = checkIngredientAvailability(ingredient, totalQuantity);
+      
+      if (!availability || !availability.available) {
+        const item = getItemById(ingredient.itemId);
+        if (item) {
+          const shortfall = availability?.shortfall || totalQuantity;
+          missingItems.push({
+            item,
+            quantity: shortfall.toString(),
+            unit: ingredient.unit,
+            source: `Needed for: ${recipes.join(', ')}`
+          });
+        }
+      }
     });
 
     onItemsAdded(missingItems);

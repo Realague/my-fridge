@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, Plus } from 'lucide-react';
 import { useRecipes } from '@/contexts/RecipeContext';
 import { useMealPlan } from '@/contexts/MealPlanContext';
+import { useItems } from '@/contexts/ItemContext';
 import { useToast } from '@/hooks/use-toast';
 
 const RecipeDetails = () => {
@@ -15,6 +17,7 @@ const RecipeDetails = () => {
   const navigate = useNavigate();
   const { getRecipeById, toggleFavorite, deleteRecipe } = useRecipes();
   const { addToMealPlan } = useMealPlan();
+  const { getItemById } = useItems();
   const { toast } = useToast();
   
   const [showMealPlanDialog, setShowMealPlanDialog] = useState(false);
@@ -223,13 +226,23 @@ const RecipeDetails = () => {
             <CardTitle className="text-lg">Ingredients</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2">
-              {recipe.ingredients.map((ingredient, index) => (
-                <li key={index} className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1.5 text-xs">●</span>
-                  <span className="text-gray-700">{ingredient}</span>
-                </li>
-              ))}
+            <ul className="space-y-3">
+              {recipe.ingredients.map((ingredient, index) => {
+                const item = getItemById(ingredient.itemId);
+                return (
+                  <li key={ingredient.id} className="flex items-start gap-3 p-2 bg-gray-50 rounded-lg">
+                    <span className="text-green-600 mt-1.5 text-xs">●</span>
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900">
+                        {ingredient.quantity} {ingredient.unit} {item?.name || 'Unknown item'}
+                      </div>
+                      {ingredient.notes && (
+                        <div className="text-sm text-gray-600 mt-1">{ingredient.notes}</div>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </CardContent>
         </Card>

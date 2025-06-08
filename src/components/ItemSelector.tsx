@@ -4,11 +4,8 @@ import { Check, ChevronDown, Plus, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
 import { useItems, FoodItem } from '@/contexts/ItemContext';
 import { ItemEditor } from '@/components/ItemEditor';
-import { getAllCategories } from '@/utils/unitSystem';
 import { cn } from '@/lib/utils';
 
 interface ItemSelectorProps {
@@ -21,8 +18,6 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [editingItem, setEditingItem] = useState<FoodItem | null>(null);
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [newItemCategory, setNewItemCategory] = useState('Other');
   const { searchItems, addItem, updateItem } = useItems();
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -36,7 +31,6 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
-        setShowCreateForm(false);
       }
     };
 
@@ -48,30 +42,21 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
     onItemSelect(item);
     setQuery('');
     setIsOpen(false);
-    setShowCreateForm(false);
   };
 
   const handleCreateNew = () => {
     if (query.trim() && !exactMatch) {
-      const newItem = addItem(query, newItemCategory);
+      const newItem = addItem(query);
       onItemSelect(newItem);
       setQuery('');
       setIsOpen(false);
-      setShowCreateForm(false);
-      setNewItemCategory('Other');
     }
-  };
-
-  const handleShowCreateForm = () => {
-    setShowCreateForm(true);
-    setNewItemCategory('Other');
   };
 
   const handleEditItem = (item: FoodItem, e: React.MouseEvent) => {
     e.stopPropagation();
     setEditingItem(item);
     setIsOpen(false);
-    setShowCreateForm(false);
   };
 
   const handleSaveEdit = (updates: Partial<FoodItem>) => {
@@ -84,7 +69,6 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
     setIsOpen(true);
-    setShowCreateForm(false);
   };
 
   const handleInputFocus = () => {
@@ -166,55 +150,14 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
           )}
 
           {query.trim() && !exactMatch && (
-            <div className="border-t border-gray-200 bg-white">
-              {!showCreateForm ? (
-                <div className="p-1">
-                  <button
-                    onClick={handleShowCreateForm}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 rounded-sm text-green-600 bg-white"
-                  >
-                    <Plus className="h-4 w-4" />
-                    <span>Create "{query}"</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="p-3 space-y-3 bg-white">
-                  <div>
-                    <Label htmlFor="category-select" className="text-sm font-medium text-gray-700">
-                      Category for "{query}"
-                    </Label>
-                    <Select value={newItemCategory} onValueChange={setNewItemCategory}>
-                      <SelectTrigger id="category-select" className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {getAllCategories().map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button 
-                      onClick={handleCreateNew}
-                      size="sm" 
-                      className="flex-1"
-                    >
-                      Create Item
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => setShowCreateForm(false)}
-                      className="flex-1"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              )}
+            <div className="border-t border-gray-200 p-1 bg-white">
+              <button
+                onClick={handleCreateNew}
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 rounded-sm text-green-600 bg-white"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Create "{query}"</span>
+              </button>
             </div>
           )}
 

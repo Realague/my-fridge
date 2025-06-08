@@ -3,12 +3,11 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, X } from 'lucide-react';
-import { useItems } from '@/contexts/ItemContext';
+import { useItems, FoodItem } from '@/contexts/ItemContext';
 import { RecipeIngredient } from '@/contexts/RecipeContext';
 import { QuantitySelector } from './QuantitySelector';
+import { ItemSelector } from './ItemSelector';
 
 interface StructuredIngredientInputProps {
   ingredients: RecipeIngredient[];
@@ -19,7 +18,7 @@ export const StructuredIngredientInput = ({
   ingredients, 
   onIngredientsChange 
 }: StructuredIngredientInputProps) => {
-  const { items, getItemById } = useItems();
+  const { getItemById } = useItems();
 
   const addIngredient = () => {
     const newIngredient: RecipeIngredient = {
@@ -41,6 +40,13 @@ export const StructuredIngredientInput = ({
       i === index ? { ...ingredient, ...updates } : ingredient
     );
     onIngredientsChange(updated);
+  };
+
+  const handleItemSelect = (index: number, item: FoodItem) => {
+    updateIngredient(index, { 
+      itemId: item.id,
+      unit: item.defaultUnit
+    });
   };
 
   const handleQuantityChange = (index: number, quantity: string, unit: string) => {
@@ -93,21 +99,12 @@ export const StructuredIngredientInput = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label className="text-sm font-medium text-gray-700">Item</label>
-                  <Select 
-                    value={ingredient.itemId} 
-                    onValueChange={(value) => updateIngredient(index, { itemId: value })}
-                  >
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select an item..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {items.map((item) => (
-                        <SelectItem key={item.id} value={item.id}>
-                          {item.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="mt-1">
+                    <ItemSelector
+                      onItemSelect={(item) => handleItemSelect(index, item)}
+                      placeholder="Search or create item..."
+                    />
+                  </div>
                 </div>
                 
                 {selectedItem && (

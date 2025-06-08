@@ -1,7 +1,8 @@
-
 import { Recipe } from '@/contexts/RecipeContext';
 import { StorageItem } from '@/contexts/StorageContext';
 import { FoodItem } from '@/contexts/ItemContext';
+import { MealPlanEntry } from '@/contexts/MealPlanContext';
+import { ShoppingListItem } from '@/contexts/ShoppingListContext';
 
 export interface IngredientAnalysis {
   ingredient: string;
@@ -135,6 +136,63 @@ export const generateShoppingItemsFromAnalysis = (
           source: 'Auto-added from meal plan'
         });
       }
+    }
+  });
+
+  return shoppingItems;
+};
+
+export const generateShoppingListFromMealPlan = (
+  mealPlans: MealPlanEntry[], 
+  recipes: Recipe[], 
+  items: FoodItem[],
+  storageItems: StorageItem[]
+): ShoppingListItem[] => {
+  const shoppingItems: ShoppingListItem[] = [];
+  const ingredientTotals = new Map<string, { ingredient: RecipeIngredient, totalQuantity: number, recipes: string[] }>();
+
+  // Group ingredients by item ID to calculate total needed quantities
+  mealPlans.forEach(mealPlan => {
+    const recipe = recipes.find(r => r.id === mealPlan.recipeId);
+    if (!recipe) return;
+
+    recipe.ingredients.forEach(ingredient => {
+      const key = ingredient.itemId;
+      const neededQuantity = ingredient.quantity * mealPlan.servings;
+      
+      if (ingredientTotals.has(key)) {
+        const existing = ingredientTotals.get(key)!;
+        existing.totalQuantity += neededQuantity;
+        existing.recipes.push(recipe.title);
+      } else {
+        ingredientTotals.set(key, {
+          ingredient,
+          totalQuantity: neededQuantity,
+          recipes: [recipe.title]
+        });
+      }
+    });
+  });
+
+  // Check availability and create shopping list
+  ingredientTotals.forEach(({ ingredient, totalQuantity, recipes }) => {
+    const item = items.find(item => item.id === ingredient.itemId);
+    if (!item) return;
+
+    const storage = storageItems.find(storage => storage.itemId === ingredient.itemId);
+    const availableQuantity = storage ? parseFloat(storage.quantity) : 0;
+    
+    if (availableQuantity < totalQuantity) {
+      const shortfall = totalQuantity - availableQuantity;
+      shoppingItems.push({
+        id: Date.now().toString() + Math.random(),
+        itemId: ingredient.itemId,
+        quantity: shortfall.toString(),
+        unit: ingredient.unit,
+        notes: `Needed for: ${recipes.join(', ')}`,
+        completed: false,
+        createdAt: new Date()
+      });
     }
   });
 

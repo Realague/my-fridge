@@ -7,15 +7,23 @@ import { Plus, Settings, Users, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StorageAreaCard from '@/components/StorageAreaCard';
 import BottomNavigation from '@/components/BottomNavigation';
+import { useStorage } from '@/contexts/StorageContext';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { storageAreas, getItemsByArea } = useStorage();
 
-  const storageAreas = [
-    { id: 1, name: 'Fridge', emoji: '🥬', itemCount: 12, lowStockCount: 2 },
-    { id: 2, name: 'Freezer', emoji: '🧊', itemCount: 8, lowStockCount: 0 },
-    { id: 3, name: 'Pantry', emoji: '🏺', itemCount: 25, lowStockCount: 3 },
-  ];
+  // Calculate storage area stats
+  const storageAreasWithStats = storageAreas.map(area => {
+    const items = getItemsByArea(area.id);
+    return {
+      id: parseInt(area.id),
+      name: area.name,
+      emoji: area.emoji,
+      itemCount: items.length,
+      lowStockCount: 0, // TODO: implement low stock logic
+    };
+  });
 
   const quickActions = [
     { title: 'Shopping List', description: '5 items pending', emoji: '🛒', route: '/shopping' },
@@ -85,7 +93,7 @@ const Dashboard = () => {
           </div>
 
           <div className="space-y-3">
-            {storageAreas.map((area) => (
+            {storageAreasWithStats.map((area) => (
               <StorageAreaCard
                 key={area.id}
                 area={area}

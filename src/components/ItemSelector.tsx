@@ -96,6 +96,9 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
                     <Badge variant="secondary" className="text-xs">
                       {item.category}
                     </Badge>
+                    <Badge variant="outline" className="text-xs text-gray-600">
+                      per {item.defaultUnit}
+                    </Badge>
                   </div>
                   {item.usageCount > 1 && (
                     <span className="text-xs text-gray-500">

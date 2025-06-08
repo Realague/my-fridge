@@ -2,17 +2,18 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Check, GripVertical, Trash2, Users } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
+import { QuantitySelector } from '@/components/QuantitySelector';
 import { useItems, FoodItem } from '@/contexts/ItemContext';
 
 interface ShoppingItem {
   id: string;
   item: FoodItem;
   quantity: string;
+  unit: string;
   completed: boolean;
   addedBy: string;
 }
@@ -25,57 +26,77 @@ const Shopping = () => {
     { 
       id: '1', 
       item: getItemById('1')!, 
-      quantity: '1 gallon', 
+      quantity: '1', 
+      unit: 'gallon',
       completed: false, 
       addedBy: 'Sarah' 
     },
     { 
       id: '2', 
       item: getItemById('2')!, 
-      quantity: '1 loaf', 
+      quantity: '1', 
+      unit: 'loaf',
       completed: false, 
       addedBy: 'John' 
     },
     { 
       id: '3', 
       item: getItemById('3')!, 
-      quantity: '12 count', 
+      quantity: '12', 
+      unit: 'count',
       completed: true, 
       addedBy: 'Sarah' 
     },
     { 
       id: '4', 
       item: getItemById('4')!, 
-      quantity: '2 lbs', 
+      quantity: '2', 
+      unit: 'lb',
       completed: false, 
       addedBy: 'Auto-added from meal plan' 
     },
     { 
       id: '5', 
       item: getItemById('5')!, 
-      quantity: '1 lb', 
+      quantity: '1', 
+      unit: 'lb',
       completed: false, 
       addedBy: 'Auto-added from meal plan' 
     },
   ].filter(item => item.item)); // Filter out any undefined items
   
-  const [newItemQuantity, setNewItemQuantity] = useState('');
+  const [selectedItem, setSelectedItem] = useState<FoodItem | null>(null);
+  const [newItemQuantity, setNewItemQuantity] = useState('1');
+  const [newItemUnit, setNewItemUnit] = useState('');
   const [showCompleted, setShowCompleted] = useState(false);
 
-  const handleAddItem = (selectedItem: FoodItem) => {
-    const quantity = newItemQuantity.trim() || selectedItem.commonQuantities[0] || '1';
-    
-    const newShoppingItem: ShoppingItem = {
-      id: Date.now().toString(),
-      item: selectedItem,
-      quantity,
-      completed: false,
-      addedBy: 'You'
-    };
-    
-    setItems([...items, newShoppingItem]);
-    setNewItemQuantity('');
-    updateItemUsage(selectedItem.id);
+  const handleItemSelect = (item: FoodItem) => {
+    setSelectedItem(item);
+    setNewItemUnit(item.defaultUnit);
+  };
+
+  const handleQuantityChange = (quantity: string, unit: string) => {
+    setNewItemQuantity(quantity);
+    setNewItemUnit(unit);
+  };
+
+  const handleAddItem = () => {
+    if (selectedItem && newItemQuantity.trim()) {
+      const newShoppingItem: ShoppingItem = {
+        id: Date.now().toString(),
+        item: selectedItem,
+        quantity: newItemQuantity,
+        unit: newItemUnit,
+        completed: false,
+        addedBy: 'You'
+      };
+      
+      setItems([...items, newShoppingItem]);
+      setSelectedItem(null);
+      setNewItemQuantity('1');
+      setNewItemUnit('');
+      updateItemUsage(selectedItem.id);
+    }
   };
 
   const toggleItemComplete = (id: string) => {
@@ -143,19 +164,30 @@ const Shopping = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex gap-2">
-              <ItemSelector
-                onItemSelect={handleAddItem}
-                placeholder="Search or add item..."
-                className="flex-1"
-              />
-              <Input
-                placeholder="Qty"
-                value={newItemQuantity}
-                onChange={(e) => setNewItemQuantity(e.target.value)}
-                className="w-24"
-              />
-            </div>
+            <ItemSelector
+              onItemSelect={handleItemSelect}
+              placeholder="Search or add item..."
+              className="w-full"
+            />
+            
+            {selectedItem && (
+              <div className="flex gap-2 items-end">
+                <div className="flex-1">
+                  <p className="text-sm text-gray-600 mb-2">
+                    Selected: <span className="font-medium">{selectedItem.name}</span>
+                  </p>
+                  <QuantitySelector
+                    item={selectedItem}
+                    initialQuantity={newItemQuantity}
+                    initialUnit={newItemUnit}
+                    onQuantityChange={handleQuantityChange}
+                  />
+                </div>
+                <Button onClick={handleAddItem} className="px-6">
+                  Add
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -186,7 +218,7 @@ const Shopping = () => {
                       </Badge>
                     </div>
                     <div className="text-sm text-gray-600">
-                      {shoppingItem.quantity} • Added by {shoppingItem.addedBy}
+                      {shoppingItem.quantity} {shoppingItem.unit} • Added by {shoppingItem.addedBy}
                     </div>
                   </div>
                   
@@ -250,7 +282,7 @@ const Shopping = () => {
                           </Badge>
                         </div>
                         <div className="text-sm text-gray-500">
-                          {shoppingItem.quantity} • Added by {shoppingItem.addedBy}
+                          {shoppingItem.quantity} {shoppingItem.unit} • Added by {shoppingItem.addedBy}
                         </div>
                       </div>
                       

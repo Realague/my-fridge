@@ -14,6 +14,8 @@ import Dashboard from "./pages/Dashboard";
 import Shopping from "./pages/Shopping";
 import StorageArea from "./pages/StorageArea";
 import Recipes from "./pages/Recipes";
+import RecipeDetails from "./pages/RecipeDetails";
+import AddRecipe from "./pages/AddRecipe";
 import Demo from "./pages/Demo";
 import NotFound from "./pages/NotFound";
 
@@ -36,6 +38,8 @@ const App = () => (
                 <Route path="/shopping" element={<Shopping />} />
                 <Route path="/storage/:areaId" element={<StorageArea />} />
                 <Route path="/recipes" element={<Recipes />} />
+                <Route path="/recipes/new" element={<AddRecipe />} />
+                <Route path="/recipes/:id" element={<RecipeDetails />} />
                 <Route path="/demo" element={<Demo />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

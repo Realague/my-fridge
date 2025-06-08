@@ -221,46 +221,48 @@ const Shopping = () => {
         </button>
         
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className={`font-medium ${isCompleted ? 'text-gray-700 line-through' : 'text-gray-900'}`}>
-              {shoppingItem.item.name}
-            </span>
-            <Badge className={getCategoryColor(shoppingItem.item.category)}>
-              {shoppingItem.item.category}
-            </Badge>
+          <div className="flex items-center gap-2 justify-between">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <span className={`font-medium ${isCompleted ? 'text-gray-700 line-through' : 'text-gray-900'}`}>
+                {shoppingItem.item.name}
+              </span>
+              <Badge className={getCategoryColor(shoppingItem.item.category)}>
+                {shoppingItem.item.category}
+              </Badge>
+            </div>
+            {isEditing && (
+              <div className="flex gap-1 flex-shrink-0">
+                <Button
+                  size="sm"
+                  onClick={handleSave}
+                  className="h-8 px-2"
+                >
+                  <Save className="h-3 w-3" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCancel}
+                  className="h-8 px-2"
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            )}
           </div>
           <div className="text-sm text-gray-600">
             {isEditing ? (
-              <div className="flex items-center gap-1 mt-1 flex-wrap">
-                <div className="flex-1 min-w-0">
-                  <QuantitySelector
-                    item={shoppingItem.item}
-                    initialQuantity={editQuantity}
-                    initialUnit={editUnit}
-                    onQuantityChange={(quantity, unit) => {
-                      setEditQuantity(quantity);
-                      setEditUnit(unit);
-                    }}
-                    className="w-full"
-                  />
-                </div>
-                <div className="flex gap-1 flex-shrink-0">
-                  <Button
-                    size="sm"
-                    onClick={handleSave}
-                    className="h-8 px-2"
-                  >
-                    <Save className="h-3 w-3" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCancel}
-                    className="h-8 px-2"
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                </div>
+              <div className="mt-1">
+                <QuantitySelector
+                  item={shoppingItem.item}
+                  initialQuantity={editQuantity}
+                  initialUnit={editUnit}
+                  onQuantityChange={(quantity, unit) => {
+                    setEditQuantity(quantity);
+                    setEditUnit(unit);
+                  }}
+                  className="w-full"
+                />
               </div>
             ) : (
               <div className="flex items-center gap-2">

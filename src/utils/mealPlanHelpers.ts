@@ -1,8 +1,8 @@
-import { Recipe } from '@/contexts/RecipeContext';
+
+import { Recipe, RecipeIngredient } from '@/contexts/RecipeContext';
 import { StorageItem } from '@/contexts/StorageContext';
 import { FoodItem } from '@/contexts/ItemContext';
 import { MealPlanEntry } from '@/contexts/MealPlanContext';
-import { ShoppingListItem } from '@/contexts/ShoppingListContext';
 
 export interface IngredientAnalysis {
   ingredient: string;
@@ -74,24 +74,20 @@ export const analyzeRecipeIngredients = (
   const servingMultiplier = servings / recipe.servings;
   
   return recipe.ingredients.map(ingredient => {
-    const parsed = parseIngredientQuantity(ingredient);
-    const neededQuantity = parsed.quantity * servingMultiplier;
+    // Now we work with structured ingredient data
+    const neededQuantity = ingredient.quantity * servingMultiplier;
     
-    const matchingItems = findMatchingItems(parsed.name, items);
+    // Find the item by ID since we have structured data
+    const matchedItem = items.find(item => item.id === ingredient.itemId);
     let availableQuantity = 0;
-    let matchedItemId: string | undefined;
 
-    if (matchingItems.length > 0) {
-      // Use the first matching item
-      const matchedItem = matchingItems[0];
-      matchedItemId = matchedItem.id;
-      
+    if (matchedItem) {
       // Find storage items for this food item
       const storageMatches = storageItems.filter(storage => storage.itemId === matchedItem.id);
       
       // Sum up available quantities (basic implementation - would need unit conversion)
       availableQuantity = storageMatches.reduce((sum, storage) => {
-        if (storage.unit === parsed.unit) {
+        if (storage.unit === ingredient.unit) {
           return sum + parseFloat(storage.quantity);
         }
         return sum; // Would need unit conversion here
@@ -101,12 +97,12 @@ export const analyzeRecipeIngredients = (
     const missingQuantity = Math.max(0, neededQuantity - availableQuantity);
 
     return {
-      ingredient: parsed.name,
+      ingredient: matchedItem?.name || 'Unknown item',
       needed: neededQuantity,
       available: availableQuantity,
-      unit: parsed.unit,
+      unit: ingredient.unit,
       missing: missingQuantity,
-      itemId: matchedItemId
+      itemId: ingredient.itemId
     };
   });
 };
@@ -147,8 +143,8 @@ export const generateShoppingListFromMealPlan = (
   recipes: Recipe[], 
   items: FoodItem[],
   storageItems: StorageItem[]
-): ShoppingListItem[] => {
-  const shoppingItems: ShoppingListItem[] = [];
+): Array<{item: FoodItem, quantity: string, unit: string, source: string}> => {
+  const shoppingItems: Array<{item: FoodItem, quantity: string, unit: string, source: string}> = [];
   const ingredientTotals = new Map<string, { ingredient: RecipeIngredient, totalQuantity: number, recipes: string[] }>();
 
   // Group ingredients by item ID to calculate total needed quantities
@@ -185,13 +181,10 @@ export const generateShoppingListFromMealPlan = (
     if (availableQuantity < totalQuantity) {
       const shortfall = totalQuantity - availableQuantity;
       shoppingItems.push({
-        id: Date.now().toString() + Math.random(),
-        itemId: ingredient.itemId,
+        item,
         quantity: shortfall.toString(),
         unit: ingredient.unit,
-        notes: `Needed for: ${recipes.join(', ')}`,
-        completed: false,
-        createdAt: new Date()
+        source: `Needed for: ${recipes.join(', ')}`
       });
     }
   });

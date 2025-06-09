@@ -18,6 +18,7 @@ import Recipes from "./pages/Recipes";
 import RecipeDetails from "./pages/RecipeDetails";
 import AddRecipe from "./pages/AddRecipe";
 import MealPlans from "./pages/MealPlans";
+import Profile from "./pages/Profile";
 import Demo from "./pages/Demo";
 import NotFound from "./pages/NotFound";
 
@@ -44,6 +45,7 @@ const App = () => (
                   <Route path="/recipes/new" element={<AddRecipe />} />
                   <Route path="/recipes/:id" element={<RecipeDetails />} />
                   <Route path="/meal-plans" element={<MealPlans />} />
+                  <Route path="/profile" element={<Profile />} />
                   <Route path="/demo" element={<Demo />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />

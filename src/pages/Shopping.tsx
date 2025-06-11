@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -96,23 +95,17 @@ const Shopping = () => {
     setNewItemUnit(unit);
   };
 
-  const handleAddItem = () => {
-    if (selectedItem && newItemQuantity.trim()) {
-      const newShoppingItem: ShoppingItem = {
-        id: Date.now().toString(),
-        item: selectedItem,
-        quantity: newItemQuantity,
-        unit: newItemUnit,
-        completed: false,
-        addedBy: 'You'
-      };
-      
-      setItems([...items, newShoppingItem]);
-      setSelectedItem(null);
-      setNewItemQuantity('1');
-      setNewItemUnit('');
-      updateItemUsage(selectedItem.id);
-    }
+  const handleAddItem = (item: FoodItem, quantity: string, unit: string) => {
+    const newShoppingItem: ShoppingItem = {
+      id: Date.now().toString(),
+      item: item,
+      quantity: quantity,
+      unit: unit,
+      completed: false,
+      addedBy: 'You'
+    };
+    
+    setItems([...items, newShoppingItem]);
   };
 
   const toggleItemComplete = (id: string) => {
@@ -498,40 +491,12 @@ const Shopping = () => {
 
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Add New Item */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Plus className="h-5 w-5 text-green-600" />
-              Add Item
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <ItemSelector
-              onItemSelect={handleItemSelect}
-              placeholder="Search or add item..."
-              className="w-full"
-            />
-            
-            {selectedItem && (
-              <div className="flex gap-2 items-end">
-                <div className="flex-1">
-                  <p className="text-sm text-gray-600 mb-2">
-                    Selected: <span className="font-medium">{selectedItem.name}</span>
-                  </p>
-                  <QuantitySelector
-                    item={selectedItem}
-                    initialQuantity={newItemQuantity}
-                    initialUnit={newItemUnit}
-                    onQuantityChange={handleQuantityChange}
-                  />
-                </div>
-                <Button onClick={handleAddItem} className="px-6">
-                  Add
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <AddItemCard
+          title="Add Item"
+          onItemAdd={handleAddItem}
+          placeholder="Search or add item..."
+          buttonText="Add"
+        />
 
         {/* Category Filter */}
         <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
@@ -650,3 +615,5 @@ const Shopping = () => {
 };
 
 export default Shopping;
+
+}

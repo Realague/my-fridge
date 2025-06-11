@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus, Settings, Users, Bell } from 'lucide-react';
+import { Settings, Users, Bell, List } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StorageAreaCard from '@/components/StorageAreaCard';
 import BottomNavigation from '@/components/BottomNavigation';
@@ -12,7 +12,7 @@ import { useStorage } from '@/contexts/StorageContext';
 const Dashboard = () => {
   const navigate = useNavigate();
   const { storageAreas, getItemsByArea } = useStorage();
-  const [showAddAreaDialog, setShowAddAreaDialog] = useState(false);
+  const [showManageAreasDialog, setShowManageAreasDialog] = useState(false);
 
   // Calculate storage area stats
   const storageAreasWithStats = storageAreas.map(area => {
@@ -86,10 +86,10 @@ const Dashboard = () => {
               variant="outline"
               size="sm"
               className="border-green-600 text-green-600 hover:bg-green-50"
-              onClick={() => setShowAddAreaDialog(true)}
+              onClick={() => setShowManageAreasDialog(true)}
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Area
+              <List className="h-4 w-4 mr-2" />
+              Manage Areas
             </Button>
           </div>
 
@@ -144,35 +144,49 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Add Area Dialog */}
-      <Dialog open={showAddAreaDialog} onOpenChange={setShowAddAreaDialog}>
+      {/* Manage Areas Dialog */}
+      <Dialog open={showManageAreasDialog} onOpenChange={setShowManageAreasDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Storage Area</DialogTitle>
+            <DialogTitle>Manage Storage Areas</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <p className="text-gray-600 mb-4">
-              Custom storage areas feature is coming soon! For now, you can use the default areas:
+              Your current storage areas:
             </p>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">🥬</span>
-                <span>Fridge - For fresh foods and leftovers</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg">🧊</span>
-                <span>Freezer - For frozen items</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg">🏺</span>
-                <span>Pantry - For dry goods and canned items</span>
-              </div>
+            <div className="space-y-3">
+              {storageAreasWithStats.map((area) => (
+                <div key={area.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{area.emoji}</span>
+                    <div>
+                      <h4 className="font-medium text-gray-900">{area.name}</h4>
+                      <p className="text-sm text-gray-600">{area.itemCount} items stored</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setShowManageAreasDialog(false);
+                      navigate(`/storage/${area.id}`);
+                    }}
+                  >
+                    View
+                  </Button>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+              <p className="text-sm text-blue-700">
+                💡 Custom storage areas feature is coming soon! You can add more areas like basement, garage, or custom pantries.
+              </p>
             </div>
             <Button 
-              onClick={() => setShowAddAreaDialog(false)} 
+              onClick={() => setShowManageAreasDialog(false)} 
               className="w-full mt-4"
             >
-              Got it
+              Close
             </Button>
           </div>
         </DialogContent>

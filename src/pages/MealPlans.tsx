@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -85,17 +86,15 @@ const MealPlans = () => {
             </div>
           </div>
           <div className="flex gap-2 justify-center sm:justify-end">
-            <Button size="sm" variant="outline" className="text-xs px-2 sm:px-3">
-              <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Generate List</span>
-              <span className="sm:hidden">List</span>
+            <Button size="sm" variant="outline" className="text-xs sm:text-sm px-3">
+              <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+              <span>Generate List</span>
             </Button>
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
               <DialogTrigger asChild>
-                <Button size="sm" className="text-xs px-2 sm:px-3">
-                  <Plus className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Add Meal</span>
-                  <span className="sm:hidden">Add</span>
+                <Button size="sm" className="text-xs sm:text-sm px-3">
+                  <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                  <span>Add Meal</span>
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -163,10 +162,10 @@ const MealPlans = () => {
                   newDate.setDate(newDate.getDate() - 7);
                   setSelectedDate(newDate.toISOString().split('T')[0]);
                 }}
-                className="touch-friendly text-xs sm:text-sm px-2 sm:px-3 flex items-center gap-1"
+                className="touch-friendly h-8 w-8 sm:h-9 sm:w-auto p-0 sm:px-3"
               >
-                <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Previous Week</span>
+                <ChevronLeft className="h-4 w-4" />
+                <span className="hidden sm:inline ml-2">Previous Week</span>
               </Button>
               <div className="text-center flex-1 px-2">
                 <h2 className="font-semibold text-xs sm:text-base leading-tight">
@@ -185,10 +184,10 @@ const MealPlans = () => {
                   newDate.setDate(newDate.getDate() + 7);
                   setSelectedDate(newDate.toISOString().split('T')[0]);
                 }}
-                className="touch-friendly text-xs sm:text-sm px-2 sm:px-3 flex items-center gap-1"
+                className="touch-friendly h-8 w-8 sm:h-9 sm:w-auto p-0 sm:px-3"
               >
-                <span>Next Week</span>
-                <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline mr-2">Next Week</span>
+                <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </CardContent>
@@ -272,3 +271,4 @@ const MealPlans = () => {
 };
 
 export default MealPlans;
+

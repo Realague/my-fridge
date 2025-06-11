@@ -16,6 +16,7 @@ import Shopping from "./pages/Shopping";
 import StorageArea from "./pages/StorageArea";
 import Recipes from "./pages/Recipes";
 import RecipeDetails from "./pages/RecipeDetails";
+import RecipeCookingMode from "./pages/RecipeCookingMode";
 import AddRecipe from "./pages/AddRecipe";
 import MealPlans from "./pages/MealPlans";
 import Profile from "./pages/Profile";
@@ -44,6 +45,7 @@ const App = () => (
                   <Route path="/recipes" element={<Recipes />} />
                   <Route path="/recipes/new" element={<AddRecipe />} />
                   <Route path="/recipes/:id" element={<RecipeDetails />} />
+                  <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />
                   <Route path="/meal-plans" element={<MealPlans />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/demo" element={<Demo />} />

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, Plus } from 'lucide-react';
+import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, Plus, ChefHat } from 'lucide-react';
 import { useRecipes } from '@/contexts/RecipeContext';
 import { useMealPlan } from '@/contexts/MealPlanContext';
 import { useItems } from '@/contexts/ItemContext';
@@ -194,9 +193,17 @@ const RecipeDetails = () => {
               ))}
             </div>
 
-            {/* Add to Meal Plan Button */}
-            <div className="pt-4">
-              <Button onClick={() => setShowMealPlanDialog(true)} className="w-full md:w-auto">
+            {/* Action Buttons */}
+            <div className="pt-4 space-y-3">
+              <Button 
+                onClick={() => navigate(`/recipes/${recipe.id}/cook`)} 
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
+                size="lg"
+              >
+                <ChefHat className="h-5 w-5 mr-2" />
+                Start Cooking
+              </Button>
+              <Button onClick={() => setShowMealPlanDialog(true)} variant="outline" className="w-full md:w-auto">
                 <Calendar className="h-4 w-4 mr-2" />
                 Add to Meal Plan
               </Button>

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Check, GripVertical, Trash2, Users, Edit, Save, X, Filter, Package } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
-import { ItemSelector } from '@/components/ItemSelector';
+import { AddItemCard } from '@/components/AddItemCard';
 import { QuantitySelector } from '@/components/QuantitySelector';
 import { useItems, FoodItem } from '@/contexts/ItemContext';
 import { useStorage } from '@/contexts/StorageContext';

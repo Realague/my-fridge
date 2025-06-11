@@ -25,9 +25,15 @@ export const AddItemCard = ({
   const [newItemQuantity, setNewItemQuantity] = useState('1');
   const [newItemUnit, setNewItemUnit] = useState('');
 
-  const handleItemSelect = (item: FoodItem) => {
+  const handleItemSelect = (item: FoodItem | null) => {
     setSelectedItem(item);
-    setNewItemUnit(item.defaultUnit);
+    if (item) {
+      setNewItemUnit(item.defaultUnit);
+    } else {
+      // Reset quantity and unit when item is cleared
+      setNewItemQuantity('1');
+      setNewItemUnit('');
+    }
   };
 
   const handleQuantityChange = (quantity: string, unit: string) => {

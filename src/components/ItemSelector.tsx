@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Check, ChevronDown, Plus, Edit, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,7 @@ import { ItemEditor } from '@/components/ItemEditor';
 import { cn } from '@/lib/utils';
 
 interface ItemSelectorProps {
-  onItemSelect: (item: FoodItem) => void;
+  onItemSelect: (item: FoodItem | null) => void;
   placeholder?: string;
   className?: string;
   selectedItem?: FoodItem | null;
@@ -84,6 +83,7 @@ export const ItemSelector = ({
   const handleClearSelection = () => {
     setQuery('');
     setIsOpen(false);
+    onItemSelect(null); // Clear the selected item in parent component
   };
 
   const displayValue = selectedItem && !query ? selectedItem.name : query;

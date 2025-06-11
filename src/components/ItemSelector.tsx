@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Check, ChevronDown, Plus, Edit } from 'lucide-react';
+import { Check, ChevronDown, Plus, Edit, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -12,9 +12,15 @@ interface ItemSelectorProps {
   onItemSelect: (item: FoodItem) => void;
   placeholder?: string;
   className?: string;
+  selectedItem?: FoodItem | null;
 }
 
-export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item...", className }: ItemSelectorProps) => {
+export const ItemSelector = ({ 
+  onItemSelect, 
+  placeholder = "Search or add item...", 
+  className,
+  selectedItem = null 
+}: ItemSelectorProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [editingItem, setEditingItem] = useState<FoodItem | null>(null);
@@ -75,6 +81,14 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
     setIsOpen(true);
   };
 
+  const handleClearSelection = () => {
+    setQuery('');
+    setIsOpen(false);
+  };
+
+  const displayValue = selectedItem && !query ? selectedItem.name : query;
+  const showClearButton = selectedItem && !query;
+
   if (editingItem) {
     return (
       <div className={className}>
@@ -92,20 +106,35 @@ export const ItemSelector = ({ onItemSelect, placeholder = "Search or add item..
       <div className="relative">
         <Input
           ref={inputRef}
-          value={query}
+          value={displayValue}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           placeholder={placeholder}
-          className="pr-8"
+          className={cn(
+            "pr-16",
+            selectedItem && !query && "bg-green-50 border-green-200"
+          )}
         />
-        <Button
-          variant="ghost"
-          size="sm"
-          className="absolute right-0 top-0 h-full px-2"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
-        </Button>
+        <div className="absolute right-0 top-0 h-full flex items-center">
+          {showClearButton && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleClearSelection}
+              className="h-full px-2"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-full px-2"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+          </Button>
+        </div>
       </div>
 
       {isOpen && (

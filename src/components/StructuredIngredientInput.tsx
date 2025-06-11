@@ -103,6 +103,7 @@ export const StructuredIngredientInput = ({
                     <ItemSelector
                       onItemSelect={(item) => handleItemSelect(index, item)}
                       placeholder="Search or create item..."
+                      selectedItem={selectedItem}
                     />
                   </div>
                 </div>

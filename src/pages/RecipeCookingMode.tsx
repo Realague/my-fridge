@@ -103,6 +103,31 @@ const RecipeCookingMode = () => {
     setCheckedIngredients(newChecked);
   };
 
+  // Function to identify relevant ingredients for current step
+  const getRelevantIngredients = (stepText: string) => {
+    const relevantIngredients: number[] = [];
+    
+    recipe.ingredients.forEach((ingredient, index) => {
+      const item = getItemById(ingredient.itemId);
+      const itemName = item?.name?.toLowerCase() || '';
+      const stepLower = stepText.toLowerCase();
+      
+      // Check if ingredient name or notes appear in the step
+      if (itemName && stepLower.includes(itemName)) {
+        relevantIngredients.push(index);
+      }
+      
+      // Also check ingredient notes for matches
+      if (ingredient.notes && stepLower.includes(ingredient.notes.toLowerCase())) {
+        relevantIngredients.push(index);
+      }
+    });
+    
+    return relevantIngredients;
+  };
+
+  const relevantIngredients = getRelevantIngredients(recipe.instructions[currentStep]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
       {/* Header */}
@@ -204,6 +229,32 @@ const RecipeCookingMode = () => {
                   {recipe.instructions[currentStep]}
                 </p>
 
+                {/* Ingredients needed for this step */}
+                {relevantIngredients.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-sm font-semibold text-green-700 mb-3 uppercase tracking-wide">
+                      Ingredients for this step:
+                    </h3>
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-2">
+                      {relevantIngredients.map((ingredientIndex) => {
+                        const ingredient = recipe.ingredients[ingredientIndex];
+                        const item = getItemById(ingredient.itemId);
+                        return (
+                          <div key={ingredient.id} className="flex items-center gap-2 text-sm">
+                            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                            <span className="font-medium text-green-800">
+                              {ingredient.quantity} {ingredient.unit} {item?.name || 'Unknown item'}
+                            </span>
+                            {ingredient.notes && (
+                              <span className="text-green-600 italic">({ingredient.notes})</span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Navigation */}
                 <div className="flex justify-between">
                   <Button
@@ -234,7 +285,7 @@ const RecipeCookingMode = () => {
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-gray-900">Ingredients</h3>
+                  <h3 className="font-semibold text-gray-900">All Ingredients</h3>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -248,19 +299,27 @@ const RecipeCookingMode = () => {
                   <div className="space-y-3">
                     {recipe.ingredients.map((ingredient, index) => {
                       const item = getItemById(ingredient.itemId);
+                      const isRelevant = relevantIngredients.includes(index);
                       return (
-                        <div key={ingredient.id} className="flex items-start gap-2">
+                        <div 
+                          key={ingredient.id} 
+                          className={`flex items-start gap-2 p-2 rounded ${
+                            isRelevant ? 'bg-green-50 border border-green-200' : ''
+                          }`}
+                        >
                           <Checkbox
                             checked={checkedIngredients[index]}
                             onCheckedChange={() => toggleIngredient(index)}
                             className="mt-1"
                           />
                           <div className={`flex-1 text-sm ${checkedIngredients[index] ? 'line-through text-gray-500' : 'text-gray-800'}`}>
-                            <div className="font-medium">
+                            <div className={`font-medium ${isRelevant ? 'text-green-800' : ''}`}>
                               {ingredient.quantity} {ingredient.unit} {item?.name || 'Unknown item'}
                             </div>
                             {ingredient.notes && (
-                              <div className="text-xs text-gray-600">{ingredient.notes}</div>
+                              <div className={`text-xs ${isRelevant ? 'text-green-600' : 'text-gray-600'}`}>
+                                {ingredient.notes}
+                              </div>
                             )}
                           </div>
                         </div>

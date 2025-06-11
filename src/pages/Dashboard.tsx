@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Settings, Users, Bell, List } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StorageAreaCard from '@/components/StorageAreaCard';
@@ -31,6 +33,30 @@ const Dashboard = () => {
     { title: 'Meal Plans', description: 'Plan this week', emoji: '📅', route: '/meal-plans' },
     { title: 'Recipes', description: '12 saved recipes', emoji: '📖', route: '/recipes' },
   ];
+
+  // Storage options similar to onboarding
+  const storageOptions = [
+    { id: '1', name: 'Refrigerator', emoji: '🥬', description: 'Main fridge compartment', type: 'fridge' },
+    { id: '2', name: 'Freezer', emoji: '🧊', description: 'Frozen food storage', type: 'freezer' },
+    { id: '3', name: 'Pantry', emoji: '🏺', description: 'Dry goods and canned items', type: 'pantry' },
+    { id: 'wine-fridge', name: 'Wine Fridge', emoji: '🍷', description: 'Wine and beverage cooler', type: 'other' },
+    { id: 'garage-fridge', name: 'Garage Fridge', emoji: '🏠', description: 'Secondary refrigerator', type: 'other' },
+    { id: 'cabinet', name: 'Kitchen Cabinet', emoji: '🗄️', description: 'Spices and small items', type: 'other' },
+  ];
+
+  // Get currently enabled storage areas
+  const enabledStorageIds = storageAreas.map(area => area.id);
+
+  const handleStorageToggle = (storageId: string) => {
+    console.log('Storage area toggle:', storageId);
+    // TODO: Implement actual toggle functionality with storage context
+  };
+
+  const handleSaveChanges = () => {
+    console.log('Saving storage area changes');
+    // TODO: Implement actual save functionality
+    setShowManageAreasDialog(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
@@ -146,48 +172,59 @@ const Dashboard = () => {
 
       {/* Manage Areas Dialog */}
       <Dialog open={showManageAreasDialog} onOpenChange={setShowManageAreasDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Manage Storage Areas</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <p className="text-gray-600 mb-4">
-              Your current storage areas:
+              Select the storage areas you have in your kitchen:
             </p>
-            <div className="space-y-3">
-              {storageAreasWithStats.map((area) => (
-                <div key={area.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{area.emoji}</span>
+            <div className="space-y-3 max-h-80 overflow-y-auto">
+              {storageOptions.map((storage) => (
+                <div
+                  key={storage.id}
+                  className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                  onClick={() => handleStorageToggle(storage.id)}
+                >
+                  <Checkbox
+                    checked={enabledStorageIds.includes(storage.id)}
+                    onChange={() => handleStorageToggle(storage.id)}
+                  />
+                  <div className="flex items-center space-x-3 flex-1">
+                    <div className="w-10 h-10 bg-gradient-to-r from-green-100 to-orange-100 rounded-lg flex items-center justify-center">
+                      <span className="text-lg">{storage.emoji}</span>
+                    </div>
                     <div>
-                      <h4 className="font-medium text-gray-900">{area.name}</h4>
-                      <p className="text-sm text-gray-600">{area.itemCount} items stored</p>
+                      <div className="font-medium text-gray-900">{storage.name}</div>
+                      <div className="text-sm text-gray-600">{storage.description}</div>
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setShowManageAreasDialog(false);
-                      navigate(`/storage/${area.id}`);
-                    }}
-                  >
-                    View
-                  </Button>
                 </div>
               ))}
             </div>
+
             <div className="mt-4 p-3 bg-blue-50 rounded-lg">
               <p className="text-sm text-blue-700">
-                💡 Custom storage areas feature is coming soon! You can add more areas like basement, garage, or custom pantries.
+                💡 You can enable or disable storage areas based on what you have available in your household.
               </p>
             </div>
-            <Button 
-              onClick={() => setShowManageAreasDialog(false)} 
-              className="w-full mt-4"
-            >
-              Close
-            </Button>
+
+            <div className="flex gap-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => setShowManageAreasDialog(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSaveChanges}
+                className="flex-1 bg-green-600 hover:bg-green-700"
+              >
+                Save Changes
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

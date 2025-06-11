@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -75,75 +74,78 @@ const MealPlans = () => {
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-green-600" />
-                Meal Plans
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex-1">
+              <h1 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2">
+                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+                <span className="hidden xs:inline">Meal Plans</span>
+                <span className="xs:hidden">Meals</span>
               </h1>
-              <p className="text-sm text-gray-600">Plan your weekly meals</p>
+              <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Plan your weekly meals</p>
             </div>
-            <div className="flex gap-2">
-              <Button size="sm" variant="outline">
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                Generate List
-              </Button>
-              <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-                <DialogTrigger asChild>
-                  <Button size="sm">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Meal
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Add Recipe to Meal Plan</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium">Date</label>
-                      <input
-                        type="date"
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                        className="w-full mt-1 px-3 py-2 border rounded-md"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium">Meal Type</label>
-                      <Select value={selectedMealType} onValueChange={(value: 'breakfast' | 'lunch' | 'dinner') => setSelectedMealType(value)}>
-                        <SelectTrigger className="mt-1">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="breakfast">🌅 Breakfast</SelectItem>
-                          <SelectItem value="lunch">☀️ Lunch</SelectItem>
-                          <SelectItem value="dinner">🌙 Dinner</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium">Recipe</label>
-                      <Select value={selectedRecipe} onValueChange={setSelectedRecipe}>
-                        <SelectTrigger className="mt-1">
-                          <SelectValue placeholder="Select a recipe" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {recipes.map((recipe) => (
-                            <SelectItem key={recipe.id} value={recipe.id}>
-                              {recipe.title}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <Button onClick={handleAddMeal} disabled={!selectedRecipe} className="w-full">
-                      Add to Meal Plan
-                    </Button>
+          </div>
+          <div className="flex gap-2 justify-center sm:justify-end">
+            <Button size="sm" variant="outline" className="text-xs px-2 sm:px-3">
+              <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Generate List</span>
+              <span className="sm:hidden">List</span>
+            </Button>
+            <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+              <DialogTrigger asChild>
+                <Button size="sm" className="text-xs px-2 sm:px-3">
+                  <Plus className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Add Meal</span>
+                  <span className="sm:hidden">Add</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add Recipe to Meal Plan</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium">Date</label>
+                    <input
+                      type="date"
+                      value={selectedDate}
+                      onChange={(e) => setSelectedDate(e.target.value)}
+                      className="w-full mt-1 px-3 py-2 border rounded-md"
+                    />
                   </div>
-                </DialogContent>
-              </Dialog>
-            </div>
+                  <div>
+                    <label className="text-sm font-medium">Meal Type</label>
+                    <Select value={selectedMealType} onValueChange={(value: 'breakfast' | 'lunch' | 'dinner') => setSelectedMealType(value)}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="breakfast">🌅 Breakfast</SelectItem>
+                        <SelectItem value="lunch">☀️ Lunch</SelectItem>
+                        <SelectItem value="dinner">🌙 Dinner</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Recipe</label>
+                    <Select value={selectedRecipe} onValueChange={setSelectedRecipe}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select a recipe" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {recipes.map((recipe) => (
+                          <SelectItem key={recipe.id} value={recipe.id}>
+                            {recipe.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button onClick={handleAddMeal} disabled={!selectedRecipe} className="w-full">
+                    Add to Meal Plan
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
@@ -151,7 +153,7 @@ const MealPlans = () => {
       <div className="container mx-auto px-4 py-6">
         {/* Week Navigation */}
         <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg mb-6">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <Button
                 variant="outline"
@@ -161,14 +163,18 @@ const MealPlans = () => {
                   newDate.setDate(newDate.getDate() - 7);
                   setSelectedDate(newDate.toISOString().split('T')[0]);
                 }}
-                className="touch-friendly"
+                className="touch-friendly h-8 w-8 sm:h-9 sm:w-auto p-0 sm:px-3"
               >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="hidden sm:inline ml-2">Previous Week</span>
               </Button>
               <div className="text-center flex-1 px-2">
-                <h2 className="font-semibold text-sm sm:text-base">
-                  Week of {new Date(weekDates[0]).toLocaleDateString()}
+                <h2 className="font-semibold text-xs sm:text-base leading-tight">
+                  Week of {new Date(weekDates[0]).toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    year: window.innerWidth < 640 ? undefined : 'numeric'
+                  })}
                 </h2>
               </div>
               <Button
@@ -179,7 +185,7 @@ const MealPlans = () => {
                   newDate.setDate(newDate.getDate() + 7);
                   setSelectedDate(newDate.toISOString().split('T')[0]);
                 }}
-                className="touch-friendly"
+                className="touch-friendly h-8 w-8 sm:h-9 sm:w-auto p-0 sm:px-3"
               >
                 <span className="hidden sm:inline mr-2">Next Week</span>
                 <ChevronRight className="h-4 w-4" />

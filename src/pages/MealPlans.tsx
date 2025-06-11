@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Plus, Clock, Users, ChefHat, Trash2, ShoppingCart } from 'lucide-react';
+import { Calendar, Plus, Clock, Users, ChefHat, Trash2, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useMealPlan } from '@/contexts/MealPlanContext';
 import { useRecipes } from '@/contexts/RecipeContext';
@@ -155,28 +155,34 @@ const MealPlans = () => {
             <div className="flex items-center justify-between">
               <Button
                 variant="outline"
+                size="sm"
                 onClick={() => {
                   const newDate = new Date(selectedDate);
                   newDate.setDate(newDate.getDate() - 7);
                   setSelectedDate(newDate.toISOString().split('T')[0]);
                 }}
+                className="touch-friendly"
               >
-                ← Previous Week
+                <ChevronLeft className="h-4 w-4" />
+                <span className="hidden sm:inline ml-2">Previous Week</span>
               </Button>
-              <div className="text-center">
-                <h2 className="font-semibold">
+              <div className="text-center flex-1 px-2">
+                <h2 className="font-semibold text-sm sm:text-base">
                   Week of {new Date(weekDates[0]).toLocaleDateString()}
                 </h2>
               </div>
               <Button
                 variant="outline"
+                size="sm"
                 onClick={() => {
                   const newDate = new Date(selectedDate);
                   newDate.setDate(newDate.getDate() + 7);
                   setSelectedDate(newDate.toISOString().split('T')[0]);
                 }}
+                className="touch-friendly"
               >
-                Next Week →
+                <span className="hidden sm:inline mr-2">Next Week</span>
+                <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </CardContent>

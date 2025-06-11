@@ -1,8 +1,8 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus, Settings, Users, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StorageAreaCard from '@/components/StorageAreaCard';
@@ -12,6 +12,7 @@ import { useStorage } from '@/contexts/StorageContext';
 const Dashboard = () => {
   const navigate = useNavigate();
   const { storageAreas, getItemsByArea } = useStorage();
+  const [showAddAreaDialog, setShowAddAreaDialog] = useState(false);
 
   // Calculate storage area stats
   const storageAreasWithStats = storageAreas.map(area => {
@@ -85,7 +86,7 @@ const Dashboard = () => {
               variant="outline"
               size="sm"
               className="border-green-600 text-green-600 hover:bg-green-50"
-              onClick={() => navigate('/storage/new')}
+              onClick={() => setShowAddAreaDialog(true)}
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Area
@@ -142,6 +143,40 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Add Area Dialog */}
+      <Dialog open={showAddAreaDialog} onOpenChange={setShowAddAreaDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Storage Area</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-gray-600 mb-4">
+              Custom storage areas feature is coming soon! For now, you can use the default areas:
+            </p>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">🥬</span>
+                <span>Fridge - For fresh foods and leftovers</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg">🧊</span>
+                <span>Freezer - For frozen items</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg">🏺</span>
+                <span>Pantry - For dry goods and canned items</span>
+              </div>
+            </div>
+            <Button 
+              onClick={() => setShowAddAreaDialog(false)} 
+              className="w-full mt-4"
+            >
+              Got it
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <BottomNavigation currentPage="dashboard" />
     </div>

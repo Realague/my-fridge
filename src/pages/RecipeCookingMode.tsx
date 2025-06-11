@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -103,30 +102,39 @@ const RecipeCookingMode = () => {
     setCheckedIngredients(newChecked);
   };
 
-  // Function to identify relevant ingredients for current step
-  const getRelevantIngredients = (stepText: string) => {
+  // Function to get relevant ingredients for current step - now uses explicit mappings
+  const getRelevantIngredients = (stepIndex: number) => {
     const relevantIngredients: number[] = [];
     
     recipe.ingredients.forEach((ingredient, index) => {
-      const item = getItemById(ingredient.itemId);
-      const itemName = item?.name?.toLowerCase() || '';
-      const stepLower = stepText.toLowerCase();
-      
-      // Check if ingredient name or notes appear in the step
-      if (itemName && stepLower.includes(itemName)) {
+      // First check if there's explicit step mapping
+      if (ingredient.usedInSteps && ingredient.usedInSteps.includes(stepIndex)) {
         relevantIngredients.push(index);
+        return;
       }
       
-      // Also check ingredient notes for matches
-      if (ingredient.notes && stepLower.includes(ingredient.notes.toLowerCase())) {
-        relevantIngredients.push(index);
+      // Fallback to text matching if no explicit mapping
+      if (!ingredient.usedInSteps || ingredient.usedInSteps.length === 0) {
+        const item = getItemById(ingredient.itemId);
+        const itemName = item?.name?.toLowerCase() || '';
+        const stepText = recipe.instructions[stepIndex].toLowerCase();
+        
+        // Check if ingredient name or notes appear in the step
+        if (itemName && stepText.includes(itemName)) {
+          relevantIngredients.push(index);
+        }
+        
+        // Also check ingredient notes for matches
+        if (ingredient.notes && stepText.includes(ingredient.notes.toLowerCase())) {
+          relevantIngredients.push(index);
+        }
       }
     });
     
     return relevantIngredients;
   };
 
-  const relevantIngredients = getRelevantIngredients(recipe.instructions[currentStep]);
+  const relevantIngredients = getRelevantIngredients(currentStep);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">

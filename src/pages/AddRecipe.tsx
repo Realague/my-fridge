@@ -8,10 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, Plus, X } from 'lucide-react';
 import { useRecipes, RecipeIngredient } from '@/contexts/RecipeContext';
 import { useToast } from '@/hooks/use-toast';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
+import { useItems } from '@/contexts/ItemContext';
 
 interface RecipeFormData {
   title: string;
@@ -29,6 +31,7 @@ const AddRecipe = () => {
   const navigate = useNavigate();
   const { addRecipe } = useRecipes();
   const { toast } = useToast();
+  const { getItemById } = useItems();
   
   const form = useForm<RecipeFormData>({
     defaultValues: {
@@ -48,13 +51,24 @@ const AddRecipe = () => {
   const [instructions, setInstructions] = React.useState(['']);
   const [tags, setTags] = React.useState<string[]>([]);
   const [newTag, setNewTag] = React.useState('');
+  const [ingredientStepMap, setIngredientStepMap] = React.useState<{[ingredientId: string]: number[]}>({});
 
   const addInstruction = () => {
     setInstructions([...instructions, '']);
   };
 
   const removeInstruction = (index: number) => {
-    setInstructions(instructions.filter((_, i) => i !== index));
+    const newInstructions = instructions.filter((_, i) => i !== index);
+    setInstructions(newInstructions);
+    
+    // Update ingredient-step mappings when removing a step
+    const updatedMap = { ...ingredientStepMap };
+    Object.keys(updatedMap).forEach(ingredientId => {
+      updatedMap[ingredientId] = updatedMap[ingredientId]
+        .filter(stepIndex => stepIndex !== index)
+        .map(stepIndex => stepIndex > index ? stepIndex - 1 : stepIndex);
+    });
+    setIngredientStepMap(updatedMap);
   };
 
   const updateInstruction = (index: number, value: string) => {
@@ -72,6 +86,23 @@ const AddRecipe = () => {
 
   const removeTag = (tagToRemove: string) => {
     setTags(tags.filter(tag => tag !== tagToRemove));
+  };
+
+  const toggleIngredientForStep = (ingredientId: string, stepIndex: number) => {
+    const currentSteps = ingredientStepMap[ingredientId] || [];
+    const isLinked = currentSteps.includes(stepIndex);
+    
+    if (isLinked) {
+      setIngredientStepMap({
+        ...ingredientStepMap,
+        [ingredientId]: currentSteps.filter(step => step !== stepIndex)
+      });
+    } else {
+      setIngredientStepMap({
+        ...ingredientStepMap,
+        [ingredientId]: [...currentSteps, stepIndex].sort((a, b) => a - b)
+      });
+    }
   };
 
   const onSubmit = (data: RecipeFormData) => {
@@ -96,9 +127,15 @@ const AddRecipe = () => {
       return;
     }
 
+    // Add step mapping to ingredients
+    const ingredientsWithSteps = validIngredients.map(ingredient => ({
+      ...ingredient,
+      usedInSteps: ingredientStepMap[ingredient.id] || []
+    }));
+
     const recipeData = {
       ...data,
-      ingredients: validIngredients,
+      ingredients: ingredientsWithSteps,
       instructions: filteredInstructions,
       tags,
       isFavorite: false,
@@ -284,26 +321,57 @@ const AddRecipe = () => {
               </CardHeader>
               <CardContent className="space-y-3">
                 {instructions.map((instruction, index) => (
-                  <div key={index} className="flex gap-2">
-                    <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium mt-2">
-                      {index + 1}
+                  <div key={index} className="space-y-3">
+                    <div className="flex gap-2">
+                      <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium mt-2">
+                        {index + 1}
+                      </div>
+                      <Textarea
+                        placeholder={`Step ${index + 1} instructions...`}
+                        value={instruction}
+                        onChange={(e) => updateInstruction(index, e.target.value)}
+                        className="flex-1 min-h-[60px]"
+                      />
+                      {instructions.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => removeInstruction(index)}
+                          className="mt-2"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
-                    <Textarea
-                      placeholder={`Step ${index + 1} instructions...`}
-                      value={instruction}
-                      onChange={(e) => updateInstruction(index, e.target.value)}
-                      className="flex-1 min-h-[60px]"
-                    />
-                    {instructions.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => removeInstruction(index)}
-                        className="mt-2"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
+                    
+                    {/* Ingredient mapping for this step */}
+                    {ingredients.length > 0 && instruction.trim() && (
+                      <div className="ml-8 p-3 bg-gray-50 rounded-lg">
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">
+                          Ingredients used in this step (optional):
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          {ingredients.map((ingredient) => {
+                            const item = getItemById(ingredient.itemId);
+                            if (!item) return null;
+                            
+                            const isLinked = (ingredientStepMap[ingredient.id] || []).includes(index);
+                            
+                            return (
+                              <div key={ingredient.id} className="flex items-center space-x-2">
+                                <Checkbox
+                                  checked={isLinked}
+                                  onCheckedChange={() => toggleIngredientForStep(ingredient.id, index)}
+                                />
+                                <span className="text-sm text-gray-600">
+                                  {ingredient.quantity} {ingredient.unit} {item.name}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
                     )}
                   </div>
                 ))}

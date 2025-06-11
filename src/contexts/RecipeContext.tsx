@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface RecipeIngredient {
@@ -7,6 +6,7 @@ export interface RecipeIngredient {
   quantity: number;
   unit: string;
   notes?: string; // For additional info like "chopped", "fresh", etc.
+  usedInSteps?: number[]; // Array of step indices where this ingredient is used
 }
 
 export interface Recipe {
@@ -54,10 +54,10 @@ const sampleRecipes: Recipe[] = [
     servings: 4,
     difficulty: 'Medium',
     ingredients: [
-      { id: '1', itemId: 'pasta-1', quantity: 400, unit: 'g', notes: 'spaghetti' },
-      { id: '2', itemId: 'meat-1', quantity: 200, unit: 'g', notes: 'pancetta or guanciale' },
-      { id: '3', itemId: 'eggs-1', quantity: 4, unit: 'pieces', notes: 'large' },
-      { id: '4', itemId: 'cheese-1', quantity: 100, unit: 'g', notes: 'Pecorino Romano' },
+      { id: '1', itemId: 'pasta-1', quantity: 400, unit: 'g', notes: 'spaghetti', usedInSteps: [0] },
+      { id: '2', itemId: 'meat-1', quantity: 200, unit: 'g', notes: 'pancetta or guanciale', usedInSteps: [1] },
+      { id: '3', itemId: 'eggs-1', quantity: 4, unit: 'pieces', notes: 'large', usedInSteps: [2] },
+      { id: '4', itemId: 'cheese-1', quantity: 100, unit: 'g', notes: 'Pecorino Romano', usedInSteps: [2, 6] },
     ],
     instructions: [
       'Bring a large pot of salted water to boil and cook spaghetti until al dente',
@@ -81,11 +81,11 @@ const sampleRecipes: Recipe[] = [
     servings: 3,
     difficulty: 'Easy',
     ingredients: [
-      { id: '1', itemId: 'chicken-1', quantity: 500, unit: 'g', notes: 'breast, sliced' },
-      { id: '2', itemId: 'peppers-1', quantity: 2, unit: 'pieces', notes: 'bell peppers' },
-      { id: '3', itemId: 'onion-1', quantity: 1, unit: 'pieces' },
-      { id: '4', itemId: 'carrots-1', quantity: 2, unit: 'pieces' },
-      { id: '5', itemId: 'garlic-1', quantity: 3, unit: 'cloves' },
+      { id: '1', itemId: 'chicken-1', quantity: 500, unit: 'g', notes: 'breast, sliced', usedInSteps: [2] },
+      { id: '2', itemId: 'peppers-1', quantity: 2, unit: 'pieces', notes: 'bell peppers', usedInSteps: [0, 3] },
+      { id: '3', itemId: 'onion-1', quantity: 1, unit: 'pieces', usedInSteps: [0, 3] },
+      { id: '4', itemId: 'carrots-1', quantity: 2, unit: 'pieces', usedInSteps: [0, 3] },
+      { id: '5', itemId: 'garlic-1', quantity: 3, unit: 'cloves', usedInSteps: [4] },
     ],
     instructions: [
       'Cut all vegetables into bite-sized pieces',

@@ -15,6 +15,9 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { storageAreas, getItemsByArea } = useStorage();
   const [showManageAreasDialog, setShowManageAreasDialog] = useState(false);
+  const [selectedStorageIds, setSelectedStorageIds] = useState<string[]>(
+    storageAreas.map(area => area.id)
+  );
 
   // Calculate storage area stats
   const storageAreasWithStats = storageAreas.map(area => {
@@ -44,18 +47,28 @@ const Dashboard = () => {
     { id: 'cabinet', name: 'Kitchen Cabinet', emoji: '🗄️', description: 'Spices and small items', type: 'other' },
   ];
 
-  // Get currently enabled storage areas
-  const enabledStorageIds = storageAreas.map(area => area.id);
-
   const handleStorageToggle = (storageId: string) => {
     console.log('Storage area toggle:', storageId);
-    // TODO: Implement actual toggle functionality with storage context
+    setSelectedStorageIds(prev => {
+      if (prev.includes(storageId)) {
+        return prev.filter(id => id !== storageId);
+      } else {
+        return [...prev, storageId];
+      }
+    });
   };
 
   const handleSaveChanges = () => {
     console.log('Saving storage area changes');
-    // TODO: Implement actual save functionality
+    // TODO: Implement actual save functionality with storage context
+    // This would involve adding/removing storage areas based on selectedStorageIds
     setShowManageAreasDialog(false);
+  };
+
+  const handleOpenManageDialog = () => {
+    // Reset selection to current areas when opening dialog
+    setSelectedStorageIds(storageAreas.map(area => area.id));
+    setShowManageAreasDialog(true);
   };
 
   return (
@@ -112,7 +125,7 @@ const Dashboard = () => {
               variant="outline"
               size="sm"
               className="border-green-600 text-green-600 hover:bg-green-50"
-              onClick={() => setShowManageAreasDialog(true)}
+              onClick={handleOpenManageDialog}
             >
               <List className="h-4 w-4 mr-2" />
               Manage Areas
@@ -188,8 +201,8 @@ const Dashboard = () => {
                   onClick={() => handleStorageToggle(storage.id)}
                 >
                   <Checkbox
-                    checked={enabledStorageIds.includes(storage.id)}
-                    onChange={() => handleStorageToggle(storage.id)}
+                    checked={selectedStorageIds.includes(storage.id)}
+                    onCheckedChange={() => handleStorageToggle(storage.id)}
                   />
                   <div className="flex items-center space-x-3 flex-1">
                     <div className="w-10 h-10 bg-gradient-to-r from-green-100 to-orange-100 rounded-lg flex items-center justify-center">

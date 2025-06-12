@@ -3,16 +3,18 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { ArrowLeft, Save, X, Plus } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ArrowLeft, Plus, X } from 'lucide-react';
 import { useRecipes, Recipe } from '@/contexts/RecipeContext';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
 import { useToast } from '@/hooks/use-toast';
+import { useItems } from '@/contexts/ItemContext';
 
 interface RecipeFormData {
   title: string;
@@ -21,7 +23,6 @@ interface RecipeFormData {
   cookTime: number;
   servings: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
-  tags: string[];
 }
 
 const EditRecipe = () => {
@@ -29,23 +30,24 @@ const EditRecipe = () => {
   const navigate = useNavigate();
   const { getRecipeById, updateRecipe } = useRecipes();
   const { toast } = useToast();
+  const { getItemById } = useItems();
   
   const recipe = id ? getRecipeById(id) : undefined;
   
   const [ingredients, setIngredients] = useState(recipe?.ingredients || []);
   const [instructions, setInstructions] = useState(recipe?.instructions || []);
-  const [newTag, setNewTag] = useState('');
   const [tags, setTags] = useState<string[]>(recipe?.tags || []);
+  const [newTag, setNewTag] = useState('');
+  const [ingredientStepMap, setIngredientStepMap] = useState<{[ingredientId: string]: number[]}>({});
 
   const form = useForm<RecipeFormData>({
     defaultValues: {
       title: recipe?.title || '',
       description: recipe?.description || '',
       prepTime: recipe?.prepTime || 10,
-      cookTime: recipe?.cookTime || 15,
+      cookTime: recipe?.cookTime || 20,
       servings: recipe?.servings || 4,
-      difficulty: recipe?.difficulty || 'Medium',
-      tags: recipe?.tags || []
+      difficulty: recipe?.difficulty || 'Easy',
     }
   });
 
@@ -58,11 +60,19 @@ const EditRecipe = () => {
         cookTime: recipe.cookTime,
         servings: recipe.servings,
         difficulty: recipe.difficulty,
-        tags: recipe.tags
       });
       setIngredients(recipe.ingredients);
       setInstructions(recipe.instructions);
       setTags(recipe.tags);
+      
+      // Initialize ingredient-step mapping from existing recipe
+      const initialMap: {[ingredientId: string]: number[]} = {};
+      recipe.ingredients.forEach(ingredient => {
+        if (ingredient.usedInSteps && ingredient.usedInSteps.length > 0) {
+          initialMap[ingredient.id] = ingredient.usedInSteps;
+        }
+      });
+      setIngredientStepMap(initialMap);
     }
   }, [recipe, form]);
 
@@ -80,65 +90,28 @@ const EditRecipe = () => {
     );
   }
 
-  const onSubmit = (data: RecipeFormData) => {
-    if (ingredients.length === 0) {
-      toast({
-        title: "Missing ingredients",
-        description: "Please add at least one ingredient.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (instructions.length === 0) {
-      toast({
-        title: "Missing instructions",
-        description: "Please add at least one instruction step.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Validate that all ingredients have items selected
-    const incompleteIngredients = ingredients.filter(ing => !ing.itemId);
-    if (incompleteIngredients.length > 0) {
-      toast({
-        title: "Incomplete ingredients",
-        description: "Please select items for all ingredients.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    const updatedRecipe: Partial<Recipe> = {
-      ...data,
-      ingredients,
-      instructions: instructions.filter(instruction => instruction.trim()),
-      tags
-    };
-
-    updateRecipe(recipe.id, updatedRecipe);
-    
-    toast({
-      title: "Recipe updated",
-      description: "Your recipe has been successfully updated.",
-    });
-    
-    navigate(`/recipes/${recipe.id}`);
-  };
-
   const addInstruction = () => {
     setInstructions([...instructions, '']);
+  };
+
+  const removeInstruction = (index: number) => {
+    const newInstructions = instructions.filter((_, i) => i !== index);
+    setInstructions(newInstructions);
+    
+    // Update ingredient-step mappings when removing a step
+    const updatedMap = { ...ingredientStepMap };
+    Object.keys(updatedMap).forEach(ingredientId => {
+      updatedMap[ingredientId] = updatedMap[ingredientId]
+        .filter(stepIndex => stepIndex !== index)
+        .map(stepIndex => stepIndex > index ? stepIndex - 1 : stepIndex);
+    });
+    setIngredientStepMap(updatedMap);
   };
 
   const updateInstruction = (index: number, value: string) => {
     const updated = [...instructions];
     updated[index] = value;
     setInstructions(updated);
-  };
-
-  const removeInstruction = (index: number) => {
-    setInstructions(instructions.filter((_, i) => i !== index));
   };
 
   const addTag = () => {
@@ -152,11 +125,66 @@ const EditRecipe = () => {
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addTag();
+  const toggleIngredientForStep = (ingredientId: string, stepIndex: number) => {
+    const currentSteps = ingredientStepMap[ingredientId] || [];
+    const isLinked = currentSteps.includes(stepIndex);
+    
+    if (isLinked) {
+      setIngredientStepMap({
+        ...ingredientStepMap,
+        [ingredientId]: currentSteps.filter(step => step !== stepIndex)
+      });
+    } else {
+      setIngredientStepMap({
+        ...ingredientStepMap,
+        [ingredientId]: [...currentSteps, stepIndex].sort((a, b) => a - b)
+      });
     }
+  };
+
+  const onSubmit = (data: RecipeFormData) => {
+    const validIngredients = ingredients.filter(ing => ing.itemId && ing.quantity > 0);
+    const filteredInstructions = instructions.filter(inst => inst.trim() !== '');
+    
+    if (validIngredients.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please add at least one ingredient.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (filteredInstructions.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please add at least one instruction.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Add step mapping to ingredients
+    const ingredientsWithSteps = validIngredients.map(ingredient => ({
+      ...ingredient,
+      usedInSteps: ingredientStepMap[ingredient.id] || []
+    }));
+
+    const updatedRecipe: Partial<Recipe> = {
+      ...data,
+      ingredients: ingredientsWithSteps,
+      instructions: filteredInstructions,
+      tags
+    };
+
+    updateRecipe(recipe.id, updatedRecipe);
+    
+    toast({
+      title: "Recipe updated!",
+      description: "Your recipe has been successfully updated.",
+    });
+    
+    navigate(`/recipes/${recipe.id}`);
   };
 
   return (
@@ -174,18 +202,19 @@ const EditRecipe = () => {
               Back
             </Button>
             <h1 className="text-xl font-bold text-gray-900">Edit Recipe</h1>
-            <div className="w-16"></div>
+            <div className="w-20"></div>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6 space-y-6">
+      <div className="container mx-auto px-4 py-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Basic Information */}
+            {/* Basic Info */}
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
                 <CardTitle>Basic Information</CardTitle>
+                <CardDescription>Essential details about your recipe</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <FormField
@@ -196,7 +225,7 @@ const EditRecipe = () => {
                     <FormItem>
                       <FormLabel>Recipe Title</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter recipe title..." {...field} />
+                        <Input placeholder="e.g., Chicken Teriyaki" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -206,12 +235,16 @@ const EditRecipe = () => {
                 <FormField
                   control={form.control}
                   name="description"
-                  rules={{ required: "Recipe description is required" }}
+                  rules={{ required: "Description is required" }}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Describe your recipe..." {...field} />
+                        <Textarea 
+                          placeholder="Brief description of your recipe..."
+                          className="min-h-[80px]"
+                          {...field} 
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -222,16 +255,15 @@ const EditRecipe = () => {
                   <FormField
                     control={form.control}
                     name="prepTime"
-                    rules={{ required: "Prep time is required", min: 1 }}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Prep Time (min)</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
-                            min="1" 
-                            {...field} 
-                            onChange={e => field.onChange(parseInt(e.target.value))}
+                            min="0"
+                            {...field}
+                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                           />
                         </FormControl>
                         <FormMessage />
@@ -242,16 +274,15 @@ const EditRecipe = () => {
                   <FormField
                     control={form.control}
                     name="cookTime"
-                    rules={{ required: "Cook time is required", min: 1 }}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Cook Time (min)</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
-                            min="1" 
-                            {...field} 
-                            onChange={e => field.onChange(parseInt(e.target.value))}
+                            min="0"
+                            {...field}
+                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                           />
                         </FormControl>
                         <FormMessage />
@@ -262,16 +293,15 @@ const EditRecipe = () => {
                   <FormField
                     control={form.control}
                     name="servings"
-                    rules={{ required: "Servings is required", min: 1 }}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Servings</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
-                            min="1" 
-                            {...field} 
-                            onChange={e => field.onChange(parseInt(e.target.value))}
+                            min="1"
+                            {...field}
+                            onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
                           />
                         </FormControl>
                         <FormMessage />
@@ -305,7 +335,7 @@ const EditRecipe = () => {
               </CardContent>
             </Card>
 
-            {/* Ingredients */}
+            {/* Structured Ingredients */}
             <StructuredIngredientInput
               ingredients={ingredients}
               onIngredientsChange={setIngredients}
@@ -317,44 +347,68 @@ const EditRecipe = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle>Instructions</CardTitle>
-                    <p className="text-sm text-gray-600">Step-by-step cooking instructions</p>
+                    <CardDescription>Step-by-step cooking instructions</CardDescription>
                   </div>
                   <Button type="button" onClick={addInstruction} size="sm">
                     <Plus className="h-4 w-4 mr-1" />
-                    Add Step
+                    Add
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {instructions.length === 0 && (
-                  <p className="text-gray-500 text-center py-4">No instructions added yet</p>
-                )}
-                
+              <CardContent className="space-y-3">
                 {instructions.map((instruction, index) => (
-                  <div key={index} className="flex gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium mt-1">
-                      {index + 1}
-                    </div>
-                    <div className="flex-1 space-y-2">
+                  <div key={index} className="space-y-3">
+                    <div className="flex gap-2">
+                      <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium mt-2">
+                        {index + 1}
+                      </div>
                       <Textarea
+                        placeholder={`Step ${index + 1} instructions...`}
                         value={instruction}
                         onChange={(e) => updateInstruction(index, e.target.value)}
-                        placeholder={`Step ${index + 1} instructions...`}
-                        className="min-h-[80px]"
+                        className="flex-1 min-h-[60px]"
                       />
                       {instructions.length > 1 && (
                         <Button
                           type="button"
                           variant="outline"
-                          size="sm"
+                          size="icon"
                           onClick={() => removeInstruction(index)}
-                          className="text-red-600 hover:text-red-700"
+                          className="mt-2"
                         >
-                          <X className="h-4 w-4 mr-1" />
-                          Remove Step
+                          <X className="h-4 w-4" />
                         </Button>
                       )}
                     </div>
+                    
+                    {/* Ingredient mapping for this step */}
+                    {ingredients.length > 0 && instruction.trim() && (
+                      <div className="ml-8 p-3 bg-gray-50 rounded-lg">
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">
+                          Ingredients used in this step (optional):
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          {ingredients.map((ingredient) => {
+                            const item = getItemById(ingredient.itemId);
+                            if (!item) return null;
+                            
+                            const isLinked = (ingredientStepMap[ingredient.id] || []).includes(index);
+                            
+                            return (
+                              <div key={ingredient.id} className="flex items-center space-x-2">
+                                <Checkbox
+                                  checked={isLinked}
+                                  onCheckedChange={() => toggleIngredientForStep(ingredient.id, index)}
+                                />
+                                <span className="text-sm text-gray-600">
+                                  {ingredient.quantity} {ingredient.unit} {item.name}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </CardContent>
@@ -364,46 +418,40 @@ const EditRecipe = () => {
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
                 <CardTitle>Tags</CardTitle>
+                <CardDescription>Add tags to categorize your recipe</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex gap-2">
                   <Input
+                    placeholder="Add a tag..."
                     value={newTag}
                     onChange={(e) => setNewTag(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Add a tag..."
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                     className="flex-1"
                   />
-                  <Button type="button" onClick={addTag} disabled={!newTag.trim()}>
-                    <Plus className="h-4 w-4" />
-                  </Button>
+                  <Button type="button" onClick={addTag}>Add Tag</Button>
                 </div>
-                
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {tags.map((tag, index) => (
-                      <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                      <div key={index} className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm flex items-center gap-1">
                         {tag}
                         <button
                           type="button"
                           onClick={() => removeTag(tag)}
-                          className="ml-1 hover:text-red-600"
+                          className="text-green-600 hover:text-green-800"
                         >
                           <X className="h-3 w-3" />
                         </button>
-                      </Badge>
+                      </div>
                     ))}
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {/* Submit Button */}
+            {/* Submit */}
             <div className="flex gap-4">
-              <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
-                <Save className="h-4 w-4 mr-2" />
-                Save Changes
-              </Button>
               <Button 
                 type="button" 
                 variant="outline" 
@@ -411,6 +459,9 @@ const EditRecipe = () => {
                 className="flex-1"
               >
                 Cancel
+              </Button>
+              <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
+                Save Recipe
               </Button>
             </div>
           </form>

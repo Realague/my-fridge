@@ -1,0 +1,19 @@
+{
+  "name": "my-fridge",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=frontend",
+    "build": "npm run build --workspace=frontend",
+    "build:dev": "npm run build:dev --workspace=frontend",
+    "lint": "npm run lint --workspace=frontend",
+    "preview": "npm run preview --workspace=frontend",
+    "install:frontend": "npm install --workspace=frontend"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 

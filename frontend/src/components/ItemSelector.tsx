@@ -1,5 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Check, ChevronDown, Plus, Edit, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,25 +26,58 @@ export const ItemSelector = ({
   const [query, setQuery] = useState('');
   const [editingItem, setEditingItem] = useState<FoodItem | null>(null);
   const [creatingNewItem, setCreatingNewItem] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const { searchItems, addItem, updateItem } = useItems();
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const searchResults = searchItems(query);
   const exactMatch = searchResults.find(item => 
     item.name.toLowerCase() === query.toLowerCase()
   );
 
+  const updateDropdownPosition = () => {
+    if (inputRef.current) {
+      const rect = inputRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY + 4,
+        left: rect.left + window.scrollX,
+        width: rect.width
+      });
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&
+          containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
+    const handleScroll = () => {
+      if (isOpen) {
+        updateDropdownPosition();
+      }
+    };
+
+    const handleResize = () => {
+      if (isOpen) {
+        updateDropdownPosition();
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    window.addEventListener('scroll', handleScroll, true);
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', handleScroll, true);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isOpen]);
 
   const handleItemSelect = (item: FoodItem) => {
     onItemSelect(item);
@@ -101,6 +135,7 @@ export const ItemSelector = ({
 
   const handleInputFocus = () => {
     setIsOpen(true);
+    setTimeout(updateDropdownPosition, 0);
   };
 
   const handleClearSelection = () => {
@@ -152,43 +187,58 @@ export const ItemSelector = ({
   }
 
   return (
-    <div className={cn("relative", className)} ref={dropdownRef}>
-      <div className="relative">
-        <Input
-          ref={inputRef}
-          value={displayValue}
-          onChange={handleInputChange}
-          onFocus={handleInputFocus}
-          placeholder={placeholder}
-          className={cn(
-            "pr-16",
-            selectedItem && !query && "bg-green-50 border-green-200"
-          )}
-        />
-        <div className="absolute right-0 top-0 h-full flex items-center">
-          {showClearButton && (
+    <>
+      <div className={cn("relative", className)} ref={containerRef}>
+        <div className="relative">
+          <Input
+            ref={inputRef}
+            value={displayValue}
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
+            placeholder={placeholder}
+            className={cn(
+              "pr-16",
+              selectedItem && !query && "bg-green-50 border-green-200"
+            )}
+          />
+          <div className="absolute right-0 top-0 h-full flex items-center">
+            {showClearButton && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClearSelection}
+                className="h-full px-2"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="sm"
-              onClick={handleClearSelection}
               className="h-full px-2"
+              onClick={() => {
+                setIsOpen(!isOpen);
+                if (!isOpen) {
+                  setTimeout(updateDropdownPosition, 0);
+                }
+              }}
             >
-              <X className="h-4 w-4" />
+              <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
             </Button>
-          )}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-full px-2"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
-          </Button>
+          </div>
         </div>
       </div>
 
-      {isOpen && (
-        <div className="absolute inset-x-0 z-[50] mt-1 bg-white border border-gray-200 rounded-md shadow-2xl max-h-60 overflow-y-auto">
+      {isOpen && createPortal(
+        <div 
+          ref={dropdownRef}
+          className="fixed z-[100] bg-white border border-gray-200 rounded-md shadow-2xl max-h-60 overflow-y-auto"
+          style={{
+            top: dropdownPosition.top,
+            left: dropdownPosition.left,
+            width: dropdownPosition.width,
+          }}
+        >
           {searchResults.length > 0 && (
             <div className="p-1">
               {searchResults.slice(0, 8).map((item) => (
@@ -254,8 +304,9 @@ export const ItemSelector = ({
               Start typing to search items...
             </div>
           )}
-        </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   );
 };

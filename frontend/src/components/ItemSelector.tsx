@@ -188,7 +188,7 @@ export const ItemSelector = ({
       </div>
 
       {isOpen && (
-        <div className="absolute inset-x-0 z-[60] mt-1 bg-white border border-gray-200 rounded-md shadow-2xl max-h-60 overflow-y-auto">
+        <div className="absolute inset-x-0 z-[50] mt-1 bg-white border border-gray-200 rounded-md shadow-2xl max-h-60 overflow-y-auto">
           {searchResults.length > 0 && (
             <div className="p-1">
               {searchResults.slice(0, 8).map((item) => (

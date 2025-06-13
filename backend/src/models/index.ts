@@ -1,6 +1,6 @@
-import { User } from './User';
+import sequelize from '../config/database';
 
 // Export models
 export {
-  User
+  sequelize
 }; 

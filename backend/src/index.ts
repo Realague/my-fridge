@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { sequelize } from './models';
 
 // Load environment variables
 dotenv.config();
@@ -32,7 +33,16 @@ app.get('/health', (req, res) => {
 
 // Database connection test
 app.get('/db-test', async (req, res) => {
-  res.json({ message: 'Database connection test route' });
+  try {
+    await sequelize.authenticate();
+    res.json({ message: 'Database connection successful!' });
+  } catch (error) {
+    console.error('Database connection failed:', error);
+    res.status(500).json({ 
+      message: 'Database connection failed',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
 });
 
 // Error handling middleware
@@ -52,6 +62,8 @@ app.use('*', (req, res) => {
 // Start server
 async function startServer() {
   try {
+    await sequelize.authenticate();
+    console.log('Database connection established successfully.');
     app.listen(PORT, () => {
       console.log(`🚀 Server is running on port ${PORT}`);
       console.log(`📖 API Documentation: http://localhost:${PORT}`);
@@ -59,7 +71,7 @@ async function startServer() {
       console.log(`🗄️  Database Test: http://localhost:${PORT}/db-test`);
     });
   } catch (error) {
-    console.error('Unable to start server:', error);
+    console.error('Unable to connect to the database:', error);
     process.exit(1);
   }
 }

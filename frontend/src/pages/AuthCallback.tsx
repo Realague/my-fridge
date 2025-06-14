@@ -1,11 +1,10 @@
+
 import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
 
 const AuthCallback: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { checkAuthStatus } = useAuth();
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -45,4 +44,4 @@ const AuthCallback: React.FC = () => {
   );
 };
 
-export default AuthCallback; 
+export default AuthCallback;

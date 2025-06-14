@@ -5,13 +5,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Settings, Users, Bell, List } from 'lucide-react';
+import { Settings, Users, Bell, List, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StorageAreaCard from '@/components/StorageAreaCard';
 import BottomNavigation from '@/components/BottomNavigation';
 import NotificationDrawer from '@/components/NotificationDrawer';
 import { useStorage } from '@/contexts/StorageContext';
 import { useNotifications } from '@/contexts/NotificationContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -22,6 +32,15 @@ const Dashboard = () => {
   const [selectedStorageIds, setSelectedStorageIds] = useState<string[]>(
     storageAreas.map(area => area.id)
   );
+
+  // Mock data for households
+  const households = [
+    { id: '1', name: 'The Smith Family', members: 3 },
+    { id: '2', name: 'Work Lunch Club', members: 5 },
+  ];
+  const [currentHouseholdId, setCurrentHouseholdId] = useState('1');
+  const currentHousehold = households.find(h => h.id === currentHouseholdId) || households[0];
+
 
   // Demo: Add some sample notifications on component mount
   useEffect(() => {
@@ -120,14 +139,40 @@ const Dashboard = () => {
       <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">The Smith Family</h1>
-              <p className="text-sm text-gray-600">3 members</p>
-            </div>
-            <div className="flex items-center gap-3">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="text-left h-auto p-1 -ml-2">
+                  <div className="flex items-center gap-2">
+                    <div>
+                      <h1 className="text-xl font-bold text-gray-900">{currentHousehold.name}</h1>
+                      <p className="text-sm text-gray-600">{currentHousehold.members} members</p>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-gray-500" />
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuLabel>Switch Household</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup value={currentHouseholdId} onValueChange={setCurrentHouseholdId}>
+                  {households.map((h) => (
+                    <DropdownMenuRadioItem key={h.id} value={h.id}>
+                      {h.name}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/household')}>
+                  <Users className="mr-2 h-4 w-4" />
+                  <span>Manage Households</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <div className="flex items-center gap-1 sm:gap-3">
               <Button 
                 variant="ghost" 
-                size="sm" 
+                size="icon" 
                 className="relative"
                 onClick={() => setShowNotifications(true)}
               >
@@ -138,10 +183,10 @@ const Dashboard = () => {
                   </Badge>
                 )}
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/household')}>
+              <Button variant="ghost" size="icon" onClick={() => navigate('/household')}>
                 <Users className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/settings')}>
+              <Button variant="ghost" size="icon" onClick={() => navigate('/settings')}>
                 <Settings className="h-5 w-5" />
               </Button>
             </div>

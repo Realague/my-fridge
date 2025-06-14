@@ -2,119 +2,118 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { UserPlus, Mail, Trash2, ArrowLeft } from 'lucide-react';
+import { Home, Plus, Users, CheckCircle, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
 
-// Mock data for household members
-const members = [
+// Mock data for households
+const households = [
   {
     id: '1',
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    role: 'Admin',
-    avatar: '',
-    initials: 'JD',
+    name: 'The Smith Family',
+    members: 3,
+    active: true,
   },
   {
     id: '2',
-    name: 'Jane Smith',
-    email: 'jane.smith@example.com',
-    role: 'Member',
-    avatar: '',
-    initials: 'JS',
-  },
-  {
-    id: '3',
-    name: 'Peter Jones',
-    email: 'peter.jones@example.com',
-    role: 'Member',
-    avatar: '',
-    initials: 'PJ',
+    name: 'Work Lunch Club',
+    members: 5,
+    active: false,
   },
 ];
 
 const Household = () => {
   const navigate = useNavigate();
 
+  const handleCreateNew = () => {
+    navigate('/onboarding'); 
+  };
+  
+  const handleJoin = () => {
+    // This is a simplified navigation. In a real app, you might pass state
+    // or use a different route to show the "join" step directly.
+    navigate('/onboarding');
+  };
+
+  const handleSwitch = (householdId: string) => {
+    // In a real app, this would trigger a context update and backend call.
+    console.log(`Switching to household ${householdId}`);
+    // For now, we'll just navigate to the dashboard to simulate a refresh.
+    navigate('/dashboard');
+  };
+
+  const handleManage = (householdId: string) => {
+    navigate(`/household/${householdId}`);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
+    <div className="min-h-screen bg-gray-50 pb-24">
       {/* Header */}
       <div className="bg-white/90 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
-              <ArrowLeft className="h-5 w-5" />
+            <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
+              <Home className="h-5 w-5" />
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">Household</h1>
-            <Button variant="ghost" size="icon">
-              <UserPlus className="h-5 w-5" />
-            </Button>
+            <h1 className="text-xl font-bold text-gray-900">Your Households</h1>
+            <div className="w-9" /> {/* Spacer */}
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 py-6 space-y-6 pb-24">
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        
         <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
-            <CardTitle>The Smith Family</CardTitle>
-            <CardDescription>3 members</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full touch-friendly bg-gray-900 text-white hover:bg-gray-800">
-              <UserPlus className="h-4 w-4 mr-2" />
-              Invite New Member
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle>Manage Members</CardTitle>
+            <CardTitle>Switch or Manage Households</CardTitle>
+            <CardDescription>You can be a part of multiple households.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {members.map((member) => (
-              <div key={member.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border">
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <Avatar className="h-12 w-12 flex-shrink-0">
-                    <AvatarImage src={member.avatar} alt={member.name} />
-                    <AvatarFallback className="bg-green-100 text-green-700 font-semibold">{member.initials}</AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-gray-900">{member.name}</p>
-                    <p className="text-sm text-gray-500 truncate">{member.email}</p>
-                  </div>
+            {households.map((h) => (
+              <div key={h.id} className="flex items-center justify-between p-3 bg-gray-50/70 rounded-lg">
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-gray-900">{h.name}</p>
+                  <p className="text-sm text-gray-500">{h.members} members</p>
                 </div>
-                <div className="flex items-center gap-3 flex-shrink-0">
-                  <Badge 
-                    variant={member.role === 'Admin' ? 'default' : 'secondary'}
-                    className={member.role === 'Admin' ? 'bg-gray-900 text-white hover:bg-gray-800' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}
-                  >
-                    {member.role}
-                  </Badge>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-50">
-                     <Trash2 className="h-4 w-4" />
+                <div className="flex items-center gap-2">
+                  {h.active ? (
+                    <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
+                      <CheckCircle className="h-3 w-3 mr-1.5" />
+                      Active
+                    </Badge>
+                  ) : (
+                    <Button variant="outline" size="sm" onClick={() => handleSwitch(h.id)}>
+                      Switch
+                    </Button>
+                  )}
+                   <Button variant="ghost" size="icon" className="h-9 w-9 text-gray-500 hover:text-gray-800 hover:bg-gray-100" onClick={() => handleManage(h.id)}>
+                     <span className="sr-only">Manage</span>
+                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
             ))}
           </CardContent>
         </Card>
-        
+
         <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Mail className="h-5 w-5" />
-              Pending Invitations
-            </CardTitle>
+            <CardTitle>Join or Create</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-500">No pending invitations.</p>
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Button size="lg" className="h-auto py-3" onClick={handleCreateNew}>
+              <Plus className="h-4 w-4 mr-2" />
+              Create New
+            </Button>
+            <Button size="lg" variant="outline" className="h-auto py-3" onClick={handleJoin}>
+              <Users className="h-4 w-4 mr-2" />
+              Join Existing
+            </Button>
           </CardContent>
         </Card>
+        
       </div>
       <BottomNavigation currentPage="household" />
     </div>

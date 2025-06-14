@@ -24,6 +24,7 @@ import AddRecipe from "./pages/AddRecipe";
 import EditRecipe from "./pages/EditRecipe";
 import MealPlans from "./pages/MealPlans";
 import Household from "./pages/Household";
+import HouseholdDetails from "./pages/HouseholdDetails";
 import Demo from "./pages/Demo";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
@@ -58,6 +59,7 @@ function App() {
                         <Route path="/edit-recipe/:id" element={<EditRecipe />} />
                         <Route path="/meal-plans" element={<MealPlans />} />
                         <Route path="/household" element={<Household />} />
+                        <Route path="/household/:id" element={<HouseholdDetails />} />
                         <Route path="/settings" element={<Settings />} />
                         <Route path="/demo" element={<Demo />} />
                         <Route path="*" element={<NotFound />} />

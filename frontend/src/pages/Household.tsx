@@ -74,9 +74,9 @@ const Household = () => {
           <CardHeader>
             <CardTitle>Manage Members</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3">
             {members.map((member) => (
-              <div key={member.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div key={member.id} className="flex items-center justify-between p-3 bg-white rounded-xl shadow-sm border">
                 <div className="flex items-center gap-4">
                   <Avatar>
                     <AvatarImage src={member.avatar} alt={member.name} />

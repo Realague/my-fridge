@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Button } from '@/components/ui/button';
@@ -80,15 +79,15 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ open, onOpenCha
                 <Badge variant="secondary">{notifications.length}</Badge>
               )}
             </DrawerTitle>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               {notifications.some(n => !n.read) && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={markAllAsRead}
-                  className="text-xs"
+                  className="text-xs px-2"
                 >
-                  <CheckCheck className="h-4 w-4 mr-1" />
+                  <CheckCheck className="h-4 w-4" />
                   Mark all read
                 </Button>
               )}
@@ -97,14 +96,14 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ open, onOpenCha
                   variant="ghost"
                   size="sm"
                   onClick={clearAll}
-                  className="text-xs text-red-600 hover:text-red-700"
+                  className="text-xs text-red-600 hover:text-red-700 px-2"
                 >
-                  <Trash2 className="h-4 w-4 mr-1" />
+                  <Trash2 className="h-4 w-4" />
                   Clear all
                 </Button>
               )}
               <DrawerClose asChild>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0">
                   <X className="h-4 w-4" />
                 </Button>
               </DrawerClose>

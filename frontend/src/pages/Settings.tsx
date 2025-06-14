@@ -74,15 +74,6 @@ const Settings = () => {
                   <Switch id="push-notifications" defaultChecked />
                 </div>
                 <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50/70">
-                  <Label htmlFor="email-notifications" className="flex flex-col space-y-1 cursor-pointer flex-1">
-                    <span className="font-medium">Email Notifications</span>
-                    <span className="font-normal text-sm text-gray-500">
-                      Get weekly summaries and important alerts.
-                    </span>
-                  </Label>
-                  <Switch id="email-notifications" />
-                </div>
-                <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50/70">
                   <Label htmlFor="low-stock-alerts" className="flex flex-col space-y-1 cursor-pointer flex-1">
                     <span className="font-medium">Low Stock Alerts</span>
                     <span className="font-normal text-sm text-gray-500">

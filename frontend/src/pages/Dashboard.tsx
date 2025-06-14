@@ -141,7 +141,7 @@ const Dashboard = () => {
               <Button variant="ghost" size="sm" onClick={() => navigate('/household')}>
                 <Users className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/settings')}>
                 <Settings className="h-5 w-5" />
               </Button>
             </div>

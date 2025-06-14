@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,6 +26,7 @@ import MealPlans from "./pages/MealPlans";
 import Household from "./pages/Household";
 import Demo from "./pages/Demo";
 import NotFound from "./pages/NotFound";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +58,7 @@ function App() {
                         <Route path="/edit-recipe/:id" element={<EditRecipe />} />
                         <Route path="/meal-plans" element={<MealPlans />} />
                         <Route path="/household" element={<Household />} />
+                        <Route path="/settings" element={<Settings />} />
                         <Route path="/demo" element={<Demo />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>

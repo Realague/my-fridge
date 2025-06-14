@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -111,15 +110,6 @@ const Settings = () => {
                     </span>
                   </Label>
                   <Switch id="dark-mode" />
-                </div>
-                <div>
-                  <Label className="font-medium px-1">Theme Color</Label>
-                  <div className="flex gap-4 pt-3 px-1">
-                    <button className="w-10 h-10 rounded-full bg-green-500 cursor-pointer ring-2 ring-offset-2 ring-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" aria-label="Green theme"></button>
-                    <button className="w-10 h-10 rounded-full bg-blue-500 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" aria-label="Blue theme"></button>
-                    <button className="w-10 h-10 rounded-full bg-orange-500 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" aria-label="Orange theme"></button>
-                    <button className="w-10 h-10 rounded-full bg-purple-500 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" aria-label="Purple theme"></button>
-                  </div>
                 </div>
               </CardContent>
             </Card>

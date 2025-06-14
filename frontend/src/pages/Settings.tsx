@@ -1,33 +1,17 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, User, Bell, Palette, LogOut, ChevronRight } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { ArrowLeft, LogOut } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 const Settings = () => {
   const navigate = useNavigate();
-
-  const settingsOptions = [
-    {
-      title: 'Profile',
-      description: 'Manage your personal information',
-      icon: <User className="h-5 w-5 text-gray-500" />,
-      onClick: () => { /* Placeholder for future navigation */ },
-    },
-    {
-      title: 'Notifications',
-      description: 'Configure how you receive alerts',
-      icon: <Bell className="h-5 w-5 text-gray-500" />,
-      onClick: () => { /* Placeholder for future navigation */ },
-    },
-    {
-      title: 'Appearance',
-      description: 'Customize the look and feel',
-      icon: <Palette className="h-5 w-5 text-gray-500" />,
-      onClick: () => { /* Placeholder for future navigation */ },
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -46,26 +30,101 @@ const Settings = () => {
 
       {/* Content */}
       <div className="container mx-auto px-4 py-6 space-y-6">
-        <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-          <CardContent className="p-0">
-            <ul className="divide-y divide-gray-200">
-              {settingsOptions.map((option, index) => (
-                <li key={index} onClick={option.onClick} className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-gray-100 p-3 rounded-full">
-                      {option.icon}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-800">{option.title}</p>
-                      <p className="text-sm text-gray-500">{option.description}</p>
-                    </div>
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 bg-gray-100 rounded-lg p-1 h-auto">
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="notifications">Notifications</TabsTrigger>
+            <TabsTrigger value="appearance">Appearance</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="profile" className="mt-4">
+            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle>Profile Settings</CardTitle>
+                <CardDescription>Manage your personal information.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input id="name" defaultValue="The Smith Family" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" type="email" defaultValue="smith.family@example.com" readOnly className="bg-gray-100" />
+                  <p className="text-xs text-gray-500">Email cannot be changed.</p>
+                </div>
+                <Button className="w-full sm:w-auto">Save Changes</Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="notifications" className="mt-4">
+            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle>Notification Settings</CardTitle>
+                <CardDescription>Configure how you receive alerts.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50/70">
+                  <Label htmlFor="push-notifications" className="flex flex-col space-y-1 cursor-pointer flex-1">
+                    <span className="font-medium">Push Notifications</span>
+                    <span className="font-normal text-sm text-gray-500">
+                      Receive alerts on your device.
+                    </span>
+                  </Label>
+                  <Switch id="push-notifications" defaultChecked />
+                </div>
+                <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50/70">
+                  <Label htmlFor="email-notifications" className="flex flex-col space-y-1 cursor-pointer flex-1">
+                    <span className="font-medium">Email Notifications</span>
+                    <span className="font-normal text-sm text-gray-500">
+                      Get weekly summaries and important alerts.
+                    </span>
+                  </Label>
+                  <Switch id="email-notifications" />
+                </div>
+                <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50/70">
+                  <Label htmlFor="low-stock-alerts" className="flex flex-col space-y-1 cursor-pointer flex-1">
+                    <span className="font-medium">Low Stock Alerts</span>
+                    <span className="font-normal text-sm text-gray-500">
+                      Notify me when items are running low.
+                    </span>
+                  </Label>
+                  <Switch id="low-stock-alerts" defaultChecked />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="appearance" className="mt-4">
+            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle>Appearance Settings</CardTitle>
+                <CardDescription>Customize the look and feel of the app.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50/70">
+                  <Label htmlFor="dark-mode" className="flex flex-col space-y-1 cursor-pointer flex-1">
+                    <span className="font-medium">Dark Mode</span>
+                    <span className="font-normal text-sm text-gray-500">
+                      Enable a darker color scheme.
+                    </span>
+                  </Label>
+                  <Switch id="dark-mode" />
+                </div>
+                <div>
+                  <Label className="font-medium px-1">Theme Color</Label>
+                  <div className="flex gap-4 pt-3 px-1">
+                    <button className="w-10 h-10 rounded-full bg-green-500 cursor-pointer ring-2 ring-offset-2 ring-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" aria-label="Green theme"></button>
+                    <button className="w-10 h-10 rounded-full bg-blue-500 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" aria-label="Blue theme"></button>
+                    <button className="w-10 h-10 rounded-full bg-orange-500 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" aria-label="Orange theme"></button>
+                    <button className="w-10 h-10 rounded-full bg-purple-500 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" aria-label="Purple theme"></button>
                   </div>
-                  <ChevronRight className="h-5 w-5 text-gray-400" />
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
 
         <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
           <CardContent className="p-4">

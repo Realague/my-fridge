@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, User, Users, Bell, Palette, LogOut, ChevronRight } from 'lucide-react';
+import { ArrowLeft, User, Bell, Palette, LogOut, ChevronRight } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 
 const Settings = () => {
@@ -15,12 +14,6 @@ const Settings = () => {
       description: 'Manage your personal information',
       icon: <User className="h-5 w-5 text-gray-500" />,
       onClick: () => { /* Placeholder for future navigation */ },
-    },
-    {
-      title: 'Household',
-      description: 'Manage members and household settings',
-      icon: <Users className="h-5 w-5 text-gray-500" />,
-      onClick: () => navigate('/household'),
     },
     {
       title: 'Notifications',

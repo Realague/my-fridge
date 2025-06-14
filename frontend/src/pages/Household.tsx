@@ -78,17 +78,17 @@ const Household = () => {
           <CardContent className="space-y-3">
             {members.map((member) => (
               <div key={member.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <Avatar className="h-12 w-12 flex-shrink-0">
                     <AvatarImage src={member.avatar} alt={member.name} />
                     <AvatarFallback className="bg-green-100 text-green-700 font-semibold">{member.initials}</AvatarFallback>
                   </Avatar>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <p className="font-semibold text-gray-900">{member.name}</p>
-                    <p className="text-sm text-gray-500">{member.email}</p>
+                    <p className="text-sm text-gray-500 truncate">{member.email}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-shrink-0">
                   <Badge 
                     variant={member.role === 'Admin' ? 'default' : 'secondary'}
                     className={member.role === 'Admin' ? 'bg-gray-900 text-white hover:bg-gray-800' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}

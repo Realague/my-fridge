@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -64,7 +63,7 @@ const Household = () => {
             <CardDescription>3 members</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full touch-friendly">
+            <Button className="w-full touch-friendly bg-gray-900 text-white hover:bg-gray-800">
               <UserPlus className="h-4 w-4 mr-2" />
               Invite New Member
             </Button>
@@ -77,7 +76,7 @@ const Household = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {members.map((member) => (
-              <div key={member.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div key={member.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-4">
                   <Avatar>
                     <AvatarImage src={member.avatar} alt={member.name} />
@@ -89,7 +88,7 @@ const Household = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant={member.role === 'Admin' ? 'default' : 'secondary'}>{member.role}</Badge>
+                  <Badge className={member.role === 'Admin' ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-800'}>{member.role}</Badge>
                   <Button variant="ghost" size="icon" className="text-gray-500 hover:text-red-500">
                      <Trash2 className="h-4 w-4" />
                   </Button>

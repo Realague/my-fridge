@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,13 +32,10 @@ const Onboarding = () => {
   };
 
   const handleCreateHousehold = () => {
-    console.log('Creating household:', householdName);
-    console.log('Selected storage areas:', selectedStorageAreas);
     navigate('/dashboard');
   };
 
   const handleJoinHousehold = () => {
-    console.log('Joining household with code:', joinCode);
     navigate('/dashboard');
   };
 

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -48,7 +47,6 @@ const Dashboard = () => {
   ];
 
   const handleStorageToggle = (storageId: string) => {
-    console.log('Storage area toggle:', storageId);
     setSelectedStorageIds(prev => {
       if (prev.includes(storageId)) {
         return prev.filter(id => id !== storageId);
@@ -59,7 +57,6 @@ const Dashboard = () => {
   };
 
   const handleSaveChanges = () => {
-    console.log('Saving storage area changes');
     // TODO: Implement actual save functionality with storage context
     // This would involve adding/removing storage areas based on selectedStorageIds
     setShowManageAreasDialog(false);

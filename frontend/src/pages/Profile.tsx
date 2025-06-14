@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,12 +11,10 @@ import BottomNavigation from '@/components/BottomNavigation';
 const Profile = () => {
   const handleLogout = () => {
     // TODO: Implement logout functionality when authentication is added
-    console.log('Logout clicked');
   };
 
   const handleSaveProfile = () => {
     // TODO: Implement profile save functionality
-    console.log('Save profile clicked');
   };
 
   return (

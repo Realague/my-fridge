@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -76,20 +77,25 @@ const Household = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             {members.map((member) => (
-              <div key={member.id} className="flex items-center justify-between p-3 bg-white rounded-xl shadow-sm border">
-                <div className="flex items-center gap-4">
-                  <Avatar>
+              <div key={member.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-12 w-12">
                     <AvatarImage src={member.avatar} alt={member.name} />
-                    <AvatarFallback className="bg-green-100 text-green-700">{member.initials}</AvatarFallback>
+                    <AvatarFallback className="bg-green-100 text-green-700 font-semibold">{member.initials}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-medium">{member.name}</p>
+                    <p className="font-semibold text-gray-900">{member.name}</p>
                     <p className="text-sm text-gray-500">{member.email}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge className={member.role === 'Admin' ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-800'}>{member.role}</Badge>
-                  <Button variant="ghost" size="icon" className="text-gray-500 hover:text-red-500">
+                <div className="flex items-center gap-3">
+                  <Badge 
+                    variant={member.role === 'Admin' ? 'default' : 'secondary'}
+                    className={member.role === 'Admin' ? 'bg-gray-900 text-white hover:bg-gray-800' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}
+                  >
+                    {member.role}
+                  </Badge>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-50">
                      <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>

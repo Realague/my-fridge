@@ -8,13 +8,12 @@ interface UserAttributes {
   firstName: string;
   lastName: string;
   googleId?: string;
-  password?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 // Some attributes are optional in `User.build()` and `User.create()`
-interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'createdAt' | 'updatedAt' | 'password'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'createdAt' | 'updatedAt' > {}
 
 export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public id!: number;
@@ -22,7 +21,6 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   public firstName!: string;
   public lastName!: string;
   public googleId?: string;
-  public password?: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -54,10 +52,6 @@ User.init(
       type: DataTypes.STRING,
       allowNull: true,
       unique: true,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: true,
     },
   },
   {

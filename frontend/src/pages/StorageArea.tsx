@@ -16,13 +16,13 @@ import { useItems, FoodItem } from '@/contexts/ItemContext';
 import { format } from 'date-fns';
 
 const StorageArea = () => {
-  const { areaId } = useParams<{ areaId: string }>();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getItemsByArea, getStorageArea, addStorageItem, updateStorageItem, removeStorageItem } = useStorage();
   const { getItemById, updateItemUsage } = useItems();
   
-  const area = getStorageArea(areaId || '');
-  const storageItems = getItemsByArea(areaId || '');
+  const area = getStorageArea(id || '');
+  const storageItems = getItemsByArea(id || '');
   
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedItem, setSelectedItem] = useState<FoodItem | null>(null);
@@ -60,7 +60,7 @@ const StorageArea = () => {
     if (selectedItem && newItemQuantity.trim()) {
       addStorageItem({
         itemId: selectedItem.id,
-        storageAreaId: areaId || '',
+        storageAreaId: id || '',
         quantity: newItemQuantity,
         unit: newItemUnit,
         purchaseDate: new Date(),

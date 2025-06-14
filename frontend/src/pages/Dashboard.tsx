@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,15 +9,60 @@ import { Settings, Users, Bell, List } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StorageAreaCard from '@/components/StorageAreaCard';
 import BottomNavigation from '@/components/BottomNavigation';
+import NotificationDrawer from '@/components/NotificationDrawer';
 import { useStorage } from '@/contexts/StorageContext';
+import { useNotifications } from '@/contexts/NotificationContext';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { storageAreas, getItemsByArea } = useStorage();
+  const { unreadCount, addNotification } = useNotifications();
   const [showManageAreasDialog, setShowManageAreasDialog] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [selectedStorageIds, setSelectedStorageIds] = useState<string[]>(
     storageAreas.map(area => area.id)
   );
+
+  // Demo: Add some sample notifications on component mount
+  useEffect(() => {
+    const hasAddedSampleNotifications = localStorage.getItem('sampleNotificationsAdded');
+    if (!hasAddedSampleNotifications) {
+      setTimeout(() => {
+        addNotification({
+          type: 'warning',
+          title: 'Low Stock Alert',
+          message: 'Bread is running low in your pantry',
+          icon: '🍞',
+          actionUrl: '/storage/3',
+          actionText: 'Check Pantry'
+        });
+      }, 2000);
+
+      setTimeout(() => {
+        addNotification({
+          type: 'success',
+          title: 'Item Added',
+          message: 'Sarah added milk to the refrigerator',
+          icon: '🥛',
+          actionUrl: '/storage/1',
+          actionText: 'View Fridge'
+        });
+      }, 4000);
+
+      setTimeout(() => {
+        addNotification({
+          type: 'info',
+          title: 'Shopping List Updated',
+          message: '5 new items were added to your shopping list',
+          icon: '🛒',
+          actionUrl: '/shopping',
+          actionText: 'View List'
+        });
+      }, 6000);
+
+      localStorage.setItem('sampleNotificationsAdded', 'true');
+    }
+  }, [addNotification]);
 
   // Calculate storage area stats
   const storageAreasWithStats = storageAreas.map(area => {
@@ -79,11 +125,18 @@ const Dashboard = () => {
               <p className="text-sm text-gray-600">3 members</p>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" className="relative">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="relative"
+                onClick={() => setShowNotifications(true)}
+              >
                 <Bell className="h-5 w-5" />
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs bg-red-500 text-white">
-                  2
-                </Badge>
+                {unreadCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs bg-red-500 text-white">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </Badge>
+                )}
               </Button>
               <Button variant="ghost" size="sm">
                 <Users className="h-5 w-5" />
@@ -238,6 +291,12 @@ const Dashboard = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Notification Drawer */}
+      <NotificationDrawer 
+        open={showNotifications} 
+        onOpenChange={setShowNotifications} 
+      />
 
       <BottomNavigation currentPage="dashboard" />
     </div>

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Home, ShoppingCart, Calendar, BookOpen, User } from 'lucide-react';
+import { Home, ShoppingCart, Calendar, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface BottomNavigationProps {
@@ -16,7 +16,6 @@ const BottomNavigation = ({ currentPage }: BottomNavigationProps) => {
     { id: 'shopping', label: 'Shopping', icon: ShoppingCart, route: '/shopping' },
     { id: 'meal-plans', label: 'Meals', icon: Calendar, route: '/meal-plans' },
     { id: 'recipes', label: 'Recipes', icon: BookOpen, route: '/recipes' },
-    { id: 'profile', label: 'Profile', icon: User, route: '/profile' },
   ];
 
   return (

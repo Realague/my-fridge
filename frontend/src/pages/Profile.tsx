@@ -1,7 +1,4 @@
-
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -12,37 +9,13 @@ import { Settings, User, Bell, Shield, LogOut } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 
 const Profile = () => {
-  const navigate = useNavigate();
-  const { user, signOut, isLoading } = useAuth();
-
   const handleLogout = () => {
-    signOut();
-    navigate('/auth');
+    // TODO: Implement logout functionality when authentication is added
   };
 
   const handleSaveProfile = () => {
     // TODO: Implement profile save functionality
   };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    // Redirect to auth page if not logged in
-    React.useEffect(() => {
-      if (!isLoading) {
-        navigate('/auth');
-      }
-    }, [isLoading, navigate]);
-    return null;
-  }
-  
-  const userInitials = `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
@@ -67,12 +40,12 @@ const Profile = () => {
               <Avatar className="h-20 w-20">
                 <AvatarImage src="" alt="Profile" />
                 <AvatarFallback className="text-lg bg-green-100 text-green-700">
-                  {userInitials}
+                  <User className="h-8 w-8" />
                 </AvatarFallback>
               </Avatar>
               <div>
-                <CardTitle className="text-xl">{user.firstName} {user.lastName}</CardTitle>
-                <p className="text-sm text-gray-500">{user.email}</p>
+                <CardTitle className="text-xl">John Doe</CardTitle>
+                <p className="text-sm text-gray-500">john.doe@example.com</p>
               </div>
               <Button variant="outline" size="sm">
                 Change Photo
@@ -95,7 +68,7 @@ const Profile = () => {
                 <Label htmlFor="firstName">First Name</Label>
                 <Input
                   id="firstName"
-                  defaultValue={user.firstName}
+                  defaultValue="John"
                   className="touch-friendly"
                 />
               </div>
@@ -103,7 +76,7 @@ const Profile = () => {
                 <Label htmlFor="lastName">Last Name</Label>
                 <Input
                   id="lastName"
-                  defaultValue={user.lastName}
+                  defaultValue="Doe"
                   className="touch-friendly"
                 />
               </div>
@@ -113,9 +86,8 @@ const Profile = () => {
               <Input
                 id="email"
                 type="email"
-                defaultValue={user.email}
+                defaultValue="john.doe@example.com"
                 className="touch-friendly"
-                readOnly
               />
             </div>
             <div className="space-y-2">

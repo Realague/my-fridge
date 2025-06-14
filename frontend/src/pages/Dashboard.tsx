@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -182,9 +181,6 @@ const Dashboard = () => {
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </Badge>
                 )}
-              </Button>
-              <Button variant="ghost" size="icon" onClick={() => navigate('/household')}>
-                <Users className="h-5 w-5" />
               </Button>
               <Button variant="ghost" size="icon" onClick={() => navigate('/settings')}>
                 <Settings className="h-5 w-5" />

@@ -216,5 +216,28 @@ router.post('/logout', (req, res) => {
   }
 });
 
+// Middleware to check if user is admin
+async function requireAdmin(req: express.Request, res: express.Response, next: express.NextFunction) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    const user = req.user as User;
+    
+    // Check if user has admin role (you'll need to add this field to your User model)
+    // For now, checking if user email is in admin list
+    const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(email => email.trim());
+    
+    if (!adminEmails.includes(user.email)) {
+      return res.status(403).json({ message: 'Admin access required' });
+    }
+
+    return next();
+  } catch (error) {
+    return res.status(403).json({ message: 'Admin access denied' });
+  }
+}
+
 export default router;
-export { authenticateGoogleToken }; 
+export { authenticateGoogleToken, requireAdmin }; 

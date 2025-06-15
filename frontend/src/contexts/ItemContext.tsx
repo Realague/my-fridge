@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { getUnitsForCategory } from '@/utils/unitSystem';
 
@@ -137,9 +136,16 @@ export const ItemProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateItem = (id: string, updates: Partial<FoodItem>) => {
-    setItems(prev => prev.map(item => 
-      item.id === id ? { ...item, ...updates } : item
-    ));
+    setItems(prev => prev.map(item => {
+      if (item.id === id) {
+        if (item.scope === 'global') {
+          console.warn(`Attempted to edit global item "${item.name}". Global items cannot be edited.`);
+          return item; // Return original item without updates
+        }
+        return { ...item, ...updates };
+      }
+      return item;
+    }));
   };
 
   const updateItemUsage = (id: string) => {

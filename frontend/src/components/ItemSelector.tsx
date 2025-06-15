@@ -270,14 +270,16 @@ export const ItemSelector = ({
                         Used {item.usageCount}x
                       </span>
                     )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => handleEditItem(item, e)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 h-auto"
-                    >
-                      <Edit className="h-3 w-3" />
-                    </Button>
+                    {item.scope !== 'global' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => handleEditItem(item, e)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 h-auto"
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               ))}

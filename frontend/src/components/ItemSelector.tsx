@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Check, ChevronDown, Plus, Edit, X } from 'lucide-react';
@@ -10,6 +9,11 @@ import { ItemEditor } from '@/components/ItemEditor';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { z } from 'zod';
+
+const itemNameSchema = z.string()
+  .trim()
+  .min(2, { message: "Item name must be at least 2 characters." })
+  .regex(/^[a-zA-Z ]+$/, { message: "Item name can only contain letters and spaces." });
 
 interface ItemSelectorProps {
   onItemSelect: (item: FoodItem | null) => void;
@@ -88,8 +92,7 @@ export const ItemSelector = ({
   };
 
   const handleCreateNew = () => {
-    const nameSchema = z.string().trim().min(2, { message: "Item name must be at least 2 characters." });
-    const validationResult = nameSchema.safeParse(query);
+    const validationResult = itemNameSchema.safeParse(query);
 
     if (!validationResult.success) {
       toast.error(validationResult.error.errors[0].message);
@@ -102,8 +105,7 @@ export const ItemSelector = ({
   };
 
   const handleQuickCreate = () => {
-    const nameSchema = z.string().trim().min(2, { message: "Item name must be at least 2 characters." });
-    const validationResult = nameSchema.safeParse(query);
+    const validationResult = itemNameSchema.safeParse(query);
 
     if (!validationResult.success) {
       toast.error(validationResult.error.errors[0].message);
@@ -133,22 +135,25 @@ export const ItemSelector = ({
   };
 
   const handleSaveNewItem = (newItemData: Partial<FoodItem>) => {
-    const newName = newItemData.name?.trim();
-    if (newName) {
-      const newItem = addItem(
-        newName,
-        newItemData.category || 'Other',
-        newItemData.defaultUnit,
-        newItemData.availableUnits
-      );
-      onItemSelect(newItem);
-      setQuery('');
-      setCreatingNewItem(false);
-      toast.success(`Added new item: "${newName}"`);
-    } else {
-      // Should be handled by ItemEditor's validation, but as a safeguard
-      toast.error("Item name cannot be empty.");
+    const validationResult = itemNameSchema.safeParse(newItemData.name);
+
+    if (!validationResult.success) {
+      toast.error(validationResult.error.errors[0].message);
+      return;
     }
+    
+    const newName = validationResult.data;
+
+    const newItem = addItem(
+      newName,
+      newItemData.category || 'Other',
+      newItemData.defaultUnit,
+      newItemData.availableUnits
+    );
+    onItemSelect(newItem);
+    setQuery('');
+    setCreatingNewItem(false);
+    toast.success(`Added new item: "${newName}"`);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

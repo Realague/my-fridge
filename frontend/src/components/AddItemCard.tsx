@@ -6,6 +6,8 @@ import { Plus } from 'lucide-react';
 import { useItems, FoodItem } from '@/contexts/ItemContext';
 import { QuantitySelector } from './QuantitySelector';
 import { ItemSelector } from './ItemSelector';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
 interface AddItemCardProps {
   title?: string;
@@ -28,6 +30,7 @@ export const AddItemCard = ({
   const handleItemSelect = (item: FoodItem | null) => {
     setSelectedItem(item);
     if (item) {
+      setNewItemQuantity('1');
       setNewItemUnit(item.defaultUnit);
     } else {
       // Reset quantity and unit when item is cleared
@@ -42,13 +45,32 @@ export const AddItemCard = ({
   };
 
   const handleAddItem = () => {
-    if (selectedItem && newItemQuantity.trim()) {
-      onItemAdd(selectedItem, newItemQuantity, newItemUnit);
-      setSelectedItem(null);
-      setNewItemQuantity('1');
-      setNewItemUnit('');
-      updateItemUsage(selectedItem.id);
+    if (!selectedItem) {
+      toast.error("Please select an item first.");
+      return;
     }
+
+    const quantitySchema = z.string()
+      .trim()
+      .min(1, { message: "Quantity cannot be empty." })
+      .refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
+        message: "Quantity must be a positive number."
+      });
+
+    const validationResult = quantitySchema.safeParse(newItemQuantity);
+
+    if (!validationResult.success) {
+      toast.error(validationResult.error.errors[0].message);
+      return;
+    }
+
+    onItemAdd(selectedItem, validationResult.data, newItemUnit);
+    updateItemUsage(selectedItem.id);
+    toast.success(`Added ${selectedItem.name} to the list.`);
+
+    setSelectedItem(null);
+    setNewItemQuantity('1');
+    setNewItemUnit('');
   };
 
   return (

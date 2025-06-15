@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { useItems, FoodItem } from '@/contexts/ItemContext';
 import { ItemEditor } from '@/components/ItemEditor';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
 interface ItemSelectorProps {
   onItemSelect: (item: FoodItem | null) => void;
@@ -86,19 +88,35 @@ export const ItemSelector = ({
   };
 
   const handleCreateNew = () => {
-    if (query.trim() && !exactMatch) {
-      setCreatingNewItem(true);
-      setIsOpen(false);
+    const nameSchema = z.string().trim().min(2, { message: "Item name must be at least 2 characters." });
+    const validationResult = nameSchema.safeParse(query);
+
+    if (!validationResult.success) {
+      toast.error(validationResult.error.errors[0].message);
+      return;
     }
+    if (exactMatch) return; // Safeguard
+
+    setCreatingNewItem(true);
+    setIsOpen(false);
   };
 
   const handleQuickCreate = () => {
-    if (query.trim() && !exactMatch) {
-      const newItem = addItem(query);
-      onItemSelect(newItem);
-      setQuery('');
-      setIsOpen(false);
+    const nameSchema = z.string().trim().min(2, { message: "Item name must be at least 2 characters." });
+    const validationResult = nameSchema.safeParse(query);
+
+    if (!validationResult.success) {
+      toast.error(validationResult.error.errors[0].message);
+      return;
     }
+
+    if (exactMatch) return; // Safeguard
+
+    const newItem = addItem(validationResult.data);
+    onItemSelect(newItem);
+    setQuery('');
+    setIsOpen(false);
+    toast.success(`Added new item: "${validationResult.data}"`);
   };
 
   const handleEditItem = (item: FoodItem, e: React.MouseEvent) => {
@@ -115,9 +133,10 @@ export const ItemSelector = ({
   };
 
   const handleSaveNewItem = (newItemData: Partial<FoodItem>) => {
-    if (query.trim()) {
+    const newName = newItemData.name?.trim();
+    if (newName) {
       const newItem = addItem(
-        query.trim(),
+        newName,
         newItemData.category || 'Other',
         newItemData.defaultUnit,
         newItemData.availableUnits
@@ -125,6 +144,10 @@ export const ItemSelector = ({
       onItemSelect(newItem);
       setQuery('');
       setCreatingNewItem(false);
+      toast.success(`Added new item: "${newName}"`);
+    } else {
+      // Should be handled by ItemEditor's validation, but as a safeguard
+      toast.error("Item name cannot be empty.");
     }
   };
 

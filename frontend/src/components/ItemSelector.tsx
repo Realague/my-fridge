@@ -169,7 +169,8 @@ export const ItemSelector = ({
       availableUnits: ['piece'],
       commonQuantities: ['1'],
       createdAt: new Date(),
-      usageCount: 0
+      usageCount: 0,
+      scope: 'household'
     };
 
     return (
@@ -251,6 +252,11 @@ export const ItemSelector = ({
                     className="flex-1 flex items-center gap-2 text-left"
                   >
                     <span className="font-medium text-gray-900">{item.name}</span>
+                    {item.scope === 'household' && (
+                      <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-800">
+                        Custom
+                      </Badge>
+                    )}
                     <Badge variant="secondary" className="text-xs">
                       {item.category}
                     </Badge>

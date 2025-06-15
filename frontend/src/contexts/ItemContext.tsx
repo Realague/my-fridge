@@ -11,6 +11,7 @@ export interface FoodItem {
   commonQuantities: string[];
   createdAt: Date;
   usageCount: number;
+  scope: 'global' | 'household';
 }
 
 interface ItemContextType {
@@ -34,7 +35,8 @@ const initialItems: FoodItem[] = [
     availableUnits: ['gallon', 'half gallon', 'quart', 'pint', 'cup', 'fl oz'],
     commonQuantities: ['1 gallon', '1/2 gallon', '1 quart'], 
     createdAt: new Date(), 
-    usageCount: 5 
+    usageCount: 5,
+    scope: 'global'
   },
   { 
     id: '2', 
@@ -44,7 +46,8 @@ const initialItems: FoodItem[] = [
     availableUnits: ['loaf', 'piece', 'dozen', 'package', 'bag'],
     commonQuantities: ['1 loaf', '2 loaves'], 
     createdAt: new Date(), 
-    usageCount: 3 
+    usageCount: 3,
+    scope: 'global'
   },
   { 
     id: '3', 
@@ -54,7 +57,8 @@ const initialItems: FoodItem[] = [
     availableUnits: ['dozen', 'count', 'piece'],
     commonQuantities: ['12 count', '18 count', '6 count'], 
     createdAt: new Date(), 
-    usageCount: 4 
+    usageCount: 4,
+    scope: 'global'
   },
   { 
     id: '4', 
@@ -64,7 +68,8 @@ const initialItems: FoodItem[] = [
     availableUnits: ['lb', 'oz', 'kg', 'g', 'piece', 'bunch', 'bag'],
     commonQuantities: ['1 lb', '2 lbs', '1 piece'], 
     createdAt: new Date(), 
-    usageCount: 2 
+    usageCount: 2,
+    scope: 'global'
   },
   { 
     id: '5', 
@@ -74,7 +79,8 @@ const initialItems: FoodItem[] = [
     availableUnits: ['lb', 'oz', 'kg', 'g', 'piece', 'package'],
     commonQuantities: ['1 lb', '2 lbs', '1 piece'], 
     createdAt: new Date(), 
-    usageCount: 3 
+    usageCount: 3,
+    scope: 'global'
   },
   { 
     id: '6', 
@@ -84,7 +90,8 @@ const initialItems: FoodItem[] = [
     availableUnits: ['bunch', 'piece', 'lb', 'oz'],
     commonQuantities: ['1 bunch', '6 pieces'], 
     createdAt: new Date(), 
-    usageCount: 2 
+    usageCount: 2,
+    scope: 'global'
   },
   { 
     id: '7', 
@@ -94,7 +101,8 @@ const initialItems: FoodItem[] = [
     availableUnits: ['lb', 'oz', 'kg', 'g', 'cup', 'bag', 'box'],
     commonQuantities: ['1 lb', '2 lbs', '5 lbs'], 
     createdAt: new Date(), 
-    usageCount: 1 
+    usageCount: 1,
+    scope: 'global'
   },
 ];
 
@@ -102,6 +110,14 @@ export const ItemProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<FoodItem[]>(initialItems);
 
   const addItem = (name: string, category: string = 'Other', defaultUnit?: string, availableUnits?: string[]): FoodItem => {
+    const trimmedName = name.trim();
+    const existingItem = items.find(item => item.name.toLowerCase() === trimmedName.toLowerCase());
+
+    if (existingItem) {
+      updateItemUsage(existingItem.id);
+      return existingItem;
+    }
+
     const categoryUnits = getUnitsForCategory(category);
     
     const newItem: FoodItem = {
@@ -112,7 +128,8 @@ export const ItemProvider = ({ children }: { children: ReactNode }) => {
       availableUnits: availableUnits || categoryUnits.availableUnits,
       commonQuantities: ['1'],
       createdAt: new Date(),
-      usageCount: 1
+      usageCount: 1,
+      scope: 'household'
     };
     
     setItems(prev => [...prev, newItem]);

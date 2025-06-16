@@ -1,12 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { UserPlus, Mail, Trash2, ArrowLeft } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { UserPlus, Mail, Trash2, ArrowLeft, LogOut, Settings, Plus, Edit3 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useStorage } from '@/contexts/StorageContext';
 import BottomNavigation from '@/components/BottomNavigation';
+import { toast } from 'sonner';
 
 // Mock data for household members
 const members = [
@@ -42,11 +45,34 @@ const households = [
     { id: '2', name: 'Work Lunch Club' },
 ];
 
+// Mock current user (in real app this would come from auth context)
+const currentUser = members[0]; // John Doe (Admin)
+
 const HouseholdDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { storageAreas } = useStorage();
+  const [managingStorage, setManagingStorage] = useState(false);
 
   const household = households.find(h => h.id === id) || { name: 'Household' };
+  const isAdmin = currentUser.role === 'Admin';
+
+  const handleLeaveHousehold = () => {
+    toast.success('Left household successfully');
+    navigate('/household');
+  };
+
+  const handleManageStorage = () => {
+    setManagingStorage(!managingStorage);
+  };
+
+  const handleAddStorageArea = () => {
+    toast.success('Add storage area functionality coming soon');
+  };
+
+  const handleEditStorageArea = (areaName: string) => {
+    toast.success(`Edit ${areaName} functionality coming soon`);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
@@ -72,13 +98,93 @@ const HouseholdDetails = () => {
             <CardTitle>{household.name}</CardTitle>
             <CardDescription>{members.length} members</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
             <Button className="w-full touch-friendly bg-gray-900 text-white hover:bg-gray-800">
               <UserPlus className="h-4 w-4 mr-2" />
               Invite New Member
             </Button>
+            
+            {isAdmin && (
+              <Button 
+                variant="outline" 
+                className="w-full touch-friendly"
+                onClick={handleManageStorage}
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                {managingStorage ? 'Hide Storage Settings' : 'Manage Storage Areas'}
+              </Button>
+            )}
+            
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" className="w-full touch-friendly text-red-600 border-red-200 hover:bg-red-50">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Leave Household
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Leave Household</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to leave "{household.name}"? You will lose access to all shared items, recipes, and meal plans.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleLeaveHousehold} className="bg-red-600 hover:bg-red-700">
+                    Leave Household
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardContent>
         </Card>
+
+        {/* Storage Management Section */}
+        {isAdmin && managingStorage && (
+          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5" />
+                Storage Areas
+              </CardTitle>
+              <CardDescription>
+                Manage the storage areas available in your household
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button 
+                className="w-full bg-green-600 hover:bg-green-700 text-white touch-friendly"
+                onClick={handleAddStorageArea}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add New Storage Area
+              </Button>
+              
+              <div className="space-y-3">
+                {storageAreas.map((area) => (
+                  <div key={area.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{area.emoji}</span>
+                      <div>
+                        <p className="font-semibold text-gray-900">{area.name}</p>
+                        <p className="text-sm text-gray-500 capitalize">{area.type}</p>
+                      </div>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={() => handleEditStorageArea(area.name)}
+                      className="h-8 w-8 text-gray-400 hover:text-blue-500 hover:bg-blue-50"
+                    >
+                      <Edit3 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
@@ -93,7 +199,10 @@ const HouseholdDetails = () => {
                     <AvatarFallback className="bg-green-100 text-green-700 font-semibold">{member.initials}</AvatarFallback>
                   </Avatar>
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-gray-900">{member.name}</p>
+                    <p className="font-semibold text-gray-900">
+                      {member.name}
+                      {member.id === currentUser.id && <span className="text-sm text-gray-500 ml-2">(You)</span>}
+                    </p>
                     <p className="text-sm text-gray-500 truncate">{member.email}</p>
                   </div>
                 </div>
@@ -104,9 +213,11 @@ const HouseholdDetails = () => {
                   >
                     {member.role}
                   </Badge>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-50">
-                     <Trash2 className="h-4 w-4" />
-                  </Button>
+                  {isAdmin && member.id !== currentUser.id && (
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-50">
+                       <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}

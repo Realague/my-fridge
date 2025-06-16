@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface StorageItem {
@@ -28,6 +27,9 @@ interface StorageContextType {
   removeStorageItem: (id: string) => void;
   getItemsByArea: (areaId: string) => StorageItem[];
   getStorageArea: (areaId: string) => StorageArea | undefined;
+  addStorageArea: (area: Omit<StorageArea, 'id'>) => StorageArea;
+  updateStorageArea: (id: string, updates: Partial<StorageArea>) => void;
+  removeStorageArea: (id: string) => void;
 }
 
 const StorageContext = createContext<StorageContextType | undefined>(undefined);
@@ -83,7 +85,7 @@ const initialStorageItems: StorageItem[] = [
 
 export const StorageProvider = ({ children }: { children: ReactNode }) => {
   const [storageItems, setStorageItems] = useState<StorageItem[]>(initialStorageItems);
-  const [storageAreas] = useState<StorageArea[]>(initialStorageAreas);
+  const [storageAreas, setStorageAreas] = useState<StorageArea[]>(initialStorageAreas);
 
   const addStorageItem = (item: Omit<StorageItem, 'id'>): StorageItem => {
     const newItem: StorageItem = {
@@ -112,6 +114,26 @@ export const StorageProvider = ({ children }: { children: ReactNode }) => {
     return storageAreas.find(area => area.id === areaId);
   };
 
+  const addStorageArea = (area: Omit<StorageArea, 'id'>): StorageArea => {
+    const newArea: StorageArea = {
+      ...area,
+      id: Date.now().toString(),
+    };
+    setStorageAreas(prev => [...prev, newArea]);
+    return newArea;
+  };
+
+  const updateStorageArea = (id: string, updates: Partial<StorageArea>) => {
+    setStorageAreas(prev => prev.map(area => 
+      area.id === id ? { ...area, ...updates } : area
+    ));
+  };
+
+  const removeStorageArea = (id: string) => {
+    setStorageAreas(prev => prev.filter(area => area.id !== id));
+    setStorageItems(prev => prev.filter(item => item.storageAreaId !== id));
+  };
+
   return (
     <StorageContext.Provider value={{
       storageItems,
@@ -120,7 +142,10 @@ export const StorageProvider = ({ children }: { children: ReactNode }) => {
       updateStorageItem,
       removeStorageItem,
       getItemsByArea,
-      getStorageArea
+      getStorageArea,
+      addStorageArea,
+      updateStorageArea,
+      removeStorageArea
     }}>
       {children}
     </StorageContext.Provider>

@@ -4,10 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { UserPlus, Mail, Trash2, ArrowLeft, LogOut, Settings, Package } from 'lucide-react';
+import { UserPlus, Mail, Trash2, ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
-import { toast } from 'sonner';
 
 // Mock data for household members
 const members = [
@@ -43,37 +42,11 @@ const households = [
     { id: '2', name: 'Work Lunch Club' },
 ];
 
-// Mock current user (in a real app, this would come from auth context)
-const currentUser = {
-  id: '1',
-  name: 'John Doe',
-  role: 'Admin'
-};
-
-// Mock storage areas for the household
-const storageAreas = [
-  { id: '1', name: 'Main Fridge', emoji: '🥬', type: 'fridge' as const },
-  { id: '2', name: 'Freezer', emoji: '🧊', type: 'freezer' as const },
-  { id: '3', name: 'Pantry', emoji: '🏺', type: 'pantry' as const },
-];
-
 const HouseholdDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
   const household = households.find(h => h.id === id) || { name: 'Household' };
-  const isAdmin = currentUser.role === 'Admin';
-  const canLeaveHousehold = !isAdmin || members.filter(m => m.role === 'Admin').length > 1;
-
-  const handleLeaveHousehold = () => {
-    // In a real app, this would make an API call
-    toast.success('You have left the household');
-    navigate('/household');
-  };
-
-  const handleStorageAreaClick = (areaId: string) => {
-    navigate(`/storage/${areaId}`);
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
@@ -107,40 +80,6 @@ const HouseholdDetails = () => {
           </CardContent>
         </Card>
 
-        {isAdmin && (
-          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Package className="h-5 w-5" />
-                Manage Storage Areas
-              </CardTitle>
-              <CardDescription>Configure and organize storage areas for this household</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {storageAreas.map((area) => (
-                <div key={area.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div className="text-2xl">{area.emoji}</div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-gray-900">{area.name}</p>
-                      <p className="text-sm text-gray-500 capitalize">{area.type}</p>
-                    </div>
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => handleStorageAreaClick(area.id)}
-                    className="text-gray-600 hover:text-gray-900"
-                  >
-                    <Settings className="h-4 w-4 mr-2" />
-                    Manage
-                  </Button>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
-
         <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle>Manage Members</CardTitle>
@@ -165,11 +104,9 @@ const HouseholdDetails = () => {
                   >
                     {member.role}
                   </Badge>
-                  {isAdmin && member.id !== currentUser.id && (
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-50">
-                       <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-50">
+                     <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             ))}
@@ -187,29 +124,6 @@ const HouseholdDetails = () => {
             <p className="text-sm text-gray-500">No pending invitations.</p>
           </CardContent>
         </Card>
-
-        {canLeaveHousehold && (
-          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg border-red-200">
-            <CardHeader>
-              <CardTitle className="text-red-600">Leave Household</CardTitle>
-              <CardDescription>
-                {isAdmin 
-                  ? "As an admin, leaving will transfer your responsibilities to another admin member." 
-                  : "You will no longer have access to this household's data and shopping lists."}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button 
-                variant="destructive" 
-                className="w-full"
-                onClick={handleLeaveHousehold}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Leave Household
-              </Button>
-            </CardContent>
-          </Card>
-        )}
       </div>
       <BottomNavigation currentPage="household" />
     </div>

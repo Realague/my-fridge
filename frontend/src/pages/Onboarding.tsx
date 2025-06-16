@@ -1,18 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowRight, Plus, Users, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const Onboarding = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [step, setStep] = useState(1);
   const [householdName, setHouseholdName] = useState('');
   const [joinCode, setJoinCode] = useState('');
   const [selectedStorageAreas, setSelectedStorageAreas] = useState<string[]>([]);
+
+  // Check URL parameters and set initial step
+  useEffect(() => {
+    const stepParam = searchParams.get('step');
+    if (stepParam) {
+      const stepNumber = parseInt(stepParam, 10);
+      if (stepNumber >= 1 && stepNumber <= 4) {
+        setStep(stepNumber);
+      }
+    }
+  }, [searchParams]);
 
   const storageOptions = [
     { id: 'fridge', name: 'Refrigerator', emoji: '🥬', description: 'Main fridge compartment' },

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,13 +26,11 @@ const Household = () => {
   const navigate = useNavigate();
 
   const handleCreateNew = () => {
-    navigate('/onboarding'); 
+    navigate('/onboarding?step=2'); // Go directly to the "Create Your Household" step
   };
   
   const handleJoin = () => {
-    // This is a simplified navigation. In a real app, you might pass state
-    // or use a different route to show the "join" step directly.
-    navigate('/onboarding');
+    navigate('/onboarding?step=4'); // Go directly to the "Join a Household" step
   };
 
   const handleSwitch = (householdId: string) => {

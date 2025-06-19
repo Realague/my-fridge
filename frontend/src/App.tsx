@@ -1,15 +1,16 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { useEffect } from "react";
+import { useAuthStore } from "@/stores/authStore";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ItemProvider } from "@/contexts/ItemContext";
 import { StorageProvider } from "@/contexts/StorageContext";
 import { RecipeProvider } from "@/contexts/RecipeContext";
 import { MealPlanProvider } from "@/contexts/MealPlanContext";
-import { NotificationProvider } from "@/contexts/NotificationContext";
+import { StoreProvider } from "@/components/StoreProvider";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
@@ -32,45 +33,52 @@ import Settings from "./pages/Settings";
 const queryClient = new QueryClient();
 
 function App() {
-  return (
+  const initializeGoogleAuth = useAuthStore(state => state.initializeGoogleAuth);
+
+  useEffect(() => {
+    // Initialize Google Auth when the app loads
+    initializeGoogleAuth();
+  }, [initializeGoogleAuth]);
+
+    return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <BrowserRouter>
-          <AuthProvider>
-            <NotificationProvider>
-              <ItemProvider>
-                <StorageProvider>
-                  <RecipeProvider>
-                    <MealPlanProvider>
+        <NotificationProvider>
+          <ItemProvider>
+            <StorageProvider>
+              <RecipeProvider>
+                <MealPlanProvider>
+                  <BrowserRouter>
+                    <StoreProvider>
                       <Toaster />
                       <Sonner />
                       <Routes>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/auth" element={<Auth />} />
-                        <Route path="/auth/callback" element={<AuthCallback />} />
-                        <Route path="/onboarding" element={<Onboarding />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/shopping" element={<Shopping />} />
-                        <Route path="/storage/:id" element={<StorageArea />} />
-                        <Route path="/recipes" element={<Recipes />} />
-                        <Route path="/recipes/:id" element={<RecipeDetails />} />
-                        <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />
-                        <Route path="/add-recipe" element={<AddRecipe />} />
-                        <Route path="/edit-recipe/:id" element={<EditRecipe />} />
-                        <Route path="/meal-plans" element={<MealPlans />} />
-                        <Route path="/household" element={<Household />} />
-                        <Route path="/household/:id" element={<HouseholdDetails />} />
-                        <Route path="/settings" element={<Settings />} />
-                        <Route path="/demo" element={<Demo />} />
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </MealPlanProvider>
-                  </RecipeProvider>
-                </StorageProvider>
-              </ItemProvider>
-            </NotificationProvider>
-          </AuthProvider>
-        </BrowserRouter>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/auth" element={<Auth />} />
+                      <Route path="/auth/callback" element={<AuthCallback />} />
+                      <Route path="/onboarding" element={<Onboarding />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/shopping" element={<Shopping />} />
+                      <Route path="/storage/:id" element={<StorageArea />} />
+                      <Route path="/recipes" element={<Recipes />} />
+                      <Route path="/recipes/:id" element={<RecipeDetails />} />
+                      <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />
+                      <Route path="/add-recipe" element={<AddRecipe />} />
+                      <Route path="/edit-recipe/:id" element={<EditRecipe />} />
+                      <Route path="/meal-plans" element={<MealPlans />} />
+                      <Route path="/household" element={<Household />} />
+                      <Route path="/household/:id" element={<HouseholdDetails />} />
+                      <Route path="/settings" element={<Settings />} />
+                      <Route path="/demo" element={<Demo />} />
+                      <Route path="*" element={<NotFound />} />
+                                          </Routes>
+                    </StoreProvider>
+                  </BrowserRouter>
+                </MealPlanProvider>
+              </RecipeProvider>
+            </StorageProvider>
+          </ItemProvider>
+        </NotificationProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

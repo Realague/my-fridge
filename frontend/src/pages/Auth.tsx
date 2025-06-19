@@ -3,12 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/stores/authStore';
 
 const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { signInWithGoogle, isAuthenticated, isLoading } = useAuth();
+  const { signInWithGoogle, isAuthenticated, isLoading } = useAuthStore();
   const [authLoading, setAuthLoading] = useState(false);
   const googleButtonRef = useRef<HTMLDivElement>(null);
 

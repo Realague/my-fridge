@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import migrationRoutes from './routes/migrations';
+import householdRoutes from './routes/households';
 import { sequelize } from './models';
 import { executeSmartMigration } from './utils/migrationStrategy';
 
@@ -28,6 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/auth', authRoutes);
 app.use('/api/migrations', migrationRoutes);
+app.use('/api/households', householdRoutes);
 
 app.get('/', (req, res) => {
   res.json({
@@ -38,6 +40,8 @@ app.get('/', (req, res) => {
       health: '/health',
       auth: '/auth',
       migrations: '/api/migrations',
+      households: '/api/households',
+      storageAreas: '/api/households/:householdId/storage-areas',
       dbTest: '/db-test'
     }
   });

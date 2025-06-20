@@ -1,18 +1,22 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-interface User {
+export interface User {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
+  selectedHouseholdId: string;
 }
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  signInWithGoogle: () => Promise<void>;
-  signOut: () => void;
   isAuthenticated: boolean;
+  signInWithGoogle: () => void;
+  signOut: () => void;
+  refreshToken: () => Promise<boolean>;
+  checkTokenExpiry: () => boolean;
+  updateUser: (userData: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -86,11 +90,73 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const token = localStorage.getItem('google_token');
     if (token) {
       try {
-        await verifyTokenWithBackend(token);
+        // Check if token is expired before trying to use it
+        if (isTokenExpired(token)) {
+          console.log('Stored token is expired, attempting refresh...');
+          const refreshed = await refreshToken();
+          if (!refreshed) {
+            localStorage.removeItem('google_token');
+            setUser(null);
+            setIsAuthenticated(false);
+          }
+        } else {
+          await verifyTokenWithBackend(token);
+        }
       } catch (error) {
         console.error('Stored token verification failed:', error);
         localStorage.removeItem('google_token');
+        setUser(null);
+        setIsAuthenticated(false);
       }
+    }
+  };
+
+  // Check if JWT token is expired
+  const isTokenExpired = (token: string): boolean => {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      return payload.exp < currentTime;
+    } catch (error) {
+      console.error('Error parsing token:', error);
+      return true;
+    }
+  };
+
+  // Check token expiry (public method)
+  const checkTokenExpiry = (): boolean => {
+    const token = localStorage.getItem('google_token');
+    if (!token) return true;
+    return isTokenExpired(token);
+  };
+
+  // Refresh the Google token
+  const refreshToken = async (): Promise<boolean> => {
+    try {
+      console.log('Attempting to refresh Google token...');
+      
+      // Prompt user to re-authenticate with Google
+      return new Promise((resolve) => {
+        if (window.google) {
+          window.google.accounts.id.prompt((notification: any) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+              console.log('Token refresh failed - user interaction required');
+              resolve(false);
+            }
+          });
+          
+          // Set a timeout for the refresh attempt
+          setTimeout(() => {
+            console.log('Token refresh timed out');
+            resolve(false);
+          }, 10000);
+        } else {
+          resolve(false);
+        }
+      });
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      return false;
     }
   };
 
@@ -114,8 +180,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     });
 
     if (response.ok) {
-      const data = await response.json();
-      setUser(data.user);
+      const resonseData = await response.json();
+      setUser(resonseData.data.user);
       setIsAuthenticated(true);
     } else {
       console.error('Backend token verification failed:', response.status);
@@ -123,59 +189,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const signInWithGoogle = async (): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      if (!window.google) {
-        console.error('Google SDK not loaded');
-        reject(new Error('Google SDK not loaded'));
-        return;
-      }
-
-      if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) {
-        console.error('Google Client ID not configured');
-        reject(new Error('Google Client ID not configured'));
-        return;
-      }
-
-      try {
-        // Use the simpler popup approach
-        window.google.accounts.id.prompt((notification: any) => {
-          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            // If prompt doesn't work, render the sign-in button programmatically
-            const buttonDiv = document.createElement('div');
-            document.body.appendChild(buttonDiv);
-            
-            window.google.accounts.id.renderButton(buttonDiv, {
-              theme: 'outline',
-              size: 'large',
-              type: 'standard',
-              text: 'signin_with',
-            });
-            
-            // Click the button programmatically
-            setTimeout(() => {
-              const button = buttonDiv.querySelector('iframe');
-              if (button) {
-                button.click();
-              }
-              document.body.removeChild(buttonDiv);
-            }, 100);
-            
-            // Set up a listener for the response
-            const originalCallback = window.google.accounts.id.callback;
-            window.google.accounts.id.callback = (response: any) => {
-              handleGoogleResponse(response).then(() => resolve()).catch(reject);
-              window.google.accounts.id.callback = originalCallback;
-            };
-          } else {
-            resolve();
-          }
-        });
-      } catch (error) {
-        console.error('Error initiating Google OAuth:', error);
-        reject(error);
-      }
-    });
+  const signInWithGoogle = () => {
+    if (window.google) {
+      window.google.accounts.id.prompt();
+    }
   };
 
   const signOut = () => {
@@ -183,18 +200,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
     setIsAuthenticated(false);
     
+    // Sign out from Google
     if (window.google) {
       window.google.accounts.id.disableAutoSelect();
     }
   };
 
-  const value: AuthContextType = {
-    user,
-    isLoading,
-    signInWithGoogle,
-    signOut,
-    isAuthenticated,
+  const updateUser = (userData: User) => {
+      setUser(userData)
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{
+      user,
+      isLoading,
+      isAuthenticated,
+      signInWithGoogle,
+      signOut,
+      refreshToken,
+      checkTokenExpiry,
+      updateUser,
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }; 

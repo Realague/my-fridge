@@ -16,11 +16,16 @@ passport.use(
 
         if (!user) {
           // Create new user if doesn't exist
+          const email = profile.emails?.[0]?.value;
+          if (!email) {
+            return done(new Error('No email found in Google profile'));
+          }
+
           user = await User.create({
             googleId: profile.id,
-            email: profile.emails![0].value,
-            firstName: profile.name!.givenName,
-            lastName: profile.name!.familyName,
+            email: email,
+            firstName: profile.name?.givenName || '',
+            lastName: profile.name?.familyName || '',
           });
         }
 

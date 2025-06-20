@@ -6,38 +6,50 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Plus, Edit3, Trash2 } from 'lucide-react';
-import { useStorage, StorageArea } from '@/contexts/StorageContext';
+import { useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
+import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
 
 const StorageAreaManager = () => {
-  const { storageAreas, addStorageArea, updateStorageArea, removeStorageArea } = useStorage();
-  const [editingArea, setEditingArea] = useState<StorageArea | null>(null);
+  const { user } = useAuthStore();
+  const { 
+    storageAreas, 
+    createStorageArea, 
+    updateStorageArea, 
+    deleteStorageArea,
+    fetchStorageAreas 
+  } = useCurrentHouseholdStorageAreas(user?.selectedHouseholdId);
+  
+  const [editingArea, setEditingArea] = useState<any>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [newAreaName, setNewAreaName] = useState('');
   const [newAreaEmoji, setNewAreaEmoji] = useState('📦');
   const [newAreaType, setNewAreaType] = useState<'fridge' | 'freezer' | 'pantry' | 'other'>('other');
 
-  const handleAddArea = () => {
+  const handleAddArea = async () => {
     if (!newAreaName.trim()) {
       toast.error('Please enter a storage area name');
       return;
     }
 
-    addStorageArea({
-      name: newAreaName.trim(),
-      emoji: newAreaEmoji,
-      type: newAreaType
-    });
+    try {
+      await createStorageArea({
+        name: newAreaName.trim(),
+        emoji: newAreaEmoji,
+        type: newAreaType
+      });
 
-    toast.success(`Added storage area: ${newAreaName}`);
-    setNewAreaName('');
-    setNewAreaEmoji('📦');
-    setNewAreaType('other');
-    setIsAddDialogOpen(false);
+      setNewAreaName('');
+      setNewAreaEmoji('📦');
+      setNewAreaType('other');
+      setIsAddDialogOpen(false);
+    } catch (error) {
+      // Error handled by store
+    }
   };
 
-  const handleEditArea = (area: StorageArea) => {
+  const handleEditArea = (area: any) => {
     setEditingArea(area);
     setNewAreaName(area.name);
     setNewAreaEmoji(area.emoji);
@@ -45,29 +57,35 @@ const StorageAreaManager = () => {
     setIsEditDialogOpen(true);
   };
 
-  const handleUpdateArea = () => {
+  const handleUpdateArea = async () => {
     if (!editingArea || !newAreaName.trim()) {
       toast.error('Please enter a storage area name');
       return;
     }
 
-    updateStorageArea(editingArea.id, {
-      name: newAreaName.trim(),
-      emoji: newAreaEmoji,
-      type: newAreaType
-    });
+    try {
+      await updateStorageArea(editingArea.id, {
+        name: newAreaName.trim(),
+        emoji: newAreaEmoji,
+        type: newAreaType
+      });
 
-    toast.success(`Updated storage area: ${newAreaName}`);
-    setEditingArea(null);
-    setNewAreaName('');
-    setNewAreaEmoji('📦');
-    setNewAreaType('other');
-    setIsEditDialogOpen(false);
+      setEditingArea(null);
+      setNewAreaName('');
+      setNewAreaEmoji('📦');
+      setNewAreaType('other');
+      setIsEditDialogOpen(false);
+    } catch (error) {
+      // Error handled by store
+    }
   };
 
-  const handleDeleteArea = (area: StorageArea) => {
-    removeStorageArea(area.id);
-    toast.success(`Deleted storage area: ${area.name}`);
+  const handleDeleteArea = async (area: any) => {
+    try {
+      await deleteStorageArea(area.id);
+    } catch (error) {
+      // Error handled by store
+    }
   };
 
   const resetForm = () => {

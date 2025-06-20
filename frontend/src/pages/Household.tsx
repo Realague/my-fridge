@@ -5,25 +5,33 @@ import { Badge } from '@/components/ui/badge';
 import { Home, Plus, Users, CheckCircle, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
-
-// Mock data for households
-const households = [
-  {
-    id: '1',
-    name: 'The Smith Family',
-    members: 3,
-    active: true,
-  },
-  {
-    id: '2',
-    name: 'Work Lunch Club',
-    members: 5,
-    active: false,
-  },
-];
+import { useHouseholdStore } from '@/stores/householdStore';
+import { useAuthStore } from '@/stores/authStore';
+import { useEffect, useState } from 'react';
 
 const Household = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, isLoading: authLoading, user: currentUser, setUser } = useAuthStore();
+  
+  // Zustand store - selective subscriptions
+  const households = useHouseholdStore(state => state.households);
+  const fetchHouseholds = useHouseholdStore(state => state.fetchHouseholds);
+  const selectHousehold = useHouseholdStore(state => state.selectHousehold);
+  
+  const [switchingHousehold, setSwitchingHousehold] = useState<string | null>(null);
+
+  // Load households on mount
+  useEffect(() => {
+    fetchHouseholds();
+  }, [fetchHouseholds]);
+
+  // Redirect to auth if not authenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      console.log('Household: User not authenticated, redirecting to auth');
+      navigate('/auth');
+    }
+  }, [authLoading, isAuthenticated, navigate]);
 
   const handleCreateNew = () => {
     navigate('/onboarding?step=2'); // Go directly to the "Create Your Household" step
@@ -33,11 +41,22 @@ const Household = () => {
     navigate('/onboarding?step=4'); // Go directly to the "Join a Household" step
   };
 
-  const handleSwitch = (householdId: string) => {
-    // In a real app, this would trigger a context update and backend call.
-    console.log(`Switching to household ${householdId}`);
-    // For now, we'll just navigate to the dashboard to simulate a refresh.
-    navigate('/dashboard');
+  const handleSwitch = async (householdId: string) => {
+    try {
+      setSwitchingHousehold(householdId);
+      
+      const user = await selectHousehold(householdId);
+      
+      if (user) {
+        setUser(user);
+      } else {
+        console.error('No user data returned from selectHousehold');
+      }
+    } catch (error) {
+      console.error('Failed to switch household:', error);
+    } finally {
+      setSwitchingHousehold(null);
+    }
   };
 
   const handleManage = (householdId: string) => {
@@ -68,30 +87,35 @@ const Household = () => {
             <CardDescription>You can be a part of multiple households.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {households.map((h) => (
-              <div key={h.id} className="flex items-center justify-between p-3 bg-gray-50/70 rounded-lg">
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900">{h.name}</p>
-                  <p className="text-sm text-gray-500">{h.members} members</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  {h.active ? (
-                    <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
-                      <CheckCircle className="h-3 w-3 mr-1.5" />
-                      Active
-                    </Badge>
-                  ) : (
-                    <Button variant="outline" size="sm" onClick={() => handleSwitch(h.id)}>
-                      Switch
-                    </Button>
-                  )}
-                   <Button variant="ghost" size="icon" className="h-9 w-9 text-gray-500 hover:text-gray-800 hover:bg-gray-100" onClick={() => handleManage(h.id)}>
-                     <span className="sr-only">Manage</span>
-                     <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
+                         {households.map((h) => (
+               <div key={h.id} className="flex items-center justify-between p-3 bg-gray-50/70 rounded-lg">
+                 <div className="flex-1 min-w-0">
+                   <p className="font-semibold text-gray-900">{h.name}</p>
+                   <p className="text-sm text-gray-500">{h.memberCount} members • {h.userRole}</p>
+                 </div>
+                 <div className="flex items-center gap-2">
+                   {currentUser?.selectedHouseholdId === h.id ? (
+                     <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
+                       <CheckCircle className="h-3 w-3 mr-1.5" />
+                       Active
+                     </Badge>
+                   ) : (
+                     <Button 
+                       variant="outline" 
+                       size="sm" 
+                       onClick={() => handleSwitch(h.id)}
+                       disabled={switchingHousehold === h.id}
+                     >
+                       {switchingHousehold === h.id ? 'Switching...' : 'Switch'}
+                     </Button>
+                   )}
+                    <Button variant="ghost" size="icon" className="h-9 w-9 text-gray-500 hover:text-gray-800 hover:bg-gray-100" onClick={() => handleManage(h.id)}>
+                      <span className="sr-only">Manage</span>
+                      <ArrowRight className="h-4 w-4" />
+                   </Button>
+                 </div>
+               </div>
+             ))}
           </CardContent>
         </Card>
 

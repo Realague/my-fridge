@@ -1,11 +1,15 @@
 import express from 'express';
 import { migrationManager } from '../utils/migrationManager';
 import { executeSmartMigration } from '../utils/migrationStrategy';
+import { authenticateGoogleToken, requireAdmin } from '../middleware/auth'; 
 
 const router = express.Router();
 
+// Apply authentication middleware to all migration routes
+router.use(authenticateGoogleToken);
+
 /**
- * Get migration status
+ * Get migration status (authenticated users only)
  */
 router.get('/status', async (req, res) => {
   try {
@@ -23,9 +27,9 @@ router.get('/status', async (req, res) => {
 });
 
 /**
- * Run pending migrations using smart strategy
+ * Run pending migrations using smart strategy (ADMIN ONLY)
  */
-router.post('/run', async (req, res) => {
+router.post('/run', requireAdmin, async (req, res) => {
   try {
     const result = await migrationManager.runMigrations();
     res.json({
@@ -42,9 +46,9 @@ router.post('/run', async (req, res) => {
 });
 
 /**
- * Run migrations with environment-specific strategy
+ * Run migrations with environment-specific strategy (ADMIN ONLY)
  */
-router.post('/smart-run', async (req, res) => {
+router.post('/smart-run', requireAdmin, async (req, res) => {
   try {
     const result = await executeSmartMigration();
     res.json({
@@ -61,7 +65,7 @@ router.post('/smart-run', async (req, res) => {
 });
 
 /**
- * Validate migrations
+ * Validate migrations (authenticated users only)
  */
 router.get('/validate', async (req, res) => {
   try {
@@ -80,7 +84,7 @@ router.get('/validate', async (req, res) => {
 });
 
 /**
- * Get pending migrations
+ * Get pending migrations (authenticated users only)
  */
 router.get('/pending', async (req, res) => {
   try {
@@ -102,9 +106,9 @@ router.get('/pending', async (req, res) => {
 });
 
 /**
- * Rollback last migration
+ * Rollback last migration (ADMIN ONLY)
  */
-router.post('/rollback', async (req, res) => {
+router.post('/rollback', requireAdmin, async (req, res) => {
   try {
     await migrationManager.rollbackLastMigration();
     res.json({
@@ -120,9 +124,9 @@ router.post('/rollback', async (req, res) => {
 });
 
 /**
- * Rollback to specific migration
+ * Rollback to specific migration (ADMIN ONLY)
  */
-router.post('/rollback-to', async (req, res) => {
+router.post('/rollback-to', requireAdmin, async (req, res) => {
   try {
     const { migration } = req.body;
     
@@ -147,9 +151,9 @@ router.post('/rollback-to', async (req, res) => {
 });
 
 /**
- * Production-safe migration execution
+ * Production-safe migration execution (ADMIN ONLY)
  */
-router.post('/run-production', async (req, res) => {
+router.post('/run-production', requireAdmin, async (req, res) => {
   try {
     // Extra safety check for production
     if (process.env.NODE_ENV !== 'production') {

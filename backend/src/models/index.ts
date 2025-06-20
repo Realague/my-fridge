@@ -1,6 +1,44 @@
 import sequelize from '../config/database';
+import { User } from './User';
+import { Household } from './Household';
+import { HouseholdMember } from './HouseholdMember';
+import { StorageArea } from './StorageArea';
+
+// Define associations
+User.hasMany(Household, { foreignKey: 'createdBy', as: 'createdHouseholds' });
+Household.belongsTo(User, { foreignKey: 'createdBy', as: 'creator' });
+
+// Many-to-many relationship between User and Household through HouseholdMember
+User.belongsToMany(Household, {
+  through: HouseholdMember,
+  foreignKey: 'userId',
+  otherKey: 'householdId',
+  as: 'households',
+});
+
+Household.belongsToMany(User, {
+  through: HouseholdMember,
+  foreignKey: 'householdId',
+  otherKey: 'userId',
+  as: 'members',
+});
+
+// Direct associations with HouseholdMember
+User.hasMany(HouseholdMember, { foreignKey: 'userId', as: 'householdMemberships' });
+HouseholdMember.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+Household.hasMany(HouseholdMember, { foreignKey: 'householdId', as: 'memberships' });
+HouseholdMember.belongsTo(Household, { foreignKey: 'householdId', as: 'household' });
+
+// Storage Area associations
+Household.hasMany(StorageArea, { foreignKey: 'householdId', as: 'storageAreas' });
+StorageArea.belongsTo(Household, { foreignKey: 'householdId', as: 'household' });
 
 // Export models
 export {
-  sequelize
+  sequelize,
+  User,
+  Household,
+  HouseholdMember,
+  StorageArea
 }; 

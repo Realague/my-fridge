@@ -17,7 +17,6 @@ const HouseholdDetails = () => {
   const { isAuthenticated, isLoading, user: currentUser } = useAuthStore();
   
   // Zustand store - selective subscriptions
-  const households = useHouseholdStore(state => state.households);
   const householdDetailsMap = useHouseholdStore(state => state.householdDetails);
   const fetchHouseholdDetails = useHouseholdStore(state => state.fetchHouseholdDetails);
   const removeMember = useHouseholdStore(state => state.removeMember);
@@ -31,7 +30,7 @@ const HouseholdDetails = () => {
     if (id) {
       fetchHouseholdDetails(id);
     }
-  }, [id]);
+  }, [id, fetchHouseholdDetails]);
 
   // Redirect to auth if not authenticated
   useEffect(() => {

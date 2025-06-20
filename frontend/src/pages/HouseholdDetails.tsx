@@ -1,10 +1,9 @@
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { UserPlus, Mail, Trash2, ArrowLeft, LogOut } from 'lucide-react';
+import { UserPlus, Trash2, ArrowLeft, LogOut } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
 import StorageAreaManager from '@/components/StorageAreaManager';
@@ -154,7 +153,6 @@ const HouseholdDetails = () => {
               <div key={member.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <Avatar className="h-12 w-12 flex-shrink-0">
-                    <AvatarImage /*src={member.avatar}*/ alt={`${member.firstName || ''} ${member.lastName || ''}`} />
                     <AvatarFallback className="bg-green-100 text-green-700 font-semibold">
                       {(member.firstName?.charAt(0) || '') + (member.lastName?.charAt(0) || '')}
                     </AvatarFallback>

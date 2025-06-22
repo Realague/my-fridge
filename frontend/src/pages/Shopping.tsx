@@ -1,83 +1,82 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Check, GripVertical, Trash2, Users, Edit, Save, X, Filter, Package } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { AddItemCard } from '@/components/AddItemCard';
 import { QuantitySelector } from '@/components/QuantitySelector';
-import { Item } from '@/services/itemService';
+import { useItems, FoodItem } from '@/contexts/ItemContext';
 import { useStorage } from '@/contexts/StorageContext';
-import { useShoppingStore, ShoppingItem } from '@/stores/shoppingStore';
-import { useHouseholdStore } from '@/stores/householdStore';
-import { toast } from 'sonner';
+
+interface ShoppingItem {
+  id: string;
+  item: FoodItem;
+  quantity: string;
+  unit: string;
+  completed: boolean;
+  addedBy: string;
+}
 
 const Shopping = () => {
+  const { getItemById, updateItemUsage } = useItems();
   const { storageAreas, addStorageItem } = useStorage();
-  const { selectedHouseholdId } = useHouseholdStore();
-  const {
-    items,
-    loading,
-    error,
-    fetchShoppingItems,
-    createShoppingItem,
-    updateShoppingItem,
-    deleteShoppingItem,
-    toggleShoppingItemCompleted,
-    getPendingItems,
-    getCompletedItems,
-    getItemsByCategory,
-    getTotalItems,
-    getCompletedCount
-  } = useShoppingStore();
   
+  // Initialize with items from the item context
+  const [items, setItems] = useState<ShoppingItem[]>([
+    { 
+      id: '1', 
+      item: getItemById('1')!, 
+      quantity: '1', 
+      unit: 'gallon',
+      completed: false, 
+      addedBy: 'Sarah' 
+    },
+    { 
+      id: '2', 
+      item: getItemById('2')!, 
+      quantity: '1', 
+      unit: 'loaf',
+      completed: false, 
+      addedBy: 'John' 
+    },
+    { 
+      id: '3', 
+      item: getItemById('3')!, 
+      quantity: '12', 
+      unit: 'count',
+      completed: true, 
+      addedBy: 'Sarah' 
+    },
+    { 
+      id: '4', 
+      item: getItemById('4')!, 
+      quantity: '2', 
+      unit: 'lb',
+      completed: false, 
+      addedBy: 'Auto-added from meal plan' 
+    },
+    { 
+      id: '5', 
+      item: getItemById('5')!, 
+      quantity: '1', 
+      unit: 'lb',
+      completed: false, 
+      addedBy: 'Auto-added from meal plan' 
+    },
+  ].filter(item => item.item)); // Filter out any undefined items
+  
+  const [selectedItem, setSelectedItem] = useState<FoodItem | null>(null);
+  const [newItemQuantity, setNewItemQuantity] = useState('1');
+  const [newItemUnit, setNewItemUnit] = useState('');
+  const [showCompleted, setShowCompleted] = useState(false);
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
-  const [completedItemsLoaded, setCompletedItemsLoaded] = useState(false);
-  const [loadingCompleted, setLoadingCompleted] = useState(false);
-
-  // Load shopping items from API
-  useEffect(() => {
-    if (selectedHouseholdId) {
-      // Fetch pending items first
-      fetchShoppingItems(selectedHouseholdId, false);
-      setCompletedItemsLoaded(false);
-      // Also fetch completed items
-      fetchCompletedItems();
-    }
-  }, [selectedHouseholdId, fetchShoppingItems]);
-
-  // Function to fetch completed items
-  const fetchCompletedItems = async () => {
-    if (!selectedHouseholdId || completedItemsLoaded) return;
-    
-    setLoadingCompleted(true);
-    try {
-      await fetchShoppingItems(selectedHouseholdId, true);
-      setCompletedItemsLoaded(true);
-    } catch (error) {
-      console.error('Failed to fetch completed items:', error);
-    } finally {
-      setLoadingCompleted(false);
-    }
-  };
-
-  // Function to refresh all shopping items
-  const refreshShoppingItems = async () => {
-    if (!selectedHouseholdId) return;
-    
-    setCompletedItemsLoaded(false);
-    // Fetch pending items
-    await fetchShoppingItems(selectedHouseholdId, false);
-    
-    // Fetch completed items
-    await fetchCompletedItems();
-  };
 
   // New state for storage dialog
   const [showStorageDialog, setShowStorageDialog] = useState(false);
@@ -86,22 +85,32 @@ const Shopping = () => {
   const [storageLocation, setStorageLocation] = useState('');
   const [storageExpirationDate, setStorageExpirationDate] = useState('');
 
-  const handleAddItem = async (item: Item, quantity: string, unit: string) => {
-    if (!selectedHouseholdId) {
-      toast.error('No household selected');
-      return;
-    }
-
-    await createShoppingItem(selectedHouseholdId, {
-      itemId: item.id,
-      quantity,
-      unit,
-    });
+  const handleItemSelect = (item: FoodItem) => {
+    setSelectedItem(item);
+    setNewItemUnit(item.defaultUnit);
   };
 
-  const toggleItemComplete = async (id: string) => {
+  const handleQuantityChange = (quantity: string, unit: string) => {
+    setNewItemQuantity(quantity);
+    setNewItemUnit(unit);
+  };
+
+  const handleAddItem = (item: FoodItem, quantity: string, unit: string) => {
+    const newShoppingItem: ShoppingItem = {
+      id: Date.now().toString(),
+      item: item,
+      quantity: quantity,
+      unit: unit,
+      completed: false,
+      addedBy: 'You'
+    };
+    
+    setItems([...items, newShoppingItem]);
+  };
+
+  const toggleItemComplete = (id: string) => {
     const item = items.find(item => item.id === id);
-    if (!item || !selectedHouseholdId) return;
+    if (!item) return;
 
     if (!item.completed) {
       // Item is being marked as completed - show storage dialog
@@ -111,44 +120,31 @@ const Shopping = () => {
       setStorageExpirationDate('');
       setShowStorageDialog(true);
     } else {
-      // Item is being unchecked - toggle via API
-      const success = await toggleShoppingItemCompleted(selectedHouseholdId, id);
-      
-      // If the item was successfully toggled and we're showing completed items,
-      // refresh to ensure we have the latest state
-      if (success && completedItemsLoaded) {
-        await refreshShoppingItems();
-      }
+      // Item is being unchecked - just toggle
+      setItems(items.map(item => 
+        item.id === id ? { ...item, completed: !item.completed } : item
+      ));
     }
   };
 
-  const handleAddToStorage = async () => {
-    if (!itemToStore || !selectedStorageArea || !selectedHouseholdId) return;
+  const handleAddToStorage = () => {
+    if (!itemToStore || !selectedStorageArea) return;
 
-    try {
-      // Add to storage
-      addStorageItem({
-        itemId: itemToStore.itemId,
-        storageAreaId: selectedStorageArea,
-        quantity: itemToStore.quantity,
-        unit: itemToStore.unit,
-        purchaseDate: new Date(),
-        expirationDate: storageExpirationDate ? new Date(storageExpirationDate) : undefined,
-        location: storageLocation.trim() || undefined,
-      });
+    // Add to storage
+    addStorageItem({
+      itemId: itemToStore.item.id,
+      storageAreaId: selectedStorageArea,
+      quantity: itemToStore.quantity,
+      unit: itemToStore.unit,
+      purchaseDate: new Date(),
+      expirationDate: storageExpirationDate ? new Date(storageExpirationDate) : undefined,
+      location: storageLocation.trim() || undefined,
+    });
 
-      // Mark as completed via API
-      const success = await toggleShoppingItemCompleted(selectedHouseholdId, itemToStore.id);
-      
-      if (success) {
-        toast.success('Item added to storage and marked as completed');
-        // Refresh items to ensure proper state
-        await refreshShoppingItems();
-      }
-    } catch (error) {
-      console.error('Error adding to storage:', error);
-      toast.error('Failed to add item to storage');
-    }
+    // Mark as completed
+    setItems(items.map(item => 
+      item.id === itemToStore.id ? { ...item, completed: true } : item
+    ));
 
     // Close dialog and reset state
     setShowStorageDialog(false);
@@ -158,48 +154,32 @@ const Shopping = () => {
     setStorageExpirationDate('');
   };
 
-  const handleSkipStorage = async () => {
-    if (!itemToStore || !selectedHouseholdId) return;
+  const handleSkipStorage = () => {
+    if (!itemToStore) return;
 
-    try {
-      // Just mark as completed without adding to storage
-      const success = await toggleShoppingItemCompleted(selectedHouseholdId, itemToStore.id);
-      
-      if (success) {
-        toast.success('Item marked as completed');
-        // Refresh items to ensure proper state
-        await refreshShoppingItems();
-      }
-    } catch (error) {
-      console.error('Error marking item as completed:', error);
-      toast.error('Failed to mark item as completed');
-    }
+    // Just mark as completed without adding to storage
+    setItems(items.map(item => 
+      item.id === itemToStore.id ? { ...item, completed: true } : item
+    ));
 
     // Close dialog and reset state
     setShowStorageDialog(false);
     setItemToStore(null);
   };
 
-  const deleteItemHandler = async (id: string) => {
-    if (!selectedHouseholdId) return;
-    await deleteShoppingItem(selectedHouseholdId, id);
+  const deleteItem = (id: string) => {
+    setItems(items.filter(item => item.id !== id));
   };
 
   const startEditingItem = (id: string) => {
     setEditingItem(id);
   };
 
-  const saveItemEdit = async (id: string, newQuantity: string, newUnit: string) => {
-    if (!selectedHouseholdId) return;
-    
-    const success = await updateShoppingItem(selectedHouseholdId, id, {
-      quantity: newQuantity,
-      unit: newUnit
-    });
-    
-    if (success) {
-      setEditingItem(null);
-    }
+  const saveItemEdit = (id: string, newQuantity: string, newUnit: string) => {
+    setItems(items.map(item => 
+      item.id === id ? { ...item, quantity: newQuantity, unit: newUnit } : item
+    ));
+    setEditingItem(null);
   };
 
   const cancelItemEdit = () => {
@@ -221,53 +201,49 @@ const Shopping = () => {
     e.preventDefault();
     if (!draggedItem || draggedItem === targetId) return;
 
-    // Note: drag and drop reordering would need to be implemented in the store
+    const draggedIndex = items.findIndex(item => item.id === draggedItem);
+    const targetIndex = items.findIndex(item => item.id === targetId);
+    
+    if (draggedIndex === -1 || targetIndex === -1) return;
+
+    const newItems = [...items];
+    const [draggedElement] = newItems.splice(draggedIndex, 1);
+    newItems.splice(targetIndex, 0, draggedElement);
+    
+    setItems(newItems);
     setDraggedItem(null);
   };
 
   // Filter items by category
   const filterItemsByCategory = (itemsList: ShoppingItem[]) => {
     if (categoryFilter === 'All') return itemsList;
-    return itemsList.filter(item => item.item?.category === categoryFilter);
+    return itemsList.filter(item => item.item.category === categoryFilter);
   };
 
-  const pendingItems = filterItemsByCategory(getPendingItems());
-  const completedItems = filterItemsByCategory(getCompletedItems());
-  const totalItems = getTotalItems();
-  const completedCount = getCompletedCount();
+  const pendingItems = filterItemsByCategory(items.filter(item => !item.completed));
+  const completedItems = filterItemsByCategory(items.filter(item => item.completed));
+  const totalItems = items.length;
+  const completedCount = completedItems.length;
 
   // Get unique categories from items
-  const categories = ['All', ...Array.from(new Set(items.map(item => item.item?.category).filter(Boolean)))];
+  const categories = ['All', ...Array.from(new Set(items.map(item => item.item.category)))];
 
   const getCategoryColor = (category: string) => {
     const colors: { [key: string]: string } = {
-      'vegetables': 'bg-green-100 text-green-800',
-      'fruits': 'bg-orange-100 text-orange-800',
-      'meat': 'bg-red-100 text-red-800',
-      'dairy': 'bg-blue-100 text-blue-800',
-      'grains': 'bg-yellow-100 text-yellow-800',
-      'other': 'bg-gray-100 text-gray-700'
+      'Dairy': 'bg-blue-100 text-blue-800',
+      'Produce': 'bg-green-100 text-green-800',
+      'Meat': 'bg-red-100 text-red-800',
+      'Bakery': 'bg-orange-100 text-orange-800',
+      'Grains': 'bg-yellow-100 text-yellow-800',
+      'Other': 'bg-gray-100 text-gray-800'
     };
-    return colors[category?.toLowerCase()] || colors['other'];
-  };
-
-  const getItemName = (shoppingItem: ShoppingItem) => {
-    return shoppingItem.item?.name || 'Unknown Item';
-  };
-
-  const getItemCategory = (shoppingItem: ShoppingItem) => {
-    return shoppingItem.item?.category || 'Other';
-  };
-
-  const getItemData = (shoppingItem: ShoppingItem): Item | null => {
-    return shoppingItem.item || null;
+    return colors[category] || colors['Other'];
   };
 
   const ShoppingItemRow = ({ shoppingItem, isCompleted = false }: { shoppingItem: ShoppingItem; isCompleted?: boolean }) => {
     const [editQuantity, setEditQuantity] = useState(shoppingItem.quantity);
     const [editUnit, setEditUnit] = useState(shoppingItem.unit);
     const isEditing = editingItem === shoppingItem.id;
-    const itemData = getItemData(shoppingItem);
 
     const handleSave = () => {
       saveItemEdit(shoppingItem.id, editQuantity, editUnit);
@@ -278,10 +254,6 @@ const Shopping = () => {
       setEditUnit(shoppingItem.unit);
       cancelItemEdit();
     };
-
-    if (!itemData) {
-      return null; // Skip items that can't be resolved
-    }
 
     return (
       <div
@@ -310,10 +282,10 @@ const Shopping = () => {
           <div className="flex items-center gap-2 justify-between">
             <div className="flex items-center gap-2 flex-1 min-w-0">
               <span className={`font-medium ${isCompleted ? 'text-gray-700 line-through' : 'text-gray-900'}`}>
-                {getItemName(shoppingItem)}
+                {shoppingItem.item.name}
               </span>
-              <Badge className={getCategoryColor(getItemCategory(shoppingItem))}>
-                {getItemCategory(shoppingItem)}
+              <Badge className={getCategoryColor(shoppingItem.item.category)}>
+                {shoppingItem.item.category}
               </Badge>
             </div>
             {isEditing && (
@@ -340,7 +312,7 @@ const Shopping = () => {
             {isEditing ? (
               <div className="mt-1">
                 <QuantitySelector
-                  item={itemData}
+                  item={shoppingItem.item}
                   initialQuantity={editQuantity}
                   initialUnit={editUnit}
                   onQuantityChange={(quantity, unit) => {
@@ -354,7 +326,7 @@ const Shopping = () => {
               <div className="flex items-center gap-2">
                 <span>{shoppingItem.quantity} {shoppingItem.unit}</span>
                 <span>•</span>
-                <span>Added by You</span>
+                <span>Added by {shoppingItem.addedBy}</span>
               </div>
             )}
           </div>
@@ -394,7 +366,7 @@ const Shopping = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => deleteItemHandler(shoppingItem.id)}
+              onClick={() => deleteItem(shoppingItem.id)}
               className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
             >
               <Trash2 className="h-4 w-4" />
@@ -421,9 +393,9 @@ const Shopping = () => {
             <div className="space-y-4">
               <div className="bg-gray-50 p-3 rounded-lg">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-medium">{getItemName(itemToStore)}</span>
-                  <Badge className={getCategoryColor(getItemCategory(itemToStore))}>
-                    {getItemCategory(itemToStore)}
+                  <span className="font-medium">{itemToStore.item.name}</span>
+                  <Badge className={getCategoryColor(itemToStore.item.category)}>
+                    {itemToStore.item.category}
                   </Badge>
                 </div>
                 <p className="text-sm text-gray-600">
@@ -526,25 +498,6 @@ const Shopping = () => {
           buttonText="Add"
         />
 
-        {loading && (
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-            <CardContent className="p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading shopping list...</p>
-            </CardContent>
-          </Card>
-        )}
-
-        {!loading && !selectedHouseholdId && (
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-            <CardContent className="p-8 text-center">
-              <p className="text-gray-600">Please select a household to view your shopping list.</p>
-            </CardContent>
-          </Card>
-        )}
-
-        {!loading && selectedHouseholdId && (
-        <>
         {/* Category Filter */}
         <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
           <CardContent className="p-4">
@@ -618,50 +571,41 @@ const Shopping = () => {
         </Card>
 
         {/* Completed Items */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-lg">
-              Completed ({completedItems.length})
-              {categoryFilter !== 'All' && (
-                <span className="text-sm font-normal text-gray-600 ml-2">
-                  • {categoryFilter}
-                </span>
-              )}
-              {loadingCompleted && (
-                <div className="inline-flex items-center gap-2 ml-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
-                  <span className="text-sm text-gray-500">Loading...</span>
+        {completedItems.length > 0 && (
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg">
+                  Completed ({completedItems.length})
+                  {categoryFilter !== 'All' && (
+                    <span className="text-sm font-normal text-gray-600 ml-2">
+                      • {categoryFilter}
+                    </span>
+                  )}
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowCompleted(!showCompleted)}
+                >
+                  {showCompleted ? 'Hide' : 'Show'}
+                </Button>
+              </div>
+            </CardHeader>
+            {showCompleted && (
+              <CardContent>
+                <div className="space-y-3">
+                  {completedItems.map((shoppingItem) => (
+                    <ShoppingItemRow 
+                      key={shoppingItem.id} 
+                      shoppingItem={shoppingItem} 
+                      isCompleted={true} 
+                    />
+                  ))}
                 </div>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loadingCompleted && completedItems.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
-                <p>Loading completed items...</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {completedItems.map((shoppingItem) => (
-                  <ShoppingItemRow 
-                    key={shoppingItem.id} 
-                    shoppingItem={shoppingItem} 
-                    isCompleted={true} 
-                  />
-                ))}
-                {completedItems.length === 0 && completedItemsLoaded && (
-                  <div className="text-center py-8 text-gray-500">
-                    <div className="text-4xl mb-2">✅</div>
-                    <p>No completed items yet</p>
-                    <p className="text-sm">Items you mark as complete will appear here</p>
-                  </div>
-                )}
-              </div>
+              </CardContent>
             )}
-          </CardContent>
-        </Card>
-        </>
+          </Card>
         )}
       </div>
 

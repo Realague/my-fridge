@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
 
 interface StorageArea {
-  id: string;
+  id: number;
   name: string;
   emoji: string;
   itemCount: number;

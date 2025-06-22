@@ -8,7 +8,6 @@ interface UserAttributes {
   firstName: string;
   lastName: string;
   googleId?: string;
-  selectedHouseholdId?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -22,13 +21,8 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   public firstName!: string;
   public lastName!: string;
   public googleId?: string;
-  public selectedHouseholdId?: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
-
-  // Association attributes for TypeScript
-  public readonly households?: any[];
-  public readonly HouseholdMember?: any;
 }
 
 User.init(
@@ -58,15 +52,6 @@ User.init(
       type: DataTypes.STRING,
       allowNull: true,
       unique: true,
-    },
-    selectedHouseholdId: {
-      type: DataTypes.UUID,
-      allowNull: true,
-      references: {
-        model: 'households',
-        key: 'id'
-      },
-      onDelete: 'SET NULL'
     },
   },
   {

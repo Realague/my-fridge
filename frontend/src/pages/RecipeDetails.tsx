@@ -6,11 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, Plus, ChefHat } from 'lucide-react';
-import BottomNavigation from '@/components/BottomNavigation';
 import { useRecipes } from '@/contexts/RecipeContext';
 import { useMealPlan } from '@/contexts/MealPlanContext';
-import { useShoppingStore } from '@/stores/shoppingStore';
-import { useHouseholdStore } from '@/stores/householdStore';
+import { useItems } from '@/contexts/ItemContext';
 import { useToast } from '@/hooks/use-toast';
 
 const RecipeDetails = () => {
@@ -18,6 +16,7 @@ const RecipeDetails = () => {
   const navigate = useNavigate();
   const { getRecipeById, toggleFavorite, deleteRecipe } = useRecipes();
   const { addToMealPlan } = useMealPlan();
+  const { getItemById } = useItems();
   const { toast } = useToast();
   
   const [showMealPlanDialog, setShowMealPlanDialog] = useState(false);
@@ -236,12 +235,13 @@ const RecipeDetails = () => {
           <CardContent>
             <ul className="space-y-3">
               {recipe.ingredients.map((ingredient, index) => {
+                const item = getItemById(ingredient.itemId);
                 return (
                   <li key={ingredient.id} className="flex items-start gap-3 p-2 bg-gray-50 rounded-lg">
                     <span className="text-green-600 mt-1.5 text-xs">●</span>
                     <div className="flex-1">
                       <div className="font-medium text-gray-900">
-                        {ingredient.quantity} {ingredient.unit} {/*{ingredient.item?.name || 'Unknown item'}*/}
+                        {ingredient.quantity} {ingredient.unit} {item?.name || 'Unknown item'}
                       </div>
                       {ingredient.notes && (
                         <div className="text-sm text-gray-600 mt-1">{ingredient.notes}</div>

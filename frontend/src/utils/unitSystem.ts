@@ -1,4 +1,3 @@
-import { Unit, ItemCategory, ITEM_CATEGORIES, UNITS } from '@/types/enums';
 
 export interface UnitCategory {
   name: string;
@@ -7,117 +6,67 @@ export interface UnitCategory {
 }
 
 export const UNIT_CATEGORIES: Record<string, UnitCategory> = {
-  [ItemCategory.DAIRY]: {
+  'Dairy': {
     name: 'Dairy',
-    defaultUnit: Unit.GALLON,
-    availableUnits: [Unit.GALLON, Unit.QUART, Unit.PINT, Unit.CUP, Unit.FLUID_OUNCE, Unit.LITER, Unit.MILLILITER]
+    defaultUnit: 'gallon',
+    availableUnits: ['gallon', 'half gallon', 'quart', 'pint', 'cup', 'fl oz']
   },
-  [ItemCategory.VEGETABLES]: {
-    name: 'Vegetables',
-    defaultUnit: Unit.POUND,
-    availableUnits: [Unit.POUND, Unit.OUNCE, Unit.KILOGRAM, Unit.GRAM, Unit.PIECE, Unit.BUNCH, Unit.PACK]
+  'Produce': {
+    name: 'Produce',
+    defaultUnit: 'lb',
+    availableUnits: ['lb', 'oz', 'kg', 'g', 'piece', 'bunch', 'bag']
   },
-  [ItemCategory.FRUITS]: {
-    name: 'Fruits',
-    defaultUnit: Unit.POUND,
-    availableUnits: [Unit.POUND, Unit.OUNCE, Unit.KILOGRAM, Unit.GRAM, Unit.PIECE, Unit.BUNCH, Unit.PACK]
-  },
-  [ItemCategory.MEAT]: {
+  'Meat': {
     name: 'Meat',
-    defaultUnit: Unit.POUND,
-    availableUnits: [Unit.POUND, Unit.OUNCE, Unit.KILOGRAM, Unit.GRAM, Unit.PIECE, Unit.PACK]
+    defaultUnit: 'lb',
+    availableUnits: ['lb', 'oz', 'kg', 'g', 'piece', 'package']
   },
-  [ItemCategory.GRAINS]: {
+  'Bakery': {
+    name: 'Bakery',
+    defaultUnit: 'loaf',
+    availableUnits: ['loaf', 'piece', 'dozen', 'package', 'bag']
+  },
+  'Grains': {
     name: 'Grains',
-    defaultUnit: Unit.POUND,
-    availableUnits: [Unit.POUND, Unit.OUNCE, Unit.KILOGRAM, Unit.GRAM, Unit.CUP, Unit.PACK]
+    defaultUnit: 'lb',
+    availableUnits: ['lb', 'oz', 'kg', 'g', 'cup', 'bag', 'box']
   },
-  [ItemCategory.BEVERAGES]: {
+  'Beverages': {
     name: 'Beverages',
-    defaultUnit: Unit.LITER,
-    availableUnits: [Unit.LITER, Unit.MILLILITER, Unit.GALLON, Unit.QUART, Unit.PINT, Unit.CUP, Unit.FLUID_OUNCE, Unit.PACK]
+    defaultUnit: 'bottle',
+    availableUnits: ['bottle', 'can', 'gallon', 'liter', 'ml', 'cup', 'pack']
   },
-  [ItemCategory.CANNED]: {
+  'Canned': {
     name: 'Canned',
-    defaultUnit: Unit.PACK,
-    availableUnits: [Unit.PACK, Unit.PIECE, Unit.GRAM, Unit.KILOGRAM, Unit.OUNCE, Unit.POUND]
+    defaultUnit: 'can',
+    availableUnits: ['can', 'jar', 'bottle', 'package', 'box']
   },
-  [ItemCategory.FROZEN]: {
+  'Frozen': {
     name: 'Frozen',
-    defaultUnit: Unit.PACK,
-    availableUnits: [Unit.PACK, Unit.POUND, Unit.OUNCE, Unit.KILOGRAM, Unit.GRAM, Unit.PIECE]
+    defaultUnit: 'package',
+    availableUnits: ['package', 'bag', 'box', 'lb', 'oz']
   },
-  [ItemCategory.SNACKS]: {
+  'Snacks': {
     name: 'Snacks',
-    defaultUnit: Unit.PACK,
-    availableUnits: [Unit.PACK, Unit.PIECE, Unit.OUNCE, Unit.GRAM]
+    defaultUnit: 'bag',
+    availableUnits: ['bag', 'box', 'package', 'piece', 'oz']
   },
-  [ItemCategory.CONDIMENTS]: {
+  'Condiments': {
     name: 'Condiments',
-    defaultUnit: Unit.PACK,
-    availableUnits: [Unit.PACK, Unit.PIECE, Unit.FLUID_OUNCE, Unit.MILLILITER, Unit.TABLESPOON, Unit.TEASPOON]
+    defaultUnit: 'bottle',
+    availableUnits: ['bottle', 'jar', 'packet', 'tube', 'can']
   },
-  [ItemCategory.SPICES]: {
-    name: 'Spices',
-    defaultUnit: Unit.GRAM,
-    availableUnits: [Unit.GRAM, Unit.OUNCE, Unit.TEASPOON, Unit.TABLESPOON, Unit.PACK]
-  },
-  [ItemCategory.OTHER]: {
+  'Other': {
     name: 'Other',
-    defaultUnit: Unit.PIECE,
-    availableUnits: [Unit.PIECE, Unit.PACK, Unit.GRAM, Unit.KILOGRAM, Unit.OUNCE, Unit.POUND]
+    defaultUnit: 'piece',
+    availableUnits: ['piece', 'package', 'box', 'bag', 'bottle']
   }
 };
 
 export const getUnitsForCategory = (category: string): UnitCategory => {
-  return UNIT_CATEGORIES[category] || UNIT_CATEGORIES[ItemCategory.OTHER];
+  return UNIT_CATEGORIES[category] || UNIT_CATEGORIES['Other'];
 };
 
 export const getAllCategories = (): string[] => {
   return Object.keys(UNIT_CATEGORIES);
-};
-
-// Helper function to get display name for units
-export const getUnitDisplayName = (unit: string): string => {
-  const displayNames: Record<string, string> = {
-    [Unit.GRAM]: 'g',
-    [Unit.KILOGRAM]: 'kg',
-    [Unit.POUND]: 'lb',
-    [Unit.OUNCE]: 'oz',
-    [Unit.MILLILITER]: 'ml',
-    [Unit.LITER]: 'L',
-    [Unit.CUP]: 'cup',
-    [Unit.TABLESPOON]: 'tbsp',
-    [Unit.TEASPOON]: 'tsp',
-    [Unit.FLUID_OUNCE]: 'fl oz',
-    [Unit.PINT]: 'pint',
-    [Unit.QUART]: 'qt',
-    [Unit.GALLON]: 'gal',
-    [Unit.PIECE]: 'piece',
-    [Unit.PACK]: 'pack',
-    [Unit.BUNCH]: 'bunch',
-    [Unit.DOZEN]: 'dozen',
-    [Unit.OTHER]: 'other'
-  };
-  
-  return displayNames[unit] || unit;
-};
-
-// Validation functions
-export const isValidUnit = (unit: string): boolean => {
-  return UNITS.includes(unit as Unit);
-};
-
-export const isValidCategory = (category: string): boolean => {
-  return ITEM_CATEGORIES.includes(category as ItemCategory);
-};
-
-// Helper to ensure a unit is valid, fallback to PIECE
-export const sanitizeUnit = (unit: string): string => {
-  return isValidUnit(unit) ? unit : Unit.PIECE;
-};
-
-// Helper to ensure a category is valid, fallback to OTHER
-export const sanitizeCategory = (category: string): string => {
-  return isValidCategory(category) ? category : ItemCategory.OTHER;
 };

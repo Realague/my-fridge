@@ -1,18 +1,17 @@
+
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { X } from 'lucide-react';
-import { Item } from '@/services/itemService';
-import { getUnitsForCategory, getUnitDisplayName } from '@/utils/unitSystem';
-import { ITEM_CATEGORIES, UNITS } from '@/types/enums';
+import { X, Check, Plus } from 'lucide-react';
+import { FoodItem } from '@/contexts/ItemContext';
+import { getUnitsForCategory, getAllCategories } from '@/utils/unitSystem';
 
 interface ItemEditorProps {
-  item: Item;
-  onSave: (updatedItem: Partial<Item>) => void;
+  item: FoodItem;
+  onSave: (updatedItem: Partial<FoodItem>) => void;
   onCancel: () => void;
 }
 
@@ -20,47 +19,28 @@ export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
   const [name, setName] = useState(item.name);
   const [category, setCategory] = useState(item.category);
   const [defaultUnit, setDefaultUnit] = useState(item.defaultUnit);
-  
-  // Ensure availableUnits is always an array (handle cases where it might be a string from DB)
-  const initialAvailableUnits = React.useMemo(() => {
-    if (Array.isArray(item.availableUnits)) {
-      return item.availableUnits;
-    }
-    // If it's a string (JSON), try to parse it
-    if (typeof item.availableUnits === 'string') {
-      try {
-        const parsed = JSON.parse(item.availableUnits);
-        return Array.isArray(parsed) ? parsed : [item.defaultUnit];
-      } catch {
-        return [item.defaultUnit];
-      }
-    }
-    // Fallback to default unit
-    return [item.defaultUnit];
-  }, [item.availableUnits, item.defaultUnit]);
-  
-  const [availableUnits, setAvailableUnits] = useState<string[]>(initialAvailableUnits);
+  const [availableUnits, setAvailableUnits] = useState<string[]>(item.availableUnits);
+  const [newUnit, setNewUnit] = useState('');
+
+  const categoryUnits = getUnitsForCategory(category);
 
   const handleCategoryChange = (newCategory: string) => {
     setCategory(newCategory);
-    const categoryUnits = getUnitsForCategory(newCategory);
-    setDefaultUnit(categoryUnits.defaultUnit);
-    setAvailableUnits(categoryUnits.availableUnits);
+    const units = getUnitsForCategory(newCategory);
+    setDefaultUnit(units.defaultUnit);
+    setAvailableUnits(units.availableUnits);
   };
 
-  const handleAddUnit = (unit: string) => {
-    if (unit && !availableUnits.includes(unit)) {
-      setAvailableUnits([...availableUnits, unit]);
+  const addCustomUnit = () => {
+    if (newUnit.trim() && !availableUnits.includes(newUnit.trim())) {
+      setAvailableUnits([...availableUnits, newUnit.trim()]);
+      setNewUnit('');
     }
   };
 
-  const handleRemoveUnit = (unit: string) => {
-    if (availableUnits.length > 1) {
-      const newUnits = availableUnits.filter(u => u !== unit);
-      setAvailableUnits(newUnits);
-      if (defaultUnit === unit && newUnits.length > 0) {
-        setDefaultUnit(newUnits[0]);
-      }
+  const removeUnit = (unitToRemove: string) => {
+    if (availableUnits.length > 1 && unitToRemove !== defaultUnit) {
+      setAvailableUnits(availableUnits.filter(unit => unit !== unitToRemove));
     }
   };
 
@@ -69,111 +49,110 @@ export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
       name: name.trim(),
       category,
       defaultUnit,
-      availableUnits,
+      availableUnits
     });
   };
 
   return (
-    <Dialog open={true} onOpenChange={(open) => !open && onCancel()}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader className="pb-4">
-          <DialogTitle>
-            {item.id ? 'Edit Item' : 'Create New Item'}
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="item-name">Name</Label>
-            <Input
-              id="item-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Item name"
-              className="mt-1"
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="item-category">Category</Label>
-            <Select value={category} onValueChange={handleCategoryChange}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {ITEM_CATEGORIES.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div>
-            <Label htmlFor="default-unit">Default Unit</Label>
-            <Select value={defaultUnit} onValueChange={setDefaultUnit}>
-              <SelectTrigger className="mt-1">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {availableUnits.map((unit) => (
-                  <SelectItem key={unit} value={unit}>
-                    {getUnitDisplayName(unit)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div>
-            <Label>Available Units</Label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {availableUnits.map((unit) => (
-                <Badge
-                  key={unit}
-                  variant={unit === defaultUnit ? "default" : "secondary"}
-                  className="cursor-pointer"
-                >
-                  {getUnitDisplayName(unit)}
-                  {availableUnits.length > 1 && (
-                    <button
-                      onClick={() => handleRemoveUnit(unit)}
-                      className="ml-1 hover:bg-red-100 rounded"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  )}
-                </Badge>
+    <Card className="w-full max-w-md mx-auto">
+      <CardHeader>
+        <CardTitle className="text-lg">Edit Item</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div>
+          <label className="text-sm font-medium text-gray-700 block mb-1">Name</label>
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Item name"
+          />
+        </div>
+
+        <div>
+          <label className="text-sm font-medium text-gray-700 block mb-1">Category</label>
+          <Select value={category} onValueChange={handleCategoryChange}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {getAllCategories().map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
               ))}
-            </div>
-            
-            <div className="mt-2">
-              <Select onValueChange={handleAddUnit}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Add unit" />
-                </SelectTrigger>
-                <SelectContent>
-                  {UNITS.filter(unit => !availableUnits.includes(unit)).map((unit) => (
-                    <SelectItem key={unit} value={unit}>
-                      {getUnitDisplayName(unit)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium text-gray-700 block mb-1">Default Unit</label>
+          <Select value={defaultUnit} onValueChange={setDefaultUnit}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {availableUnits.map((unit) => (
+                <SelectItem key={unit} value={unit}>
+                  {unit}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium text-gray-700 block mb-2">Available Units</label>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {availableUnits.map((unit) => (
+              <Badge
+                key={unit}
+                variant={unit === defaultUnit ? "default" : "secondary"}
+                className="flex items-center gap-1"
+              >
+                {unit}
+                {unit === defaultUnit && <span className="text-xs">(default)</span>}
+                {availableUnits.length > 1 && unit !== defaultUnit && (
+                  <button
+                    onClick={() => removeUnit(unit)}
+                    className="ml-1 hover:text-red-500"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+              </Badge>
+            ))}
+          </div>
+          
+          <div className="flex gap-2">
+            <Input
+              value={newUnit}
+              onChange={(e) => setNewUnit(e.target.value)}
+              placeholder="Add custom unit"
+              className="flex-1"
+              onKeyPress={(e) => e.key === 'Enter' && addCustomUnit()}
+            />
+            <Button
+              type="button"
+              onClick={addCustomUnit}
+              size="sm"
+              variant="outline"
+              disabled={!newUnit.trim()}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
           </div>
         </div>
-        
-        <div className="flex justify-end gap-2 pt-4 border-t">
-          <Button variant="outline" onClick={onCancel}>
+
+        <div className="flex gap-2 pt-4">
+          <Button onClick={handleSave} className="flex-1">
+            <Check className="h-4 w-4 mr-2" />
+            Save
+          </Button>
+          <Button variant="outline" onClick={onCancel} className="flex-1">
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={!name.trim()}>
-            {item.id ? 'Update' : 'Create'}
-          </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </CardContent>
+    </Card>
   );
 };

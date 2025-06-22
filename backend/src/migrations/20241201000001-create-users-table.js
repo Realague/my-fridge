@@ -30,15 +30,6 @@ module.exports = {
         allowNull: false,
         unique: true
       },
-      selectedHouseholdId: {
-        type: DataTypes.UUID,
-        allowNull: true,
-        references: {
-          model: 'households',
-          key: 'id'
-        },
-        onDelete: 'SET NULL'
-      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,

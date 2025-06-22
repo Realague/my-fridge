@@ -1,9 +1,9 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Plus } from 'lucide-react';
-import { Item } from '@/services/itemService';
+import { useItems, FoodItem } from '@/contexts/ItemContext';
 import { QuantitySelector } from './QuantitySelector';
 import { ItemSelector } from './ItemSelector';
 import { toast } from 'sonner';
@@ -11,25 +11,23 @@ import { z } from 'zod';
 
 interface AddItemCardProps {
   title?: string;
-  onItemAdd: (item: Item, quantity: string, unit: string) => void;
+  onItemAdd: (item: FoodItem, quantity: string, unit: string) => void;
   placeholder?: string;
   buttonText?: string;
-  disabled?: boolean;
 }
 
 export const AddItemCard = ({ 
   title = "Add Item",
   onItemAdd,
   placeholder = "Search or add item...",
-  buttonText = "Add",
-  disabled = false
+  buttonText = "Add"
 }: AddItemCardProps) => {
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const { updateItemUsage } = useItems();
+  const [selectedItem, setSelectedItem] = useState<FoodItem | null>(null);
   const [newItemQuantity, setNewItemQuantity] = useState('1');
   const [newItemUnit, setNewItemUnit] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleItemSelect = (item: Item | null) => {
+  const handleItemSelect = (item: FoodItem | null) => {
     setSelectedItem(item);
     if (item) {
       setNewItemQuantity('1');
@@ -46,13 +44,11 @@ export const AddItemCard = ({
     setNewItemUnit(unit);
   };
 
-  const handleAddItem = async () => {
+  const handleAddItem = () => {
     if (!selectedItem) {
       toast.error("Please select an item first.");
       return;
     }
-
-    if (isSubmitting) return; // Prevent double submission
 
     const quantitySchema = z.string()
       .trim()
@@ -68,23 +64,13 @@ export const AddItemCard = ({
       return;
     }
 
-    setIsSubmitting(true);
-    
-    try {
-      await onItemAdd(selectedItem, validationResult.data, newItemUnit);
-      
-      // Reset form after successful addition
-      setSelectedItem(null);
-      setNewItemQuantity('1');
-      setNewItemUnit('');
-      
-      toast.success(`Added ${selectedItem.name} to the list.`);
-    } catch (error) {
-      console.error('Failed to add item:', error);
-      toast.error('Failed to add item. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    onItemAdd(selectedItem, validationResult.data, newItemUnit);
+    updateItemUsage(selectedItem.id);
+    toast.success(`Added ${selectedItem.name} to the list.`);
+
+    setSelectedItem(null);
+    setNewItemQuantity('1');
+    setNewItemUnit('');
   };
 
   return (
@@ -106,14 +92,9 @@ export const AddItemCard = ({
         {selectedItem && (
           <div className="flex gap-2 items-end">
             <div className="flex-1">
-              <div className="text-sm text-gray-600 mb-2">
+              <p className="text-sm text-gray-600 mb-2">
                 Selected: <span className="font-medium">{selectedItem.name}</span>
-                {selectedItem.householdId && (
-                  <Badge className="ml-2 text-xs bg-blue-100 text-blue-800">
-                    Household Item
-                  </Badge>
-                )}
-              </div>
+              </p>
               <QuantitySelector
                 item={selectedItem}
                 initialQuantity={newItemQuantity}
@@ -121,19 +102,8 @@ export const AddItemCard = ({
                 onQuantityChange={handleQuantityChange}
               />
             </div>
-            <Button 
-              onClick={handleAddItem} 
-              className="px-6"
-              disabled={disabled || isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Adding...
-                </>
-              ) : (
-                buttonText
-              )}
+            <Button onClick={handleAddItem} className="px-6">
+              {buttonText}
             </Button>
           </div>
         )}

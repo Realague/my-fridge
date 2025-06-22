@@ -14,7 +14,7 @@ import { ArrowLeft, Plus, X } from 'lucide-react';
 import { useRecipes, Recipe } from '@/contexts/RecipeContext';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
 import { useToast } from '@/hooks/use-toast';
-import { useItemService } from '@/services/itemService';
+import { useItems } from '@/contexts/ItemContext';
 
 interface RecipeFormData {
   title: string;
@@ -30,7 +30,7 @@ const EditRecipe = () => {
   const navigate = useNavigate();
   const { getRecipeById, updateRecipe } = useRecipes();
   const { toast } = useToast();
-  const { getItemById } = useItemService();
+  const { getItemById } = useItems();
   
   const recipe = id ? getRecipeById(id) : undefined;
   
@@ -401,7 +401,7 @@ const EditRecipe = () => {
                                   onCheckedChange={() => toggleIngredientForStep(ingredient.id, index)}
                                 />
                                 <span className="text-sm text-gray-600">
-                                  {ingredient.quantity} {ingredient.unit} {/*{item.name}*/}
+                                  {ingredient.quantity} {ingredient.unit} {item.name}
                                 </span>
                               </div>
                             );

@@ -8,6 +8,7 @@ import { StorageAreaSeeder } from '../seeders/defaultStorageAreas';
 import { authenticateGoogleToken } from '../middleware/auth';
 import { validateRequest } from '../middleware/validation';
 import storageAreaRoutes from './storageAreas';
+import shoppingRoutes from './shopping';
 
 // Validation schemas for the middleware
 const CreateHouseholdSchema = { name: 'CreateHouseholdDto' };
@@ -65,5 +66,8 @@ router.put('/:id/select',
 
 // Nested routes for storage areas
 router.use('/:householdId/storage-areas', storageAreaRoutes);
+
+// Nested routes for shopping lists
+router.use('/:householdId/shopping', shoppingRoutes);
 
 export default router; 

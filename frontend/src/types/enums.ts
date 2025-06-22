@@ -6,7 +6,6 @@ export enum StorageAreaType {
   OTHER = 'other'
 }
 
-// Helper to get all enum values as an array
 export const STORAGE_AREA_TYPES = Object.values(StorageAreaType);
 
 export enum ItemCategory {
@@ -60,4 +59,4 @@ export enum ShoppingItemStatus {
   PENDING = 'pending',
   COMPLETED = 'completed',
   CANCELLED = 'cancelled'
-}
+} 

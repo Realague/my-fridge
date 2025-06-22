@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, ArrowRight, Play, Pause, RotateCcw, Clock, ChefHat } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Play, Pause, RotateCcw, Clock, ChefHat, Badge } from 'lucide-react';
 import { useRecipes } from '@/contexts/RecipeContext';
-import { useItems } from '@/contexts/ItemContext';
 
 const RecipeCookingMode = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getRecipeById } = useRecipes();
-  const { getItemById } = useItems();
   
   const recipe = id ? getRecipeById(id) : undefined;
   
@@ -115,14 +113,13 @@ const RecipeCookingMode = () => {
       
       // Fallback to text matching if no explicit mapping
       if (!ingredient.usedInSteps || ingredient.usedInSteps.length === 0) {
-        const item = getItemById(ingredient.itemId);
-        const itemName = item?.name?.toLowerCase() || '';
+        //const itemName = item?.name?.toLowerCase() || '';
         const stepText = recipe.instructions[stepIndex].toLowerCase();
         
         // Check if ingredient name or notes appear in the step
-        if (itemName && stepText.includes(itemName)) {
-          relevantIngredients.push(index);
-        }
+        //if (itemName && stepText.includes(itemName)) {
+        //  relevantIngredients.push(index);
+        //}
         
         // Also check ingredient notes for matches
         if (ingredient.notes && stepText.includes(ingredient.notes.toLowerCase())) {
@@ -246,12 +243,11 @@ const RecipeCookingMode = () => {
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-2">
                       {relevantIngredients.map((ingredientIndex) => {
                         const ingredient = recipe.ingredients[ingredientIndex];
-                        const item = getItemById(ingredient.itemId);
                         return (
                           <div key={ingredient.id} className="flex items-center gap-2 text-sm">
                             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                             <span className="font-medium text-green-800">
-                              {ingredient.quantity} {ingredient.unit} {item?.name || 'Unknown item'}
+                              {ingredient.quantity} {ingredient.unit} {/*{item?.name || 'Unknown item'}*/}
                             </span>
                             {ingredient.notes && (
                               <span className="text-green-600 italic">({ingredient.notes})</span>
@@ -306,7 +302,6 @@ const RecipeCookingMode = () => {
                 {showIngredients && (
                   <div className="space-y-3">
                     {recipe.ingredients.map((ingredient, index) => {
-                      const item = getItemById(ingredient.itemId);
                       const isRelevant = relevantIngredients.includes(index);
                       return (
                         <div 
@@ -322,7 +317,7 @@ const RecipeCookingMode = () => {
                           />
                           <div className={`flex-1 text-sm ${checkedIngredients[index] ? 'line-through text-gray-500' : 'text-gray-800'}`}>
                             <div className={`font-medium ${isRelevant ? 'text-green-800' : ''}`}>
-                              {ingredient.quantity} {ingredient.unit} {item?.name || 'Unknown item'}
+                              {ingredient.quantity} {ingredient.unit} {/*{item?.name || 'Unknown item'}*/}
                             </div>
                             {ingredient.notes && (
                               <div className={`text-xs ${isRelevant ? 'text-green-600' : 'text-gray-600'}`}>
@@ -384,3 +379,4 @@ const RecipeCookingMode = () => {
 };
 
 export default RecipeCookingMode;
+

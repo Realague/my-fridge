@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import migrationRoutes from './routes/migrations';
 import householdRoutes from './routes/households';
+import itemRoutes from './routes/items';
+import shoppingRoutes from './routes/shopping';
 import { sequelize } from './models';
 import { executeSmartMigration } from './utils/migrationStrategy';
 
@@ -30,6 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/auth', authRoutes);
 app.use('/api/migrations', migrationRoutes);
 app.use('/api/households', householdRoutes);
+app.use('/api/items', itemRoutes);
 
 app.get('/', (req, res) => {
   res.json({
@@ -42,6 +45,7 @@ app.get('/', (req, res) => {
       migrations: '/api/migrations',
       households: '/api/households',
       storageAreas: '/api/households/:householdId/storage-areas',
+      items: '/api/items',
       dbTest: '/db-test'
     }
   });

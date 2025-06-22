@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import { NotificationProvider } from "@/contexts/NotificationContext";
-import { ItemProvider } from "@/contexts/ItemContext";
+
 import { StorageProvider } from "@/contexts/StorageContext";
 import { RecipeProvider } from "@/contexts/RecipeContext";
 import { MealPlanProvider } from "@/contexts/MealPlanContext";
@@ -44,11 +44,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <NotificationProvider>
-          <ItemProvider>
-            <StorageProvider>
+          <StorageProvider>
               <RecipeProvider>
-                <MealPlanProvider>
-                  <BrowserRouter>
+                <BrowserRouter>
+                  <MealPlanProvider>
                     <StoreProvider>
                       <Toaster />
                       <Sonner />
@@ -73,11 +72,10 @@ function App() {
                       <Route path="*" element={<NotFound />} />
                                           </Routes>
                     </StoreProvider>
-                  </BrowserRouter>
-                </MealPlanProvider>
+                  </MealPlanProvider>
+                </BrowserRouter>
               </RecipeProvider>
             </StorageProvider>
-          </ItemProvider>
         </NotificationProvider>
       </TooltipProvider>
     </QueryClientProvider>

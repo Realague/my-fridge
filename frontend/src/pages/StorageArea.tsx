@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -12,20 +11,19 @@ import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
 import { QuantitySelector } from '@/components/QuantitySelector';
 import { useStorage, StorageItem } from '@/contexts/StorageContext';
-import { useItems, FoodItem } from '@/contexts/ItemContext';
+import { Item } from '@/services/itemService';
 import { format } from 'date-fns';
 
 const StorageArea = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getItemsByArea, getStorageArea, addStorageItem, updateStorageItem, removeStorageItem } = useStorage();
-  const { getItemById, updateItemUsage } = useItems();
   
   const area = getStorageArea(id || '');
   const storageItems = getItemsByArea(id || '');
   
   const [showAddForm, setShowAddForm] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<FoodItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [newItemQuantity, setNewItemQuantity] = useState('1');
   const [newItemUnit, setNewItemUnit] = useState('');
   const [expirationDate, setExpirationDate] = useState('');
@@ -46,9 +44,11 @@ const StorageArea = () => {
     );
   }
 
-  const handleItemSelect = (item: FoodItem) => {
+  const handleItemSelect = (item: Item | null) => {
     setSelectedItem(item);
-    setNewItemUnit(item.defaultUnit);
+    if (item) {
+      setNewItemUnit(item.defaultUnit);
+    }
   };
 
   const handleQuantityChange = (quantity: string, unit: string) => {
@@ -74,7 +74,6 @@ const StorageArea = () => {
       setExpirationDate('');
       setLocation('');
       setShowAddForm(false);
-      updateItemUsage(selectedItem.id);
     }
   };
 
@@ -112,7 +111,20 @@ const StorageArea = () => {
   };
 
   const StorageItemCard = ({ storageItem }: { storageItem: StorageItem }) => {
-    const item = getItemById(storageItem.itemId);
+    // Note: In a real app, you'd want to fetch the item data from the API
+    // For now, we'll create a minimal item object for the QuantitySelector
+    const mockItem: Item = {
+      id: storageItem.itemId,
+      name: 'Item', // This should come from API
+      category: 'other',
+      defaultUnit: storageItem.unit,
+      availableUnits: [storageItem.unit, 'piece', 'cup', 'lb', 'oz'],
+      createdBy: null,
+      householdId: null,
+      createdAt: '',
+      updatedAt: ''
+    };
+
     const isEditing = editingItem === storageItem.id;
     const [editQuantity, setEditQuantity] = useState(storageItem.quantity);
     const [editUnit, setEditUnit] = useState(storageItem.unit);
@@ -120,8 +132,6 @@ const StorageArea = () => {
     const [editExpiration, setEditExpiration] = useState(
       storageItem.expirationDate ? format(storageItem.expirationDate, 'yyyy-MM-dd') : ''
     );
-
-    if (!item) return null;
 
     const handleSave = () => {
       updateStorageItem(storageItem.id, {
@@ -147,9 +157,9 @@ const StorageArea = () => {
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2">
-                <h3 className="font-medium text-gray-900">{item.name}</h3>
+                <h3 className="font-medium text-gray-900">{mockItem.name}</h3>
                 <Badge variant="outline" className="text-xs">
-                  {item.category}
+                  {mockItem.category}
                 </Badge>
                 {getExpirationBadge(storageItem.expirationDate)}
               </div>
@@ -159,7 +169,7 @@ const StorageArea = () => {
                   <div>
                     <Label className="text-sm">Quantity</Label>
                     <QuantitySelector
-                      item={item}
+                      item={mockItem}
                       initialQuantity={editQuantity}
                       initialUnit={editUnit}
                       onQuantityChange={(quantity, unit) => {

@@ -1,7 +1,6 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Recipe, RecipeIngredient } from './RecipeContext';
-import { useItems } from './ItemContext';
+import { useItemService, Item } from '@/services/itemService';
 import { useStorage } from './StorageContext';
 
 export interface MealPlanEntry {
@@ -19,7 +18,7 @@ interface MealPlanContextType {
   removeMealPlan: (id: string) => void;
   getMealPlansForDate: (date: string) => MealPlanEntry[];
   getMealPlansForWeek: (startDate: string) => MealPlanEntry[];
-  generateShoppingListFromMealPlan: (startDate: string, endDate: string, recipes: Recipe[], onItemsAdded: (items: Array<{item: any, quantity: string, unit: string, source: string}>) => void) => void;
+  generateShoppingListFromMealPlan: (startDate: string, endDate: string, recipes: Recipe[], onItemsAdded: (items: Array<{item: Item, quantity: string, unit: string, source: string}>) => void) => void;
 }
 
 const MealPlanContext = createContext<MealPlanContextType | undefined>(undefined);
@@ -34,7 +33,7 @@ export const useMealPlan = () => {
 
 export const MealPlanProvider = ({ children }: { children: ReactNode }) => {
   const [mealPlans, setMealPlans] = useState<MealPlanEntry[]>([]);
-  const { getItemById, items } = useItems();
+  const itemService = useItemService();
   const { storageItems } = useStorage();
 
   const addToMealPlan = (recipeId: string, date: string, mealType: 'breakfast' | 'lunch' | 'dinner', servings = 1) => {
@@ -68,31 +67,36 @@ export const MealPlanProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const checkIngredientAvailability = (ingredient: RecipeIngredient, neededQuantity: number) => {
-    const item = getItemById(ingredient.itemId);
-    if (!item) return null;
+  const checkIngredientAvailability = async (ingredient: RecipeIngredient, neededQuantity: number) => {
+    try {
+      const item = await itemService.getItemById(ingredient.itemId);
+      if (!item) return null;
 
-    const storage = storageItems.find(storage => storage.itemId === ingredient.itemId);
-    if (!storage) return null;
+      const storage = storageItems.find(storage => storage.itemId === ingredient.itemId);
+      if (!storage) return null;
 
-    // Simple quantity comparison - in a real app you'd need unit conversion
-    const availableQuantity = parseFloat(storage.quantity);
-    return {
-      item,
-      storage,
-      available: availableQuantity >= neededQuantity,
-      shortfall: Math.max(0, neededQuantity - availableQuantity)
-    };
+      // Simple quantity comparison - in a real app you'd need unit conversion
+      const availableQuantity = parseFloat(storage.quantity);
+      return {
+        item,
+        storage,
+        available: availableQuantity >= neededQuantity,
+        shortfall: Math.max(0, neededQuantity - availableQuantity)
+      };
+    } catch (error) {
+      console.error('Failed to get item:', error);
+      return null;
+    }
   };
 
-  const generateShoppingListFromMealPlan = (
+  const generateShoppingListFromMealPlan = async (
     startDate: string, 
     endDate: string, 
     recipes: Recipe[],
-    onItemsAdded: (items: Array<{item: any, quantity: string, unit: string, source: string}>) => void
+    onItemsAdded: (items: Array<{item: Item, quantity: string, unit: string, source: string}>) => void
   ) => {
     const weekMealPlans = getMealPlansForWeek(startDate);
-    const missingItems: Array<{item: any, quantity: string, unit: string, source: string}> = [];
+    const missingItems: Array<{item: Item, quantity: string, unit: string, source: string}> = [];
     
     // Group ingredients by item ID to calculate total needed quantities
     const ingredientTotals = new Map<string, { ingredient: RecipeIngredient, totalQuantity: number, recipes: string[] }>();
@@ -120,22 +124,26 @@ export const MealPlanProvider = ({ children }: { children: ReactNode }) => {
     });
 
     // Check availability and create shopping list
-    ingredientTotals.forEach(({ ingredient, totalQuantity, recipes }) => {
-      const availability = checkIngredientAvailability(ingredient, totalQuantity);
+    for (const [_, { ingredient, totalQuantity, recipes }] of ingredientTotals) {
+      const availability = await checkIngredientAvailability(ingredient, totalQuantity);
       
       if (!availability || !availability.available) {
-        const item = getItemById(ingredient.itemId);
-        if (item) {
-          const shortfall = availability?.shortfall || totalQuantity;
-          missingItems.push({
-            item,
-            quantity: shortfall.toString(),
-            unit: ingredient.unit,
-            source: `Needed for: ${recipes.join(', ')}`
-          });
+        try {
+          const item = await itemService.getItemById(ingredient.itemId);
+          if (item) {
+            const shortfall = availability?.shortfall || totalQuantity;
+            missingItems.push({
+              item,
+              quantity: shortfall.toString(),
+              unit: ingredient.unit,
+              source: `Needed for: ${recipes.join(', ')}`
+            });
+          }
+        } catch (error) {
+          console.error('Failed to get item for shopping list:', error);
         }
       }
-    });
+    }
 
     onItemsAdded(missingItems);
   };

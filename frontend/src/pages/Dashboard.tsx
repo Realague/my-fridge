@@ -20,12 +20,14 @@ import {
 import { useAuthStore } from '@/stores/authStore';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
+import { useShoppingStore } from '@/stores/shoppingStore';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   
   // Zustand stores - selective subscriptions for better performance
   const { isAuthenticated, isLoading: authLoading, user: currentUser, setUser } = useAuthStore();
+  const { getPendingItems } = useShoppingStore();
   
   // Household store - only re-renders when these specific values change
   const households = useHouseholdStore(state => state.households);
@@ -93,9 +95,9 @@ const Dashboard = () => {
   */
 
   const quickActions = [
-    { title: 'Shopping List', description: '5 items pending', emoji: '🛒', route: '/shopping' },
+    { title: 'Shopping List', description: `${getPendingItems().length} items pending`, emoji: '🛒', route: '/shopping' },
     { title: 'Meal Plans', description: 'Plan this week', emoji: '📅', route: '/meal-plans' },
-    { title: 'Recipes', description: '12 saved recipes', emoji: '📖', route: '/recipes' },
+    { title: 'Recipes', description: '${recipeCount} saved recipes', emoji: '📖', route: '/recipes' },
   ];
 
   console.log("Current Household:", getCurrentHousehold());

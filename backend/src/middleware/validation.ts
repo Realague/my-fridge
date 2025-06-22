@@ -1,10 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { ValidationError } from '../errors/CustomErrors';
 
 export function validateRequest(schema: any) {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Basic validation logic - you could integrate with Joi, Yup, or class-validator
       const errors = validateSchema(req.body, schema);
       
       if (errors.length > 0) {

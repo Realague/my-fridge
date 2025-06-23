@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Recipe, RecipeIngredient } from './RecipeContext';
 import { useItemService, Item } from '@/services/itemService';
-import { useStorage } from './StorageContext';
+// import { useStorage } from './StorageContext'; // Removed - using new API stores
 
 export interface MealPlanEntry {
   id: string;
@@ -34,7 +34,8 @@ export const useMealPlan = () => {
 export const MealPlanProvider = ({ children }: { children: ReactNode }) => {
   const [mealPlans, setMealPlans] = useState<MealPlanEntry[]>([]);
   const itemService = useItemService();
-  const { storageItems } = useStorage();
+  // Note: For now, we'll disable the storage check in meal planning
+  // This would need to be updated to use the new stored items API
 
   const addToMealPlan = (recipeId: string, date: string, mealType: 'breakfast' | 'lunch' | 'dinner', servings = 1) => {
     const newMealPlan: MealPlanEntry = {
@@ -68,25 +69,9 @@ export const MealPlanProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const checkIngredientAvailability = async (ingredient: RecipeIngredient, neededQuantity: number) => {
-    try {
-      const item = await itemService.getItemById(ingredient.itemId);
-      if (!item) return null;
-
-      const storage = storageItems.find(storage => storage.itemId === ingredient.itemId);
-      if (!storage) return null;
-
-      // Simple quantity comparison - in a real app you'd need unit conversion
-      const availableQuantity = parseFloat(storage.quantity);
-      return {
-        item,
-        storage,
-        available: availableQuantity >= neededQuantity,
-        shortfall: Math.max(0, neededQuantity - availableQuantity)
-      };
-    } catch (error) {
-      console.error('Failed to get item:', error);
-      return null;
-    }
+    // TODO: Update this to use the new stored items API when needed
+    // For now, we'll return null to disable the feature temporarily
+    return null;
   };
 
   const generateShoppingListFromMealPlan = async (

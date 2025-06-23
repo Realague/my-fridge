@@ -5,7 +5,6 @@ import { toast } from 'sonner';
 
 export interface ShoppingItem {
   id: string;
-  itemId: string;
   item?: {
     id: string;
     name: string;

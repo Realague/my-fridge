@@ -1,3 +1,11 @@
+export class BadRequestError extends Error {
+  public override name = 'BadRequestError';
+  
+  constructor(message: string = 'Bad request') {
+    super(message);
+  }
+}
+
 export class ValidationError extends Error {
   public override name = 'ValidationError';
   public details?: any;

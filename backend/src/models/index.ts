@@ -5,6 +5,7 @@ import { HouseholdMember } from './HouseholdMember';
 import { StorageArea } from './StorageArea';
 import { Item } from './Item';
 import { ShoppingItem } from './ShoppingItem';
+import { StoredItem } from './StoredItem';
 
 // Define associations
 User.hasMany(Household, { foreignKey: 'createdBy', as: 'createdHouseholds' });
@@ -53,6 +54,19 @@ ShoppingItem.belongsTo(Household, { foreignKey: 'householdId', as: 'household' }
 User.hasMany(ShoppingItem, { foreignKey: 'createdBy', as: 'createdShoppingItems' });
 ShoppingItem.belongsTo(User, { foreignKey: 'createdBy', as: 'creator' });
 
+// Stored Item associations
+Item.hasMany(StoredItem, { foreignKey: 'itemId', as: 'storedItems' });
+StoredItem.belongsTo(Item, { foreignKey: 'itemId', as: 'item' });
+
+StorageArea.hasMany(StoredItem, { foreignKey: 'storageAreaId', as: 'storedItems' });
+StoredItem.belongsTo(StorageArea, { foreignKey: 'storageAreaId', as: 'storageArea' });
+
+Household.hasMany(StoredItem, { foreignKey: 'householdId', as: 'storedItems' });
+StoredItem.belongsTo(Household, { foreignKey: 'householdId', as: 'household' });
+
+User.hasMany(StoredItem, { foreignKey: 'createdBy', as: 'createdStoredItems' });
+StoredItem.belongsTo(User, { foreignKey: 'createdBy', as: 'creator' });
+
 // Export models
 export {
   sequelize,
@@ -61,5 +75,6 @@ export {
   HouseholdMember,
   StorageArea,
   Item,
-  ShoppingItem
+  ShoppingItem,
+  StoredItem
 }; 

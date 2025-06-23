@@ -11,14 +11,18 @@ import BottomNavigation from '@/components/BottomNavigation';
 import { AddItemCard } from '@/components/AddItemCard';
 import { QuantitySelector } from '@/components/QuantitySelector';
 import { Item } from '@/services/itemService';
-import { useStorage } from '@/contexts/StorageContext';
 import { useShoppingStore, ShoppingItem } from '@/stores/shoppingStore';
 import { useHouseholdStore } from '@/stores/householdStore';
+import { useStorageAreaStore } from '@/stores/storageAreaStore';
+import { useStoredItemStore } from '@/stores/storedItemStore';
 import { toast } from 'sonner';
 
 const Shopping = () => {
-  const { storageAreas, addStorageItem } = useStorage();
   const { selectedHouseholdId } = useHouseholdStore();
+  const { getStorageAreasForHousehold } = useStorageAreaStore();
+  const { createStoredItem } = useStoredItemStore();
+  
+  const storageAreas = selectedHouseholdId ? getStorageAreasForHousehold(selectedHouseholdId) : [];
   const {
     items,
     loading,
@@ -126,14 +130,14 @@ const Shopping = () => {
     if (!itemToStore || !selectedStorageArea || !selectedHouseholdId) return;
 
     try {
-      // Add to storage
-      addStorageItem({
-        itemId: itemToStore.itemId,
+      console.log('Adding to storage:', itemToStore);
+      // Add to storage using the new API
+      await createStoredItem(selectedHouseholdId, {
+        itemId: itemToStore.item?.id,
         storageAreaId: selectedStorageArea,
-        quantity: itemToStore.quantity,
-        unit: itemToStore.unit,
-        purchaseDate: new Date(),
-        expirationDate: storageExpirationDate ? new Date(storageExpirationDate) : undefined,
+        quantity: parseFloat(itemToStore.quantity),
+        unit: itemToStore.unit as any,
+        expirationDate: storageExpirationDate || undefined,
         location: storageLocation.trim() || undefined,
       });
 

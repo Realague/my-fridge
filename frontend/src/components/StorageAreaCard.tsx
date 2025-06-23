@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
+import { useStoredItemStore } from '@/stores/storedItemStore';
 
 interface StorageArea {
   id: string;

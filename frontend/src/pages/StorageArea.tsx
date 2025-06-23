@@ -1,27 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, ArrowLeft, Calendar, MapPin, AlertTriangle, Edit, Trash2, Save, X } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
 import { QuantitySelector } from '@/components/QuantitySelector';
-import { useStorage, StorageItem } from '@/contexts/StorageContext';
-import { Item } from '@/services/itemService';
+import { useStorageAreaStore } from '@/stores/storageAreaStore';
+import { useStoredItemStore } from '@/stores/storedItemStore';
+import { useHouseholdStore } from '@/stores/householdStore';
+import { itemService } from '@/services/itemService';
 import { format } from 'date-fns';
+import { Unit } from '@/types/enums';
+import { Item } from '@/services/itemService';
 
 const StorageArea = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { getItemsByArea, getStorageArea, addStorageItem, updateStorageItem, removeStorageItem } = useStorage();
   
-  const area = getStorageArea(id || '');
-  const storageItems = getItemsByArea(id || '');
+  // Store hooks
+  const { getStorageAreaById, fetchStorageAreas } = useStorageAreaStore();
+  const { 
+    getStoredItemsByStorageArea, 
+    createStoredItem, 
+    updateStoredItem, 
+    deleteStoredItem,
+    fetchStoredItemsByStorageArea,
+    loading: storedItemsLoading 
+  } = useStoredItemStore();
+  const { selectedHouseholdId } = useHouseholdStore();
   
+  // Local state
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [newItemQuantity, setNewItemQuantity] = useState('1');
@@ -29,6 +41,55 @@ const StorageArea = () => {
   const [expirationDate, setExpirationDate] = useState('');
   const [location, setLocation] = useState('');
   const [editingItem, setEditingItem] = useState<string | null>(null);
+  const [items, setItems] = useState<Record<string, Item>>({});
+
+  // Get data from stores
+  const area = selectedHouseholdId ? getStorageAreaById(selectedHouseholdId, id || '') : null;
+  const storageItems = selectedHouseholdId ? getStoredItemsByStorageArea(selectedHouseholdId, id || '') : [];
+
+  // Load storage areas and stored items on mount
+  useEffect(() => {
+    if (selectedHouseholdId) {
+      fetchStorageAreas(selectedHouseholdId);
+    }
+  }, [selectedHouseholdId, fetchStorageAreas]);
+
+  // Load stored items when area changes
+  useEffect(() => {
+    if (selectedHouseholdId && id) {
+      fetchStoredItemsByStorageArea(selectedHouseholdId, id);
+    }
+  }, [selectedHouseholdId, id, fetchStoredItemsByStorageArea]);
+
+  // Load item details for stored items
+  useEffect(() => {
+    const loadItemDetails = async () => {
+      if (!selectedHouseholdId) return;
+      
+      const itemIds = storageItems
+        .map(item => item.itemId)
+        .filter(itemId => !items[itemId]);
+      
+      if (itemIds.length === 0) return;
+      
+      try {
+        const itemDetails = await Promise.all(
+          itemIds.map(itemId => itemService.getItemById(itemId, selectedHouseholdId))
+        );
+        
+        const newItems = itemDetails.reduce((acc, item) => {
+          acc[item.id] = item;
+          return acc;
+        }, {} as Record<string, Item>);
+        
+        setItems(prev => ({ ...prev, ...newItems }));
+      } catch (error) {
+        console.error('Failed to load item details:', error);
+      }
+    };
+
+    loadItemDetails();
+  }, [storageItems, selectedHouseholdId, items]);
 
   if (!area) {
     return (
@@ -44,11 +105,9 @@ const StorageArea = () => {
     );
   }
 
-  const handleItemSelect = (item: Item | null) => {
+  const handleItemSelect = (item: Item) => {
     setSelectedItem(item);
-    if (item) {
-      setNewItemUnit(item.defaultUnit);
-    }
+    setNewItemUnit(item.defaultUnit);
   };
 
   const handleQuantityChange = (quantity: string, unit: string) => {
@@ -56,36 +115,41 @@ const StorageArea = () => {
     setNewItemUnit(unit);
   };
 
-  const handleAddItem = () => {
-    if (selectedItem && newItemQuantity.trim()) {
-      addStorageItem({
+  const handleAddItem = async () => {
+    if (!selectedItem || !newItemQuantity.trim() || !selectedHouseholdId) return;
+    
+    try {
+      await createStoredItem(selectedHouseholdId, {
         itemId: selectedItem.id,
         storageAreaId: id || '',
-        quantity: newItemQuantity,
-        unit: newItemUnit,
-        purchaseDate: new Date(),
-        expirationDate: expirationDate ? new Date(expirationDate) : undefined,
+        quantity: parseFloat(newItemQuantity),
+        unit: newItemUnit as Unit,
+        expirationDate: expirationDate || undefined,
         location: location.trim() || undefined,
       });
       
+      // Reset form
       setSelectedItem(null);
       setNewItemQuantity('1');
       setNewItemUnit('');
       setExpirationDate('');
       setLocation('');
       setShowAddForm(false);
+    } catch (error) {
+      console.error('Failed to add item:', error);
     }
   };
 
-  const getDaysUntilExpiration = (expirationDate?: Date) => {
+  const getDaysUntilExpiration = (expirationDate?: string) => {
     if (!expirationDate) return null;
     const now = new Date();
-    const diffTime = expirationDate.getTime() - now.getTime();
+    const expDate = new Date(expirationDate);
+    const diffTime = expDate.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
 
-  const getExpirationStatus = (expirationDate?: Date) => {
+  const getExpirationStatus = (expirationDate?: string) => {
     const days = getDaysUntilExpiration(expirationDate);
     if (days === null) return null;
     if (days < 0) return 'expired';
@@ -94,7 +158,7 @@ const StorageArea = () => {
     return 'fresh';
   };
 
-  const getExpirationBadge = (expirationDate?: Date) => {
+  const getExpirationBadge = (expirationDate?: string) => {
     const status = getExpirationStatus(expirationDate);
     const days = getDaysUntilExpiration(expirationDate);
     
@@ -110,45 +174,58 @@ const StorageArea = () => {
     return badges[status];
   };
 
-  const StorageItemCard = ({ storageItem }: { storageItem: StorageItem }) => {
-    // Note: In a real app, you'd want to fetch the item data from the API
-    // For now, we'll create a minimal item object for the QuantitySelector
-    const mockItem: Item = {
-      id: storageItem.itemId,
-      name: 'Item', // This should come from API
-      category: 'other',
-      defaultUnit: storageItem.unit,
-      availableUnits: [storageItem.unit, 'piece', 'cup', 'lb', 'oz'],
-      createdBy: null,
-      householdId: null,
-      createdAt: '',
-      updatedAt: ''
-    };
-
+  const StorageItemCard = ({ storageItem }: { storageItem: typeof storageItems[0] }) => {
+    const item = items[storageItem.itemId];
     const isEditing = editingItem === storageItem.id;
-    const [editQuantity, setEditQuantity] = useState(storageItem.quantity);
+    const [editQuantity, setEditQuantity] = useState(storageItem.quantity.toString());
     const [editUnit, setEditUnit] = useState(storageItem.unit);
     const [editLocation, setEditLocation] = useState(storageItem.location || '');
     const [editExpiration, setEditExpiration] = useState(
-      storageItem.expirationDate ? format(storageItem.expirationDate, 'yyyy-MM-dd') : ''
+      storageItem.expirationDate ? format(new Date(storageItem.expirationDate), 'yyyy-MM-dd') : ''
     );
 
-    const handleSave = () => {
-      updateStorageItem(storageItem.id, {
-        quantity: editQuantity,
-        unit: editUnit,
-        location: editLocation.trim() || undefined,
-        expirationDate: editExpiration ? new Date(editExpiration) : undefined,
-      });
-      setEditingItem(null);
+    if (!item) {
+      return (
+        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <CardContent className="p-4">
+            <div className="text-center text-gray-500">Loading item details...</div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    const handleSave = async () => {
+      if (!selectedHouseholdId) return;
+      
+      try {
+        await updateStoredItem(selectedHouseholdId, storageItem.id, {
+          quantity: parseFloat(editQuantity),
+          unit: editUnit as Unit,
+          location: editLocation.trim() || undefined,
+          expirationDate: editExpiration || undefined,
+        });
+        setEditingItem(null);
+      } catch (error) {
+        console.error('Failed to update item:', error);
+      }
     };
 
     const handleCancel = () => {
-      setEditQuantity(storageItem.quantity);
+      setEditQuantity(storageItem.quantity.toString());
       setEditUnit(storageItem.unit);
       setEditLocation(storageItem.location || '');
-      setEditExpiration(storageItem.expirationDate ? format(storageItem.expirationDate, 'yyyy-MM-dd') : '');
+      setEditExpiration(storageItem.expirationDate ? format(new Date(storageItem.expirationDate), 'yyyy-MM-dd') : '');
       setEditingItem(null);
+    };
+
+    const handleDelete = async () => {
+      if (!selectedHouseholdId) return;
+      
+      try {
+        await deleteStoredItem(selectedHouseholdId, storageItem.id);
+      } catch (error) {
+        console.error('Failed to delete item:', error);
+      }
     };
 
     return (
@@ -157,9 +234,9 @@ const StorageArea = () => {
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2">
-                <h3 className="font-medium text-gray-900">{mockItem.name}</h3>
+                <h3 className="font-medium text-gray-900">{item.name}</h3>
                 <Badge variant="outline" className="text-xs">
-                  {mockItem.category}
+                  {item.category}
                 </Badge>
                 {getExpirationBadge(storageItem.expirationDate)}
               </div>
@@ -169,12 +246,12 @@ const StorageArea = () => {
                   <div>
                     <Label className="text-sm">Quantity</Label>
                     <QuantitySelector
-                      item={mockItem}
+                      item={item}
                       initialQuantity={editQuantity}
                       initialUnit={editUnit}
                       onQuantityChange={(quantity, unit) => {
                         setEditQuantity(quantity);
-                        setEditUnit(unit);
+                        setEditUnit(unit as Unit);
                       }}
                       className="mt-1"
                     />
@@ -226,12 +303,12 @@ const StorageArea = () => {
                   <div className="flex items-center gap-4 text-xs text-gray-500">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
-                      <span>Added {format(storageItem.purchaseDate, 'MMM d')}</span>
+                      <span>Added {format(new Date(storageItem.createdAt), 'MMM d')}</span>
                     </div>
                     {storageItem.expirationDate && (
                       <div className="flex items-center gap-1">
                         <AlertTriangle className="h-3 w-3" />
-                        <span>Expires {format(storageItem.expirationDate, 'MMM d')}</span>
+                        <span>Expires {format(new Date(storageItem.expirationDate), 'MMM d')}</span>
                       </div>
                     )}
                   </div>
@@ -252,7 +329,7 @@ const StorageArea = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => removeStorageItem(storageItem.id)}
+                  onClick={handleDelete}
                   className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -352,7 +429,7 @@ const StorageArea = () => {
                   </div>
                   
                   <div className="flex gap-2">
-                    <Button onClick={handleAddItem} className="flex-1">
+                    <Button onClick={handleAddItem} className="flex-1" disabled={storedItemsLoading}>
                       Add to {area.name}
                     </Button>
                     <Button 
@@ -371,7 +448,13 @@ const StorageArea = () => {
 
         {/* Storage Items */}
         <div className="space-y-4">
-          {storageItems.length > 0 ? (
+          {storedItemsLoading ? (
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+              <CardContent className="p-8 text-center">
+                <div className="text-lg text-gray-600">Loading items...</div>
+              </CardContent>
+            </Card>
+          ) : storageItems.length > 0 ? (
             storageItems.map((storageItem) => (
               <StorageItemCard key={storageItem.id} storageItem={storageItem} />
             ))

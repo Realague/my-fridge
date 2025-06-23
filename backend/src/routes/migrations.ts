@@ -1,7 +1,7 @@
 import express from 'express';
 import { migrationManager } from '../utils/migrationManager';
 import { executeSmartMigration } from '../utils/migrationStrategy';
-import { authenticateGoogleToken, requireAdmin } from './auth';
+import { authenticateGoogleToken, requireAdmin } from '../middleware/auth'; 
 
 const router = express.Router();
 

@@ -1,29 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowRight, Plus, Users, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/stores/authStore';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { StorageAreaOption, StorageAreaSelections } from '@/types/household';
+import { useHouseholdStore } from '@/stores/householdStore';
 
 const Onboarding = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { isAuthenticated, isLoading } = useAuthStore();
+  const { createHousehold, joinHousehold } = useHouseholdStore(state => ({
+    createHousehold: state.createHousehold,
+    joinHousehold: state.joinHousehold
+  }));
+  
   const [step, setStep] = useState(1);
   const [householdName, setHouseholdName] = useState('');
   const [joinCode, setJoinCode] = useState('');
-  const [selectedStorageAreas, setSelectedStorageAreas] = useState<string[]>([]);
+  const [selectedStorageAreas, setSelectedStorageAreas] = useState<(keyof StorageAreaSelections)[]>([]);
 
-  const storageOptions = [
-    { id: 'fridge', name: 'Refrigerator', emoji: '🥬', description: 'Main fridge compartment' },
-    { id: 'freezer', name: 'Freezer', emoji: '🧊', description: 'Frozen food storage' },
-    { id: 'pantry', name: 'Pantry', emoji: '🏺', description: 'Dry goods and canned items' },
-    { id: 'wine-fridge', name: 'Wine Fridge', emoji: '🍷', description: 'Wine and beverage cooler' },
-    { id: 'garage-fridge', name: 'Garage Fridge', emoji: '🏠', description: 'Secondary refrigerator' },
-    { id: 'cabinet', name: 'Kitchen Cabinet', emoji: '🗄️', description: 'Spices and small items' },
+  // Redirect to auth if not authenticated
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      console.log('Onboarding: User not authenticated, redirecting to auth');
+      navigate('/auth');
+    }
+  }, [isLoading, isAuthenticated, navigate]);
+
+  // Show loading spinner while auth is loading
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check URL parameters and set initial step
+  useEffect(() => {
+    const stepParam = searchParams.get('step');
+    if (stepParam) {
+      const stepNumber = parseInt(stepParam, 10);
+      if (stepNumber >= 1 && stepNumber <= 4) {
+        setStep(stepNumber);
+      }
+    }
+  }, [searchParams]);
+
+  const storageOptions: StorageAreaOption[] = [
+    { id: 'hasFridge', name: 'Refrigerator', emoji: '🥬', description: 'Main fridge compartment' },
+    { id: 'hasFreezer', name: 'Freezer', emoji: '🧊', description: 'Frozen food storage' },
+    { id: 'hasPantry', name: 'Pantry', emoji: '🏺', description: 'Dry goods and canned items' },
+    { id: 'hasKitchenCupboard', name: 'Kitchen Cupboard', emoji: '🗄️', description: 'Spices and small items' },
   ];
 
-  const handleStorageToggle = (storageId: string) => {
+  const handleStorageToggle = (storageId: keyof StorageAreaSelections) => {
     setSelectedStorageAreas(prev => 
       prev.includes(storageId) 
         ? prev.filter(id => id !== storageId)
@@ -31,12 +70,42 @@ const Onboarding = () => {
     );
   };
 
-  const handleCreateHousehold = () => {
-    navigate('/dashboard');
+  const handleCreateHousehold = async () => {
+    try {
+      // Validate inputs
+      if (!householdName.trim()) {
+        console.error('Household name is required');
+        return;
+      }
+
+      // Convert selected storage areas to the format expected by the backend
+      const storageAreas: StorageAreaSelections = {
+        hasFridge: selectedStorageAreas.includes('hasFridge'),
+        hasFreezer: selectedStorageAreas.includes('hasFreezer'),
+        hasPantry: selectedStorageAreas.includes('hasPantry'),
+        hasKitchenCupboard: selectedStorageAreas.includes('hasKitchenCupboard'),
+      };
+
+      await createHousehold(householdName.trim(), undefined, storageAreas);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Failed to create household:', error);
+    }
   };
 
-  const handleJoinHousehold = () => {
-    navigate('/dashboard');
+  const handleJoinHousehold = async () => {
+    try {
+      // Validate inputs
+      if (!joinCode.trim() || joinCode.trim().length !== 6) {
+        console.error('Valid 6-character join code is required');
+        return;
+      }
+
+      await joinHousehold(joinCode.trim());
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Failed to join household:', error);
+    }
   };
 
   return (
@@ -142,7 +211,7 @@ const Onboarding = () => {
               </div>
               <CardTitle className="text-2xl">Set Up Storage Areas</CardTitle>
               <CardDescription>
-                Select the storage areas you have in your kitchen
+                Select the storage areas you have in your kitchen (optional - you can add more later)
               </CardDescription>
             </CardHeader>
 
@@ -182,7 +251,6 @@ const Onboarding = () => {
                 </Button>
                 <Button
                   onClick={handleCreateHousehold}
-                  disabled={selectedStorageAreas.length === 0}
                   className="flex-1 bg-green-600 hover:bg-green-700"
                 >
                   Create <ArrowRight className="ml-2 h-4 w-4" />

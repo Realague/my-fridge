@@ -1,141 +1,155 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Plus, X } from 'lucide-react';
-import { useItems, FoodItem } from '@/contexts/ItemContext';
-import { RecipeIngredient } from '@/contexts/RecipeContext';
-import { QuantitySelector } from './QuantitySelector';
+import { Label } from '@/components/ui/label';
+import { Plus, Trash2 } from 'lucide-react';
+import { Item } from '@/services/itemService';
 import { ItemSelector } from './ItemSelector';
+import { QuantitySelector } from './QuantitySelector';
 
-interface StructuredIngredientInputProps {
-  ingredients: RecipeIngredient[];
-  onIngredientsChange: (ingredients: RecipeIngredient[]) => void;
+export interface StructuredIngredient {
+  id: string;
+  itemId: string;
+  quantity: number;
+  unit: string;
+  notes?: string;
 }
 
-export const StructuredIngredientInput = ({ 
-  ingredients, 
-  onIngredientsChange 
+interface StructuredIngredientInputProps {
+  ingredients: StructuredIngredient[];
+  onIngredientsChange: (ingredients: StructuredIngredient[]) => void;
+  className?: string;
+}
+
+export const StructuredIngredientInput = ({
+  ingredients,
+  onIngredientsChange,
+  className = ''
 }: StructuredIngredientInputProps) => {
-  const { getItemById } = useItems();
+  const [editingIngredient, setEditingIngredient] = useState<string | null>(null);
 
   const addIngredient = () => {
-    const newIngredient: RecipeIngredient = {
+    const newIngredient: StructuredIngredient = {
       id: Date.now().toString(),
       itemId: '',
       quantity: 1,
-      unit: 'pieces',
+      unit: 'piece',
       notes: ''
     };
     onIngredientsChange([...ingredients, newIngredient]);
+    setEditingIngredient(newIngredient.id);
   };
 
-  const removeIngredient = (index: number) => {
-    onIngredientsChange(ingredients.filter((_, i) => i !== index));
-  };
-
-  const updateIngredient = (index: number, updates: Partial<RecipeIngredient>) => {
-    const updated = ingredients.map((ingredient, i) => 
-      i === index ? { ...ingredient, ...updates } : ingredient
+  const updateIngredient = (id: string, updates: Partial<StructuredIngredient>) => {
+    const updatedIngredients = ingredients.map(ingredient =>
+      ingredient.id === id ? { ...ingredient, ...updates } : ingredient
     );
-    onIngredientsChange(updated);
+    onIngredientsChange(updatedIngredients);
   };
 
-  const handleItemSelect = (index: number, item: FoodItem) => {
-    updateIngredient(index, { 
-      itemId: item.id,
-      unit: item.defaultUnit
-    });
+  const removeIngredient = (id: string) => {
+    onIngredientsChange(ingredients.filter(ingredient => ingredient.id !== id));
   };
 
-  const handleQuantityChange = (index: number, quantity: string, unit: string) => {
-    updateIngredient(index, { 
-      quantity: parseFloat(quantity) || 0, 
-      unit 
-    });
+  const handleItemSelect = (index: number, item: Item | null) => {
+    if (item) {
+      updateIngredient(ingredients[index].id, {
+        itemId: item.id,
+        unit: item.defaultUnit
+      });
+    }
   };
 
   return (
-    <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>Ingredients</CardTitle>
-            <p className="text-sm text-gray-600">Select items and specify quantities</p>
-          </div>
-          <Button type="button" onClick={addIngredient} size="sm">
-            <Plus className="h-4 w-4 mr-1" />
-            Add
-          </Button>
+    <div className={`space-y-4 ${className}`}>
+      <div className="flex items-center justify-between">
+        <Label className="text-base font-medium">Ingredients</Label>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={addIngredient}
+          className="flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          Add Ingredient
+        </Button>
+      </div>
+
+      {ingredients.length === 0 && (
+        <div className="text-center py-8 text-gray-500 border-2 border-dashed border-gray-200 rounded-lg">
+          <p>No ingredients added yet</p>
+          <p className="text-sm mt-1">Click "Add Ingredient" to get started</p>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {ingredients.length === 0 && (
-          <p className="text-gray-500 text-center py-4">No ingredients added yet</p>
-        )}
-        
-        {ingredients.map((ingredient, index) => {
-          const selectedItem = ingredient.itemId ? getItemById(ingredient.itemId) : null;
-          
-          return (
-            <div key={ingredient.id} className="border rounded-lg p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">
-                  Ingredient {index + 1}
-                </span>
-                {ingredients.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={() => removeIngredient(index)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <label className="text-sm font-medium text-gray-700">Item</label>
-                  <div className="mt-1">
-                    <ItemSelector
-                      onItemSelect={(item) => handleItemSelect(index, item)}
-                      placeholder="Search or create item..."
-                      selectedItem={selectedItem}
-                    />
-                  </div>
-                </div>
-                
-                {selectedItem && (
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Quantity</label>
-                    <div className="mt-1">
-                      <QuantitySelector
-                        item={selectedItem}
-                        initialQuantity={ingredient.quantity.toString()}
-                        initialUnit={ingredient.unit}
-                        onQuantityChange={(quantity, unit) => handleQuantityChange(index, quantity, unit)}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-              
+      )}
+
+      <div className="space-y-3">
+        {ingredients.map((ingredient, index) => (
+          <div key={ingredient.id} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <label className="text-sm font-medium text-gray-700">Notes (optional)</label>
-                <Input
-                  placeholder="e.g., chopped, fresh, cooked..."
-                  value={ingredient.notes || ''}
-                  onChange={(e) => updateIngredient(index, { notes: e.target.value })}
+                <Label className="text-sm">Item</Label>
+                <ItemSelector
+                  onItemSelect={(item) => handleItemSelect(index, item)}
+                  placeholder="Select ingredient..."
                   className="mt-1"
                 />
               </div>
+              
+              {ingredient.itemId && (
+                <>
+                  <div>
+                    <Label className="text-sm">Quantity & Unit</Label>
+                    <div className="mt-1">
+                      <QuantitySelector
+                        item={{
+                          id: ingredient.itemId,
+                          name: '',
+                          category: 'other',
+                          defaultUnit: ingredient.unit,
+                          availableUnits: [ingredient.unit, 'piece', 'cup', 'tsp', 'tbsp'],
+                          createdBy: null,
+                          householdId: null,
+                          createdAt: '',
+                          updatedAt: ''
+                        }}
+                        initialQuantity={ingredient.quantity.toString()}
+                        initialUnit={ingredient.unit}
+                        onQuantityChange={(quantity, unit) => {
+                          updateIngredient(ingredient.id, {
+                            quantity: parseFloat(quantity) || 0,
+                            unit
+                          });
+                        }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label className="text-sm">Notes (optional)</Label>
+                    <Input
+                      value={ingredient.notes || ''}
+                      onChange={(e) => updateIngredient(ingredient.id, { notes: e.target.value })}
+                      placeholder="e.g., diced, chopped fine..."
+                      className="mt-1"
+                    />
+                  </div>
+                </>
+              )}
             </div>
-          );
-        })}
-      </CardContent>
-    </Card>
+            
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => removeIngredient(ingredient.id)}
+              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };

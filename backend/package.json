@@ -6,6 +6,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
+    "debug": "nodemon --inspect=0.0.0.0:9229 src/index.ts",
+    "debug-brk": "nodemon --inspect-brk=0.0.0.0:9229 src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:migrate": "sequelize-cli db:migrate",
     "db:migrate:undo": "sequelize-cli db:migrate:undo",

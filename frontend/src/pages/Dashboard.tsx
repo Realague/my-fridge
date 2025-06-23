@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Settings, Users, Bell, List, ChevronDown } from 'lucide-react';
+import { Settings, Users, Bell, List, ChevronDown, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StorageAreaCard from '@/components/StorageAreaCard';
 import BottomNavigation from '@/components/BottomNavigation';
 import NotificationDrawer from '@/components/NotificationDrawer';
-import { useStorage } from '@/contexts/StorageContext';
-import { useNotifications } from '@/contexts/NotificationContext';
+import AddStorageAreaDialog from '@/components/AddStorageAreaDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,117 +16,91 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  } from "@/components/ui/dropdown-menu";
+import { useAuthStore } from '@/stores/authStore';
+import { useHouseholdStore } from '@/stores/householdStore';
+import { useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
+import { useShoppingStore } from '@/stores/shoppingStore';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { storageAreas, getItemsByArea } = useStorage();
-  const { unreadCount, addNotification } = useNotifications();
-  const [showManageAreasDialog, setShowManageAreasDialog] = useState(false);
+  
+  // Zustand stores - selective subscriptions for better performance
+  const { isAuthenticated, isLoading: authLoading, user: currentUser, setUser } = useAuthStore();
+  const { getPendingItems } = useShoppingStore();
+  
+  // Household store - only re-renders when these specific values change
+  const households = useHouseholdStore(state => state.households);
+  const selectedHouseholdId = useHouseholdStore(state => state.selectedHouseholdId);
+  
+  // Actions - these don't cause re-renders
+  const getCurrentHousehold = useHouseholdStore(state => state.getCurrentHousehold);
+  const fetchHouseholds = useHouseholdStore(state => state.fetchHouseholds);
+  const selectHousehold = useHouseholdStore(state => state.selectHousehold);
+  
+  // Storage areas for current household
+  const {
+    storageAreasWithStats,
+    loading: storageLoading,
+    error: storageError,
+    fetchStorageAreas
+  } = useCurrentHouseholdStorageAreas(selectedHouseholdId);
+  
   const [showNotifications, setShowNotifications] = useState(false);
-  const [selectedStorageIds, setSelectedStorageIds] = useState<string[]>(
-    storageAreas.map(area => area.id)
-  );
 
-  // Mock data for households
-  const households = [
-    { id: '1', name: 'The Smith Family', members: 3 },
-    { id: '2', name: 'Work Lunch Club', members: 5 },
-  ];
-  const [currentHouseholdId, setCurrentHouseholdId] = useState('1');
-  const currentHousehold = households.find(h => h.id === currentHouseholdId) || households[0];
+  // Load households when authenticated
+  useEffect(() => {
+    fetchHouseholds();  
+  }, [selectedHouseholdId, authLoading]);
+
+  // Load storage areas when household changes
+  useEffect(() => {
+    if (selectedHouseholdId && !authLoading) {
+      fetchStorageAreas();
+    }
+  }, [selectedHouseholdId, authLoading]);
+
+  // Redirect to auth if not authenticated
+  useEffect(() => {
+    console.log('Dashboard: Auth state check - authLoading:', authLoading, 'isAuthenticated:', isAuthenticated);
+    if (!authLoading && !isAuthenticated) {
+      navigate('/auth');
+    }
+  }, [authLoading, isAuthenticated, navigate]);
+
+  const handleSwitchHousehold = async (householdId: string) => {
+    try {
+      const user = await selectHousehold(householdId);
+      if (user) {
+        setUser(user);
+      } else {
+        console.error('No user data returned from selectHousehold');
+      }
+    } catch (error) {
+      console.error('Failed to switch household:', error);
+    }
+  };
 
 
+  // TODO: Re-enable notifications and storage when stores are ready
   // Demo: Add some sample notifications on component mount
+  /*
   useEffect(() => {
     const hasAddedSampleNotifications = localStorage.getItem('sampleNotificationsAdded');
     if (!hasAddedSampleNotifications) {
-      setTimeout(() => {
-        addNotification({
-          type: 'warning',
-          title: 'Low Stock Alert',
-          message: 'Bread is running low in your pantry',
-          icon: '🍞',
-          actionUrl: '/storage/3',
-          actionText: 'Check Pantry'
-        });
-      }, 2000);
-
-      setTimeout(() => {
-        addNotification({
-          type: 'success',
-          title: 'Item Added',
-          message: 'Sarah added milk to the refrigerator',
-          icon: '🥛',
-          actionUrl: '/storage/1',
-          actionText: 'View Fridge'
-        });
-      }, 4000);
-
-      setTimeout(() => {
-        addNotification({
-          type: 'info',
-          title: 'Shopping List Updated',
-          message: '5 new items were added to your shopping list',
-          icon: '🛒',
-          actionUrl: '/shopping',
-          actionText: 'View List'
-        });
-      }, 6000);
-
+      // Sample notifications code will go here when notification store is integrated
       localStorage.setItem('sampleNotificationsAdded', 'true');
     }
-  }, [addNotification]);
-
-  // Calculate storage area stats
-  const storageAreasWithStats = storageAreas.map(area => {
-    const items = getItemsByArea(area.id);
-    return {
-      id: parseInt(area.id),
-      name: area.name,
-      emoji: area.emoji,
-      itemCount: items.length,
-      lowStockCount: 0, // TODO: implement low stock logic
-    };
-  });
+  }, []);
+  */
 
   const quickActions = [
-    { title: 'Shopping List', description: '5 items pending', emoji: '🛒', route: '/shopping' },
+    { title: 'Shopping List', description: `${getPendingItems().length} items pending`, emoji: '🛒', route: '/shopping' },
     { title: 'Meal Plans', description: 'Plan this week', emoji: '📅', route: '/meal-plans' },
-    { title: 'Recipes', description: '12 saved recipes', emoji: '📖', route: '/recipes' },
+    { title: 'Recipes', description: '${recipeCount} saved recipes', emoji: '📖', route: '/recipes' },
   ];
 
-  // Storage options similar to onboarding
-  const storageOptions = [
-    { id: '1', name: 'Refrigerator', emoji: '🥬', description: 'Main fridge compartment', type: 'fridge' },
-    { id: '2', name: 'Freezer', emoji: '🧊', description: 'Frozen food storage', type: 'freezer' },
-    { id: '3', name: 'Pantry', emoji: '🏺', description: 'Dry goods and canned items', type: 'pantry' },
-    { id: 'wine-fridge', name: 'Wine Fridge', emoji: '🍷', description: 'Wine and beverage cooler', type: 'other' },
-    { id: 'garage-fridge', name: 'Garage Fridge', emoji: '🏠', description: 'Secondary refrigerator', type: 'other' },
-    { id: 'cabinet', name: 'Kitchen Cabinet', emoji: '🗄️', description: 'Spices and small items', type: 'other' },
-  ];
-
-  const handleStorageToggle = (storageId: string) => {
-    setSelectedStorageIds(prev => {
-      if (prev.includes(storageId)) {
-        return prev.filter(id => id !== storageId);
-      } else {
-        return [...prev, storageId];
-      }
-    });
-  };
-
-  const handleSaveChanges = () => {
-    // TODO: Implement actual save functionality with storage context
-    // This would involve adding/removing storage areas based on selectedStorageIds
-    setShowManageAreasDialog(false);
-  };
-
-  const handleOpenManageDialog = () => {
-    // Reset selection to current areas when opening dialog
-    setSelectedStorageIds(storageAreas.map(area => area.id));
-    setShowManageAreasDialog(true);
-  };
+  console.log("Current Household:", getCurrentHousehold());
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
@@ -143,8 +113,8 @@ const Dashboard = () => {
                 <Button variant="ghost" className="text-left h-auto p-1 -ml-2">
                   <div className="flex items-center gap-2">
                     <div>
-                      <h1 className="text-xl font-bold text-gray-900">{currentHousehold.name}</h1>
-                      <p className="text-sm text-gray-600">{currentHousehold.members} members</p>
+                      <h1 className="text-xl font-bold text-gray-900">{getCurrentHousehold()?.name || 'Loading...'}</h1>
+                      <p className="text-sm text-gray-600">{getCurrentHousehold()?.memberCount || 0} members</p>
                     </div>
                     <ChevronDown className="h-4 w-4 text-gray-500" />
                   </div>
@@ -153,7 +123,7 @@ const Dashboard = () => {
               <DropdownMenuContent className="w-56">
                 <DropdownMenuLabel>Switch Household</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuRadioGroup value={currentHouseholdId} onValueChange={setCurrentHouseholdId}>
+                <DropdownMenuRadioGroup value={selectedHouseholdId || ''} onValueChange={handleSwitchHousehold}>
                   {households.map((h) => (
                     <DropdownMenuRadioItem key={h.id} value={h.id}>
                       {h.name}
@@ -176,11 +146,11 @@ const Dashboard = () => {
                 onClick={() => setShowNotifications(true)}
               >
                 <Bell className="h-5 w-5" />
-                {unreadCount > 0 && (
+                {/*{unreadCount > 0 && (
                   <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs bg-red-500 text-white">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </Badge>
-                )}
+                )}*/}
               </Button>
               <Button variant="ghost" size="icon" onClick={() => navigate('/settings')}>
                 <Settings className="h-5 w-5" />
@@ -212,25 +182,45 @@ const Dashboard = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-gray-900">Storage Areas</h2>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-green-600 text-green-600 hover:bg-green-50"
-              onClick={handleOpenManageDialog}
-            >
-              <List className="h-4 w-4 mr-2" />
-              Manage Areas
-            </Button>
+            <div className="flex gap-2">
+              <AddStorageAreaDialog />
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-green-600 text-green-600 hover:bg-green-50"
+                onClick={() => navigate(`/household/${getCurrentHousehold()?.id}`)}
+              >
+                <List className="h-4 w-4 mr-2" />
+                Manage
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-3">
-            {storageAreasWithStats.map((area) => (
-              <StorageAreaCard
-                key={area.id}
-                area={area}
-                onClick={() => navigate(`/storage/${area.id}`)}
-              />
-            ))}
+            {storageLoading ? (
+              <div className="text-center py-4 text-gray-500">Loading storage areas...</div>
+            ) : storageError ? (
+              <div className="text-center py-4 text-red-500">Error: {storageError}</div>
+            ) : storageAreasWithStats.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500 mb-4">No storage areas yet</p>
+                <AddStorageAreaDialog 
+                  trigger={
+                    <Button className="bg-green-600 hover:bg-green-700">
+                      Add Your First Storage Area
+                    </Button>
+                  }
+                />
+              </div>
+            ) : (
+              storageAreasWithStats.map((area) => (
+                <StorageAreaCard
+                  key={area.id}
+                  area={area}
+                  onClick={() => navigate(`/storage/${area.id}`)}
+                />
+              ))
+            )}
           </div>
         </div>
 
@@ -273,65 +263,6 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
-
-      {/* Manage Areas Dialog */}
-      <Dialog open={showManageAreasDialog} onOpenChange={setShowManageAreasDialog}>
-        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Manage Storage Areas</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <p className="text-gray-600 mb-4">
-              Select the storage areas you have in your kitchen:
-            </p>
-            <div className="space-y-3 max-h-80 overflow-y-auto">
-              {storageOptions.map((storage) => (
-                <div
-                  key={storage.id}
-                  className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                  onClick={() => handleStorageToggle(storage.id)}
-                >
-                  <Checkbox
-                    checked={selectedStorageIds.includes(storage.id)}
-                    onCheckedChange={() => handleStorageToggle(storage.id)}
-                  />
-                  <div className="flex items-center space-x-3 flex-1">
-                    <div className="w-10 h-10 bg-gradient-to-r from-green-100 to-orange-100 rounded-lg flex items-center justify-center">
-                      <span className="text-lg">{storage.emoji}</span>
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-900">{storage.name}</div>
-                      <div className="text-sm text-gray-600">{storage.description}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-700">
-                💡 You can enable or disable storage areas based on what you have available in your household.
-              </p>
-            </div>
-
-            <div className="flex gap-3 mt-6">
-              <Button
-                variant="outline"
-                onClick={() => setShowManageAreasDialog(false)}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSaveChanges}
-                className="flex-1 bg-green-600 hover:bg-green-700"
-              >
-                Save Changes
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* Notification Drawer */}
       <NotificationDrawer 

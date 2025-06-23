@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -13,7 +12,6 @@ import { ArrowLeft, Plus, X } from 'lucide-react';
 import { useRecipes, RecipeIngredient } from '@/contexts/RecipeContext';
 import { useToast } from '@/hooks/use-toast';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
-import { useItems } from '@/contexts/ItemContext';
 
 interface RecipeFormData {
   title: string;
@@ -31,7 +29,6 @@ const AddRecipe = () => {
   const navigate = useNavigate();
   const { addRecipe } = useRecipes();
   const { toast } = useToast();
-  const { getItemById } = useItems();
   
   const form = useForm<RecipeFormData>({
     defaultValues: {
@@ -353,8 +350,8 @@ const AddRecipe = () => {
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                           {ingredients.map((ingredient) => {
-                            const item = getItemById(ingredient.itemId);
-                            if (!item) return null;
+                            //const item = getItemById(ingredient.itemId);
+                            //if (!item) return null;
                             
                             const isLinked = (ingredientStepMap[ingredient.id] || []).includes(index);
                             
@@ -365,7 +362,7 @@ const AddRecipe = () => {
                                   onCheckedChange={() => toggleIngredientForStep(ingredient.id, index)}
                                 />
                                 <span className="text-sm text-gray-600">
-                                  {ingredient.quantity} {ingredient.unit} {item.name}
+                                  {ingredient.quantity} {ingredient.unit} {/*{item.name}*/}
                                 </span>
                               </div>
                             );

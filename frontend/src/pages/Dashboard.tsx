@@ -19,15 +19,19 @@ import {
   } from "@/components/ui/dropdown-menu";
 import { useAuthStore } from '@/stores/authStore';
 import { useHouseholdStore } from '@/stores/householdStore';
-import { useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
+import { useStorageAreasWithStats } from '@/stores/storageAreaStore';
 import { useShoppingStore } from '@/stores/shoppingStore';
+import { useStoredItemStore } from '@/stores/storedItemStore';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+
+  const { getStoredItemsForHousehold } = useStoredItemStore();
   
   // Zustand stores - selective subscriptions for better performance
   const { isAuthenticated, isLoading: authLoading, user: currentUser, setUser } = useAuthStore();
-  const { getPendingItems } = useShoppingStore();
+  const { getPendingItems, fetchShoppingItems } = useShoppingStore();
+  const { fetchStoredItems } = useStoredItemStore();
   
   // Household store - only re-renders when these specific values change
   const households = useHouseholdStore(state => state.households);
@@ -41,10 +45,8 @@ const Dashboard = () => {
   // Storage areas for current household
   const {
     storageAreasWithStats,
-    loading: storageLoading,
-    error: storageError,
     fetchStorageAreas
-  } = useCurrentHouseholdStorageAreas(selectedHouseholdId);
+  } = useStorageAreasWithStats(selectedHouseholdId);
   
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -53,12 +55,16 @@ const Dashboard = () => {
     fetchHouseholds();  
   }, [selectedHouseholdId, authLoading]);
 
-  // Load storage areas when household changes
+  // Load storage areas and stored items when household changes
   useEffect(() => {
     if (selectedHouseholdId && !authLoading) {
       fetchStorageAreas();
+      // Also fetch stored items so item counts are calculated correctly
+      fetchStoredItems(selectedHouseholdId);
+      // Fetch shopping items for the dashboard count
+      fetchShoppingItems(selectedHouseholdId);
     }
-  }, [selectedHouseholdId, authLoading]);
+  }, [selectedHouseholdId, authLoading]); // Remove function dependencies to prevent infinite loops
 
   // Redirect to auth if not authenticated
   useEffect(() => {
@@ -197,11 +203,7 @@ const Dashboard = () => {
           </div>
 
           <div className="space-y-3">
-            {storageLoading ? (
-              <div className="text-center py-4 text-gray-500">Loading storage areas...</div>
-            ) : storageError ? (
-              <div className="text-center py-4 text-red-500">Error: {storageError}</div>
-            ) : storageAreasWithStats.length === 0 ? (
+            {storageAreasWithStats.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-gray-500 mb-4">No storage areas yet</p>
                 <AddStorageAreaDialog 

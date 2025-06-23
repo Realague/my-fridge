@@ -79,4 +79,62 @@ export interface GetShoppingItemsQueryDto {
   completed?: boolean;
   limit?: number;
   offset?: number;
+}
+
+export interface CreateStoredItemDto {
+  itemId: string;
+  storageAreaId: string;
+  quantity: number;
+  unit: Unit;
+  expirationDate?: string; // ISO date string
+  location?: string;
+  householdId: string;
+  createdBy: string;
+}
+
+export interface UpdateStoredItemDto {
+  quantity?: number;
+  unit?: Unit;
+  expirationDate?: string; // ISO date string
+  location?: string;
+}
+
+export interface StoredItemDto {
+  id: string;
+  itemId: string;
+  storageAreaId: string;
+  quantity: number;
+  unit: Unit;
+  expirationDate: string | null | undefined;
+  location: string | null;
+  householdId: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  item?: ItemDto;
+  storageArea?: {
+    id: string;
+    name: string;
+    emoji: string;
+    type: string;
+  };
+  creator?: {
+    id: string;
+    displayName: string;
+    email: string;
+  };
+  isExpired?: boolean;
+  isExpiringSoon?: boolean;
+  daysUntilExpiration?: number | null;
+}
+
+export interface GetStoredItemsQueryDto {
+  householdId: string;
+  storageAreaId?: string;
+  itemId?: string;
+  search?: string;
+  isExpired?: boolean;
+  isExpiringSoon?: boolean;
+  limit?: number;
+  offset?: number;
 } 

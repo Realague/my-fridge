@@ -1,11 +1,11 @@
 
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { Calendar, Plus, Clock, Users, ChefHat, Trash2, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useMealPlan } from '@/contexts/MealPlanContext';
@@ -20,6 +20,7 @@ const MealPlans = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedRecipe, setSelectedRecipe] = useState('');
   const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner'>('lunch');
+  const [selectedServings, setSelectedServings] = useState(1);
   const [showAddDialog, setShowAddDialog] = useState(false);
 
   // Generate week dates starting from selected date
@@ -43,12 +44,13 @@ const MealPlans = () => {
 
   const handleAddMeal = () => {
     if (selectedRecipe && selectedDate && selectedMealType) {
-      addToMealPlan(selectedRecipe, selectedDate, selectedMealType);
+      addToMealPlan(selectedRecipe, selectedDate, selectedMealType, selectedServings);
       setShowAddDialog(false);
       setSelectedRecipe('');
+      setSelectedServings(1);
       toast({
         title: "Meal added",
-        description: "Recipe has been added to your meal plan.",
+        description: `Recipe has been added to your meal plan for ${selectedServings} serving${selectedServings > 1 ? 's' : ''}.`,
       });
     }
   };
@@ -139,6 +141,18 @@ const MealPlans = () => {
                       </SelectContent>
                     </Select>
                   </div>
+                  <div>
+                    <label className="text-sm font-medium">Servings</label>
+                    <Input
+                      type="number"
+                      min="1"
+                      max="20"
+                      value={selectedServings}
+                      onChange={(e) => setSelectedServings(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="mt-1"
+                      placeholder="Number of servings"
+                    />
+                  </div>
                   <Button onClick={handleAddMeal} disabled={!selectedRecipe} className="w-full">
                     Add to Meal Plan
                   </Button>
@@ -226,9 +240,17 @@ const MealPlans = () => {
                               {recipe.title}
                             </div>
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-1 text-xs text-gray-600">
-                                <Clock className="h-3 w-3" />
-                                <span>{recipe.prepTime + recipe.cookTime}m</span>
+                              <div className="flex items-center gap-2 text-xs text-gray-600">
+                                <div className="flex items-center gap-1">
+                                  <Clock className="h-3 w-3" />
+                                  <span>{recipe.prepTime + recipe.cookTime}m</span>
+                                </div>
+                                {mealPlan && mealPlan.servings > 1 && (
+                                  <div className="flex items-center gap-1">
+                                    <Users className="h-3 w-3" />
+                                    <span>{mealPlan.servings}</span>
+                                  </div>
+                                )}
                               </div>
                               <Button
                                 variant="ghost"
@@ -271,4 +293,3 @@ const MealPlans = () => {
 };
 
 export default MealPlans;
-

@@ -19,7 +19,7 @@ export interface MealPlan {
 }
 
 export const getWeekDays = (date: Date): Date[] => {
-  const start = startOfWeek(date, { weekStartsOn: 0 }); // Sunday
+  const start = startOfWeek(date, { weekStartsOn: 1 }); // Monday
   return Array.from({ length: 7 }, (_, i) => addDays(start, i));
 };
 

@@ -174,7 +174,7 @@ const MealPlans = () => {
 
             {/* Week Grid */}
             <div className="grid grid-cols-7 gap-2">
-              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
                 <div key={day} className="text-center text-sm font-medium text-gray-500 p-2">
                   {day}
                 </div>

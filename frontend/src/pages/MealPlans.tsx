@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Calendar, Plus, Clock, Users, ChefHat, Trash2, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar, Plus, Clock, Users, ChefHat, Trash2, ShoppingCart, ChevronLeft, ChevronRight, Check, ChevronsUpDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useMealPlan } from '@/contexts/MealPlanContext';
 import { useRecipes } from '@/contexts/RecipeContext';
@@ -22,6 +24,7 @@ const MealPlans = () => {
   const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner'>('lunch');
   const [selectedServings, setSelectedServings] = useState(1);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [recipePopoverOpen, setRecipePopoverOpen] = useState(false);
 
   // Generate week dates starting from selected date
   const getWeekDates = (startDate: string) => {
@@ -48,6 +51,7 @@ const MealPlans = () => {
       setShowAddDialog(false);
       setSelectedRecipe('');
       setSelectedServings(1);
+      setRecipePopoverOpen(false);
       toast({
         title: "Meal added",
         description: `Recipe has been added to your meal plan for ${selectedServings} serving${selectedServings > 1 ? 's' : ''}.`,
@@ -72,6 +76,8 @@ const MealPlans = () => {
       default: return 'bg-gray-100 text-gray-800';
     }
   };
+
+  const selectedRecipeData = recipes.find(recipe => recipe.id === selectedRecipe);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
@@ -99,7 +105,7 @@ const MealPlans = () => {
                   <span>Add Meal</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle>Add Recipe to Meal Plan</DialogTitle>
                 </DialogHeader>
@@ -128,18 +134,54 @@ const MealPlans = () => {
                   </div>
                   <div>
                     <label className="text-sm font-medium">Recipe</label>
-                    <Select value={selectedRecipe} onValueChange={setSelectedRecipe}>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Select a recipe" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {recipes.map((recipe) => (
-                          <SelectItem key={recipe.id} value={recipe.id}>
-                            {recipe.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Popover open={recipePopoverOpen} onOpenChange={setRecipePopoverOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={recipePopoverOpen}
+                          className="w-full justify-between mt-1"
+                        >
+                          {selectedRecipeData
+                            ? selectedRecipeData.title
+                            : "Select a recipe..."}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-0" align="start">
+                        <Command>
+                          <CommandInput placeholder="Search recipes..." />
+                          <CommandEmpty>No recipe found.</CommandEmpty>
+                          <CommandList>
+                            <CommandGroup>
+                              {recipes.map((recipe) => (
+                                <CommandItem
+                                  key={recipe.id}
+                                  value={recipe.title}
+                                  onSelect={() => {
+                                    setSelectedRecipe(recipe.id);
+                                    setRecipePopoverOpen(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      selectedRecipe === recipe.id ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  <div className="flex-1">
+                                    <div className="font-medium">{recipe.title}</div>
+                                    <div className="text-xs text-gray-500">
+                                      {recipe.prepTime + recipe.cookTime}m • {recipe.servings} servings
+                                    </div>
+                                  </div>
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                   <div>
                     <label className="text-sm font-medium">Servings</label>

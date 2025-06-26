@@ -1,3 +1,4 @@
+
 import { useApiWithAuth } from '@/hooks/useApiWithAuth';
 
 export type RecipeDifficulty = 'Easy' | 'Medium' | 'Hard';
@@ -19,8 +20,7 @@ export interface RecipeIngredientDto {
 }
 
 export interface CreateRecipeIngredientDto {
-  [x: string]: Key;
-  itemId: string;
+  itemId: string;  // Removed the Key type which was causing the error
   quantity: number;
   unit: string;
   notes?: string;
@@ -127,7 +127,7 @@ export interface IngredientStats {
 }
 
 export const useRecipeService = () => {
-  const { apiCall } = useApiWithAuth();
+  const { makeApiCall } = useApiWithAuth(); // Fixed the destructuring to use makeApiCall
 
   const getRecipes = async (
     householdId: string,
@@ -145,25 +145,28 @@ export const useRecipeService = () => {
       }
     });
 
-    return await apiCall(`/api/recipes/${householdId}/recipes?${queryParams}`, {
+    const response = await makeApiCall(`/api/recipes/${householdId}/recipes?${queryParams}`, {
       method: 'GET',
     });
+    return response.json();
   };
 
   const getRecipeById = async (householdId: string, recipeId: string): Promise<RecipeDto> => {
-    return await apiCall(`/api/recipes/${householdId}/recipes/${recipeId}`, {
+    const response = await makeApiCall(`/api/recipes/${householdId}/recipes/${recipeId}`, {
       method: 'GET',
     });
+    return response.json();
   };
 
   const createRecipe = async (householdId: string, recipeData: CreateRecipeDto): Promise<RecipeDto> => {
-    return await apiCall(`/api/recipes/${householdId}/recipes`, {
+    const response = await makeApiCall(`/api/recipes/${householdId}/recipes`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(recipeData),
     });
+    return response.json();
   };
 
   const updateRecipe = async (
@@ -171,55 +174,62 @@ export const useRecipeService = () => {
     recipeId: string,
     updates: UpdateRecipeDto
   ): Promise<RecipeDto> => {
-    return await apiCall(`/api/recipes/${householdId}/recipes/${recipeId}`, {
+    const response = await makeApiCall(`/api/recipes/${householdId}/recipes/${recipeId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(updates),
     });
+    return response.json();
   };
 
   const deleteRecipe = async (householdId: string, recipeId: string): Promise<void> => {
-    return await apiCall(`/api/recipes/${householdId}/recipes/${recipeId}`, {
+    await makeApiCall(`/api/recipes/${householdId}/recipes/${recipeId}`, {
       method: 'DELETE',
     });
   };
 
   const toggleFavorite = async (householdId: string, recipeId: string): Promise<RecipeDto> => {
-    return await apiCall(`/api/recipes/${householdId}/recipes/${recipeId}/favorite`, {
+    const response = await makeApiCall(`/api/recipes/${householdId}/recipes/${recipeId}/favorite`, {
       method: 'POST',
     });
+    return response.json();
   };
 
   const getFavoriteRecipes = async (householdId: string): Promise<RecipeListDto[]> => {
-    return await apiCall(`/api/recipes/${householdId}/recipes/favorites`, {
+    const response = await makeApiCall(`/api/recipes/${householdId}/recipes/favorites`, {
       method: 'GET',
     });
+    return response.json();
   };
 
   const getAllTags = async (householdId: string): Promise<string[]> => {
-    return await apiCall(`/api/recipes/${householdId}/recipes/tags`, {
+    const response = await makeApiCall(`/api/recipes/${householdId}/recipes/tags`, {
       method: 'GET',
     });
+    return response.json();
   };
 
   const getRecipeStats = async (householdId: string): Promise<RecipeStats> => {
-    return await apiCall(`/api/recipes/${householdId}/recipes/stats`, {
+    const response = await makeApiCall(`/api/recipes/${householdId}/recipes/stats`, {
       method: 'GET',
     });
+    return response.json();
   };
 
   const getIngredientStats = async (householdId: string): Promise<IngredientStats[]> => {
-    return await apiCall(`/api/recipes/${householdId}/recipes/ingredients/stats`, {
+    const response = await makeApiCall(`/api/recipes/${householdId}/recipes/ingredients/stats`, {
       method: 'GET',
     });
+    return response.json();
   };
 
   const getRecipesByUser = async (householdId: string, userId: string): Promise<RecipeListDto[]> => {
-    return await apiCall(`/api/recipes/${householdId}/users/${userId}/recipes`, {
+    const response = await makeApiCall(`/api/recipes/${householdId}/users/${userId}/recipes`, {
       method: 'GET',
     });
+    return response.json();
   };
 
   return {
@@ -235,4 +245,4 @@ export const useRecipeService = () => {
     getIngredientStats,
     getRecipesByUser,
   };
-}; 
+};

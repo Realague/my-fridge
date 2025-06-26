@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { format, isToday, isSameMonth, addWeeks, subWeeks } from 'date-fns';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
@@ -110,6 +111,15 @@ const MealPlans = () => {
       });
     }
   };
+
+  // Convert RecipeListDto to format expected by RecipeSelector
+  const convertedRecipes = recipes.map(recipe => ({
+    ...recipe,
+    instructions: recipe.description || '',
+    householdId: '',
+    updatedAt: '',
+    ingredients: []
+  }));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
@@ -224,9 +234,9 @@ const MealPlans = () => {
               <div>
                 <label className="block text-sm font-medium mb-2">Recipe</label>
                 <RecipeSelector
-                  onRecipeSelect={setSelectedRecipe}
+                  onRecipeSelect={(recipe) => setSelectedRecipe(recipe as RecipeListDto)}
                   selectedRecipe={selectedRecipe}
-                  recipes={recipes}
+                  recipes={convertedRecipes}
                   loading={recipesLoading}
                   placeholder="Search for a recipe..."
                 />

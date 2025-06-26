@@ -7,6 +7,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from "@/hooks/use-toast"
 import { getWeekDays, getMealPlansForDay, MealPlan } from '@/utils/mealPlanHelpers';
 import { useMealPlanStore } from '@/stores/mealPlanStore';
@@ -40,8 +41,9 @@ const MealPlans = () => {
   }, [currentDate]);
 
   useEffect(() => {
+    const householdId = localStorage.getItem('householdId') || 'default';
     fetchMealPlans();
-    fetchRecipes();
+    fetchRecipes(householdId);
   }, [fetchMealPlans, fetchRecipes]);
 
   const getMealPlansForDay = (day: Date): MealPlan[] => {
@@ -115,7 +117,7 @@ const MealPlans = () => {
   // Convert RecipeListDto to format expected by RecipeSelector
   const convertedRecipes = recipes.map(recipe => ({
     ...recipe,
-    instructions: recipe.description || '',
+    instructions: recipe.description ? [recipe.description] : [],
     householdId: '',
     updatedAt: '',
     ingredients: []
@@ -190,17 +192,27 @@ const MealPlans = () => {
                   {/* Meal Plans for this day */}
                   <div className="space-y-1">
                     {getMealPlansForDay(day).map((mealPlan) => (
-                      <div
+                      <Card
                         key={mealPlan.id}
-                        className="text-xs p-2 bg-green-100 text-green-800 rounded-md cursor-pointer hover:bg-green-200 transition-colors"
+                        className="cursor-pointer hover:shadow-md transition-shadow border-0 bg-gradient-to-r from-green-50 to-orange-50"
                         onClick={() => handleViewMealPlan(mealPlan)}
                       >
-                        <div className="font-medium truncate">{mealPlan.recipe.title}</div>
-                        <div className="text-green-600">
-                          {mealPlan.mealType} 
-                          {mealPlan.servings > 1 && ` • ${mealPlan.servings} servings`}
-                        </div>
-                      </div>
+                        <CardContent className="p-2">
+                          <div className="text-xs font-medium text-gray-900 truncate mb-1">
+                            {mealPlan.recipe.title}
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <Badge variant="secondary" className="text-xs px-1 py-0">
+                              {mealPlan.mealType}
+                            </Badge>
+                            {mealPlan.servings > 1 && (
+                              <span className="text-xs text-gray-600">
+                                {mealPlan.servings}
+                              </span>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                   
@@ -234,7 +246,11 @@ const MealPlans = () => {
               <div>
                 <label className="block text-sm font-medium mb-2">Recipe</label>
                 <RecipeSelector
-                  onRecipeSelect={(recipe) => setSelectedRecipe(recipe as RecipeListDto)}
+                  onRecipeSelect={(recipe) => setSelectedRecipe(recipe ? {
+                    ...recipe,
+                    ingredientCount: 0,
+                    creator: undefined
+                  } : null)}
                   selectedRecipe={selectedRecipe}
                   recipes={convertedRecipes}
                   loading={recipesLoading}
@@ -244,7 +260,7 @@ const MealPlans = () => {
 
               <div>
                 <label className="block text-sm font-medium mb-2">Meal Type</label>
-                <Select value={selectedMealType} onValueChange={(value: 'breakfast' | 'lunch' | 'dinner' | 'snack') => setSelectedMealType(value)}>
+                <Select value={selectedMealType} onValueChange={(value) => setSelectedMealType(value as 'breakfast' | 'lunch' | 'dinner' | 'snack')}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select meal type" />
                   </SelectTrigger>

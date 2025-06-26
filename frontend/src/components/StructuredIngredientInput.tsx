@@ -1,19 +1,37 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2 } from 'lucide-react';
-import { Item } from '@/services/itemService';
 import { ItemSelector } from './ItemSelector';
 import { QuantitySelector } from './QuantitySelector';
+
+// Simplified item interface that matches what we get from the API
+interface SimpleItem {
+  id: string;
+  name: string;
+  category: string;
+  defaultUnit: string;
+  availableUnits: string[];
+}
+
+// Full item interface for compatibility with ItemSelector
+interface FullItem extends SimpleItem {
+  createdBy: string | null;
+  householdId: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface StructuredIngredient {
   id: string;
   itemId: string;
-  item?: Item;
+  item?: SimpleItem;
   quantity: number;
   unit: string;
   notes?: string;
+  usedInSteps?: number[];
 }
 
 interface StructuredIngredientInputProps {
@@ -52,11 +70,20 @@ export const StructuredIngredientInput = ({
     onIngredientsChange(ingredients.filter(ingredient => ingredient.id !== id));
   };
 
-  const handleItemSelect = (index: number, item: Item | null) => {
+  const handleItemSelect = (index: number, item: FullItem | null) => {
     if (item) {
+      // Convert FullItem to SimpleItem for storage
+      const simpleItem: SimpleItem = {
+        id: item.id,
+        name: item.name,
+        category: item.category,
+        defaultUnit: item.defaultUnit,
+        availableUnits: item.availableUnits
+      };
+      
       updateIngredient(ingredients[index].id, {
         itemId: item.id,
-        item: item, // Store the full item object
+        item: simpleItem,
         unit: item.defaultUnit
       });
     } else {
@@ -100,7 +127,13 @@ export const StructuredIngredientInput = ({
                 <Label className="text-sm">Item</Label>
                 <ItemSelector
                   onItemSelect={(item) => handleItemSelect(index, item)}
-                  selectedItem={ingredient.item || null} // Pass the selected item
+                  selectedItem={ingredient.item ? {
+                    ...ingredient.item,
+                    createdBy: null,
+                    householdId: null,
+                    createdAt: '',
+                    updatedAt: ''
+                  } : null}
                   placeholder="Select ingredient..."
                   className="mt-1"
                 />
@@ -112,7 +145,13 @@ export const StructuredIngredientInput = ({
                     <Label className="text-sm">Quantity & Unit</Label>
                     <div className="mt-1">
                       <QuantitySelector
-                        item={ingredient.item || {
+                        item={ingredient.item ? {
+                          ...ingredient.item,
+                          createdBy: null,
+                          householdId: null,
+                          createdAt: '',
+                          updatedAt: ''
+                        } : {
                           id: ingredient.itemId,
                           name: '',
                           category: 'other',

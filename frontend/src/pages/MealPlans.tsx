@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast"
 import { getWeekDays, getMealPlansForDay, MealPlan } from '@/utils/mealPlanHelpers';
 import { useMealPlanStore } from '@/stores/mealPlanStore';
 import { useRecipeStore } from '@/stores/recipeStore';
-import { RecipeDto } from '@/services/recipeService';
+import { RecipeListDto } from '@/services/recipeService';
 import { RecipeSelector } from '@/components/RecipeSelector';
 
 interface MealPlanForm {
@@ -28,8 +28,8 @@ const MealPlans = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('lunch');
   const [selectedServings, setSelectedServings] = useState(1);
-  const [selectedRecipe, setSelectedRecipe] = useState<RecipeDto | null>(null);
-  const [viewingMealPlan, setViewingMealPlan] = useState<MealPlan | null>(null);
+  const [selectedRecipe, setSelectedRecipe] = useState<RecipeListDto | null>(null);
+  const [viewingMealPlan, setViewingMealPlan] = useState<any>(null);
   const { mealPlans, fetchMealPlans, createMealPlan, deleteMealPlan, loading: mealPlansLoading, savingMealPlan, deletingMealPlan } = useMealPlanStore();
   const { recipes, fetchRecipes, loading: recipesLoading } = useRecipeStore();
   const { toast } = useToast();
@@ -234,7 +234,7 @@ const MealPlans = () => {
 
               <div>
                 <label className="block text-sm font-medium mb-2">Meal Type</label>
-                <Select value={selectedMealType} onValueChange={setSelectedMealType}>
+                <Select value={selectedMealType} onValueChange={(value: 'breakfast' | 'lunch' | 'dinner' | 'snack') => setSelectedMealType(value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select meal type" />
                   </SelectTrigger>

@@ -22,6 +22,7 @@ import { useHouseholdStore } from '@/stores/householdStore';
 import { useStorageAreasWithStats } from '@/stores/storageAreaStore';
 import { useShoppingStore } from '@/stores/shoppingStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
+import { useRecipeStore } from '@/stores/recipeStore';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ const Dashboard = () => {
   const { isAuthenticated, isLoading: authLoading, user: currentUser, setUser } = useAuthStore();
   const { getPendingItems, fetchShoppingItems } = useShoppingStore();
   const { fetchStoredItems } = useStoredItemStore();
+  const { recipes, fetchRecipes } = useRecipeStore();
   
   // Household store - only re-renders when these specific values change
   const households = useHouseholdStore(state => state.households);
@@ -63,6 +65,8 @@ const Dashboard = () => {
       fetchStoredItems(selectedHouseholdId);
       // Fetch shopping items for the dashboard count
       fetchShoppingItems(selectedHouseholdId);
+      // Fetch recipes for the dashboard count
+      fetchRecipes(selectedHouseholdId);
     }
   }, [selectedHouseholdId, authLoading]); // Remove function dependencies to prevent infinite loops
 
@@ -103,7 +107,7 @@ const Dashboard = () => {
   const quickActions = [
     { title: 'Shopping List', description: `${getPendingItems().length} items pending`, emoji: '🛒', route: '/shopping' },
     { title: 'Meal Plans', description: 'Plan this week', emoji: '📅', route: '/meal-plans' },
-    { title: 'Recipes', description: '${recipeCount} saved recipes', emoji: '📖', route: '/recipes' },
+    { title: 'Recipes', description: `${(recipes || []).length} saved recipes`, emoji: '📖', route: '/recipes' },
   ];
 
   console.log("Current Household:", getCurrentHousehold());

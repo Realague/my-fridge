@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, Plus, ChefHat } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
-import { useRecipes } from '@/contexts/RecipeContext';
+import { useRecipeStore } from '@/stores/recipeStore';
 import { useMealPlan } from '@/contexts/MealPlanContext';
 import { useShoppingStore } from '@/stores/shoppingStore';
 import { useHouseholdStore } from '@/stores/householdStore';
@@ -16,15 +17,73 @@ import { useToast } from '@/hooks/use-toast';
 const RecipeDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { getRecipeById, toggleFavorite, deleteRecipe } = useRecipes();
-  const { addToMealPlan } = useMealPlan();
   const { toast } = useToast();
+  const { selectedHouseholdId } = useHouseholdStore();
+  const { 
+    currentRecipe: recipe, 
+    loading, 
+    error, 
+    fetchRecipeById, 
+    toggleFavorite, 
+    deleteRecipe,
+    clearCurrentRecipe,
+    clearError
+  } = useRecipeStore();
+  const { addToMealPlan } = useMealPlan();
   
   const [showMealPlanDialog, setShowMealPlanDialog] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner'>('lunch');
-  
-  const recipe = id ? getRecipeById(id) : undefined;
+
+  useEffect(() => {
+    if (selectedHouseholdId && id) {
+      fetchRecipeById(selectedHouseholdId, id);
+    }
+    
+    return () => {
+      clearCurrentRecipe();
+    };
+  }, [selectedHouseholdId, id, fetchRecipeById, clearCurrentRecipe]);
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Error',
+        description: error,
+        variant: 'destructive',
+      });
+      clearError();
+    }
+  }, [error, toast, clearError]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
+        <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/recipes')}
+                className="text-gray-600"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
+              </Button>
+              <div className="flex gap-2">
+                <Skeleton className="h-8 w-8" />
+                <Skeleton className="h-8 w-8" />
+                <Skeleton className="h-8 w-8" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 py-6">
+          <RecipeDetailsSkeleton />
+        </div>
+      </div>
+    );
+  }
 
   if (!recipe) {
     return (
@@ -49,13 +108,41 @@ const RecipeDetails = () => {
     }
   };
 
-  const handleDelete = () => {
-    deleteRecipe(recipe.id);
-    toast({
-      title: "Recipe deleted",
-      description: "The recipe has been removed from your collection.",
-    });
-    navigate('/recipes');
+  const handleDelete = async () => {
+    if (!selectedHouseholdId || !recipe?.id) return;
+    
+    try {
+      await deleteRecipe(selectedHouseholdId, recipe.id);
+      toast({
+        title: "Recipe deleted",
+        description: "The recipe has been removed from your collection.",
+      });
+      navigate('/recipes');
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete recipe.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleToggleFavorite = async () => {
+    if (!selectedHouseholdId || !recipe?.id) return;
+    
+    try {
+      await toggleFavorite(selectedHouseholdId, recipe.id);
+      toast({
+        title: "Success",
+        description: recipe.isFavorite ? "Removed from favorites" : "Added to favorites",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update favorite status.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleAddToMealPlan = () => {
@@ -125,7 +212,7 @@ const RecipeDetails = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => toggleFavorite(recipe.id)}
+                onClick={handleToggleFavorite}
               >
                 <Heart 
                   className={`h-4 w-4 ${recipe.isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} 
@@ -174,7 +261,7 @@ const RecipeDetails = () => {
               <div className="flex items-center gap-1 text-gray-600">
                 <Clock className="h-4 w-4" />
                 <span className="text-sm">
-                  {recipe.prepTime + recipe.cookTime} min total
+                  {recipe.totalTime} min total
                 </span>
               </div>
               <div className="flex items-center gap-1 text-gray-600">
@@ -288,6 +375,99 @@ const RecipeDetails = () => {
           </CardContent>
         </Card>
       </div>
+    </div>
+  );
+};
+
+const RecipeDetailsSkeleton = () => {
+  return (
+    <div className="space-y-6">
+      {/* Recipe Header */}
+      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <CardHeader>
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-8 w-3/4" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+            <Skeleton className="w-full md:w-48 h-32 rounded-lg" />
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-4 pt-4">
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-6 w-16 rounded-full" />
+          </div>
+
+          <div className="flex flex-wrap gap-2 pt-2">
+            <Skeleton className="h-5 w-12 rounded-full" />
+            <Skeleton className="h-5 w-16 rounded-full" />
+            <Skeleton className="h-5 w-14 rounded-full" />
+          </div>
+
+          <div className="pt-4 space-y-3">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-10 w-48" />
+          </div>
+        </CardHeader>
+      </Card>
+
+      {/* Times */}
+      <div className="grid grid-cols-2 gap-4">
+        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <CardContent className="p-4 text-center space-y-2">
+            <Skeleton className="h-8 w-12 mx-auto" />
+            <Skeleton className="h-4 w-16 mx-auto" />
+          </CardContent>
+        </Card>
+        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <CardContent className="p-4 text-center space-y-2">
+            <Skeleton className="h-8 w-12 mx-auto" />
+            <Skeleton className="h-4 w-16 mx-auto" />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Ingredients */}
+      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <CardHeader>
+          <Skeleton className="h-6 w-24" />
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div key={index} className="flex items-start gap-3 p-2 bg-gray-50 rounded-lg">
+                <div className="w-1 h-1 bg-gray-400 rounded-full mt-2" />
+                <div className="flex-1 space-y-1">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-3 w-20" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Instructions */}
+      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <CardHeader>
+          <Skeleton className="h-6 w-28" />
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="flex gap-3">
+                <Skeleton className="w-6 h-6 rounded-full" />
+                <div className="flex-1 space-y-1">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

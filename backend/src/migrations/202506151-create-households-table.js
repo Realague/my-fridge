@@ -53,9 +53,28 @@ module.exports = {
     // Add indexes for better query performance
     await queryInterface.addIndex('households', ['inviteCode']);
     await queryInterface.addIndex('households', ['createdBy']);
+
+    // Add selectedHouseholdId column to users table now that households table exists
+    await queryInterface.addColumn('users', 'selectedHouseholdId', {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: 'households',
+        key: 'id'
+      },
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE'
+    });
+
+    // Add index for better performance
+    await queryInterface.addIndex('users', ['selectedHouseholdId']);
   },
 
   async down (queryInterface, Sequelize) {
+    // Remove the selectedHouseholdId column from users table
+    await queryInterface.removeColumn('users', 'selectedHouseholdId');
+    
+    // Drop the households table
     await queryInterface.dropTable('households');
   }
 };

@@ -10,6 +10,7 @@ import { QuantitySelector } from './QuantitySelector';
 export interface StructuredIngredient {
   id: string;
   itemId: string;
+  item?: Item;
   quantity: number;
   unit: string;
   notes?: string;
@@ -55,7 +56,15 @@ export const StructuredIngredientInput = ({
     if (item) {
       updateIngredient(ingredients[index].id, {
         itemId: item.id,
+        item: item, // Store the full item object
         unit: item.defaultUnit
+      });
+    } else {
+      // Clear the selection
+      updateIngredient(ingredients[index].id, {
+        itemId: '',
+        item: undefined,
+        unit: 'piece'
       });
     }
   };
@@ -91,6 +100,7 @@ export const StructuredIngredientInput = ({
                 <Label className="text-sm">Item</Label>
                 <ItemSelector
                   onItemSelect={(item) => handleItemSelect(index, item)}
+                  selectedItem={ingredient.item || null} // Pass the selected item
                   placeholder="Select ingredient..."
                   className="mt-1"
                 />
@@ -102,7 +112,7 @@ export const StructuredIngredientInput = ({
                     <Label className="text-sm">Quantity & Unit</Label>
                     <div className="mt-1">
                       <QuantitySelector
-                        item={{
+                        item={ingredient.item || {
                           id: ingredient.itemId,
                           name: '',
                           category: 'other',

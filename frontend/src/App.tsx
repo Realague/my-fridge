@@ -64,7 +64,7 @@ function App() {
                   <Route path="/recipes/:id" element={<RecipeDetails />} />
                   <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />
                   <Route path="/add-recipe" element={<AddRecipe />} />
-                  <Route path="/edit-recipe/:id" element={<EditRecipe />} />
+                  <Route path="/recipes/:id/edit" element={<EditRecipe />} />
                   <Route path="/meal-plans" element={<MealPlans />} />
                   <Route path="/household" element={<Household />} />
                   <Route path="/household/:id" element={<HouseholdDetails />} />

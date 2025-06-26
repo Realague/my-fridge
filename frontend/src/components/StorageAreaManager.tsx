@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,18 +5,17 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Plus, Edit3, Trash2 } from 'lucide-react';
-import { useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
+import { useStorageAreasWithStats, useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
 
 const StorageAreaManager = () => {
   const { user } = useAuthStore();
+  const { storageAreas } = useStorageAreasWithStats(user?.selectedHouseholdId);
   const { 
-    storageAreas, 
     createStorageArea, 
     updateStorageArea, 
-    deleteStorageArea,
-    fetchStorageAreas 
+    deleteStorageArea
   } = useCurrentHouseholdStorageAreas(user?.selectedHouseholdId);
   
   const [editingArea, setEditingArea] = useState<any>(null);

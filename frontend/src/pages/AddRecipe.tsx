@@ -18,6 +18,13 @@ import { StructuredIngredientInput } from '@/components/StructuredIngredientInpu
 
 interface RecipeIngredientWithId extends CreateRecipeIngredientDto {
   id: string;
+  item?: {
+    id: string;
+    name: string;
+    category: string;
+    defaultUnit: string;
+    availableUnits: string[];
+  };
 }
 
 interface RecipeFormData {

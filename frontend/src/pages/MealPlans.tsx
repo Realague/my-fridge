@@ -120,7 +120,11 @@ const MealPlans = () => {
     instructions: recipe.description ? [recipe.description] : [],
     householdId: '',
     updatedAt: '',
-    ingredients: []
+    ingredients: [],
+    creator: recipe.creator ? {
+      ...recipe.creator,
+      email: ''
+    } : undefined
   }));
 
   return (
@@ -362,7 +366,7 @@ const MealPlans = () => {
                     onClick={() => handleDeleteMealPlan(viewingMealPlan.id)}
                     disabled={deletingMealPlan}
                   >
-                    {deletingMealPlan ? 'Deleting...' : 'Delete'}
+                    {deletingMealPlan ? 'Deleting..' : 'Delete'}
                   </Button>
                 </DialogFooter>
               </>

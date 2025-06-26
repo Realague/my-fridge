@@ -1,335 +1,349 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { format, isToday, isSameMonth, addWeeks, subWeeks } from 'date-fns';
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Calendar } from '@/components/ui/calendar';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar, Plus, Clock, Users, ChefHat, Trash2, ShoppingCart, ChevronLeft, ChevronRight, Check, ChevronsUpDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import BottomNavigation from '@/components/BottomNavigation';
-import { useMealPlan } from '@/contexts/MealPlanContext';
-import { useRecipes } from '@/contexts/RecipeContext';
-import { useToast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from "@/hooks/use-toast"
+import { getWeekDays, getMealPlansForDay, MealPlan } from '@/utils/mealPlanHelpers';
+import { useMealPlanStore } from '@/stores/mealPlanStore';
+import { useRecipeStore } from '@/stores/recipeStore';
+import { RecipeDto } from '@/services/recipeService';
+import { RecipeSelector } from '@/components/RecipeSelector';
+
+interface MealPlanForm {
+  date: Date | undefined;
+  mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  servings: number;
+  recipeId: string;
+}
 
 const MealPlans = () => {
-  const { mealPlans, addToMealPlan, removeMealPlan, getMealPlansForDate } = useMealPlan();
-  const { recipes } = useRecipes();
-  const { toast } = useToast();
-  
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [selectedRecipe, setSelectedRecipe] = useState('');
-  const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner'>('lunch');
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [weekDays, setWeekDays] = useState<Date[]>(getWeekDays(currentDate));
+  const [isAddMealDialogOpen, setIsAddMealDialogOpen] = useState(false);
+  const [isViewMealPlanDialogOpen, setIsViewMealPlanDialogOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('lunch');
   const [selectedServings, setSelectedServings] = useState(1);
-  const [showAddDialog, setShowAddDialog] = useState(false);
-  const [recipePopoverOpen, setRecipePopoverOpen] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState<RecipeDto | null>(null);
+  const [viewingMealPlan, setViewingMealPlan] = useState<MealPlan | null>(null);
+  const { mealPlans, fetchMealPlans, createMealPlan, deleteMealPlan, loading: mealPlansLoading, savingMealPlan, deletingMealPlan } = useMealPlanStore();
+  const { recipes, fetchRecipes, loading: recipesLoading } = useRecipeStore();
+  const { toast } = useToast();
 
-  // Generate week dates starting from selected date
-  const getWeekDates = (startDate: string) => {
-    const dates = [];
-    const start = new Date(startDate);
-    const startOfWeek = new Date(start);
-    startOfWeek.setDate(start.getDate() - start.getDay()); // Start from Sunday
-    
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(startOfWeek);
-      date.setDate(startOfWeek.getDate() + i);
-      dates.push(date.toISOString().split('T')[0]);
-    }
-    return dates;
+  useEffect(() => {
+    setWeekDays(getWeekDays(currentDate));
+  }, [currentDate]);
+
+  useEffect(() => {
+    fetchMealPlans();
+    fetchRecipes();
+  }, [fetchMealPlans, fetchRecipes]);
+
+  const getMealPlansForDay = (day: Date): MealPlan[] => {
+    return mealPlans.filter(plan => 
+      format(new Date(plan.plannedFor), 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')
+    );
   };
 
-  const weekDates = getWeekDates(selectedDate);
-  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const mealTypes = ['breakfast', 'lunch', 'dinner'] as const;
+  const handleAddMeal = (day: Date) => {
+    setSelectedDate(day);
+    setIsAddMealDialogOpen(true);
+  };
 
-  const handleAddMeal = () => {
-    if (selectedRecipe && selectedDate && selectedMealType) {
-      addToMealPlan(selectedRecipe, selectedDate, selectedMealType, selectedServings);
-      setShowAddDialog(false);
-      setSelectedRecipe('');
-      setSelectedServings(1);
-      setRecipePopoverOpen(false);
+  const handleViewMealPlan = (mealPlan: MealPlan) => {
+    setViewingMealPlan(mealPlan);
+    setIsViewMealPlanDialogOpen(true);
+  };
+
+  const handleSaveMeal = async () => {
+    if (!selectedDate || !selectedMealType || !selectedRecipe) {
       toast({
-        title: "Meal added",
-        description: `Recipe has been added to your meal plan for ${selectedServings} serving${selectedServings > 1 ? 's' : ''}.`,
+        title: "Error",
+        description: "Please select a date, meal type, and recipe.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await createMealPlan({
+        plannedFor: selectedDate.toISOString(),
+        mealType: selectedMealType,
+        servings: selectedServings,
+        recipeId: selectedRecipe.id,
+      });
+
+      setIsAddMealDialogOpen(false);
+      setSelectedRecipe(null);
+      toast({
+        title: "Meal plan added!",
+        description: "Your meal plan has been saved.",
+      });
+    } catch (error) {
+      console.error('Error creating meal plan:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create meal plan. Please try again.",
+        variant: "destructive",
       });
     }
   };
 
-  const getMealTypeIcon = (mealType: string) => {
-    switch (mealType) {
-      case 'breakfast': return '🌅';
-      case 'lunch': return '☀️';
-      case 'dinner': return '🌙';
-      default: return '🍽️';
+  const handleDeleteMealPlan = async (mealPlanId: string) => {
+    try {
+      await deleteMealPlan(mealPlanId);
+      setIsViewMealPlanDialogOpen(false);
+      toast({
+        title: "Meal plan deleted!",
+        description: "The meal plan has been removed.",
+      });
+    } catch (error) {
+      console.error('Error deleting meal plan:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete meal plan. Please try again.",
+        variant: "destructive",
+      });
     }
   };
-
-  const getMealTypeColor = (mealType: string) => {
-    switch (mealType) {
-      case 'breakfast': return 'bg-orange-100 text-orange-800';
-      case 'lunch': return 'bg-blue-100 text-blue-800';
-      case 'dinner': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const selectedRecipeData = recipes.find(recipe => recipe.id === selectedRecipe);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex-1">
-              <h1 className="text-base sm:text-xl font-bold text-gray-900 flex items-center gap-2">
-                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
-                <span>Meal Plans</span>
-              </h1>
-              <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Plan your weekly meals</p>
-            </div>
-          </div>
-          <div className="flex gap-2 justify-center sm:justify-end">
-            <Button size="sm" variant="outline" className="text-xs sm:text-sm px-3">
-              <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-              <span>Generate List</span>
-            </Button>
-            <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-              <DialogTrigger asChild>
-                <Button size="sm" className="text-xs sm:text-sm px-3">
-                  <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-                  <span>Add Meal</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Add Recipe to Meal Plan</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium">Date</label>
-                    <input
-                      type="date"
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      className="w-full mt-1 px-3 py-2 border rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Meal Type</label>
-                    <Select value={selectedMealType} onValueChange={(value: 'breakfast' | 'lunch' | 'dinner') => setSelectedMealType(value)}>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="breakfast">🌅 Breakfast</SelectItem>
-                        <SelectItem value="lunch">☀️ Lunch</SelectItem>
-                        <SelectItem value="dinner">🌙 Dinner</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Recipe</label>
-                    <Popover open={recipePopoverOpen} onOpenChange={setRecipePopoverOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={recipePopoverOpen}
-                          className="w-full justify-between mt-1"
-                        >
-                          {selectedRecipeData
-                            ? selectedRecipeData.title
-                            : "Select a recipe..."}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-full p-0" align="start">
-                        <Command>
-                          <CommandInput placeholder="Search recipes..." />
-                          <CommandEmpty>No recipe found.</CommandEmpty>
-                          <CommandList>
-                            <CommandGroup>
-                              {recipes.map((recipe) => (
-                                <CommandItem
-                                  key={recipe.id}
-                                  value={recipe.title}
-                                  onSelect={() => {
-                                    setSelectedRecipe(recipe.id);
-                                    setRecipePopoverOpen(false);
-                                  }}
-                                >
-                                  <Check
-                                    className={cn(
-                                      "mr-2 h-4 w-4",
-                                      selectedRecipe === recipe.id ? "opacity-100" : "opacity-0"
-                                    )}
-                                  />
-                                  <div className="flex-1">
-                                    <div className="font-medium">{recipe.title}</div>
-                                    <div className="text-xs text-gray-500">
-                                      {recipe.prepTime + recipe.cookTime}m • {recipe.servings} servings
-                                    </div>
-                                  </div>
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Servings</label>
-                    <Input
-                      type="number"
-                      min="1"
-                      max="20"
-                      value={selectedServings}
-                      onChange={(e) => setSelectedServings(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="mt-1"
-                      placeholder="Number of servings"
-                    />
-                  </div>
-                  <Button onClick={handleAddMeal} disabled={!selectedRecipe} className="w-full">
-                    Add to Meal Plan
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
+          <h1 className="text-2xl font-bold text-gray-900">Meal Plans</h1>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-6">
-        {/* Week Navigation */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg mb-6">
-          <CardContent className="p-3 sm:p-4">
-            <div className="flex items-center justify-between gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const newDate = new Date(selectedDate);
-                  newDate.setDate(newDate.getDate() - 7);
-                  setSelectedDate(newDate.toISOString().split('T')[0]);
-                }}
-                className="touch-friendly h-8 w-8 sm:h-9 sm:w-auto p-0 sm:px-3"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                <span className="hidden sm:inline ml-2">Previous Week</span>
-              </Button>
-              <div className="text-center flex-1 px-2">
-                <h2 className="font-semibold text-xs sm:text-base leading-tight">
-                  Week of {new Date(weekDates[0]).toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    day: 'numeric',
-                    year: window.innerWidth < 640 ? undefined : 'numeric'
-                  })}
-                </h2>
+        {/* Calendar Header */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-0 mb-6">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-gray-900">
+                {format(currentDate, 'MMMM yyyy')}
+              </h2>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentDate(subWeeks(currentDate, 1))}
+                  className="text-gray-600"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentDate(new Date())}
+                  className="text-gray-600"
+                >
+                  Today
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentDate(addWeeks(currentDate, 1))}
+                  className="text-gray-600"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const newDate = new Date(selectedDate);
-                  newDate.setDate(newDate.getDate() + 7);
-                  setSelectedDate(newDate.toISOString().split('T')[0]);
-                }}
-                className="touch-friendly h-8 w-8 sm:h-9 sm:w-auto p-0 sm:px-3"
-              >
-                <span className="hidden sm:inline mr-2">Next Week</span>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Weekly Meal Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
-          {weekDates.map((date, index) => {
-            const dayMealPlans = getMealPlansForDate(date);
-            const isToday = date === new Date().toISOString().split('T')[0];
-            
-            return (
-              <Card key={date} className={`bg-white/80 backdrop-blur-sm border-0 shadow-lg ${isToday ? 'ring-2 ring-green-500' : ''}`}>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm text-center">
-                    <div className="font-medium">{dayNames[index]}</div>
-                    <div className="text-xs text-gray-600">
-                      {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {mealTypes.map((mealType) => {
-                    const mealPlan = dayMealPlans.find(plan => plan.mealType === mealType);
-                    const recipe = mealPlan ? recipes.find(r => r.id === mealPlan.recipeId) : null;
-                    
-                    return (
-                      <div key={mealType} className="min-h-[60px] border border-gray-200 rounded-lg p-2">
-                        <div className="flex items-center gap-1 mb-1">
-                          <span className="text-xs">{getMealTypeIcon(mealType)}</span>
-                          <span className="text-xs font-medium capitalize">{mealType}</span>
+            {/* Week Grid */}
+            <div className="grid grid-cols-7 gap-2">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                <div key={day} className="text-center text-sm font-medium text-gray-500 p-2">
+                  {day}
+                </div>
+              ))}
+              
+              {weekDays.map((day) => (
+                <div
+                  key={day.toISOString()}
+                  className={`
+                    min-h-[120px] p-2 border border-gray-200 rounded-lg
+                    ${!isSameMonth(day, currentDate) ? 'opacity-50 bg-gray-50' : 'bg-white'}
+                    ${isToday(day) ? 'ring-2 ring-green-500' : ''}
+                  `}
+                >
+                  <div className="text-sm font-medium text-gray-900 mb-2">
+                    {format(day, 'd')}
+                  </div>
+                  
+                  {/* Meal Plans for this day */}
+                  <div className="space-y-1">
+                    {getMealPlansForDay(day).map((mealPlan) => (
+                      <div
+                        key={mealPlan.id}
+                        className="text-xs p-2 bg-green-100 text-green-800 rounded-md cursor-pointer hover:bg-green-200 transition-colors"
+                        onClick={() => handleViewMealPlan(mealPlan)}
+                      >
+                        <div className="font-medium truncate">{mealPlan.recipe.title}</div>
+                        <div className="text-green-600">
+                          {mealPlan.mealType} 
+                          {mealPlan.servings > 1 && ` • ${mealPlan.servings} servings`}
                         </div>
-                        {recipe ? (
-                          <div className="space-y-1">
-                            <div className="text-xs font-medium text-gray-900 line-clamp-2">
-                              {recipe.title}
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2 text-xs text-gray-600">
-                                <div className="flex items-center gap-1">
-                                  <Clock className="h-3 w-3" />
-                                  <span>{recipe.prepTime + recipe.cookTime}m</span>
-                                </div>
-                                {mealPlan && mealPlan.servings > 1 && (
-                                  <div className="flex items-center gap-1">
-                                    <Users className="h-3 w-3" />
-                                    <span>{mealPlan.servings}</span>
-                                  </div>
-                                )}
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => mealPlan && removeMealPlan(mealPlan.id)}
-                                className="h-5 w-5 p-0 text-red-500 hover:text-red-700"
-                              >
-                                <Trash2 className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          </div>
-                        ) : (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedDate(date);
-                              setSelectedMealType(mealType);
-                              setShowAddDialog(true);
-                            }}
-                            className="w-full h-8 text-xs text-gray-500 hover:text-gray-700"
-                          >
-                            <Plus className="h-3 w-3 mr-1" />
-                            Add
-                          </Button>
-                        )}
                       </div>
-                    );
-                  })}
-                </CardContent>
-              </Card>
-            );
-          })}
+                    ))}
+                  </div>
+                  
+                  {/* Add Meal Button */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleAddMeal(day)}
+                    className="w-full mt-2 text-xs text-gray-500 hover:text-green-600 hover:bg-green-50"
+                  >
+                    <Plus className="h-3 w-3 mr-1" />
+                    Add Meal
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
 
-      <BottomNavigation currentPage="meal-plans" />
+        {/* Add Meal Dialog */}
+        <Dialog open={isAddMealDialogOpen} onOpenChange={setIsAddMealDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add Meal Plan</DialogTitle>
+              <DialogDescription>
+                Add a meal for {selectedDate ? format(selectedDate, 'EEEE, MMMM d') : ''}
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Recipe</label>
+                <RecipeSelector
+                  onRecipeSelect={setSelectedRecipe}
+                  selectedRecipe={selectedRecipe}
+                  recipes={recipes}
+                  loading={recipesLoading}
+                  placeholder="Search for a recipe..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Meal Type</label>
+                <Select value={selectedMealType} onValueChange={setSelectedMealType}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select meal type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="breakfast">Breakfast</SelectItem>
+                    <SelectItem value="lunch">Lunch</SelectItem>
+                    <SelectItem value="dinner">Dinner</SelectItem>
+                    <SelectItem value="snack">Snack</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Servings</label>
+                <Select value={selectedServings.toString()} onValueChange={(value) => setSelectedServings(parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select servings" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+                      <SelectItem key={num} value={num.toString()}>
+                        {num} {num === 1 ? 'serving' : 'servings'}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsAddMealDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSaveMeal}
+                disabled={!selectedRecipe || !selectedMealType || savingMealPlan}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                {savingMealPlan ? 'Adding...' : 'Add Meal'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* View Meal Plan Dialog */}
+        <Dialog open={isViewMealPlanDialogOpen} onOpenChange={setIsViewMealPlanDialogOpen}>
+          <DialogContent className="max-w-md">
+            {viewingMealPlan && (
+              <>
+                <DialogHeader>
+                  <DialogTitle>{viewingMealPlan.recipe.title}</DialogTitle>
+                  <DialogDescription>
+                    {format(new Date(viewingMealPlan.plannedFor), 'EEEE, MMMM d')} • {viewingMealPlan.mealType}
+                    {viewingMealPlan.servings > 1 && ` • ${viewingMealPlan.servings} servings`}
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-medium mb-2">Description</h4>
+                    <p className="text-sm text-gray-600">{viewingMealPlan.recipe.description}</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="font-medium">Prep Time:</span> {viewingMealPlan.recipe.prepTime} min
+                    </div>
+                    <div>
+                      <span className="font-medium">Cook Time:</span> {viewingMealPlan.recipe.cookTime} min
+                    </div>
+                    <div>
+                      <span className="font-medium">Difficulty:</span> {viewingMealPlan.recipe.difficulty}
+                    </div>
+                    <div>
+                      <span className="font-medium">Recipe Servings:</span> {viewingMealPlan.recipe.servings}
+                    </div>
+                  </div>
+                  
+                  {viewingMealPlan.recipe.tags.length > 0 && (
+                    <div>
+                      <h4 className="font-medium mb-2">Tags</h4>
+                      <div className="flex flex-wrap gap-1">
+                        {viewingMealPlan.recipe.tags.map((tag, index) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsViewMealPlanDialogOpen(false)}>
+                    Close
+                  </Button>
+                  <Button 
+                    variant="destructive"
+                    onClick={() => handleDeleteMealPlan(viewingMealPlan.id)}
+                    disabled={deletingMealPlan}
+                  >
+                    {deletingMealPlan ? 'Deleting...' : 'Delete'}
+                  </Button>
+                </DialogFooter>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 };

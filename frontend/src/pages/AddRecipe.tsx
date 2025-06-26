@@ -9,9 +9,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, Plus, X } from 'lucide-react';
-import { useRecipes, RecipeIngredient } from '@/contexts/RecipeContext';
+import { useRecipeStore } from '@/stores/recipeStore';
+import { useHouseholdStore } from '@/stores/householdStore';
+import { useAuthStore } from '@/stores/authStore';
+import { CreateRecipeIngredientDto, RecipeDifficulty } from '@/services/recipeService';
 import { useToast } from '@/hooks/use-toast';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
+
+interface RecipeIngredientWithId extends CreateRecipeIngredientDto {
+  id: string;
+}
 
 interface RecipeFormData {
   title: string;
@@ -19,16 +26,18 @@ interface RecipeFormData {
   prepTime: number;
   cookTime: number;
   servings: number;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  ingredients: RecipeIngredient[];
+  difficulty: RecipeDifficulty;
+  ingredients: RecipeIngredientWithId[];
   instructions: string[];
   tags: string[];
 }
 
 const AddRecipe = () => {
   const navigate = useNavigate();
-  const { addRecipe } = useRecipes();
   const { toast } = useToast();
+  const { selectedHouseholdId } = useHouseholdStore();
+  const { user } = useAuthStore();
+  const { createRecipe, loading, clearError } = useRecipeStore();
   
   const form = useForm<RecipeFormData>({
     defaultValues: {
@@ -44,11 +53,16 @@ const AddRecipe = () => {
     },
   });
 
-  const [ingredients, setIngredients] = React.useState<RecipeIngredient[]>([]);
+  const [ingredients, setIngredients] = React.useState<RecipeIngredientWithId[]>([]);
   const [instructions, setInstructions] = React.useState(['']);
   const [tags, setTags] = React.useState<string[]>([]);
   const [newTag, setNewTag] = React.useState('');
   const [ingredientStepMap, setIngredientStepMap] = React.useState<{[ingredientId: string]: number[]}>({});
+
+  // Clear any existing errors when component mounts
+  React.useEffect(() => {
+    clearError();
+  }, [clearError]);
 
   const addInstruction = () => {
     setInstructions([...instructions, '']);
@@ -102,7 +116,16 @@ const AddRecipe = () => {
     }
   };
 
-  const onSubmit = (data: RecipeFormData) => {
+  const onSubmit = async (data: RecipeFormData) => {
+    if (!selectedHouseholdId || !user?.id) {
+      toast({
+        title: "Error",
+        description: "Missing household or user information.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const validIngredients = ingredients.filter(ing => ing.itemId && ing.quantity > 0);
     const filteredInstructions = instructions.filter(inst => inst.trim() !== '');
     
@@ -124,28 +147,49 @@ const AddRecipe = () => {
       return;
     }
 
-    // Add step mapping to ingredients
-    const ingredientsWithSteps = validIngredients.map(ingredient => ({
-      ...ingredient,
+    // Transform ingredients and add step mapping
+    const ingredientsForApi: CreateRecipeIngredientDto[] = validIngredients.map(ingredient => ({
+      itemId: ingredient.itemId,
+      quantity: ingredient.quantity,
+      unit: ingredient.unit,
+      notes: ingredient.notes,
       usedInSteps: ingredientStepMap[ingredient.id] || []
     }));
 
     const recipeData = {
-      ...data,
-      ingredients: ingredientsWithSteps,
+      title: data.title,
+      description: data.description,
+      prepTime: data.prepTime,
+      cookTime: data.cookTime,
+      servings: data.servings,
+      difficulty: data.difficulty,
       instructions: filteredInstructions,
       tags,
-      isFavorite: false,
+      ingredients: ingredientsForApi,
     };
 
-    addRecipe(recipeData);
-    
-    toast({
-      title: "Recipe added!",
-      description: "Your new recipe has been saved to your collection.",
-    });
-    
-    navigate('/recipes');
+    try {
+      // Clear any existing errors before creating the recipe
+      clearError();
+      
+      const newRecipe = await createRecipe(selectedHouseholdId, recipeData);
+      
+      toast({
+        title: "Recipe added!",
+        description: "Your new recipe has been saved to your collection.",
+      });
+      
+      // Clear any errors that might have been set and navigate
+      clearError();
+      navigate('/recipes');
+    } catch (error) {
+      console.error('Recipe creation failed:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to create recipe. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -350,8 +394,6 @@ const AddRecipe = () => {
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                           {ingredients.map((ingredient) => {
-                            //const item = getItemById(ingredient.itemId);
-                            //if (!item) return null;
                             
                             const isLinked = (ingredientStepMap[ingredient.id] || []).includes(index);
                             
@@ -362,7 +404,7 @@ const AddRecipe = () => {
                                   onCheckedChange={() => toggleIngredientForStep(ingredient.id, index)}
                                 />
                                 <span className="text-sm text-gray-600">
-                                  {ingredient.quantity} {ingredient.unit} {/*{item.name}*/}
+                                  {ingredient.quantity} {ingredient.unit} {ingredient.item?.name}
                                 </span>
                               </div>
                             );
@@ -421,8 +463,12 @@ const AddRecipe = () => {
               >
                 Cancel
               </Button>
-              <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
-                Save Recipe
+              <Button 
+                type="submit" 
+                className="flex-1 bg-green-600 hover:bg-green-700"
+                disabled={loading}
+              >
+                {loading ? 'Saving...' : 'Save Recipe'}
               </Button>
             </div>
           </form>

@@ -6,6 +6,8 @@ import { StorageArea } from './StorageArea';
 import { Item } from './Item';
 import { ShoppingItem } from './ShoppingItem';
 import { StoredItem } from './StoredItem';
+import { Recipe } from './Recipe';
+import { RecipeIngredient } from './RecipeIngredient';
 
 // Define associations
 User.hasMany(Household, { foreignKey: 'createdBy', as: 'createdHouseholds' });
@@ -67,6 +69,20 @@ StoredItem.belongsTo(Household, { foreignKey: 'householdId', as: 'household' });
 User.hasMany(StoredItem, { foreignKey: 'createdBy', as: 'createdStoredItems' });
 StoredItem.belongsTo(User, { foreignKey: 'createdBy', as: 'creator' });
 
+// Recipe associations
+User.hasMany(Recipe, { foreignKey: 'createdBy', as: 'createdRecipes' });
+Recipe.belongsTo(User, { foreignKey: 'createdBy', as: 'creator' });
+
+Household.hasMany(Recipe, { foreignKey: 'householdId', as: 'recipes' });
+Recipe.belongsTo(Household, { foreignKey: 'householdId', as: 'household' });
+
+// Recipe Ingredient associations
+Recipe.hasMany(RecipeIngredient, { foreignKey: 'recipeId', as: 'ingredients' });
+RecipeIngredient.belongsTo(Recipe, { foreignKey: 'recipeId', as: 'recipe' });
+
+Item.hasMany(RecipeIngredient, { foreignKey: 'itemId', as: 'recipeIngredients' });
+RecipeIngredient.belongsTo(Item, { foreignKey: 'itemId', as: 'item' });
+
 // Export models
 export {
   sequelize,
@@ -76,5 +92,7 @@ export {
   StorageArea,
   Item,
   ShoppingItem,
-  StoredItem
+  StoredItem,
+  Recipe,
+  RecipeIngredient
 }; 

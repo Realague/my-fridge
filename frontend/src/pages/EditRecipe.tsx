@@ -11,7 +11,9 @@ import { Badge } from '@/components/ui/badge';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, Plus, X } from 'lucide-react';
-import { useRecipes, Recipe } from '@/contexts/RecipeContext';
+import { useRecipeStore } from '@/stores/recipeStore';
+import { useHouseholdStore } from '@/stores/householdStore';
+import { RecipeDto, UpdateRecipeDto, CreateRecipeIngredientDto, RecipeDifficulty } from '@/services/recipeService';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
 import { useToast } from '@/hooks/use-toast';
 import { useItemService } from '@/services/itemService';
@@ -28,11 +30,25 @@ interface RecipeFormData {
 const EditRecipe = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { getRecipeById, updateRecipe } = useRecipes();
+  const { currentRecipe, fetchRecipeById, updateRecipe, loading, error, clearError } = useRecipeStore();
+  const { selectedHouseholdId } = useHouseholdStore();
   const { toast } = useToast();
   const { getItemById } = useItemService();
   
-  const recipe = id ? getRecipeById(id) : undefined;
+  const recipe = currentRecipe;
+  
+  // Fetch recipe on component mount
+  useEffect(() => {
+    if (id && selectedHouseholdId && (!recipe || recipe.id !== id)) {
+      console.log('Fetching recipe for edit:', id);
+      fetchRecipeById(selectedHouseholdId, id);
+    }
+  }, [id, selectedHouseholdId, recipe, fetchRecipeById]);
+
+  // Clear any existing errors when component mounts
+  useEffect(() => {
+    clearError();
+  }, [clearError]);
   
   const [ingredients, setIngredients] = useState(recipe?.ingredients || []);
   const [instructions, setInstructions] = useState(recipe?.instructions || []);
@@ -76,11 +92,27 @@ const EditRecipe = () => {
     }
   }, [recipe, form]);
 
-  if (!recipe) {
+  // Show loading state
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Recipe not found</h1>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading recipe...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error or not found state
+  if (!recipe || error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            {error ? 'Error loading recipe' : 'Recipe not found'}
+          </h1>
+          {error && <p className="text-red-600 mb-4">{error}</p>}
           <Button onClick={() => navigate('/recipes')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Recipes
@@ -142,7 +174,16 @@ const EditRecipe = () => {
     }
   };
 
-  const onSubmit = (data: RecipeFormData) => {
+  const onSubmit = async (data: RecipeFormData) => {
+    if (!selectedHouseholdId || !recipe?.id) {
+      toast({
+        title: "Error",
+        description: "Missing household or recipe information.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const validIngredients = ingredients.filter(ing => ing.itemId && ing.quantity > 0);
     const filteredInstructions = instructions.filter(inst => inst.trim() !== '');
     
@@ -170,21 +211,30 @@ const EditRecipe = () => {
       usedInSteps: ingredientStepMap[ingredient.id] || []
     }));
 
-    const updatedRecipe: Partial<Recipe> = {
+    const updatedRecipe: UpdateRecipeDto = {
       ...data,
       ingredients: ingredientsWithSteps,
       instructions: filteredInstructions,
       tags
     };
 
-    updateRecipe(recipe.id, updatedRecipe);
-    
-    toast({
-      title: "Recipe updated!",
-      description: "Your recipe has been successfully updated.",
-    });
-    
-    navigate(`/recipes/${recipe.id}`);
+    try {
+      await updateRecipe(selectedHouseholdId, recipe.id, updatedRecipe);
+      
+      toast({
+        title: "Recipe updated!",
+        description: "Your recipe has been successfully updated.",
+      });
+      
+      navigate(`/recipes/${recipe.id}`);
+    } catch (error) {
+      console.error('Recipe update failed:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update recipe. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

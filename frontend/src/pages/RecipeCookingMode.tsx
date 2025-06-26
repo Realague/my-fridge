@@ -1,18 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, ArrowRight, Play, Pause, RotateCcw, Clock, ChefHat, Badge } from 'lucide-react';
-import { useRecipes } from '@/contexts/RecipeContext';
+import { useRecipeStore } from '@/stores/recipeStore';
+import { useHouseholdStore } from '@/stores/householdStore';
 
 const RecipeCookingMode = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { getRecipeById } = useRecipes();
-  
-  const recipe = id ? getRecipeById(id) : undefined;
+  const { selectedHouseholdId } = useHouseholdStore();
+  const { currentRecipe: recipe, fetchRecipeById, loading, error } = useRecipeStore();
+
+  // Fetch the recipe when component mounts
+  useEffect(() => {
+    if (selectedHouseholdId && id && (!recipe || recipe.id !== id)) {
+      console.log('Fetching recipe for cooking mode:', id);
+      fetchRecipeById(selectedHouseholdId, id);
+    }
+  }, [selectedHouseholdId, id, recipe, fetchRecipeById]);
   
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<boolean[]>([]);
@@ -40,11 +48,27 @@ const RecipeCookingMode = () => {
     return () => clearInterval(interval);
   }, [isTimerRunning, timer]);
 
-  if (!recipe) {
+  // Show loading state
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Recipe not found</h1>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading recipe...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error or not found state
+  if (!recipe || error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            {error ? 'Error loading recipe' : 'Recipe not found'}
+          </h1>
+          {error && <p className="text-red-600 mb-4">{error}</p>}
           <Button onClick={() => navigate('/recipes')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Recipes
@@ -113,13 +137,7 @@ const RecipeCookingMode = () => {
       
       // Fallback to text matching if no explicit mapping
       if (!ingredient.usedInSteps || ingredient.usedInSteps.length === 0) {
-        //const itemName = item?.name?.toLowerCase() || '';
         const stepText = recipe.instructions[stepIndex].toLowerCase();
-        
-        // Check if ingredient name or notes appear in the step
-        //if (itemName && stepText.includes(itemName)) {
-        //  relevantIngredients.push(index);
-        //}
         
         // Also check ingredient notes for matches
         if (ingredient.notes && stepText.includes(ingredient.notes.toLowerCase())) {
@@ -247,7 +265,7 @@ const RecipeCookingMode = () => {
                           <div key={ingredient.id} className="flex items-center gap-2 text-sm">
                             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                             <span className="font-medium text-green-800">
-                              {ingredient.quantity} {ingredient.unit} {/*{item?.name || 'Unknown item'}*/}
+                              {ingredient.quantity} {ingredient.unit} {ingredient.item?.name}
                             </span>
                             {ingredient.notes && (
                               <span className="text-green-600 italic">({ingredient.notes})</span>
@@ -317,7 +335,7 @@ const RecipeCookingMode = () => {
                           />
                           <div className={`flex-1 text-sm ${checkedIngredients[index] ? 'line-through text-gray-500' : 'text-gray-800'}`}>
                             <div className={`font-medium ${isRelevant ? 'text-green-800' : ''}`}>
-                              {ingredient.quantity} {ingredient.unit} {/*{item?.name || 'Unknown item'}*/}
+                              {ingredient.quantity} {ingredient.unit} {ingredient.item?.name}
                             </div>
                             {ingredient.notes && (
                               <div className={`text-xs ${isRelevant ? 'text-green-600' : 'text-gray-600'}`}>

@@ -62,7 +62,7 @@ export const ItemSelector = ({
   const loadHouseholdItemsOnDemand = async () => {
     // Wait for authentication to complete
     if (!user || !isAuthenticated || !selectedHouseholdId || hasLoadedHouseholdItems) {
-      console.log('Skipping household items load:', { 
+      console.log('ItemSelector: Skipping household items load:', { 
         hasUser: !!user, 
         isAuthenticated, 
         hasHouseholdId: !!selectedHouseholdId, 
@@ -74,27 +74,27 @@ export const ItemSelector = ({
     // Check if we have a valid token
     const token = localStorage.getItem('google_token');
     if (!token) {
-      console.warn('No Google token found, skipping household items load');
+      console.warn('ItemSelector: No Google token found, skipping household items load');
       return;
     }
     
-    console.log('Loading household items on demand for household:', selectedHouseholdId);
+    console.log('ItemSelector: Loading household items on demand for household:', selectedHouseholdId);
 
     try {
       setApiLoading(true);
       const items = await itemService.getItemsByHousehold(selectedHouseholdId);
-      console.log('Loaded household items:', items.length);
+      console.log('ItemSelector: Loaded household items:', items.length);
       setHouseholdItems(items);
       setApiResults(items);
       householdItemsRef.current = items;
       setHasLoadedHouseholdItems(true);
     } catch (error) {
-      console.error('Failed to load household items:', error);
+      console.error('ItemSelector: Failed to load household items:', error);
       // Check if it's an auth error
       if (error instanceof Error && error.message.includes('Authentication')) {
         toast.error('Please log in again to access items');
       } else {
-        toast.error('Failed to load items');
+        toast.error('Failed to load items. Please try again.');
       }
       setHouseholdItems([]);
       setApiResults([]);
@@ -375,13 +375,18 @@ export const ItemSelector = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
     setIsOpen(true);
+    
+    // Load household items when user starts typing (lazy loading)
+    if (!hasLoadedHouseholdItems && !e.target.value.trim()) {
+      loadHouseholdItemsOnDemand();
+    }
   };
 
   const handleInputFocus = () => {
     setIsOpen(true);
     setTimeout(updateDropdownPosition, 0);
     
-    // Load household items only when user opens dropdown
+    // Load household items on first focus if not already loaded
     if (!hasLoadedHouseholdItems && !query.trim()) {
       loadHouseholdItemsOnDemand();
     }
@@ -441,7 +446,15 @@ export const ItemSelector = ({
               <X className="h-3 w-3" />
             </Button>
           )}
-          <ChevronDown className="h-4 w-4 text-gray-400" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleInputFocus}
+            className="h-6 w-6 p-0 hover:bg-gray-100"
+          >
+            <ChevronDown className="h-4 w-4 text-gray-400" />
+          </Button>
         </div>
       </div>
 
@@ -456,6 +469,7 @@ export const ItemSelector = ({
             minWidth: dropdownPosition.width
           }}
         >
+
           {apiLoading && (
             <div className="flex items-center justify-center p-4 text-sm text-gray-500 bg-white">
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -530,7 +544,16 @@ export const ItemSelector = ({
             </div>
           )}
 
-          {filteredResults.length === 0 && !query.trim() && (
+          {filteredResults.length === 0 && !query.trim() && !hasLoadedHouseholdItems && (
+            <div 
+              className="p-4 text-center text-sm text-gray-500 bg-white cursor-pointer hover:bg-gray-50"
+              onClick={() => loadHouseholdItemsOnDemand()}
+            >
+              Click to load your household items...
+            </div>
+          )}
+          
+          {filteredResults.length === 0 && !query.trim() && hasLoadedHouseholdItems && (
             <div className="p-4 text-center text-sm text-gray-500 bg-white">
               Start typing to search items...
             </div>

@@ -14,10 +14,8 @@ const Onboarding = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isAuthenticated, isLoading } = useAuthStore();
-  const { createHousehold, joinHousehold } = useHouseholdStore(state => ({
-    createHousehold: state.createHousehold,
-    joinHousehold: state.joinHousehold
-  }));
+  const createHousehold = useHouseholdStore(state => state.createHousehold);
+  const joinHousehold = useHouseholdStore(state => state.joinHousehold);
   
   const [step, setStep] = useState(1);
   const [householdName, setHouseholdName] = useState('');

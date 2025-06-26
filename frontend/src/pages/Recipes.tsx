@@ -1,29 +1,95 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Plus, Search, Heart, Clock, Users, ChefHat } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
-import { useRecipes } from '@/contexts/RecipeContext';
+import { useRecipeStore } from '@/stores/recipeStore';
+import { useHouseholdStore } from '@/stores/householdStore';
+import { RecipeListDto } from '@/services/recipeService';
+import { useToast } from '@/hooks/use-toast';
 
 const Recipes = () => {
   const navigate = useNavigate();
-  const { recipes, toggleFavorite } = useRecipes();
+  const { toast } = useToast();
+  const { selectedHouseholdId } = useHouseholdStore();
+  const {
+    recipes,
+    favoriteRecipes,
+    loading,
+    error,
+    total,
+    fetchRecipes,
+    fetchFavoriteRecipes,
+    toggleFavorite,
+    clearError,
+  } = useRecipeStore();
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
 
-  const filteredRecipes = recipes.filter(recipe => {
-    const matchesSearch = recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         recipe.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         recipe.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    if (activeTab === 'favorites') return matchesSearch && recipe.isFavorite;
-    return matchesSearch;
+  useEffect(() => {
+    console.log('Recipes component - selectedHouseholdId:', selectedHouseholdId);
+    if (selectedHouseholdId) {
+      console.log('Fetching recipes for household:', selectedHouseholdId);
+      fetchRecipes(selectedHouseholdId);
+      fetchFavoriteRecipes(selectedHouseholdId);
+    } else {
+      console.log('No selectedHouseholdId, skipping recipe fetch');
+    }
+  }, [selectedHouseholdId, fetchRecipes, fetchFavoriteRecipes]);
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Error',
+        description: error,
+        variant: 'destructive',
+      });
+      clearError();
+    }
+  }, [error, toast, clearError]);
+
+  const currentRecipes = activeTab === 'favorites' ? favoriteRecipes : recipes;
+  
+  console.log('Recipes component state:', { 
+    recipes: recipes?.length || 0, 
+    favoriteRecipes: favoriteRecipes?.length || 0, 
+    activeTab, 
+    currentRecipes: currentRecipes?.length || 0,
+    loading,
+    error 
   });
+  
+  const filteredRecipes = (currentRecipes || []).filter(recipe => {
+    const searchLower = searchQuery.toLowerCase();
+    return recipe.title.toLowerCase().includes(searchLower) ||
+           (recipe.description && recipe.description.toLowerCase().includes(searchLower)) ||
+           (recipe.tags && recipe.tags.some(tag => tag.toLowerCase().includes(searchLower)));
+  });
+
+  const handleToggleFavorite = async (recipeId: string) => {
+    if (!selectedHouseholdId) return;
+    
+    try {
+      await toggleFavorite(selectedHouseholdId, recipeId);
+      toast({
+        title: 'Success',
+        description: 'Recipe favorite status updated',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to update favorite status',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -34,6 +100,19 @@ const Recipes = () => {
     }
   };
 
+  // Early return if no household is selected
+  if (!selectedHouseholdId && !loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20 flex items-center justify-center">
+        <div className="text-center">
+          <ChefHat className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">Please select a household to view recipes</p>
+        </div>
+        <BottomNavigation currentPage="recipes" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
       {/* Header */}
@@ -42,11 +121,13 @@ const Recipes = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-xl font-bold text-gray-900">Recipes</h1>
-              <p className="text-sm text-gray-600">{recipes.length} recipes saved</p>
+              <p className="text-sm text-gray-600">
+                {loading ? 'Loading...' : `${total || 0} recipes saved`}
+              </p>
             </div>
             <Button
               className="bg-green-600 hover:bg-green-700"
-              onClick={() => navigate('/recipes/new')}
+              onClick={() => navigate('/add-recipe')}
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Recipe
@@ -75,11 +156,27 @@ const Recipes = () => {
           </TabsList>
 
           <TabsContent value="all" className="space-y-4">
-            <RecipeGrid recipes={filteredRecipes} onToggleFavorite={toggleFavorite} getDifficultyColor={getDifficultyColor} />
+            {loading ? (
+              <RecipeGridSkeleton />
+            ) : (
+              <RecipeGrid 
+                recipes={filteredRecipes} 
+                onToggleFavorite={handleToggleFavorite} 
+                getDifficultyColor={getDifficultyColor} 
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="favorites" className="space-y-4">
-            <RecipeGrid recipes={filteredRecipes} onToggleFavorite={toggleFavorite} getDifficultyColor={getDifficultyColor} />
+            {loading ? (
+              <RecipeGridSkeleton />
+            ) : (
+              <RecipeGrid 
+                recipes={filteredRecipes} 
+                onToggleFavorite={handleToggleFavorite} 
+                getDifficultyColor={getDifficultyColor} 
+              />
+            )}
           </TabsContent>
         </Tabs>
       </div>
@@ -90,7 +187,7 @@ const Recipes = () => {
 };
 
 interface RecipeGridProps {
-  recipes: any[];
+  recipes: RecipeListDto[];
   onToggleFavorite: (id: string) => void;
   getDifficultyColor: (difficulty: string) => string;
 }
@@ -98,7 +195,8 @@ interface RecipeGridProps {
 const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGridProps) => {
   const navigate = useNavigate();
 
-  if (recipes.length === 0) {
+  // Handle undefined or null recipes
+  if (!recipes || recipes.length === 0) {
     return (
       <div className="text-center py-12">
         <ChefHat className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -143,24 +241,56 @@ const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGri
             <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
               <div className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
-                <span>{recipe.prepTime + recipe.cookTime}m</span>
+                <span>{(recipe.prepTime || 0) + (recipe.cookTime || 0)}m</span>
               </div>
               <div className="flex items-center gap-1">
                 <Users className="h-3 w-3" />
-                <span>{recipe.servings}</span>
+                <span>{recipe.servings || 0}</span>
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <div className="flex flex-wrap gap-1">
-                <Badge className={getDifficultyColor(recipe.difficulty)}>
-                  {recipe.difficulty}
+                <Badge className={getDifficultyColor(recipe.difficulty || 'Easy')}>
+                  {recipe.difficulty || 'Easy'}
                 </Badge>
-                {recipe.tags.slice(0, 2).map((tag, index) => (
+                {(recipe.tags || []).slice(0, 2).map((tag, index) => (
                   <Badge key={index} variant="outline" className="text-xs">
                     {tag}
                   </Badge>
                 ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+};
+
+const RecipeGridSkeleton = () => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {Array.from({ length: 6 }).map((_, index) => (
+        <Card key={index} className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between">
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+              </div>
+              <Skeleton className="h-6 w-6 rounded-full ml-2" />
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="flex items-center gap-4 mb-3">
+              <Skeleton className="h-4 w-12" />
+              <Skeleton className="h-4 w-8" />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex gap-1">
+                <Skeleton className="h-5 w-16 rounded-full" />
+                <Skeleton className="h-5 w-12 rounded-full" />
               </div>
             </div>
           </CardContent>

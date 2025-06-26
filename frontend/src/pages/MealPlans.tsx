@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast"
 import { getWeekDays, getMealPlansForDay, MealPlan } from '@/utils/mealPlanHelpers';
 import { useMealPlanStore } from '@/stores/mealPlanStore';
 import { useRecipeStore } from '@/stores/recipeStore';
-import { RecipeListDto } from '@/services/recipeService';
+import { RecipeListDto, RecipeDto } from '@/services/recipeService';
 import { RecipeSelector } from '@/components/RecipeSelector';
 
 interface MealPlanForm {
@@ -30,7 +30,7 @@ const MealPlans = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('lunch');
   const [selectedServings, setSelectedServings] = useState(1);
-  const [selectedRecipe, setSelectedRecipe] = useState<RecipeListDto | null>(null);
+  const [selectedRecipe, setSelectedRecipe] = useState<RecipeDto | null>(null);
   const [viewingMealPlan, setViewingMealPlan] = useState<any>(null);
   const { mealPlans, fetchMealPlans, createMealPlan, deleteMealPlan, loading: mealPlansLoading, savingMealPlan, deletingMealPlan } = useMealPlanStore();
   const { recipes, fetchRecipes, loading: recipesLoading } = useRecipeStore();
@@ -114,12 +114,12 @@ const MealPlans = () => {
     }
   };
 
-  // Convert RecipeListDto to format expected by RecipeSelector
-  const convertedRecipes = recipes.map(recipe => ({
+  // Convert RecipeListDto to RecipeDto format expected by RecipeSelector
+  const convertedRecipes: RecipeDto[] = recipes.map(recipe => ({
     ...recipe,
     instructions: recipe.description ? [recipe.description] : [],
     householdId: '',
-    updatedAt: '',
+    updatedAt: recipe.createdAt,
     ingredients: [],
     creator: recipe.creator ? {
       ...recipe.creator,
@@ -250,11 +250,7 @@ const MealPlans = () => {
               <div>
                 <label className="block text-sm font-medium mb-2">Recipe</label>
                 <RecipeSelector
-                  onRecipeSelect={(recipe) => setSelectedRecipe(recipe ? {
-                    ...recipe,
-                    ingredientCount: 0,
-                    creator: undefined
-                  } : null)}
+                  onRecipeSelect={(recipe) => setSelectedRecipe(recipe)}
                   selectedRecipe={selectedRecipe}
                   recipes={convertedRecipes}
                   loading={recipesLoading}

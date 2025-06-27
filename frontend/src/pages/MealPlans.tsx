@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { format, isToday, isSameMonth, addWeeks, subWeeks } from 'date-fns';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
@@ -14,6 +13,7 @@ import { useMealPlanStore } from '@/stores/mealPlanStore';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { RecipeListDto, RecipeDto } from '@/services/recipeService';
 import { RecipeSelector } from '@/components/RecipeSelector';
+import BottomNavigation from '@/components/BottomNavigation';
 
 interface MealPlanForm {
   date: Date | undefined;
@@ -128,7 +128,7 @@ const MealPlans = () => {
   }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
@@ -370,6 +370,8 @@ const MealPlans = () => {
           </DialogContent>
         </Dialog>
       </div>
+
+      <BottomNavigation currentPage="meal-plans" />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format, isToday, isSameMonth, addWeeks, subWeeks } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
@@ -60,6 +60,25 @@ const MealPlans = () => {
   const handleViewMealPlan = (mealPlan: MealPlan) => {
     setViewingMealPlan(mealPlan);
     setIsViewMealPlanDialogOpen(true);
+  };
+
+  const handleQuickDeleteMealPlan = async (e: React.MouseEvent, mealPlanId: string) => {
+    e.stopPropagation(); // Prevent opening the meal plan dialog
+    
+    try {
+      await deleteMealPlan(mealPlanId);
+      toast({
+        title: "Meal plan deleted!",
+        description: "The meal plan has been removed.",
+      });
+    } catch (error) {
+      console.error('Error deleting meal plan:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete meal plan. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSaveMeal = async () => {
@@ -198,7 +217,7 @@ const MealPlans = () => {
                     {getMealPlansForDay(day).map((mealPlan) => (
                       <Card
                         key={mealPlan.id}
-                        className="cursor-pointer hover:shadow-md transition-shadow border-0 bg-gradient-to-r from-green-50 to-orange-50"
+                        className="cursor-pointer hover:shadow-md transition-shadow border-0 bg-gradient-to-r from-green-50 to-orange-50 group relative"
                         onClick={() => handleViewMealPlan(mealPlan)}
                       >
                         <CardContent className="p-2">
@@ -216,6 +235,17 @@ const MealPlans = () => {
                             )}
                           </div>
                         </CardContent>
+                        
+                        {/* Quick Delete Button */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => handleQuickDeleteMealPlan(e, mealPlan.id)}
+                          className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-red-50 hover:bg-red-100 text-red-600"
+                          disabled={deletingMealPlan}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
                       </Card>
                     ))}
                   </div>

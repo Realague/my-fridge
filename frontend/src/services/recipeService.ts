@@ -127,7 +127,7 @@ export interface IngredientStats {
 }
 
 export const useRecipeService = () => {
-  const { makeApiCall } = useApiWithAuth();
+  const { makeApiCall } = useApiWithAuth(); // Fixed the destructuring to use makeApiCall
 
   const getRecipes = async (
     householdId: string,

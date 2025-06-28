@@ -1,10 +1,29 @@
-import { create } from 'zustand';
-import { MealPlanDto, CreateMealPlanDto, createMealPlanApiService } from '@/services/mealPlanService';
-import { useHouseholdStore } from './householdStore';
 
-export interface MealPlan extends MealPlanDto {
-  // Keep the same interface for backwards compatibility with components
-  plannedFor: string; // Will map to 'date' from backend
+import { create } from 'zustand';
+
+export interface MealPlan {
+  id: string;
+  plannedFor: string;
+  mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  servings: number;
+  recipeId: string;
+  recipe: {
+    id: string;
+    title: string;
+    description: string;
+    prepTime: number;
+    cookTime: number;
+    servings: number;
+    difficulty: string;
+    tags: string[];
+  };
+}
+
+interface CreateMealPlanDto {
+  plannedFor: string;
+  mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  servings: number;
+  recipeId: string;
 }
 
 interface MealPlanStore {
@@ -12,39 +31,130 @@ interface MealPlanStore {
   loading: boolean;
   savingMealPlan: boolean;
   deletingMealPlan: boolean;
-  fetchMealPlans: (householdId?: string) => Promise<void>;
-  fetchMealPlansByDateRange: (householdId: string, startDate: string, endDate: string) => Promise<void>;
-  createMealPlan: (data: CreateMealPlanDto, householdId?: string) => Promise<void>;
-  updateMealPlan: (id: string, data: Partial<CreateMealPlanDto>, householdId?: string) => Promise<void>;
-  deleteMealPlan: (id: string, householdId?: string) => Promise<void>;
-  generateShoppingList: (startDate: string, endDate: string, householdId?: string) => Promise<any[]>;
+  fetchMealPlans: () => Promise<void>;
+  createMealPlan: (data: CreateMealPlanDto) => Promise<void>;
+  deleteMealPlan: (id: string) => Promise<void>;
 }
 
-// Helper function to get household ID
-const getHouseholdId = (providedId?: string): string | null => {
-  if (providedId) return providedId;
-  
-  // Get from household store
-  const selectedHouseholdId = useHouseholdStore.getState().selectedHouseholdId;
-  if (selectedHouseholdId) return selectedHouseholdId;
-  
-  // Check if user has any households
-  const households = useHouseholdStore.getState().households;
-  if (households.length > 0) {
-    return households[0].id; // Use first household if none selected
-  }
-  
-  return null; // No household available
+// Generate some dummy meal plans for the current week
+const generateDummyMealPlans = (): MealPlan[] => {
+  const today = new Date();
+  const dummyRecipes = [
+    {
+      id: '1',
+      title: 'Avocado Toast',
+      description: 'Healthy breakfast with smashed avocado on sourdough',
+      prepTime: 10,
+      cookTime: 5,
+      servings: 2,
+      difficulty: 'Easy',
+      tags: ['breakfast', 'healthy', 'vegetarian']
+    },
+    {
+      id: '2',
+      title: 'Chicken Caesar Salad',
+      description: 'Classic Caesar salad with grilled chicken breast',
+      prepTime: 20,
+      cookTime: 15,
+      servings: 4,
+      difficulty: 'Medium',
+      tags: ['lunch', 'salad', 'protein']
+    },
+    {
+      id: '3',
+      title: 'Spaghetti Carbonara',
+      description: 'Creamy Italian pasta with pancetta and parmesan',
+      prepTime: 15,
+      cookTime: 20,
+      servings: 4,
+      difficulty: 'Medium',
+      tags: ['dinner', 'pasta', 'italian']
+    },
+    {
+      id: '4',
+      title: 'Greek Yogurt Bowl',
+      description: 'Protein-rich yogurt with berries and granola',
+      prepTime: 5,
+      cookTime: 0,
+      servings: 1,
+      difficulty: 'Easy',
+      tags: ['breakfast', 'healthy', 'quick']
+    },
+    {
+      id: '5',
+      title: 'Beef Stir Fry',
+      description: 'Quick and healthy stir fry with mixed vegetables',
+      prepTime: 15,
+      cookTime: 10,
+      servings: 3,
+      difficulty: 'Easy',
+      tags: ['dinner', 'asian', 'healthy']
+    },
+    {
+      id: '6',
+      title: 'Quinoa Buddha Bowl',
+      description: 'Nutritious bowl with quinoa, roasted vegetables, and tahini dressing',
+      prepTime: 25,
+      cookTime: 30,
+      servings: 2,
+      difficulty: 'Medium',
+      tags: ['lunch', 'healthy', 'vegan']
+    }
+  ];
+
+  const mealPlans: MealPlan[] = [
+    {
+      id: '1',
+      plannedFor: new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString(),
+      mealType: 'breakfast',
+      servings: 2,
+      recipeId: '1',
+      recipe: dummyRecipes[0]
+    },
+    {
+      id: '2',
+      plannedFor: new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString(),
+      mealType: 'lunch',
+      servings: 4,
+      recipeId: '2',
+      recipe: dummyRecipes[1]
+    },
+    {
+      id: '3',
+      plannedFor: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString(),
+      mealType: 'dinner',
+      servings: 4,
+      recipeId: '3',
+      recipe: dummyRecipes[2]
+    },
+    {
+      id: '4',
+      plannedFor: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString(),
+      mealType: 'breakfast',
+      servings: 1,
+      recipeId: '4',
+      recipe: dummyRecipes[3]
+    },
+    {
+      id: '5',
+      plannedFor: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2).toISOString(),
+      mealType: 'dinner',
+      servings: 3,
+      recipeId: '5',
+      recipe: dummyRecipes[4]
+    },
+    {
+      id: '6',
+      plannedFor: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3).toISOString(),
+      mealType: 'lunch',
+      servings: 2,
+      recipeId: '6',
+      recipe: dummyRecipes[5]
+    }
+  ];
+
+  return mealPlans;
 };
-
-// Helper function to transform backend DTO to frontend interface
-const transformMealPlan = (dto: MealPlanDto): MealPlan => ({
-  ...dto,
-  plannedFor: dto.date, // Map 'date' to 'plannedFor' for compatibility
-});
-
-// Create the API service instance
-const mealPlanApiService = createMealPlanApiService();
 
 export const useMealPlanStore = create<MealPlanStore>((set, get) => ({
   mealPlans: [],
@@ -52,64 +162,37 @@ export const useMealPlanStore = create<MealPlanStore>((set, get) => ({
   savingMealPlan: false,
   deletingMealPlan: false,
 
-  fetchMealPlans: async (householdId?: string) => {
+  fetchMealPlans: async () => {
     set({ loading: true });
     try {
-      const houseId = getHouseholdId(householdId);
-      if (!houseId) {
-        console.log('No household ID available, skipping meal plan fetch');
-        set({ mealPlans: [], loading: false });
-        return;
-      }
-      
-      // Get meal plans for current week
-      const today = new Date();
-      const startOfWeek = new Date(today);
-      startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Start from Monday
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6); // End on Sunday
-      
-      const startDate = startOfWeek.toISOString().split('T')[0];
-      const endDate = endOfWeek.toISOString().split('T')[0];
-      
-      const mealPlanDtos = await mealPlanApiService.getMealPlansByDateRange(houseId, startDate, endDate);
-      const mealPlans = mealPlanDtos.map(transformMealPlan);
-      
-      set({ mealPlans });
+      // Return dummy data
+      const dummyMealPlans = generateDummyMealPlans();
+      set({ mealPlans: dummyMealPlans });
     } catch (error) {
       console.error('Error fetching meal plans:', error);
-      // Fallback to empty array on error
-      set({ mealPlans: [] });
     } finally {
       set({ loading: false });
     }
   },
 
-  fetchMealPlansByDateRange: async (householdId: string, startDate: string, endDate: string) => {
-    set({ loading: true });
-    try {
-      const mealPlanDtos = await mealPlanApiService.getMealPlansByDateRange(householdId, startDate, endDate);
-      const mealPlans = mealPlanDtos.map(transformMealPlan);
-      
-      set({ mealPlans });
-    } catch (error) {
-      console.error('Error fetching meal plans by date range:', error);
-      set({ mealPlans: [] });
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  createMealPlan: async (data: CreateMealPlanDto, householdId?: string) => {
+  createMealPlan: async (data: CreateMealPlanDto) => {
     set({ savingMealPlan: true });
     try {
-      const houseId = getHouseholdId(householdId);
-      if (!houseId) {
-        throw new Error('No household selected. Please select a household first.');
-      }
-      
-      const newMealPlanDto = await mealPlanApiService.createMealPlan(houseId, data);
-      const newMealPlan = transformMealPlan(newMealPlanDto);
+      // Mock creation - in a real app this would call API
+      const newMealPlan: MealPlan = {
+        id: Date.now().toString(),
+        ...data,
+        recipe: {
+          id: data.recipeId,
+          title: 'New Recipe',
+          description: 'A delicious new recipe',
+          prepTime: 15,
+          cookTime: 25,
+          servings: 4,
+          difficulty: 'Easy',
+          tags: ['new']
+        }
+      };
       
       set({ mealPlans: [...get().mealPlans, newMealPlan] });
     } catch (error) {
@@ -120,63 +203,15 @@ export const useMealPlanStore = create<MealPlanStore>((set, get) => ({
     }
   },
 
-  updateMealPlan: async (id: string, data: Partial<CreateMealPlanDto>, householdId?: string) => {
-    set({ savingMealPlan: true });
-    try {
-      const houseId = getHouseholdId(householdId);
-      if (!houseId) {
-        throw new Error('No household selected. Please select a household first.');
-      }
-      
-      const updatedMealPlanDto = await mealPlanApiService.updateMealPlan(houseId, id, data);
-      const updatedMealPlan = transformMealPlan(updatedMealPlanDto);
-      
-      set({ 
-        mealPlans: get().mealPlans.map(mp => 
-          mp.id === id ? updatedMealPlan : mp
-        )
-      });
-    } catch (error) {
-      console.error('Error updating meal plan:', error);
-      throw error;
-    } finally {
-      set({ savingMealPlan: false });
-    }
-  },
-
-  deleteMealPlan: async (id: string, householdId?: string) => {
+  deleteMealPlan: async (id: string) => {
     set({ deletingMealPlan: true });
     try {
-      const houseId = getHouseholdId(householdId);
-      if (!houseId) {
-        throw new Error('No household selected. Please select a household first.');
-      }
-      
-      await mealPlanApiService.deleteMealPlan(houseId, id);
-      
-      set({ 
-        mealPlans: get().mealPlans.filter(mp => mp.id !== id)
-      });
+      set({ mealPlans: get().mealPlans.filter(plan => plan.id !== id) });
     } catch (error) {
       console.error('Error deleting meal plan:', error);
       throw error;
     } finally {
       set({ deletingMealPlan: false });
-    }
-  },
-
-  generateShoppingList: async (startDate: string, endDate: string, householdId?: string) => {
-    try {
-      const houseId = getHouseholdId(householdId);
-      if (!houseId) {
-        throw new Error('No household selected. Please select a household first.');
-      }
-      
-      const shoppingList = await mealPlanApiService.generateShoppingList(houseId, startDate, endDate);
-      return shoppingList;
-    } catch (error) {
-      console.error('Error generating shopping list:', error);
-      throw error;
     }
   },
 }));

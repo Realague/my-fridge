@@ -8,7 +8,6 @@ import { ShoppingItem } from './ShoppingItem';
 import { StoredItem } from './StoredItem';
 import { Recipe } from './Recipe';
 import { RecipeIngredient } from './RecipeIngredient';
-import { MealPlan } from './MealPlan';
 
 // Define associations
 User.hasMany(Household, { foreignKey: 'createdBy', as: 'createdHouseholds' });
@@ -84,13 +83,6 @@ RecipeIngredient.belongsTo(Recipe, { foreignKey: 'recipeId', as: 'recipe' });
 Item.hasMany(RecipeIngredient, { foreignKey: 'itemId', as: 'recipeIngredients' });
 RecipeIngredient.belongsTo(Item, { foreignKey: 'itemId', as: 'item' });
 
-// Meal Plan associations
-Household.hasMany(MealPlan, { foreignKey: 'householdId', as: 'mealPlans' });
-MealPlan.belongsTo(Household, { foreignKey: 'householdId', as: 'household' });
-
-Recipe.hasMany(MealPlan, { foreignKey: 'recipeId', as: 'mealPlans' });
-MealPlan.belongsTo(Recipe, { foreignKey: 'recipeId', as: 'recipe' });
-
 // Export models
 export {
   sequelize,
@@ -102,6 +94,5 @@ export {
   ShoppingItem,
   StoredItem,
   Recipe,
-  RecipeIngredient,
-  MealPlan
+  RecipeIngredient
 }; 

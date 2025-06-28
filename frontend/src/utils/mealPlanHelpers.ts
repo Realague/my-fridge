@@ -6,15 +6,15 @@ export interface MealPlan {
   plannedFor: string;
   mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
   servings: number;
-  recipe?: {
+  recipe: {
     id: string;
     title: string;
-    description?: string;
+    description: string;
     prepTime: number;
     cookTime: number;
     servings: number;
     difficulty: string;
-    tags?: string[];
+    tags: string[];
   };
 }
 

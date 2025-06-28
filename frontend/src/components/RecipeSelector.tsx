@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDown, X, Search, Loader2 } from 'lucide-react';
@@ -52,13 +53,8 @@ export const RecipeSelector = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      const isClickInside = (
-        (dropdownRef.current && dropdownRef.current.contains(target)) ||
-        (containerRef.current && containerRef.current.contains(target))
-      );
-      
-      if (!isClickInside && isOpen) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&
+          containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -75,7 +71,6 @@ export const RecipeSelector = ({
       }
     };
 
-    // Use 'mousedown' for faster detection
     document.addEventListener('mousedown', handleClickOutside);
     window.addEventListener('scroll', handleScroll, true);
     window.addEventListener('resize', handleResize);
@@ -87,10 +82,7 @@ export const RecipeSelector = ({
     };
   }, [isOpen]);
 
-
-
   const handleRecipeSelect = (recipe: RecipeDto) => {
-    console.log('RecipeSelector: handleRecipeSelect called with:', recipe.title);
     onRecipeSelect(recipe);
     setQuery('');
     setIsOpen(false);
@@ -163,13 +155,12 @@ export const RecipeSelector = ({
       {isOpen && createPortal(
         <div
           ref={dropdownRef}
-          className="fixed z-[99999] bg-white border border-gray-200 rounded-md shadow-lg max-h-64 overflow-y-auto"
+          className="fixed z-50 bg-white border border-gray-200 rounded-md shadow-lg max-h-64 overflow-y-auto"
           style={{
             top: dropdownPosition.top,
             left: dropdownPosition.left,
             width: dropdownPosition.width,
-            minWidth: dropdownPosition.width,
-            pointerEvents: 'auto'
+            minWidth: dropdownPosition.width
           }}
         >
           {loading && (
@@ -182,11 +173,10 @@ export const RecipeSelector = ({
           {filteredRecipes.length > 0 && (
             <div className="p-1">
               {filteredRecipes.slice(0, 8).map((recipe) => (
-                <button
+                <div
                   key={recipe.id}
-                  type="button"
                   onClick={() => handleRecipeSelect(recipe)}
-                  className="group flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer rounded transition-colors w-full text-left"
+                  className="group flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer rounded transition-colors"
                 >
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <div className="flex-1 min-w-0">
@@ -201,7 +191,7 @@ export const RecipeSelector = ({
                       </div>
                     </div>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           )}

@@ -3,13 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, Plus, ChefHat } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
+import { AddMealPlanDialog } from '@/components/AddMealPlanDialog';
 import { useRecipeStore } from '@/stores/recipeStore';
-import { useMealPlan } from '@/contexts/MealPlanContext';
 import { useShoppingStore } from '@/stores/shoppingStore';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useToast } from '@/hooks/use-toast';
@@ -29,11 +28,8 @@ const RecipeDetails = () => {
     clearCurrentRecipe,
     clearError
   } = useRecipeStore();
-  const { addToMealPlan } = useMealPlan();
   
   const [showMealPlanDialog, setShowMealPlanDialog] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner'>('lunch');
 
   useEffect(() => {
     if (selectedHouseholdId && id) {
@@ -145,56 +141,22 @@ const RecipeDetails = () => {
     }
   };
 
-  const handleAddToMealPlan = () => {
-    addToMealPlan(recipe.id, selectedDate, selectedMealType);
-    setShowMealPlanDialog(false);
-    toast({
-      title: "Added to meal plan",
-      description: `${recipe.title} has been added to your ${selectedMealType} on ${new Date(selectedDate).toLocaleDateString()}.`,
-    });
-  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
-      {/* Meal Plan Dialog */}
-      <Dialog open={showMealPlanDialog} onOpenChange={setShowMealPlanDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add to Meal Plan</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <div className="font-medium">{recipe.title}</div>
-              <div className="text-sm text-gray-600">{recipe.servings} servings</div>
-            </div>
-            <div>
-              <label className="text-sm font-medium">Date</label>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full mt-1 px-3 py-2 border rounded-md"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium">Meal Type</label>
-              <Select value={selectedMealType} onValueChange={(value: 'breakfast' | 'lunch' | 'dinner') => setSelectedMealType(value)}>
-                <SelectTrigger className="mt-1">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="breakfast">🌅 Breakfast</SelectItem>
-                  <SelectItem value="lunch">☀️ Lunch</SelectItem>
-                  <SelectItem value="dinner">🌙 Dinner</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button onClick={handleAddToMealPlan} className="w-full">
-              Add to Meal Plan
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Add Meal Plan Dialog */}
+      <AddMealPlanDialog
+        isOpen={showMealPlanDialog}
+        onClose={() => setShowMealPlanDialog(false)}
+        preselectedRecipe={{
+          id: recipe.id,
+          title: recipe.title,
+          servings: recipe.servings,
+          prepTime: recipe.prepTime,
+          cookTime: recipe.cookTime
+        }}
+      />
 
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">

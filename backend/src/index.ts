@@ -7,6 +7,7 @@ import householdRoutes from './routes/households';
 import itemRoutes from './routes/items';
 import storedItemRoutes from './routes/storedItems';
 import recipeRoutes from './routes/recipes';
+import mealPlanRoutes from './routes/mealPlans';
 import { sequelize } from './models';
 import { executeSmartMigration } from './utils/migrationStrategy';
 
@@ -36,6 +37,7 @@ app.use('/api/households', householdRoutes);
 app.use('/api/households', storedItemRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/recipes', recipeRoutes);
+app.use('/api', mealPlanRoutes);
 
 app.get('/', (req, res) => {
   res.json({
@@ -50,6 +52,7 @@ app.get('/', (req, res) => {
       storageAreas: '/api/households/:householdId/storage-areas',
       storedItems: '/api/households/:householdId/stored-items',
       recipes: '/api/recipes/:householdId/recipes',
+      mealPlans: '/api/households/:householdId/meal-plans',
       items: '/api/items',
       dbTest: '/db-test'
     }

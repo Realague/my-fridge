@@ -136,6 +136,69 @@ function validateSchema(data: any, schema: any): string[] {
     }
   }
    
+  // Meal Plan validation schemas
+  if (schema.name === 'CreateMealPlanDto') {
+    if (!data.recipeId || typeof data.recipeId !== 'string') {
+      errors.push('Recipe ID is required and must be a string');
+    }
+    if (!data.date || typeof data.date !== 'string') {
+      errors.push('Date is required and must be a string');
+    }
+    if (data.date && !/^\d{4}-\d{2}-\d{2}$/.test(data.date)) {
+      errors.push('Date must be in YYYY-MM-DD format');
+    }
+    if (!data.mealType || !['breakfast', 'lunch', 'dinner'].includes(data.mealType)) {
+      errors.push('Meal type must be one of: breakfast, lunch, dinner');
+    }
+    if (data.servings !== undefined) {
+      if (typeof data.servings !== 'number' || data.servings < 1 || data.servings > 20) {
+        errors.push('Servings must be a number between 1 and 20');
+      }
+    }
+    if (data.notes !== undefined && data.notes !== null) {
+      if (typeof data.notes !== 'string') {
+        errors.push('Notes must be a string');
+      }
+      if (data.notes && data.notes.length > 500) {
+        errors.push('Notes must be 500 characters or less');
+      }
+    }
+  }
+
+  if (schema.name === 'UpdateMealPlanDto') {
+    if (data.recipeId !== undefined) {
+      if (!data.recipeId || typeof data.recipeId !== 'string') {
+        errors.push('Recipe ID must be a string');
+      }
+    }
+    if (data.date !== undefined) {
+      if (!data.date || typeof data.date !== 'string') {
+        errors.push('Date must be a string');
+      }
+      if (data.date && !/^\d{4}-\d{2}-\d{2}$/.test(data.date)) {
+        errors.push('Date must be in YYYY-MM-DD format');
+      }
+    }
+    if (data.mealType !== undefined) {
+      if (!['breakfast', 'lunch', 'dinner'].includes(data.mealType)) {
+        errors.push('Meal type must be one of: breakfast, lunch, dinner');
+      }
+    }
+    if (data.servings !== undefined) {
+      if (typeof data.servings !== 'number' || data.servings < 1 || data.servings > 20) {
+        errors.push('Servings must be a number between 1 and 20');
+      }
+    }
+    if (data.notes !== undefined && data.notes !== null) {
+      if (typeof data.notes !== 'string') {
+        errors.push('Notes must be a string');
+      }
+      if (data.notes && data.notes.length > 500) {
+        errors.push('Notes must be 500 characters or less');
+      }
+    }
+  }
+   
   return errors;
 }
 
@@ -183,4 +246,8 @@ function validateQueryParams(query: any, schema: any): string[] {
   }
   
   return errors;
-} 
+}
+
+// Meal Plan validators
+export const validateMealPlan = validateRequest({ name: 'CreateMealPlanDto' });
+export const validateMealPlanUpdate = validateRequest({ name: 'UpdateMealPlanDto' });

@@ -1,7 +1,5 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { useApiWithAuth } from '@/hooks/useApiWithAuth';
-import { toast } from 'sonner';
 import { StorageAreaSelections } from '@/types/household';
 
 export interface Household {
@@ -68,20 +66,45 @@ interface HouseholdStore {
   isCurrentUserAdmin: () => boolean;
 }
 
-// Create API instance outside the store to avoid circular dependencies
-let apiInstance: ReturnType<typeof useApiWithAuth> | null = null;
+// Create API service for non-hook usage in stores
+const createApiService = () => {
+  const makeApiCall = async (url: string, options: RequestInit = {}) => {
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+    
+    const token = localStorage.getItem('google_token');
+    if (!token) {
+      throw new Error('No authentication token');
+    }
 
-const getApi = () => {
-  if (!apiInstance) {
-    // This will be set by the provider
-    throw new Error('API instance not initialized. Make sure to call initializeHouseholdStore.');
-  }
-  return apiInstance;
+    const requestOptions: RequestInit = {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        ...options.headers,
+      },
+    };
+
+    const response = await fetch(fullUrl, requestOptions);
+    
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Network error' }));
+      throw new Error(error.message || `HTTP ${response.status}`);
+    }
+    
+    return response;
+  };
+
+  return {
+    get: (url: string) => makeApiCall(url, { method: 'GET' }),
+    post: (url: string, body?: any) => makeApiCall(url, { method: 'POST', body: JSON.stringify(body) }),
+    put: (url: string, body?: any) => makeApiCall(url, { method: 'PUT', body: JSON.stringify(body) }),
+    delete: (url: string) => makeApiCall(url, { method: 'DELETE' }),
+  };
 };
 
-export const initializeHouseholdStore = (api: ReturnType<typeof useApiWithAuth>) => {
-  apiInstance = api;
-};
+const apiService = createApiService();
 
 // Add initialization function to sync with auth store
 export const syncHouseholdStoreWithAuth = () => {
@@ -121,17 +144,9 @@ export const useHouseholdStore = create<HouseholdStore>()(
           set({ loading: true, error: null });
           
           try {
-            const api = getApi();
-            const response = await api.get('/api/households');
-            
-            if (response.ok) {
-              const responseData = await response.json();
-              set({ households: responseData.data || [] });
-            } else {
-              const errorText = await response.text();
-              console.error('fetchHouseholds: Error response:', errorText);
-              throw new Error(`Failed to fetch households: ${response.status}`);
-            }
+            const response = await apiService.get('/api/households');
+            const responseData = await response.json();
+            set({ households: responseData.data || [] });
           } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to fetch households';
             set({ error: message });
@@ -145,27 +160,19 @@ export const useHouseholdStore = create<HouseholdStore>()(
           set({ loading: true, error: null });
           
           try {
-            const api = getApi();
-            const response = await api.get(`/api/households/${householdId}`);
-            
-            if (response.ok) {
-              const responseData = await response.json();
-              if (responseData.success && responseData.data) {
-                const details = responseData.data;
-                set(state => ({
-                  householdDetails: {
-                    ...state.householdDetails,
-                    [householdId]: details
-                  }
-                }));
-                return details;
-              } else {
-                throw new Error(responseData.message || 'Failed to fetch household details');
-              }
+            const response = await apiService.get(`/api/households/${householdId}`);
+            const responseData = await response.json();
+            if (responseData.success && responseData.data) {
+              const details = responseData.data;
+              set(state => ({
+                householdDetails: {
+                  ...state.householdDetails,
+                  [householdId]: details
+                }
+              }));
+              return details;
             } else {
-              const errorText = await response.text();
-              console.error('fetchHouseholdDetails: Error response:', errorText);
-              throw new Error(`Failed to fetch household details: ${response.status}`);
+              throw new Error(responseData.message || 'Failed to fetch household details');
             }
           } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to fetch household details';
@@ -181,7 +188,6 @@ export const useHouseholdStore = create<HouseholdStore>()(
           set({ loading: true, error: null });
           
           try {
-            const api = getApi();
             const requestBody: any = {
               name,
               description,
@@ -192,36 +198,21 @@ export const useHouseholdStore = create<HouseholdStore>()(
               requestBody.storageAreas = storageAreas;
             }
 
-            const response = await api.post('/api/households', requestBody);
+            const response = await apiService.post('/api/households', requestBody);
+            const responseData = await response.json();
             
-            if (response.ok) {
-              const responseData = await response.json();
-              
-              if (responseData.success) {
-                const selectedCount = storageAreas ? Object.values(storageAreas).filter(Boolean).length : 0;
-                const storageMessage = selectedCount > 0 ? ` with ${selectedCount} storage areas` : '';
-                
-                toast.success("Household Created!", {
-                  description: `${name} has been created successfully${storageMessage}.`,
-                });
-                
-                // Refresh the households list
-                const store = get();
-                await store.fetchHouseholds();
-                return responseData.data;
-              } else {
-                throw new Error(responseData.error || 'Failed to create household');
-              }
+            if (responseData.success) {
+              // Refresh the households list
+              const store = get();
+              await store.fetchHouseholds();
+              return responseData.data;
             } else {
-              const errorData = await response.json();
-              throw new Error(errorData.error || `Failed to create household: ${response.status}`);
+              throw new Error(responseData.error || 'Failed to create household');
             }
           } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to create household';
             set({ error: message });
-            toast.error("Creation Failed", {
-              description: message,
-            });
+            console.error('createHousehold: Error:', error);
             throw error;
           } finally {
             set({ loading: false });
@@ -232,37 +223,24 @@ export const useHouseholdStore = create<HouseholdStore>()(
           set({ loading: true, error: null });
           
           try {
-            const api = getApi();
-            const response = await api.put(`/api/households/${householdId}`, {
+            const response = await apiService.put(`/api/households/${householdId}`, {
               name,
               description
             });
+            const responseData = await response.json();
             
-            if (response.ok) {
-              const responseData = await response.json();
-              
-              if (responseData.success) {
-                toast.success("Household Updated!", {
-                  description: `${name} has been updated successfully.`,
-                });
-                
-                // Refresh households and details
-                const store = get();
-                await store.fetchHouseholds();
-                await store.fetchHouseholdDetails(householdId);
-              } else {
-                throw new Error(responseData.message || 'Failed to update household');
-              }
+            if (responseData.success) {
+              // Refresh households and details
+              const store = get();
+              await store.fetchHouseholds();
+              await store.fetchHouseholdDetails(householdId);
             } else {
-              const errorData = await response.json();
-              throw new Error(errorData.message || `Failed to update household: ${response.status}`);
+              throw new Error(responseData.message || 'Failed to update household');
             }
           } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to update household';
             set({ error: message });
-            toast.error("Update Failed", {
-              description: message,
-            });
+            console.error('updateHousehold: Error:', error);
             throw error;
           } finally {
             set({ loading: false });
@@ -273,46 +251,34 @@ export const useHouseholdStore = create<HouseholdStore>()(
           set({ loading: true, error: null });
           
           try {
-            const api = getApi();
-            const response = await api.put(`/api/households/${householdId}/select`);
+            const response = await apiService.put(`/api/households/${householdId}/select`);
+            const responseData = await response.json();
             
-            if (response.ok) {
-              const responseData = await response.json();
+            if (responseData.success) {
+              // Update household store
+              set({ selectedHouseholdId: householdId });
               
-              if (responseData.success) {
-                // Update household store
-                set({ selectedHouseholdId: householdId });
-                
-                // Also update auth store with the returned user data
-                if (responseData.data && responseData.data.user) {
-                  try {
-                    import('./authStore').then(({ useAuthStore }) => {
-                      useAuthStore.getState().setUser(responseData.data.user);
-                    }).catch((error) => {
-                      console.warn('Failed to import auth store after household selection:', error);
-                    });
-                  } catch (error) {
-                    console.warn('Failed to update auth store after household selection:', error);
-                  }
+              // Also update auth store with the returned user data
+              if (responseData.data && responseData.data.user) {
+                try {
+                  import('./authStore').then(({ useAuthStore }) => {
+                    useAuthStore.getState().setUser(responseData.data.user);
+                  }).catch((error) => {
+                    console.warn('Failed to import auth store after household selection:', error);
+                  });
+                } catch (error) {
+                  console.warn('Failed to update auth store after household selection:', error);
                 }
-                
-                toast.success("Household Selected!", {
-                  description: `You are now managing this household.`,
-                });
-                return responseData.data;
-              } else {
-                throw new Error(responseData.message || 'Failed to select household');
               }
+              
+              return responseData.data;
             } else {
-              const errorData = await response.json();
-              throw new Error(errorData.message || `Failed to select household: ${response.status}`);
+              throw new Error(responseData.message || 'Failed to select household');
             }
           } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to select household';
             set({ error: message });
-            toast.error("Selection Failed", {
-              description: message,
-            });
+            console.error('selectHousehold: Error:', error);
             throw error;
           } finally {
             set({ loading: false });
@@ -323,35 +289,22 @@ export const useHouseholdStore = create<HouseholdStore>()(
           set({ loading: true, error: null });
           
           try {
-            const api = getApi();
-            const response = await api.post('/api/households/join', {
+            const response = await apiService.post('/api/households/join', {
               inviteCode
             });
+            const responseData = await response.json();
             
-            if (response.ok) {
-              const responseData = await response.json();
-              
-              if (responseData.success) {
-                toast.success("Household Joined!", {
-                  description: `You have successfully joined the household.`,
-                });
-                
-                // Refresh the households list
-                const store = get();
-                await store.fetchHouseholds();
-              } else {
-                throw new Error(responseData.message || 'Failed to join household');
-              }
+            if (responseData.success) {
+              // Refresh the households list
+              const store = get();
+              await store.fetchHouseholds();
             } else {
-              const errorData = await response.json();
-              throw new Error(errorData.message || `Failed to join household: ${response.status}`);
+              throw new Error(responseData.message || 'Failed to join household');
             }
           } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to join household';
             set({ error: message });
-            toast.error("Join Failed", {
-              description: message,
-            });
+            console.error('joinHousehold: Error:', error);
             throw error;
           } finally {
             set({ loading: false });
@@ -362,42 +315,29 @@ export const useHouseholdStore = create<HouseholdStore>()(
           set({ loading: true, error: null });
           
           try {
-            const api = getApi();
-            const response = await api.delete(`/api/households/${householdId}/leave`);
+            const response = await apiService.delete(`/api/households/${householdId}/leave`);
+            const responseData = await response.json();
             
-            if (response.ok) {
-              const responseData = await response.json();
+            if (responseData.success) {
+              // Remove from local state and refresh
+              set(state => ({
+                households: state.households.filter(h => h.id !== householdId),
+                selectedHouseholdId: state.selectedHouseholdId === householdId ? null : state.selectedHouseholdId
+              }));
               
-              if (responseData.success) {
-                toast.success("Left Household", {
-                  description: `You have successfully left the household.`,
-                });
-                
-                // Remove from local state and refresh
-                set(state => ({
-                  households: state.households.filter(h => h.id !== householdId),
-                  selectedHouseholdId: state.selectedHouseholdId === householdId ? null : state.selectedHouseholdId
-                }));
-                
-                // Clear details cache
-                set(state => {
-                  const newDetails = { ...state.householdDetails };
-                  delete newDetails[householdId];
-                  return { householdDetails: newDetails };
-                });
-              } else {
-                throw new Error(responseData.message || 'Failed to leave household');
-              }
+              // Clear details cache
+              set(state => {
+                const newDetails = { ...state.householdDetails };
+                delete newDetails[householdId];
+                return { householdDetails: newDetails };
+              });
             } else {
-              const errorData = await response.json();
-              throw new Error(errorData.message || `Failed to leave household: ${response.status}`);
+              throw new Error(responseData.message || 'Failed to leave household');
             }
           } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to leave household';
             set({ error: message });
-            toast.error("Leave Failed", {
-              description: message,
-            });
+            console.error('leaveHousehold: Error:', error);
             throw error;
           } finally {
             set({ loading: false });
@@ -408,42 +348,29 @@ export const useHouseholdStore = create<HouseholdStore>()(
           set({ loading: true, error: null });
           
           try {
-            const api = getApi();
-            const response = await api.delete(`/api/households/${householdId}`);
+            const response = await apiService.delete(`/api/households/${householdId}`);
+            const responseData = await response.json();
             
-            if (response.ok) {
-              const responseData = await response.json();
+            if (responseData.success) {
+              // Remove from local state
+              set(state => ({
+                households: state.households.filter(h => h.id !== householdId),
+                selectedHouseholdId: state.selectedHouseholdId === householdId ? null : state.selectedHouseholdId
+              }));
               
-              if (responseData.success) {
-                toast.success("Household Deleted", {
-                  description: `The household has been permanently deleted.`,
-                });
-                
-                // Remove from local state
-                set(state => ({
-                  households: state.households.filter(h => h.id !== householdId),
-                  selectedHouseholdId: state.selectedHouseholdId === householdId ? null : state.selectedHouseholdId
-                }));
-                
-                // Clear details cache
-                set(state => {
-                  const newDetails = { ...state.householdDetails };
-                  delete newDetails[householdId];
-                  return { householdDetails: newDetails };
-                });
-              } else {
-                throw new Error(responseData.message || 'Failed to delete household');
-              }
+              // Clear details cache
+              set(state => {
+                const newDetails = { ...state.householdDetails };
+                delete newDetails[householdId];
+                return { householdDetails: newDetails };
+              });
             } else {
-              const errorData = await response.json();
-              throw new Error(errorData.message || `Failed to delete household: ${response.status}`);
+              throw new Error(responseData.message || 'Failed to delete household');
             }
           } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to delete household';
             set({ error: message });
-            toast.error("Delete Failed", {
-              description: message,
-            });
+            console.error('deleteHousehold: Error:', error);
             throw error;
           } finally {
             set({ loading: false });
@@ -454,33 +381,20 @@ export const useHouseholdStore = create<HouseholdStore>()(
           set({ loading: true, error: null });
           
           try {
-            const api = getApi();
-            const response = await api.delete(`/api/households/${householdId}/members/${memberId}`);
+            const response = await apiService.delete(`/api/households/${householdId}/members/${memberId}`);
+            const responseData = await response.json();
             
-            if (response.ok) {
-              const responseData = await response.json();
-              
-              if (responseData.success) {
-                toast.success("Member Removed", {
-                  description: `The member has been removed from the household.`,
-                });
-                
-                // Refresh household details to update member list
-                const store = get();
-                await store.fetchHouseholdDetails(householdId);
-              } else {
-                throw new Error(responseData.message || 'Failed to remove member');
-              }
+            if (responseData.success) {
+              // Refresh household details to update member list
+              const store = get();
+              await store.fetchHouseholdDetails(householdId);
             } else {
-              const errorData = await response.json();
-              throw new Error(errorData.message || `Failed to remove member: ${response.status}`);
+              throw new Error(responseData.message || 'Failed to remove member');
             }
           } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to remove member';
             set({ error: message });
-            toast.error("Remove Failed", {
-              description: message,
-            });
+            console.error('removeMember: Error:', error);
             throw error;
           } finally {
             set({ loading: false });

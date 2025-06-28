@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { format, isToday, isSameMonth, addWeeks, subWeeks } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus, Trash2, ShoppingCart } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
@@ -12,7 +11,6 @@ import { useToast } from "@/hooks/use-toast"
 import { getWeekDays, getMealPlansForDay, MealPlan } from '@/utils/mealPlanHelpers';
 import { useMealPlanStore } from '@/stores/mealPlanStore';
 import { useRecipeStore } from '@/stores/recipeStore';
-import { useShoppingStore } from '@/stores/shoppingStore';
 import { RecipeListDto, RecipeDto } from '@/services/recipeService';
 import { RecipeSelector } from '@/components/RecipeSelector';
 import BottomNavigation from '@/components/BottomNavigation';
@@ -29,22 +27,13 @@ const MealPlans = () => {
   const [weekDays, setWeekDays] = useState<Date[]>(getWeekDays(currentDate));
   const [isAddMealDialogOpen, setIsAddMealDialogOpen] = useState(false);
   const [isViewMealPlanDialogOpen, setIsViewMealPlanDialogOpen] = useState(false);
-  const [isGenerateShoppingListDialogOpen, setIsGenerateShoppingListDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('lunch');
   const [selectedServings, setSelectedServings] = useState(1);
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeDto | null>(null);
   const [viewingMealPlan, setViewingMealPlan] = useState<any>(null);
-  const [shoppingListDateRange, setShoppingListDateRange] = useState<{
-    from: Date | undefined;
-    to: Date | undefined;
-  }>({
-    from: undefined,
-    to: undefined,
-  });
   const { mealPlans, fetchMealPlans, createMealPlan, deleteMealPlan, loading: mealPlansLoading, savingMealPlan, deletingMealPlan } = useMealPlanStore();
   const { recipes, fetchRecipes, loading: recipesLoading } = useRecipeStore();
-  const { createShoppingItem } = useShoppingStore();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -87,100 +76,6 @@ const MealPlans = () => {
       toast({
         title: "Error",
         description: "Failed to delete meal plan. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleGenerateShoppingList = async () => {
-    if (!shoppingListDateRange.from || !shoppingListDateRange.to) {
-      toast({
-        title: "Error",
-        description: "Please select both start and end dates.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      const householdId = localStorage.getItem('householdId') || 'default';
-      
-      // Get meal plans within the date range
-      const startDate = format(shoppingListDateRange.from, 'yyyy-MM-dd');
-      const endDate = format(shoppingListDateRange.to, 'yyyy-MM-dd');
-      
-      const relevantMealPlans = mealPlans.filter(plan => {
-        const planDate = format(new Date(plan.plannedFor), 'yyyy-MM-dd');
-        return planDate >= startDate && planDate <= endDate;
-      });
-
-      if (relevantMealPlans.length === 0) {
-        toast({
-          title: "No meal plans found",
-          description: "No meal plans found for the selected date range.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Group ingredients by item and calculate total quantities needed
-      const ingredientTotals = new Map<string, {
-        name: string;
-        quantity: number;
-        unit: string;
-        recipes: string[];
-      }>();
-
-      relevantMealPlans.forEach(mealPlan => {
-        const recipe = recipes.find(r => r.id === mealPlan.recipeId);
-        if (!recipe || !recipe.ingredients) return;
-
-        recipe.ingredients.forEach(ingredient => {
-          const key = ingredient.itemId;
-          const neededQuantity = parseFloat(ingredient.quantity.toString()) * mealPlan.servings;
-          
-          if (ingredientTotals.has(key)) {
-            const existing = ingredientTotals.get(key)!;
-            existing.quantity += neededQuantity;
-            existing.recipes.push(recipe.title);
-          } else {
-            ingredientTotals.set(key, {
-              name: ingredient.item?.name || 'Unknown Item',
-              quantity: neededQuantity,
-              unit: ingredient.unit,
-              recipes: [recipe.title]
-            });
-          }
-        });
-      });
-
-      // Create shopping items for each ingredient
-      let addedCount = 0;
-      for (const [itemId, data] of ingredientTotals) {
-        try {
-          await createShoppingItem(householdId, {
-            itemId,
-            quantity: data.quantity.toString(),
-            unit: data.unit,
-            priority: 0
-          });
-          addedCount++;
-        } catch (error) {
-          console.error(`Failed to add ${data.name} to shopping list:`, error);
-        }
-      }
-
-      setIsGenerateShoppingListDialogOpen(false);
-      toast({
-        title: "Shopping list generated!",
-        description: `Added ${addedCount} items to your shopping list from ${relevantMealPlans.length} meal plans.`,
-      });
-
-    } catch (error) {
-      console.error('Error generating shopping list:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate shopping list. Please try again.",
         variant: "destructive",
       });
     }
@@ -256,16 +151,7 @@ const MealPlans = () => {
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">Meal Plans</h1>
-            <Button
-              onClick={() => setIsGenerateShoppingListDialogOpen(true)}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Generate Shopping List
-            </Button>
-          </div>
+          <h1 className="text-2xl font-bold text-gray-900">Meal Plans</h1>
         </div>
       </div>
 
@@ -380,51 +266,70 @@ const MealPlans = () => {
           </div>
         </div>
 
-        {/* Generate Shopping List Dialog */}
-        <Dialog open={isGenerateShoppingListDialogOpen} onOpenChange={setIsGenerateShoppingListDialogOpen}>
+        {/* Add Meal Dialog */}
+        <Dialog open={isAddMealDialogOpen} onOpenChange={setIsAddMealDialogOpen}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Generate Shopping List</DialogTitle>
+              <DialogTitle>Add Meal Plan</DialogTitle>
               <DialogDescription>
-                Select a date range to generate a shopping list from your meal plans
+                Add a meal for {selectedDate ? format(selectedDate, 'EEEE, MMMM d') : ''}
               </DialogDescription>
             </DialogHeader>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Start Date</label>
-                <Calendar
-                  mode="single"
-                  selected={shoppingListDateRange.from}
-                  onSelect={(date) => setShoppingListDateRange(prev => ({ ...prev, from: date }))}
-                  className="rounded-md border"
+                <label className="block text-sm font-medium mb-2">Recipe</label>
+                <RecipeSelector
+                  onRecipeSelect={(recipe) => setSelectedRecipe(recipe)}
+                  selectedRecipe={selectedRecipe}
+                  recipes={convertedRecipes}
+                  loading={recipesLoading}
+                  placeholder="Search for a recipe..."
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">End Date</label>
-                <Calendar
-                  mode="single"
-                  selected={shoppingListDateRange.to}
-                  onSelect={(date) => setShoppingListDateRange(prev => ({ ...prev, to: date }))}
-                  className="rounded-md border"
-                  disabled={(date) => 
-                    shoppingListDateRange.from ? date < shoppingListDateRange.from : false
-                  }
-                />
+                <label className="block text-sm font-medium mb-2">Meal Type</label>
+                <Select value={selectedMealType} onValueChange={(value) => setSelectedMealType(value as 'breakfast' | 'lunch' | 'dinner' | 'snack')}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select meal type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="breakfast">Breakfast</SelectItem>
+                    <SelectItem value="lunch">Lunch</SelectItem>
+                    <SelectItem value="dinner">Dinner</SelectItem>
+                    <SelectItem value="snack">Snack</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Servings</label>
+                <Select value={selectedServings.toString()} onValueChange={(value) => setSelectedServings(parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select servings" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+                      <SelectItem key={num} value={num.toString()}>
+                        {num} {num === 1 ? 'serving' : 'servings'}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsGenerateShoppingListDialogOpen(false)}>
+              <Button variant="outline" onClick={() => setIsAddMealDialogOpen(false)}>
                 Cancel
               </Button>
               <Button 
-                onClick={handleGenerateShoppingList}
-                disabled={!shoppingListDateRange.from || !shoppingListDateRange.to}
+                onClick={handleSaveMeal}
+                disabled={!selectedRecipe || !selectedMealType || savingMealPlan}
                 className="bg-green-600 hover:bg-green-700"
               >
-                Generate List
+                {savingMealPlan ? 'Adding...' : 'Add Meal'}
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -171,7 +171,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const verifyTokenWithBackend = async (token: string) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/auth/verify-google-token`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://2b14-2a01-cb10-8dc5-8e00-7e31-6dd7-fe4f-90f5.ngrok-free.app'}/auth/verify-google-token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -9,7 +9,7 @@ import {
   IngredientStats
 } from '@/services/recipeService';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://2b14-2a01-cb10-8dc5-8e00-7e31-6dd7-fe4f-90f5.ngrok-free.app';
 
 // Helper function to make authenticated API calls
 const makeApiCall = async (endpoint: string, options: RequestInit = {}) => {

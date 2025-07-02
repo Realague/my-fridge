@@ -244,7 +244,7 @@ const Settings = () => {
                     <li>Copy the token above using the copy button</li>
                     <li>Open Insomnia/Postman</li>
                     <li>Add header: <code className="bg-blue-100 px-1 rounded">Authorization: Bearer &lt;paste-token&gt;</code></li>
-                    <li>Test API endpoints at: <code className="bg-blue-100 px-1 rounded">http://localhost:3001/api/households</code></li>
+                    <li>Test API endpoints at: <code className="bg-blue-100 px-1 rounded">https://2b14-2a01-cb10-8dc5-8e00-7e31-6dd7-fe4f-90f5.ngrok-free.app/api/households</code></li>
                   </ol>
                 </div>
               </CardContent>

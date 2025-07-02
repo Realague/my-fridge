@@ -26,7 +26,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       DB_HOST: db
       DB_PORT: 5432
       DB_USER: postgres
@@ -50,7 +50,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      VITE_API_URL: http://localhost:3000
+      VITE_API_URL: https://2b14-2a01-cb10-8dc5-8e00-7e31-6dd7-fe4f-90f5.ngrok-free.app
     ports:
       - "8080:8080"
     depends_on:

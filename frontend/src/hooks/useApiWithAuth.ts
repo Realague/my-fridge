@@ -15,7 +15,7 @@ export const useApiWithAuth = () => {
   const { toast } = useToast();
 
   const makeApiCall = async (url: string, options: ApiOptions = {}) => {
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    const baseUrl = import.meta.env.VITE_API_URL || 'https://2b14-2a01-cb10-8dc5-8e00-7e31-6dd7-fe4f-90f5.ngrok-free.app';
     const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
     const timeout = options.timeout || 10000; // Default 10 seconds
 

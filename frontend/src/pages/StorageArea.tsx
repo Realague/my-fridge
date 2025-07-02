@@ -11,7 +11,7 @@ import { ItemSelector } from '@/components/ItemSelector';
 import { QuantitySelector } from '@/components/QuantitySelector';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
-import { useHouseholdStore } from '@/stores/householdStore';
+import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { itemService } from '@/services/itemService';
 import { format } from 'date-fns';
 import { Unit } from '@/types/enums';
@@ -31,7 +31,7 @@ const StorageArea = () => {
     fetchStoredItemsByStorageArea,
     loading: storedItemsLoading 
   } = useStoredItemStore();
-  const { selectedHouseholdId } = useHouseholdStore();
+  const { selectedHouseholdId } = useProtectedRoute();
   
   // Local state
   const [showAddForm, setShowAddForm] = useState(false);

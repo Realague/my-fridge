@@ -15,10 +15,13 @@ import { useShoppingStore, ShoppingItem } from '@/stores/shoppingStore';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
+import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { toast } from 'sonner';
 
 const Shopping = () => {
-  const { selectedHouseholdId } = useHouseholdStore();
+  // Protected route hook handles auth and household checks
+  const { selectedHouseholdId } = useProtectedRoute();
+  
   const { getStorageAreasForHousehold } = useStorageAreaStore();
   const { createStoredItem } = useStoredItemStore();
   

@@ -10,14 +10,14 @@ import { Plus, Search, Heart, Clock, Users, ChefHat } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useRecipeStore } from '@/stores/recipeStore';
-import { useHouseholdStore } from '@/stores/householdStore';
+import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { RecipeListDto } from '@/services/recipeService';
 import { useToast } from '@/hooks/use-toast';
 
 const Recipes = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { selectedHouseholdId } = useHouseholdStore();
+  const { selectedHouseholdId } = useProtectedRoute();
   const {
     recipes,
     favoriteRecipes,
@@ -100,18 +100,7 @@ const Recipes = () => {
     }
   };
 
-  // Early return if no household is selected
-  if (!selectedHouseholdId && !loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20 flex items-center justify-center">
-        <div className="text-center">
-          <ChefHat className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-600">Please select a household to view recipes</p>
-        </div>
-        <BottomNavigation currentPage="recipes" />
-      </div>
-    );
-  }
+  // Note: Household checks are handled by useProtectedRoute hook
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">

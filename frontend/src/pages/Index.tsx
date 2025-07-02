@@ -1,12 +1,47 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, Users, Utensils, ShoppingCart, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/stores/authStore';
+import { useHouseholdStore } from '@/stores/householdStore';
 
 const Index = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, isLoading: authLoading } = useAuthStore();
+  const { selectedHouseholdId, households, fetchHouseholds } = useHouseholdStore();
+
+  // Redirect authenticated users to appropriate page
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      // Fetch households to check if user has any
+      fetchHouseholds().then(() => {
+        if (selectedHouseholdId) {
+          // User has a selected household, go to dashboard
+          navigate('/dashboard');
+        } else if (households.length === 0) {
+          // User has no households, go to onboarding
+          navigate('/onboarding');
+        } else {
+          // User has households but none selected, go to dashboard (will handle selection there)
+          navigate('/dashboard');
+        }
+      });
+    }
+  }, [authLoading, isAuthenticated, navigate, fetchHouseholds]);
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">

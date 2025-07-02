@@ -23,21 +23,24 @@ import { useStorageAreasWithStats } from '@/stores/storageAreaStore';
 import { useShoppingStore } from '@/stores/shoppingStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useRecipeStore } from '@/stores/recipeStore';
+import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  
+  // Protected route hook handles auth and household checks
+  const { selectedHouseholdId, isLoading: authLoading, isAuthenticated } = useProtectedRoute();
 
   const { getStoredItemsForHousehold } = useStoredItemStore();
   
   // Zustand stores - selective subscriptions for better performance
-  const { isAuthenticated, isLoading: authLoading, user: currentUser, setUser } = useAuthStore();
+  const { user: currentUser, setUser } = useAuthStore();
   const { getPendingItems, fetchShoppingItems } = useShoppingStore();
   const { fetchStoredItems } = useStoredItemStore();
   const { recipes, fetchRecipes } = useRecipeStore();
   
   // Household store - only re-renders when these specific values change
   const households = useHouseholdStore(state => state.households);
-  const selectedHouseholdId = useHouseholdStore(state => state.selectedHouseholdId);
   
   // Actions - these don't cause re-renders
   const getCurrentHousehold = useHouseholdStore(state => state.getCurrentHousehold);
@@ -70,13 +73,7 @@ const Dashboard = () => {
     }
   }, [selectedHouseholdId, authLoading]); // Remove function dependencies to prevent infinite loops
 
-  // Redirect to auth if not authenticated
-  useEffect(() => {
-    console.log('Dashboard: Auth state check - authLoading:', authLoading, 'isAuthenticated:', isAuthenticated);
-    if (!authLoading && !isAuthenticated) {
-      navigate('/auth');
-    }
-  }, [authLoading, isAuthenticated, navigate]);
+  // Note: Auth and household checks are now handled by useProtectedRoute hook
 
   const handleSwitchHousehold = async (householdId: string) => {
     try {

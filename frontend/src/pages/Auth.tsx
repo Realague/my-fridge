@@ -8,16 +8,22 @@ import { useAuthStore } from '@/stores/authStore';
 const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { signInWithGoogle, isAuthenticated, isLoading } = useAuthStore();
+  const { signInWithGoogle, isAuthenticated, isLoading, user } = useAuthStore();
   const [authLoading, setAuthLoading] = useState(false);
   const googleButtonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Redirect if already authenticated
-    if (isAuthenticated) {
-      navigate('/dashboard');
+    if (isAuthenticated && user) {
+      // Check if user has a selected household
+      if (user.selectedHouseholdId) {
+        navigate('/dashboard');
+      } else {
+        // User needs to create or join a household
+        navigate('/onboarding');
+      }
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate]);
 
   useEffect(() => {
     // Check for error in URL
@@ -67,7 +73,7 @@ const Auth = () => {
     setAuthLoading(true);
     try {
       await signInWithGoogle();
-      // If successful, the useEffect above will handle navigation
+      // Navigation will be handled by the useEffect above after authentication
     } catch (error) {
       console.error('Google auth failed:', error);
       // You could show an error message here

@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -42,6 +43,7 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
 
       setUser: (user) => {
+        console.log('Auth store: Setting user:', user);
         set({ user });
         // Sync with household store when user changes
         if (user?.selectedHouseholdId) {
@@ -263,4 +265,4 @@ export const useAuthStore = create<AuthState>()(
       }),
     }
   )
-); 
+);

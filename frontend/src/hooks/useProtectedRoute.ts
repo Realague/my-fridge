@@ -10,7 +10,7 @@ import { useHouseholdStore } from '@/stores/householdStore';
 export const useProtectedRoute = () => {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading: authLoading } = useAuthStore();
-  const { selectedHouseholdId, households, fetchHouseholds } = useHouseholdStore();
+  const { selectedHouseholdId } = useHouseholdStore();
 
   useEffect(() => {
     if (!authLoading) {
@@ -18,17 +18,11 @@ export const useProtectedRoute = () => {
         // User not authenticated - redirect to auth
         navigate('/auth');
       } else if (!selectedHouseholdId) {
-        // User authenticated but no household selected - check if they have any households
-        fetchHouseholds().then(() => {
-          if (households.length === 0) {
-            // User has no households - redirect to onboarding
-            navigate('/onboarding');
-          }
-          // If user has households but none selected, Dashboard will handle household selection
-        });
+        // User authenticated but no household selected - redirect to onboarding to create first household
+        navigate('/onboarding');
       }
     }
-  }, [authLoading, isAuthenticated, selectedHouseholdId, households.length, navigate, fetchHouseholds]);
+  }, [authLoading, isAuthenticated, selectedHouseholdId, navigate]);
 
   return {
     isAuthenticated,

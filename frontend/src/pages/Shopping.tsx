@@ -135,7 +135,7 @@ const Shopping = () => {
     try {
       console.log('Adding to storage:', itemToStore);
       // Add to storage using the new API
-      await createStoredItem(selectedHouseholdId, {
+      const createdStoredItem = await createStoredItem(selectedHouseholdId, {
         itemId: itemToStore.item?.id,
         storageAreaId: selectedStorageArea,
         quantity: parseFloat(itemToStore.quantity),
@@ -144,10 +144,13 @@ const Shopping = () => {
         location: storageLocation.trim() || undefined,
       });
 
-      // Mark as completed via API
-      const success = await toggleShoppingItemCompleted(selectedHouseholdId, itemToStore.id);
+      // Update the shopping item with the stored item ID, then mark as completed
+      const updateSuccess = await updateShoppingItem(selectedHouseholdId, itemToStore.id, {
+        storedItemId: createdStoredItem.id,
+        completed: true
+      });
       
-      if (success) {
+      if (updateSuccess) {
         toast.success('Item added to storage and marked as completed');
         // Refresh items to ensure proper state
         await refreshShoppingItems();

@@ -205,10 +205,28 @@ export const useHouseholdStore = create<HouseholdStore>()(
                   description: `${name} has been created successfully${storageMessage}.`,
                 });
                 
+                // Update household store with new selected household
+                if (responseData.data.household) {
+                  set({ selectedHouseholdId: responseData.data.household.id });
+                }
+                
+                // Update auth store with updated user data
+                if (responseData.data.user) {
+                  try {
+                    import('./authStore').then(({ useAuthStore }) => {
+                      useAuthStore.getState().setUser(responseData.data.user);
+                    }).catch((error) => {
+                      console.warn('Failed to import auth store after household creation:', error);
+                    });
+                  } catch (error) {
+                    console.warn('Failed to update auth store after household creation:', error);
+                  }
+                }
+                
                 // Refresh the households list
                 const store = get();
                 await store.fetchHouseholds();
-                return responseData.data;
+                return responseData.data.household;
               } else {
                 throw new Error(responseData.error || 'Failed to create household');
               }
@@ -335,6 +353,24 @@ export const useHouseholdStore = create<HouseholdStore>()(
                 toast.success("Household Joined!", {
                   description: `You have successfully joined the household.`,
                 });
+                
+                // Update household store with new selected household
+                if (responseData.data.household) {
+                  set({ selectedHouseholdId: responseData.data.household.id });
+                }
+                
+                // Update auth store with updated user data
+                if (responseData.data.user) {
+                  try {
+                    import('./authStore').then(({ useAuthStore }) => {
+                      useAuthStore.getState().setUser(responseData.data.user);
+                    }).catch((error) => {
+                      console.warn('Failed to import auth store after household join:', error);
+                    });
+                  } catch (error) {
+                    console.warn('Failed to update auth store after household join:', error);
+                  }
+                }
                 
                 // Refresh the households list
                 const store = get();

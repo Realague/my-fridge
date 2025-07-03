@@ -21,6 +21,7 @@ export interface ShoppingItem {
   unit: string;
   completed: boolean;
   priority: number;
+  storedItemId: string | null;
   createdBy: string;
   createdAt: string;
   updatedAt: string;

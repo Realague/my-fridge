@@ -7,7 +7,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  selectedHouseholdId: string;
+  selectedHouseholdId: string | null;
 }
 
 interface AuthState {

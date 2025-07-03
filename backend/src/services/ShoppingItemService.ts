@@ -1,6 +1,7 @@
 import { ShoppingItemRepository } from '../repositories/ShoppingItemRepository';
 import { ItemRepository } from '../repositories/ItemRepository';
 import { HouseholdRepository } from '../repositories/HouseholdRepository';
+import { StoredItemService } from './StoredItemService';
 import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto, ShoppingItemDto } from '../types/ItemDto';
 import { ApiResponse } from '../types/ApiResponse';
 import { ShoppingItem } from '../models/ShoppingItem';
@@ -9,15 +10,18 @@ export class ShoppingItemService {
   private shoppingItemRepository: ShoppingItemRepository;
   private itemRepository: ItemRepository;
   private householdRepository: HouseholdRepository;
+  private storedItemService: StoredItemService;
 
   constructor(
     shoppingItemRepository?: ShoppingItemRepository,
     itemRepository?: ItemRepository,
-    householdRepository?: HouseholdRepository
+    householdRepository?: HouseholdRepository,
+    storedItemService?: StoredItemService
   ) {
     this.shoppingItemRepository = shoppingItemRepository || new ShoppingItemRepository();
     this.itemRepository = itemRepository || new ItemRepository();
     this.householdRepository = householdRepository || new HouseholdRepository();
+    this.storedItemService = storedItemService || new StoredItemService();
   }
 
   async createShoppingItem(data: CreateShoppingItemDto): Promise<ApiResponse<ShoppingItemDto>> {
@@ -61,6 +65,7 @@ export class ShoppingItemService {
         unit: shoppingItem.unit,
         completed: shoppingItem.completed,
         priority: shoppingItem.priority,
+        storedItemId: shoppingItem.storedItemId,
         createdBy: shoppingItem.createdBy,
         createdAt: shoppingItem.createdAt.toISOString(),
         updatedAt: shoppingItem.updatedAt.toISOString(),
@@ -181,14 +186,44 @@ export class ShoppingItemService {
         };
       }
 
+      const wasCompleted = shoppingItem.completed;
+      const willBeCompleted = !wasCompleted;
+
       const updatedShoppingItem = await this.shoppingItemRepository.update(
         id,
-        { completed: !shoppingItem.completed },
+        { completed: willBeCompleted },
       );
+
+      if (!updatedShoppingItem) {
+        return {
+          success: false,
+          error: 'Failed to toggle shopping item completion',
+        };
+      }
+
+      // If the item is being unmarked as completed (was completed, now not completed),
+      // delete the stored item referenced by storedItemId and clear the reference
+      if (wasCompleted && !willBeCompleted && shoppingItem.storedItemId) {
+        try {
+          const deleteSuccess = await this.storedItemService.deleteStoredItem(
+            shoppingItem.storedItemId,
+            shoppingItem.householdId
+          );
+          
+          if (deleteSuccess) {
+            console.log(`Deleted stored item ${shoppingItem.storedItemId} when unmarking shopping item ${id}`);
+            // Clear the storedItemId reference
+            await this.shoppingItemRepository.update(id, { storedItemId: null });
+          }
+        } catch (error) {
+          console.error('Error deleting stored item when unmarking shopping item:', error);
+          // Don't fail the entire operation if stored item deletion fails
+        }
+      }
 
       return {
         success: true,
-        data: this.formatShoppingItemResponse(updatedShoppingItem!),
+        data: this.formatShoppingItemResponse(updatedShoppingItem),
       };
     } catch (error) {
       console.error('Error toggling shopping item completion:', error);
@@ -293,6 +328,7 @@ export class ShoppingItemService {
       unit: shoppingItem.unit,
       completed: shoppingItem.completed,
       priority: shoppingItem.priority,
+      storedItemId: shoppingItem.storedItemId,
       createdBy: shoppingItem.createdBy,
       createdAt: shoppingItem.createdAt.toISOString(),
       updatedAt: shoppingItem.updatedAt.toISOString(),

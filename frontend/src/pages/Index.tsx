@@ -10,26 +10,21 @@ import { useHouseholdStore } from '@/stores/householdStore';
 const Index = () => {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading: authLoading } = useAuthStore();
-  const { selectedHouseholdId, households, fetchHouseholds } = useHouseholdStore();
+  const { selectedHouseholdId } = useHouseholdStore();
 
   // Redirect authenticated users to appropriate page
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
-      // Fetch households to check if user has any
-      fetchHouseholds().then(() => {
-        if (selectedHouseholdId) {
-          // User has a selected household, go to dashboard
-          navigate('/dashboard');
-        } else if (households.length === 0) {
-          // User has no households, go to onboarding
-          navigate('/onboarding');
-        } else {
-          // User has households but none selected, go to dashboard (will handle selection there)
-          navigate('/dashboard');
-        }
-      });
+      // Check if user has selected household
+      if (selectedHouseholdId) {
+        // User has a selected household, go to dashboard
+        navigate('/dashboard');
+      } else {
+        // User has no selected household, go to onboarding
+        navigate('/onboarding');
+      }
     }
-  }, [authLoading, isAuthenticated, navigate, fetchHouseholds]);
+      }, [authLoading, isAuthenticated, selectedHouseholdId, navigate]);
 
   // Show loading while checking auth
   if (authLoading) {

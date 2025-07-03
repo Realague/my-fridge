@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
 import { ShoppingItemService } from '../services/ShoppingItemService';
+import { StoredItemService } from '../services/StoredItemService';
 import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto } from '../types/ItemDto';
 
 export class ShoppingItemController {
   private shoppingItemService: ShoppingItemService;
 
   constructor() {
-    this.shoppingItemService = new ShoppingItemService();
+    const storedItemService = new StoredItemService();
+    this.shoppingItemService = new ShoppingItemService(undefined, undefined, undefined, storedItemService);
   }
 
   async createShoppingItem(req: Request, res: Response): Promise<void> {

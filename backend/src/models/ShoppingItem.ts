@@ -12,12 +12,13 @@ interface ShoppingItemAttributes {
   unit: string;
   completed: boolean;
   priority: number;
+  storedItemId: string | null;
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface ShoppingItemCreationAttributes extends Optional<ShoppingItemAttributes, 'id' | 'createdAt' | 'updatedAt' | 'completed' | 'priority'> {}
+interface ShoppingItemCreationAttributes extends Optional<ShoppingItemAttributes, 'id' | 'createdAt' | 'updatedAt' | 'completed' | 'priority' | 'storedItemId'> {}
 
 class ShoppingItem extends Model<ShoppingItemAttributes, ShoppingItemCreationAttributes> implements ShoppingItemAttributes {
   public id!: string;
@@ -27,6 +28,7 @@ class ShoppingItem extends Model<ShoppingItemAttributes, ShoppingItemCreationAtt
   public unit!: string;
   public completed!: boolean;
   public priority!: number;
+  public storedItemId!: string | null;
   public createdBy!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -71,6 +73,11 @@ ShoppingItem.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
+    },
+    storedItemId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'stored_item_id',
     },
     createdBy: {
       type: DataTypes.UUID,

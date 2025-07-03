@@ -39,11 +39,12 @@ export class HouseholdController {
       // Transform raw data to DTO in controller
       const household = HouseholdService.transformToResponseDto(householdData);
 
-      const selectedHousehold = await this.householdService.selectHousehold(household.id, userId);
+      // Auto-select the household and get updated user data
+      const updatedUser = await this.householdService.selectHousehold(household.id, userId);
       
       const response: ApiResponse = {
         success: true,
-        data: household,
+        data: { household, user: updatedUser },
         message: 'Household created successfully'
       };
       
@@ -139,11 +140,12 @@ export class HouseholdController {
       // Transform raw data to DTO in controller
       const household = HouseholdService.transformToResponseDto(householdData);
 
-      await this.householdService.selectHousehold(household.id, userId);
+      // Auto-select the household and get updated user data
+      const updatedUser = await this.householdService.selectHousehold(household.id, userId);
       
       const response: ApiResponse = {
         success: true,
-        data: household,
+        data: { household, user: updatedUser },
         message: `Successfully joined ${household.name}`
       };
       

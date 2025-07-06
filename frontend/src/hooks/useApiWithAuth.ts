@@ -64,6 +64,7 @@ export const useApiWithAuth = () => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
+        'ngrok-skip-browser-warning': 'true',
         ...options.headers,
       },
       signal: controller.signal,
@@ -101,6 +102,7 @@ export const useApiWithAuth = () => {
             headers: {
               ...requestOptions.headers,
               'Authorization': `Bearer ${newToken}`,
+              'ngrok-skip-browser-warning': 'true',
             },
             signal: retryController.signal,
           };

@@ -1,6 +1,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { getUnauthHeaders, getAuthHeaders } from '@/utils/apiHeaders';
 
 export interface User {
   id: string;
@@ -126,9 +127,7 @@ export const useAuthStore = create<AuthState>()(
       verifyTokenWithBackend: async (token: string) => {
         const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://2b14-2a01-cb10-8dc5-8e00-7e31-6dd7-fe4f-90f5.ngrok-free.app'}/auth/verify-google-token`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: getUnauthHeaders(),
           body: JSON.stringify({ token }),
         });
 
@@ -225,10 +224,7 @@ export const useAuthStore = create<AuthState>()(
 
         const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://2b14-2a01-cb10-8dc5-8e00-7e31-6dd7-fe4f-90f5.ngrok-free.app'}/auth/me`, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
+          headers: getAuthHeaders(token),
           body: JSON.stringify({ firstName, lastName }),
         });
 

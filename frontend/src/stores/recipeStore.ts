@@ -8,6 +8,7 @@ import {
   RecipeStats,
   IngredientStats
 } from '@/services/recipeService';
+import { mergeHeaders } from '@/utils/apiHeaders';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://2b14-2a01-cb10-8dc5-8e00-7e31-6dd7-fe4f-90f5.ngrok-free.app';
 
@@ -21,11 +22,7 @@ const makeApiCall = async (endpoint: string, options: RequestInit = {}) => {
   
   const response = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      ...options.headers,
-    },
+    headers: mergeHeaders(options.headers, true, token),
   });
 
   if (!response.ok) {

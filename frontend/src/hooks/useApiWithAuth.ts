@@ -1,6 +1,7 @@
 import { useAuthStore } from '@/stores/authStore';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { mergeHeaders } from '@/utils/apiHeaders';
 
 interface ApiOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -61,12 +62,7 @@ export const useApiWithAuth = () => {
     // Prepare the request
     const requestOptions: RequestInit = {
       method: options.method || 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': 'true',
-        ...options.headers,
-      },
+      headers: mergeHeaders(options.headers, true, token),
       signal: controller.signal,
     };
 
@@ -99,11 +95,7 @@ export const useApiWithAuth = () => {
           
           const retryOptions = {
             ...requestOptions,
-            headers: {
-              ...requestOptions.headers,
-              'Authorization': `Bearer ${newToken}`,
-              'ngrok-skip-browser-warning': 'true',
-            },
+            headers: mergeHeaders(options.headers, true, newToken),
             signal: retryController.signal,
           };
           

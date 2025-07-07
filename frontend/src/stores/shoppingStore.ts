@@ -1,7 +1,5 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { useApiWithAuth } from '@/hooks/useApiWithAuth';
-import { toast } from 'sonner';
 
 export interface ShoppingItem {
   id: string;
@@ -69,19 +67,46 @@ interface ShoppingStore {
   getCompletedCount: () => number;
 }
 
-// Create API instance outside the store to avoid circular dependencies
-let apiInstance: ReturnType<typeof useApiWithAuth> | null = null;
+// Create API service for non-hook usage in stores
+const createApiService = () => {
+  const makeApiCall = async (url: string, options: RequestInit = {}) => {
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+    
+    const token = localStorage.getItem('google_token');
+    if (!token) {
+      throw new Error('No authentication token');
+    }
 
-const getApi = () => {
-  if (!apiInstance) {
-    throw new Error('API instance not initialized. Make sure to call initializeShoppingStore.');
-  }
-  return apiInstance;
+    const requestOptions: RequestInit = {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        ...options.headers,
+      },
+    };
+
+    const response = await fetch(fullUrl, requestOptions);
+    
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Network error' }));
+      throw new Error(error.message || `HTTP ${response.status}`);
+    }
+    
+    return response;
+  };
+
+  return {
+    get: (url: string) => makeApiCall(url, { method: 'GET' }),
+    post: (url: string, body?: any) => makeApiCall(url, { method: 'POST', body: JSON.stringify(body) }),
+    put: (url: string, body?: any) => makeApiCall(url, { method: 'PUT', body: JSON.stringify(body) }),
+    patch: (url: string, body?: any) => makeApiCall(url, { method: 'PATCH', body: JSON.stringify(body) }),
+    delete: (url: string) => makeApiCall(url, { method: 'DELETE' }),
+  };
 };
 
-export const initializeShoppingStore = (api: ReturnType<typeof useApiWithAuth>) => {
-  apiInstance = api;
-};
+const apiService = createApiService();
 
 export const useShoppingStore = create<ShoppingStore>()(
   devtools(
@@ -99,7 +124,6 @@ export const useShoppingStore = create<ShoppingStore>()(
         set({ loading: true, error: null });
         
         try {
-          const api = getApi();
           const searchParams = new URLSearchParams();
           
           if (completed !== undefined) searchParams.append('completed', completed.toString());
@@ -107,38 +131,31 @@ export const useShoppingStore = create<ShoppingStore>()(
           const queryString = searchParams.toString();
           const url = `/api/households/${householdId}/shopping${queryString ? `?${queryString}` : ''}`;
           
-          const response = await api.get(url);
+          const response = await apiService.get(url);
+          const result = await response.json();
           
-          if (response.ok) {
-            const result = await response.json();
-            if (result.success && result.data) {
-              const newItems = result.data.items || [];
-              
-              if (completed === undefined) {
-                // Fetching all items - replace the entire array
-                set({ items: newItems });
-              } else {
-                // Fetching specific completion state - merge with existing items
-                set(state => {
-                  // Remove existing items with the same completion state
-                  const filteredItems = state.items.filter(item => item.completed !== completed);
-                  // Add the new items
-                  return { items: [...filteredItems, ...newItems] };
-                });
-              }
+          if (result.success && result.data) {
+            const newItems = result.data.items || [];
+            
+            if (completed === undefined) {
+              // Fetching all items - replace the entire array
+              set({ items: newItems });
             } else {
-              throw new Error(result.error || 'Failed to fetch shopping items');
+              // Fetching specific completion state - merge with existing items
+              set(state => {
+                // Remove existing items with the same completion state
+                const filteredItems = state.items.filter(item => item.completed !== completed);
+                // Add the new items
+                return { items: [...filteredItems, ...newItems] };
+              });
             }
           } else {
-            const errorText = await response.text();
-            console.error('fetchShoppingItems: Error response:', errorText);
-            throw new Error(`Failed to fetch shopping items: ${response.status}`);
+            throw new Error(result.error || 'Failed to fetch shopping items');
           }
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to fetch shopping items';
           set({ error: message });
           console.error('fetchShoppingItems: Error:', error);
-          toast.error(message);
         } finally {
           set({ loading: false });
         }
@@ -148,30 +165,22 @@ export const useShoppingStore = create<ShoppingStore>()(
         set({ error: null });
         
         try {
-          const api = getApi();
-          const response = await api.post(`/api/households/${householdId}/shopping`, itemData);
+          const response = await apiService.post(`/api/households/${householdId}/shopping`, itemData);
+          const result = await response.json();
           
-          if (response.ok) {
-            const result = await response.json();
-            if (result.success && result.data) {
-              const newItem = result.data;
-              set(state => ({ 
-                items: [...state.items, newItem] 
-              }));
-              toast.success(`Added ${newItem.item?.name || 'item'} to shopping list`);
-              return newItem;
-            } else {
-              throw new Error(result.error || 'Failed to create shopping item');
-            }
+          if (result.success && result.data) {
+            const newItem = result.data;
+            set(state => ({ 
+              items: [...state.items, newItem] 
+            }));
+            return newItem;
           } else {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to create shopping item');
+            throw new Error(result.error || 'Failed to create shopping item');
           }
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to create shopping item';
           set({ error: message });
           console.error('createShoppingItem: Error:', error);
-          toast.error(message);
           return null;
         }
       },
@@ -180,32 +189,24 @@ export const useShoppingStore = create<ShoppingStore>()(
         set({ error: null });
         
         try {
-          const api = getApi();
-          const response = await api.put(`/api/households/${householdId}/shopping/${id}`, updates);
+          const response = await apiService.put(`/api/households/${householdId}/shopping/${id}`, updates);
+          const result = await response.json();
           
-          if (response.ok) {
-            const result = await response.json();
-            if (result.success && result.data) {
-              const updatedItem = result.data;
-              set(state => ({
-                items: state.items.map(item => 
-                  item.id === id ? updatedItem : item
-                )
-              }));
-              toast.success('Item updated');
-              return true;
-            } else {
-              throw new Error(result.error || 'Failed to update shopping item');
-            }
+          if (result.success && result.data) {
+            const updatedItem = result.data;
+            set(state => ({
+              items: state.items.map(item => 
+                item.id === id ? updatedItem : item
+              )
+            }));
+            return true;
           } else {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to update shopping item');
+            throw new Error(result.error || 'Failed to update shopping item');
           }
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to update shopping item';
           set({ error: message });
           console.error('updateShoppingItem: Error:', error);
-          toast.error(message);
           return false;
         }
       },
@@ -214,29 +215,21 @@ export const useShoppingStore = create<ShoppingStore>()(
         set({ error: null });
         
         try {
-          const api = getApi();
-          const response = await api.delete(`/api/households/${householdId}/shopping/${id}`);
+          const response = await apiService.delete(`/api/households/${householdId}/shopping/${id}`);
+          const result = await response.json();
           
-          if (response.ok) {
-            const result = await response.json();
-            if (result.success) {
-              set(state => ({
-                items: state.items.filter(item => item.id !== id)
-              }));
-              toast.success('Item removed from shopping list');
-              return true;
-            } else {
-              throw new Error(result.error || 'Failed to delete shopping item');
-            }
+          if (result.success) {
+            set(state => ({
+              items: state.items.filter(item => item.id !== id)
+            }));
+            return true;
           } else {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to delete shopping item');
+            throw new Error(result.error || 'Failed to delete shopping item');
           }
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to delete shopping item';
           set({ error: message });
           console.error('deleteShoppingItem: Error:', error);
-          toast.error(message);
           return false;
         }
       },
@@ -245,31 +238,24 @@ export const useShoppingStore = create<ShoppingStore>()(
         set({ error: null });
         
         try {
-          const api = getApi();
-          const response = await api.patch(`/api/households/${householdId}/shopping/${id}/toggle`);
+          const response = await apiService.patch(`/api/households/${householdId}/shopping/${id}/toggle`);
+          const result = await response.json();
           
-          if (response.ok) {
-            const result = await response.json();
-            if (result.success && result.data) {
-              const updatedItem = result.data;
-              set(state => ({
-                items: state.items.map(item => 
-                  item.id === id ? updatedItem : item
-                )
-              }));
-              return true;
-            } else {
-              throw new Error(result.error || 'Failed to toggle shopping item completion');
-            }
+          if (result.success && result.data) {
+            const updatedItem = result.data;
+            set(state => ({
+              items: state.items.map(item => 
+                item.id === id ? updatedItem : item
+              )
+            }));
+            return true;
           } else {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to toggle shopping item completion');
+            throw new Error(result.error || 'Failed to toggle shopping item completion');
           }
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to toggle shopping item completion';
           set({ error: message });
           console.error('toggleShoppingItemCompleted: Error:', error);
-          toast.error(message);
           return false;
         }
       },
@@ -278,31 +264,23 @@ export const useShoppingStore = create<ShoppingStore>()(
         set({ error: null });
         
         try {
-          const api = getApi();
-          const response = await api.put(`/api/households/${householdId}/shopping/bulk-update`, { ids, completed });
+          const response = await apiService.put(`/api/households/${householdId}/shopping/bulk-update`, { ids, completed });
+          const result = await response.json();
           
-          if (response.ok) {
-            const result = await response.json();
-            if (result.success) {
-              set(state => ({
-                items: state.items.map(item => 
-                  ids.includes(item.id) ? { ...item, completed } : item
-                )
-              }));
-              toast.success(`${completed ? 'Completed' : 'Uncompleted'} ${ids.length} items`);
-              return true;
-            } else {
-              throw new Error(result.error || 'Failed to bulk update shopping items');
-            }
+          if (result.success) {
+            set(state => ({
+              items: state.items.map(item => 
+                ids.includes(item.id) ? { ...item, completed } : item
+              )
+            }));
+            return true;
           } else {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to bulk update shopping items');
+            throw new Error(result.error || 'Failed to bulk update shopping items');
           }
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to bulk update shopping items';
           set({ error: message });
           console.error('bulkUpdateCompleted: Error:', error);
-          toast.error(message);
           return false;
         }
       },
@@ -311,29 +289,21 @@ export const useShoppingStore = create<ShoppingStore>()(
         set({ error: null });
         
         try {
-          const api = getApi();
-          const response = await api.delete(`/api/households/${householdId}/shopping/completed`);
+          const response = await apiService.delete(`/api/households/${householdId}/shopping/completed`);
+          const result = await response.json();
           
-          if (response.ok) {
-            const result = await response.json();
-            if (result.success) {
-              set(state => ({
-                items: state.items.filter(item => !item.completed)
-              }));
-              toast.success('Completed items cleared');
-              return true;
-            } else {
-              throw new Error(result.error || 'Failed to clear completed shopping items');
-            }
+          if (result.success) {
+            set(state => ({
+              items: state.items.filter(item => !item.completed)
+            }));
+            return true;
           } else {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to clear completed shopping items');
+            throw new Error(result.error || 'Failed to clear completed shopping items');
           }
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to clear completed shopping items';
           set({ error: message });
           console.error('clearCompleted: Error:', error);
-          toast.error(message);
           return false;
         }
       },
@@ -342,32 +312,25 @@ export const useShoppingStore = create<ShoppingStore>()(
         set({ error: null });
         
         try {
-          const api = getApi();
-          const response = await api.put(`/api/households/${householdId}/shopping/reorder`, { itemPriorities });
+          const response = await apiService.put(`/api/households/${householdId}/shopping/reorder`, { itemPriorities });
+          const result = await response.json();
           
-          if (response.ok) {
-            const result = await response.json();
-            if (result.success) {
-              // Update local state with new priorities
-              set(state => ({
-                items: state.items.map(item => {
-                  const priorityUpdate = itemPriorities.find(p => p.id === item.id);
-                  return priorityUpdate ? { ...item, priority: priorityUpdate.priority } : item;
-                }).sort((a, b) => b.priority - a.priority)
-              }));
-              return true;
-            } else {
-              throw new Error(result.error || 'Failed to reorder shopping items');
-            }
+          if (result.success) {
+            // Update local state with new priorities
+            set(state => ({
+              items: state.items.map(item => {
+                const priorityUpdate = itemPriorities.find(p => p.id === item.id);
+                return priorityUpdate ? { ...item, priority: priorityUpdate.priority } : item;
+              }).sort((a, b) => b.priority - a.priority)
+            }));
+            return true;
           } else {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to reorder shopping items');
+            throw new Error(result.error || 'Failed to reorder shopping items');
           }
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to reorder shopping items';
           set({ error: message });
           console.error('reorderItems: Error:', error);
-          toast.error(message);
           return false;
         }
       },

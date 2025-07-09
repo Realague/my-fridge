@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { StorageAreaSelections } from '@/types/household';
+import { toast } from '@/hooks/use-toast';
 
 export interface Household {
   id: string;
@@ -208,7 +209,8 @@ export const useHouseholdStore = create<HouseholdStore>()(
                 const selectedCount = storageAreas ? Object.values(storageAreas).filter(Boolean).length : 0;
                 const storageMessage = selectedCount > 0 ? ` with ${selectedCount} storage areas` : '';
                 
-                toast.success("Household Created!", {
+                toast({
+                  title: "Household Created!",
                   description: `${name} has been created successfully${storageMessage}.`,
                 });
                 
@@ -329,7 +331,8 @@ export const useHouseholdStore = create<HouseholdStore>()(
               const responseData = await response.json();
               
               if (responseData.success) {
-                toast.success("Household Joined!", {
+                toast({
+                  title: "Household Joined!",
                   description: `You have successfully joined the household.`,
                 });
                 

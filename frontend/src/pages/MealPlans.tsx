@@ -555,28 +555,20 @@ const MealPlans = () => {
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Start Date</label>
+                <label className="block text-sm font-medium mb-2">
+                  Select Date Range
+                  {shoppingListDateRange.from && shoppingListDateRange.to && (
+                    <span className="text-sm text-gray-600 ml-2">
+                      ({format(shoppingListDateRange.from, 'MMM d')} - {format(shoppingListDateRange.to, 'MMM d')})
+                    </span>
+                  )}
+                </label>
                 <Calendar
-                  mode="single"
-                  selected={shoppingListDateRange.from}
-                  onSelect={(date) => setShoppingListDateRange(prev => ({ ...prev, from: date }))}
-                  className="rounded-md border"
-                  disabled={(date) => 
-                    shoppingListDateRange.to ? date > shoppingListDateRange.to : false
-                  }
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">End Date</label>
-                <Calendar
-                  mode="single"
-                  selected={shoppingListDateRange.to}
-                  onSelect={(date) => setShoppingListDateRange(prev => ({ ...prev, to: date }))}
-                  className="rounded-md border"
-                  disabled={(date) => 
-                    shoppingListDateRange.from ? date < shoppingListDateRange.from : false
-                  }
+                  mode="range"
+                  selected={shoppingListDateRange}
+                  onSelect={(range) => setShoppingListDateRange({ from: range?.from, to: range?.to })}
+                  className="rounded-md border pointer-events-auto"
+                  numberOfMonths={1}
                 />
               </div>
             </div>

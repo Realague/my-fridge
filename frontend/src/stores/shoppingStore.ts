@@ -37,6 +37,7 @@ export interface UpdateShoppingItemRequest {
   unit?: string;
   completed?: boolean;
   priority?: number;
+  storedItemId?: string;
 }
 
 interface ShoppingStore {

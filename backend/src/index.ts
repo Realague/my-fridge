@@ -29,6 +29,13 @@ app.use(cors({
   ],
   credentials: true
 }));
+
+// Add ngrok bypass header middleware
+app.use((req, res, next) => {
+  res.header('ngrok-skip-browser-warning', 'true');
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

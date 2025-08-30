@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { StorageAreaSelections } from '@/types/household';
 import { toast } from '@/hooks/use-toast';
+import { mergeHeaders } from '@/utils/apiHeaders';
 
 export interface Household {
   id: string;
@@ -70,7 +71,7 @@ interface HouseholdStore {
 // Create API service for non-hook usage in stores
 const createApiService = () => {
   const makeApiCall = async (url: string, options: RequestInit = {}) => {
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
     const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
     
     const token = localStorage.getItem('google_token');
@@ -80,12 +81,7 @@ const createApiService = () => {
 
     const requestOptions: RequestInit = {
       ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': 'true',
-        ...options.headers,
-      },
+      headers: mergeHeaders(options.headers, true, token),
     };
 
     const response = await fetch(fullUrl, requestOptions);

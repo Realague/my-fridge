@@ -21,21 +21,10 @@ const PORT = process.env.PORT || 3000;
 app.use(cors({
   origin: [
     process.env.FRONTEND_URL || 'http://localhost:8080',
-    'http://localhost:8080',
-    'http://localhost:3000',
-    'http://localhost:5173',
     'https://preview--my-fridge.lovable.app',
-    'https://30fb01b8fdbc.ngrok-free.app',
-    'https://2b14-2a01-cb10-8dc5-8e00-7e31-6dd7-fe4f-90f5.ngrok-free.app',
   ],
   credentials: true
 }));
-
-// Add ngrok bypass header middleware
-app.use((req, res, next) => {
-  res.header('ngrok-skip-browser-warning', 'true');
-  next();
-});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

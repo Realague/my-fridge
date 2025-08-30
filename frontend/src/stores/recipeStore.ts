@@ -10,7 +10,7 @@ import {
 } from '@/services/recipeService';
 import { mergeHeaders } from '@/utils/apiHeaders';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'https://2b14-2a01-cb10-8dc5-8e00-7e31-6dd7-fe4f-90f5.ngrok-free.app';
+const API_BASE = import.meta.env.VITE_API_URL || 'localhost:3000';
 
 // Helper function to make authenticated API calls
 const makeApiCall = async (endpoint: string, options: RequestInit = {}) => {

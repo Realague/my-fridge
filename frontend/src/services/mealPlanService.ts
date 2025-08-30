@@ -56,7 +56,7 @@ interface ApiResponse<T> {
 // Non-hook version for use in stores
 export const createMealPlanApiService = () => {
   const makeApiCall = async (url: string, options: RequestInit = {}) => {
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
     const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
     
     const token = localStorage.getItem('google_token');

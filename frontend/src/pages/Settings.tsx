@@ -237,16 +237,6 @@ const Settings = () => {
                     Add it as: <code className="bg-gray-100 px-1 rounded">Authorization: Bearer &lt;token&gt;</code>
                   </p>
                 </div>
-                
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <h4 className="font-medium text-blue-900 mb-2">API Testing Instructions:</h4>
-                  <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                    <li>Copy the token above using the copy button</li>
-                    <li>Open Insomnia/Postman</li>
-                    <li>Add header: <code className="bg-blue-100 px-1 rounded">Authorization: Bearer &lt;paste-token&gt;</code></li>
-                    <li>Test API endpoints at: <code className="bg-blue-100 px-1 rounded">https://2b14-2a01-cb10-8dc5-8e00-7e31-6dd7-fe4f-90f5.ngrok-free.app/api/households</code></li>
-                  </ol>
-                </div>
               </CardContent>
             </Card>
           </TabsContent>

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { mergeHeaders } from '@/utils/apiHeaders';
 
 export interface ShoppingItem {
   id: string;
@@ -81,12 +82,7 @@ const createApiService = () => {
 
     const requestOptions: RequestInit = {
       ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': 'true',
-        ...options.headers,
-      },
+      headers: mergeHeaders(options.headers, true, token),
     };
 
     const response = await fetch(fullUrl, requestOptions);

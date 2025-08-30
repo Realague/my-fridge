@@ -24,7 +24,8 @@ app.use(cors({
     'http://localhost:8080',
     'http://localhost:3000',
     'http://localhost:5173',
-    'https://preview--my-fridge.lovable.app'
+    'https://preview--my-fridge.lovable.app',
+    'https://30fb01b8fdbc.ngrok-free.app',
   ],
   credentials: true
 }));

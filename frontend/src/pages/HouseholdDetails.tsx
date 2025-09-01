@@ -11,6 +11,7 @@ import { useHouseholdStore } from '@/stores/householdStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useEffect } from 'react';
+import { toast } from '@/hooks/use-toast';
 
 const HouseholdDetails = () => {
   const navigate = useNavigate();
@@ -69,6 +70,33 @@ const HouseholdDetails = () => {
   const currentUserMember = members.find(member => member.id === currentUser?.id);
   const isAdmin = currentUserMember?.HouseholdMember.role === 'admin';
 
+  const handleInviteMember = async () => {
+    if (!householdDetails?.inviteCode) return;
+    
+    const inviteMessage = `🏠 Join my household "${householdDetails.name}" on MyFridge!\n\nUse invite code: ${householdDetails.inviteCode}\n\nMyFridge helps manage your shared kitchen inventory, plan meals together, and reduce food waste. Download the app and join us!`;
+    
+    try {
+      await navigator.clipboard.writeText(inviteMessage);
+      toast({
+        title: "Invite copied!",
+        description: "Share this message with your household members to invite them.",
+      });
+    } catch (error) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = inviteMessage;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      toast({
+        title: "Invite copied!",
+        description: "Share this message with your household members to invite them.",
+      });
+    }
+  };
+
   const handleRemoveMember = async (memberId: string, memberName: string) => {
     if (!id) return;
     
@@ -107,7 +135,10 @@ const HouseholdDetails = () => {
             <CardDescription>{members.length} members</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button className="w-full touch-friendly bg-gray-900 text-white hover:bg-gray-800">
+            <Button 
+              className="w-full touch-friendly bg-gray-900 text-white hover:bg-gray-800"
+              onClick={handleInviteMember}
+            >
               <UserPlus className="h-4 w-4 mr-2" />
               Invite New Member
             </Button>

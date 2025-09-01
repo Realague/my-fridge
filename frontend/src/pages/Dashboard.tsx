@@ -24,9 +24,11 @@ import { useShoppingStore } from '@/stores/shoppingStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useTranslation } from 'react-i18next';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
   const [showNotifications, setShowNotifications] = useState(false);
@@ -79,7 +81,7 @@ const Dashboard = () => {
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -114,9 +116,9 @@ const Dashboard = () => {
   */
 
   const quickActions = [
-    { title: 'Shopping List', description: `${getPendingItems().length} items pending`, emoji: '🛒', route: '/shopping' },
-    { title: 'Meal Plans', description: 'Plan this week', emoji: '📅', route: '/meal-plans' },
-    { title: 'Recipes', description: `${(recipes || []).length} saved recipes`, emoji: '📖', route: '/recipes' },
+    { title: t('pages.shopping.title'), description: t('pages.dashboard.itemsPending', { count: getPendingItems().length }), emoji: '🛒', route: '/shopping' },
+    { title: t('pages.mealPlans.title'), description: t('pages.dashboard.planThisWeek'), emoji: '📅', route: '/meal-plans' },
+    { title: t('pages.recipes.title'), description: t('pages.dashboard.savedRecipes', { count: (recipes || []).length }), emoji: '📖', route: '/recipes' },
   ];
 
   console.log("Current Household:", getCurrentHousehold());
@@ -132,15 +134,15 @@ const Dashboard = () => {
                 <Button variant="ghost" className="text-left h-auto p-1 -ml-2">
                   <div className="flex items-center gap-2">
                     <div>
-                      <h1 className="text-xl font-bold text-gray-900">{getCurrentHousehold()?.name || 'Loading...'}</h1>
-                      <p className="text-sm text-gray-600">{getCurrentHousehold()?.memberCount || 0} members</p>
+                       <h1 className="text-xl font-bold text-gray-900">{getCurrentHousehold()?.name || t('common.loading')}</h1>
+                       <p className="text-sm text-gray-600">{getCurrentHousehold()?.memberCount || 0} {t('pages.dashboard.members')}</p>
                     </div>
                     <ChevronDown className="h-4 w-4 text-gray-500" />
                   </div>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>Switch Household</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('pages.dashboard.switchHousehold')}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup value={selectedHouseholdId || ''} onValueChange={handleSwitchHousehold}>
                   {households.map((h) => (
@@ -152,7 +154,7 @@ const Dashboard = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate('/household')}>
                   <Users className="mr-2 h-4 w-4" />
-                  <span>Manage Households</span>
+                  <span>{t('pages.dashboard.manageHouseholds')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -200,7 +202,7 @@ const Dashboard = () => {
         {/* Storage Areas */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900">Storage Areas</h2>
+            <h2 className="text-xl font-bold text-gray-900">{t('pages.dashboard.storageAreas')}</h2>
             <div className="flex gap-2">
               <AddStorageAreaDialog />
               <Button
@@ -210,7 +212,7 @@ const Dashboard = () => {
                 onClick={() => navigate(`/household/${getCurrentHousehold()?.id}`)}
               >
                 <List className="h-4 w-4 mr-2" />
-                Manage
+                {t('pages.dashboard.manage')}
               </Button>
             </div>
           </div>
@@ -218,14 +220,14 @@ const Dashboard = () => {
           <div className="space-y-3">
             {storageAreasWithStats.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gray-500 mb-4">No storage areas yet</p>
-                <AddStorageAreaDialog 
-                  trigger={
-                    <Button className="bg-green-600 hover:bg-green-700">
-                      Add Your First Storage Area
-                    </Button>
-                  }
-                />
+                 <p className="text-gray-500 mb-4">{t('pages.dashboard.noStorageAreas')}</p>
+                 <AddStorageAreaDialog 
+                   trigger={
+                     <Button className="bg-green-600 hover:bg-green-700">
+                       {t('pages.dashboard.addFirstStorageArea')}
+                     </Button>
+                   }
+                 />
               </div>
             ) : (
               storageAreasWithStats.map((area) => (
@@ -242,8 +244,8 @@ const Dashboard = () => {
         {/* Recent Activity */}
         <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
-            <CardTitle className="text-lg">Recent Activity</CardTitle>
-            <CardDescription>What's happening in your household</CardDescription>
+             <CardTitle className="text-lg">{t('pages.dashboard.recentActivity')}</CardTitle>
+             <CardDescription>{t('pages.dashboard.recentActivityDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">

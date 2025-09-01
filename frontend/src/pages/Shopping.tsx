@@ -17,8 +17,10 @@ import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const Shopping = () => {
+  const { t } = useTranslation();
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
   
@@ -95,7 +97,7 @@ const Shopping = () => {
 
   const handleAddItem = async (item: Item, quantity: string, unit: string) => {
     if (!selectedHouseholdId) {
-      toast.error('No household selected');
+      toast.error(t('messages.error.noHouseholdSelected'));
       return;
     }
 
@@ -151,13 +153,13 @@ const Shopping = () => {
       });
       
       if (updateSuccess) {
-        toast.success('Item added to storage and marked as completed');
+        toast.success(t('messages.success.itemAddedToStorage'));
         // Refresh items to ensure proper state
         await refreshShoppingItems();
       }
     } catch (error) {
       console.error('Error adding to storage:', error);
-      toast.error('Failed to add item to storage');
+      toast.error(t('messages.error.failedToAddToStorage'));
     }
 
     // Close dialog and reset state
@@ -176,13 +178,13 @@ const Shopping = () => {
       const success = await toggleShoppingItemCompleted(selectedHouseholdId, itemToStore.id);
       
       if (success) {
-        toast.success('Item marked as completed');
+        toast.success(t('messages.success.itemMarkedCompleted'));
         // Refresh items to ensure proper state
         await refreshShoppingItems();
       }
     } catch (error) {
       console.error('Error marking item as completed:', error);
-      toast.error('Failed to mark item as completed');
+      toast.error(t('messages.error.failedToMarkCompleted'));
     }
 
     // Close dialog and reset state
@@ -364,7 +366,7 @@ const Shopping = () => {
               <div className="flex items-center gap-2">
                 <span>{shoppingItem.quantity} {shoppingItem.unit}</span>
                 <span>•</span>
-                <span>Added by You</span>
+                <span>{t('pages.shopping.addedBy')}</span>
               </div>
             )}
           </div>
@@ -423,7 +425,7 @@ const Shopping = () => {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Package className="h-5 w-5 text-green-600" />
-              Add to Storage
+               {t('pages.shopping.addToStorage')}
             </DialogTitle>
           </DialogHeader>
           
@@ -442,10 +444,10 @@ const Shopping = () => {
               </div>
               
               <div>
-                <Label className="text-sm">Storage Area</Label>
+                <Label className="text-sm">{t('pages.shopping.storageArea')}</Label>
                 <Select value={selectedStorageArea} onValueChange={setSelectedStorageArea}>
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select storage area" />
+                    <SelectValue placeholder={t('pages.shopping.selectStorageArea')} />
                   </SelectTrigger>
                   <SelectContent>
                     {storageAreas.map((area) => (
@@ -461,7 +463,7 @@ const Shopping = () => {
               </div>
               
               <div>
-                <Label className="text-sm">Location (optional)</Label>
+                <Label className="text-sm">{t('pages.shopping.locationOptional')}</Label>
                 <Input
                   value={storageLocation}
                   onChange={(e) => setStorageLocation(e.target.value)}
@@ -471,7 +473,7 @@ const Shopping = () => {
               </div>
               
               <div>
-                <Label className="text-sm">Expiration Date (optional)</Label>
+                <Label className="text-sm">{t('pages.shopping.expirationDateOptional')}</Label>
                 <Input
                   type="date"
                   value={storageExpirationDate}
@@ -486,14 +488,14 @@ const Shopping = () => {
                   disabled={!selectedStorageArea}
                   className="flex-1"
                 >
-                  Add to Storage
+                  {t('pages.shopping.addToStorage')}
                 </Button>
                 <Button 
                   variant="outline" 
                   onClick={handleSkipStorage}
                   className="flex-1"
                 >
-                  Skip Storage
+                  {t('pages.shopping.skipStorage')}
                 </Button>
               </div>
             </div>

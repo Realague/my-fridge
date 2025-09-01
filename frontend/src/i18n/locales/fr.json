@@ -29,18 +29,22 @@
     "confirmPassword": "Confirmer le mot de passe",
     "firstName": "Prénom",
     "lastName": "Nom de famille",
-    "householdName": "Nom du Foyer",
-    "inviteCode": "Code d'Invitation",
+    "householdName": "Nom du foyer",
+    "inviteCode": "Code d'invitation",
     "quantity": "Quantité",
     "unit": "Unité",
     "category": "Catégorie",
     "location": "Emplacement",
-    "expiryDate": "Date d'Expiration",
-    "notes": "Notes"
+    "expiryDate": "Date d'expiration",
+    "notes": "Notes",
+    "searchOrAddItem": "Rechercher ou ajouter un article...",
+    "selected": "Sélectionné",
+    "householdItem": "Article du foyer",
+    "adding": "Ajout..."
   },
   "messages": {
     "success": {
-      "itemAdded": "Article ajouté avec succès",
+      "itemAdded": "{{item}} ajouté à la liste.",
       "itemUpdated": "Article mis à jour avec succès",
       "itemDeleted": "Article supprimé avec succès",
       "memberRemoved": "Membre supprimé avec succès",
@@ -70,8 +74,10 @@
       "selectBothDates": "Veuillez sélectionner les deux dates de début et de fin.",
       "failedToGenerateShoppingList": "Échec de la génération de la liste de courses. Veuillez réessayer.",
       "noHouseholdSelected": "Aucun foyer sélectionné",
-      "failedToAddToStorage": "Échec de l'ajout de l'article au stockage",
-      "failedToMarkCompleted": "Échec du marquage de l'article comme terminé"
+      "failedToAddToStorage": "Échec de l'ajout d'article au stockage",
+      "failedToMarkCompleted": "Échec du marquage d'article comme terminé",
+      "selectItemFirst": "Veuillez d'abord sélectionner un article.",
+      "failedToAdd": "Échec de l'ajout d'article. Réessayez."
     },
     "confirmation": {
       "deleteItem": "Êtes-vous sûr de vouloir supprimer cet article ?",
@@ -86,20 +92,24 @@
   },
   "pages": {
     "dashboard": {
-      "title": "Tableau de Bord",
+      "title": "Tableau de bord",
       "welcome": "Bienvenue sur MyFridge",
-      "recentItems": "Articles Récents",
-      "quickActions": "Actions Rapides",
-      "storageAreas": "Zones de Stockage",
-      "recentActivity": "Activité Récente",
-      "switchHousehold": "Changer de Foyer",
-      "manageHouseholds": "Gérer les Foyers",
+      "recentItems": "Articles récents",
+      "quickActions": "Actions rapides",
+      "storageAreas": "Zones de stockage",
+      "recentActivity": "Activité récente",
+      "recentActivityDescription": "Ce qui se passe dans votre foyer",
+      "switchHousehold": "Changer de foyer",
+      "manageHouseholds": "Gérer les foyers",
       "noStorageAreas": "Aucune zone de stockage pour le moment",
-      "addFirstStorageArea": "Ajouter Votre Première Zone de Stockage",
+      "addFirstStorageArea": "Ajoutez votre première zone de stockage",
       "manage": "Gérer",
       "members": "membres",
       "loading": "Chargement...",
-      "today": "Aujourd'hui"
+      "today": "Aujourd'hui",
+      "itemsPending": "{{count}} articles en attente",
+      "planThisWeek": "Planifiez cette semaine",
+      "savedRecipes": "{{count}} recettes sauvegardées"
     },
     "shopping": {
       "title": "Liste de Courses",

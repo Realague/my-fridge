@@ -24,23 +24,27 @@
   },
   "forms": {
     "name": "Nombre",
-    "email": "Correo",
+    "email": "Correo electrónico",
     "password": "Contraseña",
-    "confirmPassword": "Confirmar Contraseña",
+    "confirmPassword": "Confirmar contraseña",
     "firstName": "Nombre",
     "lastName": "Apellido",
-    "householdName": "Nombre del Hogar",
-    "inviteCode": "Código de Invitación",
+    "householdName": "Nombre del hogar",
+    "inviteCode": "Código de invitación",
     "quantity": "Cantidad",
     "unit": "Unidad",
     "category": "Categoría",
     "location": "Ubicación",
-    "expiryDate": "Fecha de Vencimiento",
-    "notes": "Notas"
+    "expiryDate": "Fecha de vencimiento",
+    "notes": "Notas",
+    "searchOrAddItem": "Buscar o agregar artículo...",
+    "selected": "Seleccionado",
+    "householdItem": "Artículo del hogar",
+    "adding": "Agregando..."
   },
   "messages": {
     "success": {
-      "itemAdded": "Artículo agregado exitosamente",
+      "itemAdded": "{{item}} agregado a la lista.",
       "itemUpdated": "Artículo actualizado exitosamente",
       "itemDeleted": "Artículo eliminado exitosamente",
       "memberRemoved": "Miembro removido exitosamente",
@@ -71,7 +75,9 @@
       "failedToGenerateShoppingList": "Error al generar lista de compras. Inténtalo de nuevo.",
       "noHouseholdSelected": "No se ha seleccionado hogar",
       "failedToAddToStorage": "Error al agregar artículo al almacenamiento",
-      "failedToMarkCompleted": "Error al marcar artículo como completado"
+      "failedToMarkCompleted": "Error al marcar artículo como completado",
+      "selectItemFirst": "Por favor selecciona un artículo primero.",
+      "failedToAdd": "Error al agregar artículo. Inténtalo de nuevo."
     },
     "confirmation": {
       "deleteItem": "¿Estás seguro de que quieres eliminar este artículo?",
@@ -86,20 +92,24 @@
   },
   "pages": {
     "dashboard": {
-      "title": "Panel Principal",
+      "title": "Tablero",
       "welcome": "Bienvenido a MyFridge",
-      "recentItems": "Artículos Recientes",
-      "quickActions": "Acciones Rápidas",
-      "storageAreas": "Áreas de Almacenamiento",
-      "recentActivity": "Actividad Reciente",
-      "switchHousehold": "Cambiar Hogar",
-      "manageHouseholds": "Administrar Hogares",
-      "noStorageAreas": "No hay áreas de almacenamiento aún",
-      "addFirstStorageArea": "Agregar Tu Primera Área de Almacenamiento",
-      "manage": "Administrar",
+      "recentItems": "Artículos recientes",
+      "quickActions": "Acciones rápidas",
+      "storageAreas": "Áreas de almacenamiento",
+      "recentActivity": "Actividad reciente",
+      "recentActivityDescription": "Lo que está pasando en tu hogar",
+      "switchHousehold": "Cambiar hogar",
+      "manageHouseholds": "Gestionar hogares",
+      "noStorageAreas": "Aún no hay áreas de almacenamiento",
+      "addFirstStorageArea": "Agrega tu primera área de almacenamiento",
+      "manage": "Gestionar",
       "members": "miembros",
       "loading": "Cargando...",
-      "today": "Hoy"
+      "today": "Hoy",
+      "itemsPending": "{{count}} artículos pendientes",
+      "planThisWeek": "Planifica esta semana",
+      "savedRecipes": "{{count}} recetas guardadas"
     },
     "shopping": {
       "title": "Lista de Compras",

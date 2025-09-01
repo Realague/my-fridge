@@ -124,17 +124,17 @@ const Settings = () => {
       <div className="container mx-auto px-4 py-6 space-y-6">
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="grid w-full grid-cols-4 bg-gray-100 rounded-lg p-1 h-auto">
-            <TabsTrigger value="profile">Profile</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-            <TabsTrigger value="appearance">Appearance</TabsTrigger>
-            <TabsTrigger value="debug">Debug</TabsTrigger>
+             <TabsTrigger value="profile">{t('pages.settings.tabs.profile')}</TabsTrigger>
+             <TabsTrigger value="notifications">{t('pages.settings.tabs.notifications')}</TabsTrigger>
+             <TabsTrigger value="appearance">{t('pages.settings.tabs.appearance')}</TabsTrigger>
+             <TabsTrigger value="debug">{t('pages.settings.tabs.debug')}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="profile" className="mt-4">
             <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>Profile Settings</CardTitle>
-                <CardDescription>Manage your personal information.</CardDescription>
+                 <CardTitle>{t('pages.settings.profileSettings.title')}</CardTitle>
+                 <CardDescription>{t('pages.settings.profileSettings.description')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
@@ -143,7 +143,7 @@ const Settings = () => {
                     id="firstName" 
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    placeholder={`Enter your ${t('forms.firstName').toLowerCase()}`}
+                    placeholder={t('pages.settings.profileSettings.enterFirstName')}
                   />
                 </div>
                 <div className="space-y-2">
@@ -152,20 +152,20 @@ const Settings = () => {
                     id="lastName" 
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    placeholder={`Enter your ${t('forms.lastName').toLowerCase()}`}
+                    placeholder={t('pages.settings.profileSettings.enterLastName')}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">{t('forms.email')}</Label>
                   <Input id="email" type="email" defaultValue={user?.email} readOnly className="bg-gray-100" />
-                  <p className="text-xs text-gray-500">Email cannot be changed.</p>
+                  <p className="text-xs text-gray-500">{t('pages.settings.profileSettings.emailCannotBeChanged')}</p>
                 </div>
                 <Button 
                   className="w-full sm:w-auto" 
                   onClick={handleSaveChanges}
                   disabled={isUpdating}
                 >
-                  {isUpdating ? 'Saving...' : t('buttons.save')}
+                  {isUpdating ? t('pages.settings.profileSettings.saving') : t('buttons.save')}
                 </Button>
               </CardContent>
             </Card>
@@ -174,25 +174,25 @@ const Settings = () => {
           <TabsContent value="notifications" className="mt-4">
             <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>Notification Settings</CardTitle>
-                <CardDescription>Configure how you receive alerts.</CardDescription>
+                 <CardTitle>{t('pages.settings.notificationSettings.title')}</CardTitle>
+                 <CardDescription>{t('pages.settings.notificationSettings.description')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50/70">
                   <Label htmlFor="push-notifications" className="flex flex-col space-y-1 cursor-pointer flex-1">
-                    <span className="font-medium">Push Notifications</span>
-                    <span className="font-normal text-sm text-gray-500">
-                      Receive alerts on your device.
-                    </span>
+                     <span className="font-medium">{t('pages.settings.notificationSettings.pushNotifications')}</span>
+                     <span className="font-normal text-sm text-gray-500">
+                       {t('pages.settings.notificationSettings.pushDescription')}
+                     </span>
                   </Label>
                   <Switch id="push-notifications" defaultChecked />
                 </div>
                 <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50/70">
                   <Label htmlFor="low-stock-alerts" className="flex flex-col space-y-1 cursor-pointer flex-1">
-                    <span className="font-medium">Low Stock Alerts</span>
-                    <span className="font-normal text-sm text-gray-500">
-                      Notify me when items are running low.
-                    </span>
+                     <span className="font-medium">{t('pages.settings.notificationSettings.lowStockAlerts')}</span>
+                     <span className="font-normal text-sm text-gray-500">
+                       {t('pages.settings.notificationSettings.lowStockDescription')}
+                     </span>
                   </Label>
                   <Switch id="low-stock-alerts" defaultChecked />
                 </div>
@@ -204,7 +204,7 @@ const Settings = () => {
             <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
                 <CardTitle>{t('pages.settings.appearance')}</CardTitle>
-                <CardDescription>Customize the look and feel of the app.</CardDescription>
+                <CardDescription>{t('pages.settings.appearanceSettings.description')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-3">
@@ -227,15 +227,15 @@ const Settings = () => {
                       ))}
                     </SelectContent>
                   </Select>
-                  <p className="text-xs text-gray-500">Choose your preferred language for the interface.</p>
+                  <p className="text-xs text-gray-500">{t('pages.settings.appearanceSettings.languageDescription')}</p>
                 </div>
                 
                 <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50/70">
                   <Label htmlFor="dark-mode" className="flex flex-col space-y-1 cursor-pointer flex-1">
-                    <span className="font-medium">Dark Mode</span>
-                    <span className="font-normal text-sm text-gray-500">
-                      Enable a darker color scheme.
-                    </span>
+                     <span className="font-medium">{t('pages.settings.appearanceSettings.darkMode')}</span>
+                     <span className="font-normal text-sm text-gray-500">
+                       {t('pages.settings.appearanceSettings.darkModeDescription')}
+                     </span>
                   </Label>
                   <Switch id="dark-mode" />
                 </div>
@@ -246,12 +246,12 @@ const Settings = () => {
           <TabsContent value="debug" className="mt-4">
             <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>Debug Information</CardTitle>
-                <CardDescription>Developer tools and authentication tokens for API testing.</CardDescription>
+                 <CardTitle>{t('pages.settings.debugSettings.title')}</CardTitle>
+                 <CardDescription>{t('pages.settings.debugSettings.description')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-3">
-                  <Label htmlFor="google-token">Google Auth Token</Label>
+                  <Label htmlFor="google-token">{t('pages.settings.debugSettings.googleAuthToken')}</Label>
                   <div className="flex gap-2">
                     <Input
                       id="google-token"
@@ -276,11 +276,11 @@ const Settings = () => {
                       <Copy className="h-4 w-4" />
                     </Button>
                   </div>
-                  <p className="text-xs text-gray-500">
-                    Copy this token to use in API testing tools like Insomnia or Postman.
-                    <br />
-                    Add it as: <code className="bg-gray-100 px-1 rounded">Authorization: Bearer &lt;token&gt;</code>
-                  </p>
+                   <p className="text-xs text-gray-500">
+                     {t('pages.settings.debugSettings.tokenDescription')}
+                     <br />
+                     {t('pages.settings.debugSettings.authorizationHeader')}: <code className="bg-gray-100 px-1 rounded">Authorization: Bearer &lt;token&gt;</code>
+                   </p>
                 </div>
               </CardContent>
             </Card>
@@ -291,7 +291,7 @@ const Settings = () => {
           <CardContent className="p-4">
             <Button variant="destructive" className="w-full" onClick={handleSignOut}>
               <LogOut className="h-4 w-4 mr-2" />
-              Log Out
+              {t('pages.settings.logOut')}
             </Button>
           </CardContent>
         </Card>

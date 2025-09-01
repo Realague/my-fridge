@@ -45,40 +45,108 @@
       "itemDeleted": "Article supprimé avec succès",
       "memberRemoved": "Membre supprimé avec succès",
       "inviteCopied": "Invitation copiée !",
-      "settingsSaved": "Paramètres enregistrés avec succès"
+      "settingsSaved": "Paramètres enregistrés avec succès",
+      "mealPlanAdded": "Plan de repas ajouté !",
+      "mealPlanDeleted": "Plan de repas supprimé !",
+      "shoppingListGenerated": "Liste de courses générée !",
+      "itemAddedToStorage": "Article ajouté au stockage et marqué comme terminé",
+      "itemMarkedCompleted": "Article marqué comme terminé",
+      "profileUpdated": "Votre profil a été mis à jour avec succès.",
+      "languageChanged": "Langue changée en"
     },
     "error": {
       "somethingWentWrong": "Quelque chose s'est mal passé",
       "failedToLoad": "Échec du chargement des données",
       "invalidCredentials": "Identifiants invalides",
       "networkError": "Erreur réseau",
-      "permissionDenied": "Permission refusée"
+      "permissionDenied": "Permission refusée",
+      "validationError": "Erreur de Validation",
+      "updateFailed": "Échec de la Mise à Jour",
+      "failedToUpdateProfile": "Échec de la mise à jour du profil. Veuillez réessayer.",
+      "firstNameLastNameRequired": "Le prénom et le nom de famille sont requis.",
+      "selectDateMealTypeRecipe": "Veuillez sélectionner une date, un type de repas et une recette.",
+      "failedToCreateMealPlan": "Échec de la création du plan de repas. Veuillez réessayer.",
+      "failedToDeleteMealPlan": "Échec de la suppression du plan de repas. Veuillez réessayer.",
+      "selectBothDates": "Veuillez sélectionner les deux dates de début et de fin.",
+      "failedToGenerateShoppingList": "Échec de la génération de la liste de courses. Veuillez réessayer.",
+      "noHouseholdSelected": "Aucun foyer sélectionné",
+      "failedToAddToStorage": "Échec de l'ajout de l'article au stockage",
+      "failedToMarkCompleted": "Échec du marquage de l'article comme terminé"
     },
     "confirmation": {
       "deleteItem": "Êtes-vous sûr de vouloir supprimer cet article ?",
       "removeMember": "Êtes-vous sûr de vouloir supprimer {{name}} du foyer ?",
       "leaveHousehold": "Êtes-vous sûr de vouloir quitter ce foyer ?"
     },
-    "inviteMessage": "🏠 Rejoins mon foyer \"{{householdName}}\" sur MyFridge !\n\nUtilise le code d'invitation : {{inviteCode}}\n\nMyFridge aide à gérer l'inventaire partagé de votre cuisine, planifier les repas ensemble et réduire le gaspillage alimentaire. Télécharge l'app et rejoins-nous !"
+    "inviteMessage": "🏠 Rejoins mon foyer \"{{householdName}}\" sur MyFridge !\n\nUtilise le code d'invitation : {{inviteCode}}\n\nMyFridge aide à gérer l'inventaire partagé de votre cuisine, planifier les repas ensemble et réduire le gaspillage alimentaire. Télécharge l'app et rejoins-nous !",
+    "mealPlanDescription": "Votre plan de repas a été sauvegardé.",
+    "mealPlanDeletedDescription": "Le plan de repas a été supprimé.",
+    "shoppingListGeneratedDescription": "{{count}} articles ajoutés à votre liste de courses pour {{dateRange}}",
+    "googleTokenCopied": "Le jeton Google a été copié dans le presse-papiers pour les tests d'API."
   },
   "pages": {
     "dashboard": {
       "title": "Tableau de Bord",
       "welcome": "Bienvenue sur MyFridge",
       "recentItems": "Articles Récents",
-      "quickActions": "Actions Rapides"
+      "quickActions": "Actions Rapides",
+      "storageAreas": "Zones de Stockage",
+      "recentActivity": "Activité Récente",
+      "switchHousehold": "Changer de Foyer",
+      "manageHouseholds": "Gérer les Foyers",
+      "noStorageAreas": "Aucune zone de stockage pour le moment",
+      "addFirstStorageArea": "Ajouter Votre Première Zone de Stockage",
+      "manage": "Gérer",
+      "members": "membres",
+      "loading": "Chargement...",
+      "today": "Aujourd'hui"
     },
     "shopping": {
       "title": "Liste de Courses",
       "addItem": "Ajouter un Article",
       "noItems": "Aucun article dans votre liste de courses",
-      "generateFromMeals": "Générer depuis les Plans de Repas"
+      "generateFromMeals": "Générer depuis les Plans de Repas",
+      "addToStorage": "Ajouter au Stockage",
+      "skipStorage": "Ignorer le Stockage",
+      "storageArea": "Zone de Stockage",
+      "location": "Emplacement",
+      "locationOptional": "Emplacement (facultatif)",
+      "expirationDateOptional": "Date d'Expiration (facultatif)",
+      "selectStorageArea": "Sélectionner une zone de stockage",
+      "addedBy": "Ajouté par Vous",
+      "pendingItems": "Articles en Attente",
+      "completedItems": "Articles Terminés",
+      "showCompleted": "Afficher Terminés",
+      "hideCompleted": "Masquer Terminés",
+      "deleteCompleted": "Supprimer Terminés",
+      "filterByCategory": "Filtrer par Catégorie",
+      "allCategories": "Toutes les Catégories"
     },
     "mealPlans": {
       "title": "Plans de Repas",
       "addMealPlan": "Ajouter un Plan de Repas",
       "noMealPlans": "Aucun plan de repas créé pour le moment",
-      "generateShoppingList": "Générer la Liste de Courses"
+      "generateShoppingList": "Générer la Liste de Courses",
+      "addMeal": "Ajouter un Repas",
+      "mealType": "Type de Repas",
+      "recipe": "Recette",
+      "selectMealType": "Sélectionner le type de repas",
+      "selectServings": "Sélectionner les portions",
+      "breakfast": "Petit-déjeuner",
+      "lunch": "Déjeuner",
+      "dinner": "Dîner",
+      "snack": "Collation",
+      "searchRecipe": "Rechercher une recette...",
+      "addMealFor": "Ajouter un repas pour",
+      "viewRecipe": "Voir la Recette",
+      "generateShoppingListDialog": {
+        "title": "Générer la Liste de Courses",
+        "description": "Sélectionner la plage de dates pour générer la liste de courses à partir des plans de repas",
+        "startDate": "Date de Début",
+        "endDate": "Date de Fin",
+        "selectStartDate": "Sélectionner la date de début",
+        "selectEndDate": "Sélectionner la date de fin"
+      }
     },
     "recipes": {
       "title": "Recettes",
@@ -96,16 +164,72 @@
       "notifications": "Notifications",
       "account": "Compte",
       "household": "Foyer",
-      "privacy": "Confidentialité"
+      "privacy": "Confidentialité",
+      "appearance": "Apparence",
+      "profile": "Profil",
+      "debug": "Débogage",
+      "tabs": {
+        "profile": "Profil",
+        "notifications": "Notifications",
+        "appearance": "Apparence",
+        "debug": "Débogage"
+      },
+      "profileSettings": {
+        "title": "Paramètres du Profil",
+        "description": "Gérez vos informations personnelles.",
+        "enterFirstName": "Entrez votre prénom",
+        "enterLastName": "Entrez votre nom de famille",
+        "emailCannotBeChanged": "L'email ne peut pas être modifié.",
+        "saving": "Sauvegarde..."
+      },
+      "notificationSettings": {
+        "title": "Paramètres de Notification",
+        "description": "Configurez comment vous recevez les alertes.",
+        "pushNotifications": "Notifications Push",
+        "pushDescription": "Recevoir des alertes sur votre appareil.",
+        "lowStockAlerts": "Alertes de Stock Faible",
+        "lowStockDescription": "Me prévenir quand les articles sont en rupture."
+      },
+      "appearanceSettings": {
+        "title": "Paramètres d'Apparence",
+        "description": "Personnalisez l'apparence de l'application.",
+        "darkMode": "Mode Sombre",
+        "darkModeDescription": "Activer un schéma de couleurs plus sombre.",
+        "languageDescription": "Choisissez votre langue préférée pour l'interface."
+      },
+      "debugSettings": {
+        "title": "Informations de Débogage",
+        "description": "Outils de développement et jetons d'authentification pour les tests d'API.",
+        "googleAuthToken": "Jeton d'Authentification Google",
+        "tokenDescription": "Copiez ce jeton pour l'utiliser dans des outils de test d'API comme Insomnia ou Postman.",
+        "authorizationHeader": "Ajoutez-le comme :",
+        "noTokenFound": "Aucun jeton trouvé",
+        "copyFailed": "Échec de la Copie",
+        "copyFailedDescription": "Impossible de copier le jeton dans le presse-papiers."
+      },
+      "logOut": "Se Déconnecter"
     },
     "household": {
       "title": "Détails du Foyer",
       "members": "Membres",
       "inviteCode": "Code d'Invitation",
+      "manageHousehold": "Gérer le Foyer",
+      "manageMembers": "Gérer les Membres",
+      "leaveHousehold": "Quitter le Foyer",
+      "leaveHouseholdDescription": "Êtes-vous sûr de vouloir quitter ce foyer ? Vous perdrez l'accès à tous les articles partagés, recettes et plans de repas.",
+      "householdNotFound": "Foyer Non Trouvé",
+      "householdNotFoundDescription": "Le foyer que vous recherchez n'existe pas.",
+      "backToHouseholds": "Retour aux Foyers",
+      "you": "(Vous)",
       "role": {
         "admin": "Administrateur",
         "member": "Membre"
       }
+    },
+    "auth": {
+      "noHouseholdSelected": "Aucun Foyer Sélectionné",
+      "selectHouseholdFirst": "Veuillez d'abord sélectionner un foyer pour voir et gérer votre",
+      "goToHouseholdSettings": "Aller aux Paramètres du Foyer"
     }
   },
   "units": {

@@ -45,40 +45,108 @@
       "itemDeleted": "Artículo eliminado exitosamente",
       "memberRemoved": "Miembro removido exitosamente",
       "inviteCopied": "¡Invitación copiada!",
-      "settingsSaved": "Configuración guardada exitosamente"
+      "settingsSaved": "Configuración guardada exitosamente",
+      "mealPlanAdded": "¡Plan de comida agregado!",
+      "mealPlanDeleted": "¡Plan de comida eliminado!",
+      "shoppingListGenerated": "¡Lista de compras generada!",
+      "itemAddedToStorage": "Artículo agregado al almacenamiento y marcado como completado",
+      "itemMarkedCompleted": "Artículo marcado como completado",
+      "profileUpdated": "Tu perfil ha sido actualizado exitosamente.",
+      "languageChanged": "Idioma cambiado a"
     },
     "error": {
       "somethingWentWrong": "Algo salió mal",
       "failedToLoad": "Error al cargar datos",
       "invalidCredentials": "Credenciales inválidas",
       "networkError": "Error de red",
-      "permissionDenied": "Permiso denegado"
+      "permissionDenied": "Permiso denegado",
+      "validationError": "Error de Validación",
+      "updateFailed": "Error de Actualización",
+      "failedToUpdateProfile": "Error al actualizar perfil. Inténtalo de nuevo.",
+      "firstNameLastNameRequired": "Nombre y apellido son requeridos.",
+      "selectDateMealTypeRecipe": "Por favor selecciona una fecha, tipo de comida y receta.",
+      "failedToCreateMealPlan": "Error al crear plan de comida. Inténtalo de nuevo.",
+      "failedToDeleteMealPlan": "Error al eliminar plan de comida. Inténtalo de nuevo.",
+      "selectBothDates": "Por favor selecciona ambas fechas de inicio y fin.",
+      "failedToGenerateShoppingList": "Error al generar lista de compras. Inténtalo de nuevo.",
+      "noHouseholdSelected": "No se ha seleccionado hogar",
+      "failedToAddToStorage": "Error al agregar artículo al almacenamiento",
+      "failedToMarkCompleted": "Error al marcar artículo como completado"
     },
     "confirmation": {
       "deleteItem": "¿Estás seguro de que quieres eliminar este artículo?",
       "removeMember": "¿Estás seguro de que quieres remover a {{name}} del hogar?",
       "leaveHousehold": "¿Estás seguro de que quieres dejar este hogar?"
     },
-    "inviteMessage": "🏠 ¡Únete a mi hogar \"{{householdName}}\" en MyFridge!\n\nUsa el código de invitación: {{inviteCode}}\n\nMyFridge ayuda a gestionar el inventario compartido de tu cocina, planificar comidas juntos y reducir el desperdicio de alimentos. ¡Descarga la app y únete!"
+    "inviteMessage": "🏠 ¡Únete a mi hogar \"{{householdName}}\" en MyFridge!\n\nUsa el código de invitación: {{inviteCode}}\n\nMyFridge ayuda a gestionar el inventario compartido de tu cocina, planificar comidas juntos y reducir el desperdicio de alimentos. ¡Descarga la app y únete!",
+    "mealPlanDescription": "Tu plan de comida ha sido guardado.",
+    "mealPlanDeletedDescription": "El plan de comida ha sido removido.",
+    "shoppingListGeneratedDescription": "Se agregaron {{count}} artículos a tu lista de compras para {{dateRange}}",
+    "googleTokenCopied": "El token de Google ha sido copiado al portapapeles para pruebas de API."
   },
   "pages": {
     "dashboard": {
       "title": "Panel Principal",
       "welcome": "Bienvenido a MyFridge",
       "recentItems": "Artículos Recientes",
-      "quickActions": "Acciones Rápidas"
+      "quickActions": "Acciones Rápidas",
+      "storageAreas": "Áreas de Almacenamiento",
+      "recentActivity": "Actividad Reciente",
+      "switchHousehold": "Cambiar Hogar",
+      "manageHouseholds": "Administrar Hogares",
+      "noStorageAreas": "No hay áreas de almacenamiento aún",
+      "addFirstStorageArea": "Agregar Tu Primera Área de Almacenamiento",
+      "manage": "Administrar",
+      "members": "miembros",
+      "loading": "Cargando...",
+      "today": "Hoy"
     },
     "shopping": {
       "title": "Lista de Compras",
       "addItem": "Agregar Artículo",
       "noItems": "No hay artículos en tu lista de compras",
-      "generateFromMeals": "Generar desde Planes de Comida"
+      "generateFromMeals": "Generar desde Planes de Comida",
+      "addToStorage": "Agregar al Almacenamiento",
+      "skipStorage": "Omitir Almacenamiento",
+      "storageArea": "Área de Almacenamiento",
+      "location": "Ubicación",
+      "locationOptional": "Ubicación (opcional)",
+      "expirationDateOptional": "Fecha de Vencimiento (opcional)",
+      "selectStorageArea": "Seleccionar área de almacenamiento",
+      "addedBy": "Agregado por Ti",
+      "pendingItems": "Artículos Pendientes",
+      "completedItems": "Artículos Completados",
+      "showCompleted": "Mostrar Completados",
+      "hideCompleted": "Ocultar Completados",
+      "deleteCompleted": "Eliminar Completados",
+      "filterByCategory": "Filtrar por Categoría",
+      "allCategories": "Todas las Categorías"
     },
     "mealPlans": {
       "title": "Planes de Comida",
       "addMealPlan": "Agregar Plan de Comida",
       "noMealPlans": "No hay planes de comida creados aún",
-      "generateShoppingList": "Generar Lista de Compras"
+      "generateShoppingList": "Generar Lista de Compras",
+      "addMeal": "Agregar Comida",
+      "mealType": "Tipo de Comida",
+      "recipe": "Receta",
+      "selectMealType": "Seleccionar tipo de comida",
+      "selectServings": "Seleccionar porciones",
+      "breakfast": "Desayuno",
+      "lunch": "Almuerzo",
+      "dinner": "Cena",
+      "snack": "Aperitivo",
+      "searchRecipe": "Buscar una receta...",
+      "addMealFor": "Agregar una comida para",
+      "viewRecipe": "Ver Receta",
+      "generateShoppingListDialog": {
+        "title": "Generar Lista de Compras",
+        "description": "Seleccionar rango de fechas para generar lista de compras desde planes de comida",
+        "startDate": "Fecha de Inicio",
+        "endDate": "Fecha de Fin",
+        "selectStartDate": "Seleccionar fecha de inicio",
+        "selectEndDate": "Seleccionar fecha de fin"
+      }
     },
     "recipes": {
       "title": "Recetas",
@@ -96,16 +164,72 @@
       "notifications": "Notificaciones",
       "account": "Cuenta",
       "household": "Hogar",
-      "privacy": "Privacidad"
+      "privacy": "Privacidad",
+      "appearance": "Apariencia",
+      "profile": "Perfil",
+      "debug": "Depuración",
+      "tabs": {
+        "profile": "Perfil",
+        "notifications": "Notificaciones",
+        "appearance": "Apariencia",
+        "debug": "Depuración"
+      },
+      "profileSettings": {
+        "title": "Configuración del Perfil",
+        "description": "Administra tu información personal.",
+        "enterFirstName": "Ingresa tu nombre",
+        "enterLastName": "Ingresa tu apellido",
+        "emailCannotBeChanged": "El correo electrónico no se puede cambiar.",
+        "saving": "Guardando..."
+      },
+      "notificationSettings": {
+        "title": "Configuración de Notificaciones",
+        "description": "Configura cómo recibes alertas.",
+        "pushNotifications": "Notificaciones Push",
+        "pushDescription": "Recibir alertas en tu dispositivo.",
+        "lowStockAlerts": "Alertas de Stock Bajo",
+        "lowStockDescription": "Notificarme cuando los artículos se estén agotando."
+      },
+      "appearanceSettings": {
+        "title": "Configuración de Apariencia",
+        "description": "Personaliza la apariencia de la aplicación.",
+        "darkMode": "Modo Oscuro",
+        "darkModeDescription": "Habilitar un esquema de colores más oscuro.",
+        "languageDescription": "Elige tu idioma preferido para la interfaz."
+      },
+      "debugSettings": {
+        "title": "Información de Depuración",
+        "description": "Herramientas de desarrollador y tokens de autenticación para pruebas de API.",
+        "googleAuthToken": "Token de Autenticación de Google",
+        "tokenDescription": "Copia este token para usar en herramientas de prueba de API como Insomnia o Postman.",
+        "authorizationHeader": "Agrégalo como:",
+        "noTokenFound": "No se encontró token",
+        "copyFailed": "Error al Copiar",
+        "copyFailedDescription": "No se pudo copiar el token al portapapeles."
+      },
+      "logOut": "Cerrar Sesión"
     },
     "household": {
       "title": "Detalles del Hogar",
       "members": "Miembros",
       "inviteCode": "Código de Invitación",
+      "manageHousehold": "Administrar Hogar",
+      "manageMembers": "Administrar Miembros",
+      "leaveHousehold": "Dejar Hogar",
+      "leaveHouseholdDescription": "¿Estás seguro de que quieres dejar este hogar? Perderás acceso a todos los artículos compartidos, recetas y planes de comida.",
+      "householdNotFound": "Hogar No Encontrado",
+      "householdNotFoundDescription": "El hogar que buscas no existe.",
+      "backToHouseholds": "Volver a Hogares",
+      "you": "(Tú)",
       "role": {
         "admin": "Administrador",
         "member": "Miembro"
       }
+    },
+    "auth": {
+      "noHouseholdSelected": "No se ha Seleccionado Hogar",
+      "selectHouseholdFirst": "Por favor selecciona primero un hogar para ver y administrar tu",
+      "goToHouseholdSettings": "Ir a Configuración del Hogar"
     }
   },
   "units": {

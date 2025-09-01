@@ -17,6 +17,7 @@ import { RecipeListDto, RecipeDto } from '@/services/recipeService';
 import { RecipeSelector } from '@/components/RecipeSelector';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useTranslation } from 'react-i18next';
 
 interface MealPlanForm {
   date: Date | undefined;
@@ -26,6 +27,7 @@ interface MealPlanForm {
 }
 
 const MealPlans = () => {
+  const { t } = useTranslation();
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
   
@@ -99,14 +101,14 @@ const MealPlans = () => {
     try {
       await deleteMealPlan(mealPlanId);
       toast({
-        title: "Meal plan deleted!",
-        description: "The meal plan has been removed.",
+        title: t('pages.mealPlans.mealPlanDeleted'),
+        description: t('pages.mealPlans.mealPlanRemoved'),
       });
     } catch (error) {
       console.error('Error deleting meal plan:', error);
       toast({
-        title: "Error",
-        description: "Failed to delete meal plan. Please try again.",
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.failedToDeleteMealPlan'),
         variant: "destructive",
       });
     }
@@ -115,8 +117,8 @@ const MealPlans = () => {
   const handleSaveMeal = async () => {
     if (!selectedDate || !selectedMealType || !selectedRecipe) {
       toast({
-        title: "Error",
-        description: "Please select a date, meal type, and recipe.",
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.selectDateMealTypeRecipe'),
         variant: "destructive",
       });
       return;
@@ -136,14 +138,14 @@ const MealPlans = () => {
       setIsAddMealDialogOpen(false);
       setSelectedRecipe(null);
       toast({
-        title: "Meal plan added!",
-        description: "Your meal plan has been saved.",
+        title: t('pages.mealPlans.mealPlanAdded'),
+        description: t('pages.mealPlans.mealPlanSaved'),
       });
     } catch (error) {
       console.error('Error creating meal plan:', error);
       toast({
-        title: "Error",
-        description: "Failed to create meal plan. Please try again.",
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.failedToCreateMealPlan'),
         variant: "destructive",
       });
     }
@@ -154,14 +156,14 @@ const MealPlans = () => {
       await deleteMealPlan(mealPlanId);
       setIsViewMealPlanDialogOpen(false);
       toast({
-        title: "Meal plan deleted!",
-        description: "The meal plan has been removed.",
+        title: t('pages.mealPlans.mealPlanDeleted'),
+        description: t('pages.mealPlans.mealPlanRemoved'),
       });
     } catch (error) {
       console.error('Error deleting meal plan:', error);
       toast({
-        title: "Error",
-        description: "Failed to delete meal plan. Please try again.",
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.failedToDeleteMealPlan'),
         variant: "destructive",
       });
     }
@@ -183,8 +185,8 @@ const MealPlans = () => {
   const handleGenerateShoppingList = async () => {
     if (!shoppingListDateRange.from || !shoppingListDateRange.to || !selectedHouseholdId) {
       toast({
-        title: "Error",
-        description: "Please select both start and end dates.",
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.selectBothDates'),
         variant: "destructive",
       });
       return;
@@ -202,14 +204,17 @@ const MealPlans = () => {
       navigate('/shopping');
       
       toast({
-        title: "Shopping list generated!",
-        description: `Added ${shoppingList.length} items to your shopping list for ${format(shoppingListDateRange.from, 'MMM d')} - ${format(shoppingListDateRange.to, 'MMM d')}`,
+        title: t('messages.success.shoppingListGenerated'),
+        description: t('messages.shoppingListGeneratedDescription', { 
+          count: shoppingList.length, 
+          dateRange: `${format(shoppingListDateRange.from, 'MMM d')} - ${format(shoppingListDateRange.to, 'MMM d')}`
+        }),
       });
     } catch (error) {
       console.error('Error generating shopping list:', error);
       toast({
-        title: "Error",
-        description: "Failed to generate shopping list. Please try again.",
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.failedToGenerateShoppingList'),
         variant: "destructive",
       });
     }
@@ -251,15 +256,15 @@ const MealPlans = () => {
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
         <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
           <div className="container mx-auto px-4 py-4">
-            <h1 className="text-2xl font-bold text-gray-900">Meal Plans</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t('pages.mealPlans.title')}</h1>
           </div>
         </div>
         <div className="container mx-auto px-4 py-6">
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-0 p-8 text-center">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">No Household Selected</h2>
-            <p className="text-gray-600 mb-6">Please select a household first to view and manage your meal plans.</p>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('pages.auth.noHouseholdSelected')}</h2>
+            <p className="text-gray-600 mb-6">{t('pages.auth.selectHouseholdFirst')} meal plans.</p>
             <Button onClick={() => window.location.href = '/household'} className="bg-green-600 hover:bg-green-700">
-              Go to Household Settings
+              {t('pages.auth.goToHouseholdSettings')}
             </Button>
           </div>
         </div>
@@ -274,13 +279,13 @@ const MealPlans = () => {
       <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">Meal Plans</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t('pages.mealPlans.title')}</h1>
             <Button
               onClick={() => generateShoppingList()}
               className="bg-green-600 hover:bg-green-700"
             >
               <ShoppingCart className="h-4 w-4 mr-2" />
-              Generate Shopping List
+              {t('pages.mealPlans.generateShoppingList')}
             </Button>
           </div>
         </div>
@@ -309,7 +314,7 @@ const MealPlans = () => {
                   onClick={() => setCurrentDate(new Date())}
                   className="text-gray-600"
                 >
-                  Today
+                  {t('pages.mealPlans.today')}
                 </Button>
                 <Button
                   variant="outline"
@@ -324,7 +329,7 @@ const MealPlans = () => {
 
             {/* Week Grid */}
             <div className="grid grid-cols-7 gap-2">
-              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+              {[t('pages.mealPlans.mon'), t('pages.mealPlans.tue'), t('pages.mealPlans.wed'), t('pages.mealPlans.thu'), t('pages.mealPlans.fri'), t('pages.mealPlans.sat'), t('pages.mealPlans.sun')].map((day) => (
                 <div key={day} className="text-center text-sm font-medium text-gray-500 p-2">
                   {day}
                 </div>
@@ -387,7 +392,7 @@ const MealPlans = () => {
                     className="w-full mt-2 text-xs text-gray-500 hover:text-green-600 hover:bg-green-50"
                   >
                     <Plus className="h-3 w-3 mr-1" />
-                    Add Meal
+                    {t('pages.mealPlans.addMeal')}
                   </Button>
                 </div>
               ))}
@@ -399,44 +404,44 @@ const MealPlans = () => {
         <Dialog open={isAddMealDialogOpen} onOpenChange={setIsAddMealDialogOpen}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Add Meal Plan</DialogTitle>
+              <DialogTitle>{t('pages.mealPlans.addMealPlan')}</DialogTitle>
               <DialogDescription>
-                Add a meal for {selectedDate ? format(selectedDate, 'EEEE, MMMM d') : ''}
+                {t('pages.mealPlans.addMealFor')} {selectedDate ? format(selectedDate, 'EEEE, MMMM d') : ''}
               </DialogDescription>
             </DialogHeader>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Recipe</label>
+                <label className="block text-sm font-medium mb-2">{t('pages.mealPlans.recipe')}</label>
                 <RecipeSelector
                   onRecipeSelect={(recipe) => setSelectedRecipe(recipe)}
                   selectedRecipe={selectedRecipe}
                   recipes={convertedRecipes}
                   loading={recipesLoading}
-                  placeholder="Search for a recipe..."
+                  placeholder={t('pages.mealPlans.searchRecipe')}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Meal Type</label>
+                <label className="block text-sm font-medium mb-2">{t('pages.mealPlans.mealType')}</label>
                 <Select value={selectedMealType} onValueChange={(value) => setSelectedMealType(value as 'breakfast' | 'lunch' | 'dinner' | 'snack')}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select meal type" />
+                    <SelectValue placeholder={t('pages.mealPlans.selectMealType')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="breakfast">Breakfast</SelectItem>
-                    <SelectItem value="lunch">Lunch</SelectItem>
-                    <SelectItem value="dinner">Dinner</SelectItem>
-                    <SelectItem value="snack">Snack</SelectItem>
+                    <SelectItem value="breakfast">{t('pages.mealPlans.breakfast')}</SelectItem>
+                    <SelectItem value="lunch">{t('pages.mealPlans.lunch')}</SelectItem>
+                    <SelectItem value="dinner">{t('pages.mealPlans.dinner')}</SelectItem>
+                    <SelectItem value="snack">{t('pages.mealPlans.snack')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Servings</label>
+                <label className="block text-sm font-medium mb-2">{t('pages.recipes.servings')}</label>
                 <Select value={selectedServings.toString()} onValueChange={(value) => setSelectedServings(parseInt(value))}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select servings" />
+                    <SelectValue placeholder={t('pages.mealPlans.selectServings')} />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
@@ -451,14 +456,14 @@ const MealPlans = () => {
 
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsAddMealDialogOpen(false)}>
-                Cancel
+                {t('buttons.cancel')}
               </Button>
               <Button 
                 onClick={handleSaveMeal}
                 disabled={!selectedRecipe || !selectedMealType || savingMealPlan}
                 className="bg-green-600 hover:bg-green-700"
               >
-                {savingMealPlan ? 'Adding...' : 'Add Meal'}
+                {savingMealPlan ? t('forms.adding') : t('pages.mealPlans.addMeal')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -531,14 +536,14 @@ const MealPlans = () => {
 
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setIsViewMealPlanDialogOpen(false)}>
-                    Close
+                    {t('buttons.close')}
                   </Button>
                   <Button 
                     variant="destructive"
                     onClick={() => handleDeleteMealPlan(viewingMealPlan.id)}
                     disabled={deletingMealPlan}
                   >
-                    {deletingMealPlan ? 'Deleting..' : 'Delete'}
+                    {deletingMealPlan ? t('buttons.delete')+'...' : t('buttons.delete')}
                   </Button>
                 </DialogFooter>
               </>
@@ -550,9 +555,9 @@ const MealPlans = () => {
         <Dialog open={isGenerateShoppingListDialogOpen} onOpenChange={setIsGenerateShoppingListDialogOpen}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Generate Shopping List</DialogTitle>
+              <DialogTitle>{t('pages.mealPlans.generateShoppingListDialog.title')}</DialogTitle>
               <DialogDescription>
-                Select a date range to generate a shopping list from your meal plans
+                {t('pages.mealPlans.generateShoppingListDialog.description')}
               </DialogDescription>
             </DialogHeader>
             
@@ -578,7 +583,7 @@ const MealPlans = () => {
 
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsGenerateShoppingListDialogOpen(false)}>
-                Cancel
+                {t('buttons.cancel')}
               </Button>
               <Button 
                 onClick={handleGenerateShoppingList}

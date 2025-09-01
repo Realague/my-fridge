@@ -13,8 +13,10 @@ import { useRecipeStore } from '@/stores/recipeStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { RecipeListDto } from '@/services/recipeService';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 const Recipes = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { selectedHouseholdId } = useProtectedRoute();
@@ -47,7 +49,7 @@ const Recipes = () => {
   useEffect(() => {
     if (error) {
       toast({
-        title: 'Error',
+        title: t('messages.error.somethingWentWrong'),
         description: error,
         variant: 'destructive',
       });
@@ -79,13 +81,13 @@ const Recipes = () => {
     try {
       await toggleFavorite(selectedHouseholdId, recipeId);
       toast({
-        title: 'Success',
-        description: 'Recipe favorite status updated',
+        title: t('messages.success.itemUpdated'),
+        description: t('pages.recipes.recipeUpdated'),
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update favorite status',
+        title: t('messages.error.somethingWentWrong'),
+        description: t('pages.recipes.updateFailed'),
         variant: 'destructive',
       });
     }
@@ -109,9 +111,9 @@ const Recipes = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-gray-900">Recipes</h1>
+              <h1 className="text-xl font-bold text-gray-900">{t('pages.recipes.title')}</h1>
               <p className="text-sm text-gray-600">
-                {loading ? 'Loading...' : `${total || 0} recipes saved`}
+                {loading ? t('common.loading') : t('pages.recipes.recipeSaved', { count: total || 0 })}
               </p>
             </div>
             <Button
@@ -119,7 +121,7 @@ const Recipes = () => {
               onClick={() => navigate('/add-recipe')}
             >
               <Plus className="h-4 w-4 mr-2" />
-              Add Recipe
+              {t('pages.recipes.addRecipe')}
             </Button>
           </div>
         </div>
@@ -130,7 +132,7 @@ const Recipes = () => {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
-            placeholder="Search recipes, ingredients, or tags..."
+            placeholder={t('pages.recipes.search')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 bg-white/80 backdrop-blur-sm border-0 shadow-lg"
@@ -140,8 +142,8 @@ const Recipes = () => {
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2 bg-white/80 backdrop-blur-sm">
-            <TabsTrigger value="all">All Recipes</TabsTrigger>
-            <TabsTrigger value="favorites">Favorites</TabsTrigger>
+            <TabsTrigger value="all">{t('pages.recipes.allRecipes')}</TabsTrigger>
+            <TabsTrigger value="favorites">{t('pages.recipes.favorites')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="all" className="space-y-4">
@@ -182,6 +184,7 @@ interface RecipeGridProps {
 }
 
 const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGridProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   // Handle undefined or null recipes
@@ -189,7 +192,7 @@ const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGri
     return (
       <div className="text-center py-12">
         <ChefHat className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <p className="text-gray-600">No recipes found</p>
+        <p className="text-gray-600">{t('pages.recipes.noRecipes')}</p>
       </div>
     );
   }
@@ -240,8 +243,8 @@ const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGri
 
             <div className="flex items-center justify-between">
               <div className="flex flex-wrap gap-1">
-                <Badge className={getDifficultyColor(recipe.difficulty || 'Easy')}>
-                  {recipe.difficulty || 'Easy'}
+                <Badge className={getDifficultyColor(recipe.difficulty || t('pages.recipes.easy'))}>
+                  {recipe.difficulty || t('pages.recipes.easy')}
                 </Badge>
                 {(recipe.tags || []).slice(0, 2).map((tag, index) => (
                   <Badge key={index} variant="outline" className="text-xs">

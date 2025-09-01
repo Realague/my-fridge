@@ -101,18 +101,19 @@ export const useAuthStore = create<AuthState>()(
                   cancel_on_tap_outside: false,
                 });
                 
-                // Check if user is already authenticated
+                // Check if user is already authenticated - this will set isLoading to false
                 get().checkStoredAuth();
               } catch (error) {
                 console.error('Error initializing Google Auth:', error);
+                set({ isLoading: false });
               }
             } else {
               console.error('Google SDK not available or Client ID missing');
               if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) {
                 console.error('VITE_GOOGLE_CLIENT_ID environment variable is not set');
               }
+              set({ isLoading: false });
             }
-            set({ isLoading: false });
           };
           script.onerror = () => {
             console.error('Failed to load Google SDK');
@@ -163,7 +164,12 @@ export const useAuthStore = create<AuthState>()(
             localStorage.removeItem('google_token');
             set({ user: null, isAuthenticated: false });
           }
+        } else {
+          // No token found, ensure auth state is clear
+          set({ user: null, isAuthenticated: false });
         }
+        // Always set loading to false after checking stored auth
+        set({ isLoading: false });
       },
 
       isTokenExpired: (token: string): boolean => {

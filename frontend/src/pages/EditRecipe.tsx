@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, Plus, X } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useHouseholdStore } from '@/stores/householdStore';
+import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { RecipeDto, UpdateRecipeDto, CreateRecipeIngredientDto, RecipeDifficulty } from '@/services/recipeService';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
 import { useToast } from '@/hooks/use-toast';
@@ -30,8 +31,11 @@ interface RecipeFormData {
 const EditRecipe = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  
+  // Protected route hook handles auth and household checks
+  const { selectedHouseholdId } = useProtectedRoute();
+  
   const { currentRecipe, fetchRecipeById, updateRecipe, loading, error, clearError } = useRecipeStore();
-  const { selectedHouseholdId } = useHouseholdStore();
   const { toast } = useToast();
   const { getItemById } = useItemService();
   

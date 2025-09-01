@@ -1,4 +1,5 @@
 import { useApiWithAuth } from '@/hooks/useApiWithAuth';
+import { mergeHeaders } from '@/utils/apiHeaders';
 
 // Types matching backend DTOs
 export interface CreateMealPlanDto {
@@ -66,12 +67,7 @@ export const createMealPlanApiService = () => {
 
     const requestOptions: RequestInit = {
       ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': 'true',
-        ...options.headers,
-      },
+      headers: mergeHeaders(options.headers, true, token),
     };
 
     const response = await fetch(fullUrl, requestOptions);

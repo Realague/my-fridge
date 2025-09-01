@@ -200,7 +200,6 @@ export const useHouseholdStore = create<HouseholdStore>()(
             const responseData = await response.json();
             
             if (response.ok) {
-              const responseData = await response.json();
               
               if (responseData.success) {
                 const selectedCount = storageAreas ? Object.values(storageAreas).filter(Boolean).length : 0;
@@ -211,25 +210,22 @@ export const useHouseholdStore = create<HouseholdStore>()(
                   description: `${name} has been created successfully${storageMessage}.`,
                 });
                 
-                // Update household store with new selected household
-                if (responseData.data.household) {
-                  set({ selectedHouseholdId: responseData.data.household.id });
-                }
-                
-                // Update auth store with updated user data
+                // Update auth store with updated user data first
                 if (responseData.data.user) {
                   try {
-                    import('./authStore').then(({ useAuthStore }) => {
-                      useAuthStore.getState().setUser(responseData.data.user);
-                    }).catch((error) => {
-                      console.warn('Failed to import auth store after household creation:', error);
-                    });
+                    const authStoreModule = await import('./authStore');
+                    authStoreModule.useAuthStore.getState().setUser(responseData.data.user);
                   } catch (error) {
                     console.warn('Failed to update auth store after household creation:', error);
                   }
                 }
                 
-                // Refresh the households list
+                // Update household store with new selected household
+                if (responseData.data.household) {
+                  set(state => ({ selectedHouseholdId: responseData.data.household.id }));
+                }
+                
+                // Refresh the households list to include the new household
                 const store = get();
                 await store.fetchHouseholds();
                 return responseData.data.household;
@@ -291,11 +287,8 @@ export const useHouseholdStore = create<HouseholdStore>()(
               // Also update auth store with the returned user data
               if (responseData.data && responseData.data.user) {
                 try {
-                  import('./authStore').then(({ useAuthStore }) => {
-                    useAuthStore.getState().setUser(responseData.data.user);
-                  }).catch((error) => {
-                    console.warn('Failed to import auth store after household selection:', error);
-                  });
+                  const authStoreModule = await import('./authStore');
+                  authStoreModule.useAuthStore.getState().setUser(responseData.data.user);
                 } catch (error) {
                   console.warn('Failed to update auth store after household selection:', error);
                 }
@@ -325,7 +318,6 @@ export const useHouseholdStore = create<HouseholdStore>()(
             const responseData = await response.json();
             
             if (response.ok) {
-              const responseData = await response.json();
               
               if (responseData.success) {
                 toast({
@@ -333,25 +325,22 @@ export const useHouseholdStore = create<HouseholdStore>()(
                   description: `You have successfully joined the household.`,
                 });
                 
-                // Update household store with new selected household
-                if (responseData.data.household) {
-                  set({ selectedHouseholdId: responseData.data.household.id });
-                }
-                
-                // Update auth store with updated user data
+                // Update auth store with updated user data first
                 if (responseData.data.user) {
                   try {
-                    import('./authStore').then(({ useAuthStore }) => {
-                      useAuthStore.getState().setUser(responseData.data.user);
-                    }).catch((error) => {
-                      console.warn('Failed to import auth store after household join:', error);
-                    });
+                    const authStoreModule = await import('./authStore');
+                    authStoreModule.useAuthStore.getState().setUser(responseData.data.user);
                   } catch (error) {
                     console.warn('Failed to update auth store after household join:', error);
                   }
                 }
                 
-                // Refresh the households list
+                // Update household store with new selected household
+                if (responseData.data.household) {
+                  set({ selectedHouseholdId: responseData.data.household.id });
+                }
+                
+                // Refresh the households list to include the new household
                 const store = get();
                 await store.fetchHouseholds();
               } else {

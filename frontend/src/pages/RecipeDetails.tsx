@@ -11,13 +11,17 @@ import { AddMealPlanDialog } from '@/components/AddMealPlanDialog';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useShoppingStore } from '@/stores/shoppingStore';
 import { useHouseholdStore } from '@/stores/householdStore';
+import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useToast } from '@/hooks/use-toast';
 
 const RecipeDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { selectedHouseholdId } = useHouseholdStore();
+  
+  // Protected route hook handles auth and household checks
+  const { selectedHouseholdId } = useProtectedRoute();
+  
   const { 
     currentRecipe: recipe, 
     loading, 

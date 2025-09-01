@@ -10,10 +10,15 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from '@/stores/authStore';
+import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 
 const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  
+  // Protected route hook handles auth and household checks
+  useProtectedRoute();
+  
   const [googleToken, setGoogleToken] = useState<string>('');
   const [showToken, setShowToken] = useState(false);
   const [firstName, setFirstName] = useState<string>('');

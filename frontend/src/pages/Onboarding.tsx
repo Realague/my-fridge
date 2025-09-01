@@ -9,6 +9,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { StorageAreaOption, StorageAreaSelections } from '@/types/household';
 import { useHouseholdStore } from '@/stores/householdStore';
+import { toast } from '@/hooks/use-toast';
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -72,7 +73,11 @@ const Onboarding = () => {
     try {
       // Validate inputs
       if (!householdName.trim()) {
-        console.error('Household name is required');
+        toast({
+          title: "Invalid Input",
+          description: "Household name is required.",
+          variant: "destructive",
+        });
         return;
       }
 
@@ -88,6 +93,11 @@ const Onboarding = () => {
       navigate('/dashboard');
     } catch (error) {
       console.error('Failed to create household:', error);
+      toast({
+        title: "Creation Failed",
+        description: "Failed to create household. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -95,7 +105,11 @@ const Onboarding = () => {
     try {
       // Validate inputs
       if (!joinCode.trim() || joinCode.trim().length !== 6) {
-        console.error('Valid 6-character join code is required');
+        toast({
+          title: "Invalid Join Code",
+          description: "Please enter a valid 6-character join code.",
+          variant: "destructive",
+        });
         return;
       }
 
@@ -103,6 +117,11 @@ const Onboarding = () => {
       navigate('/dashboard');
     } catch (error) {
       console.error('Failed to join household:', error);
+      toast({
+        title: "Join Failed",
+        description: "Failed to join household. Please check the code and try again.",
+        variant: "destructive",
+      });
     }
   };
 

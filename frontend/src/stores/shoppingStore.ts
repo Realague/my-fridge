@@ -72,7 +72,7 @@ interface ShoppingStore {
 // Create API service for non-hook usage in stores
 const createApiService = () => {
   const makeApiCall = async (url: string, options: RequestInit = {}) => {
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
     const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
     
     const token = localStorage.getItem('google_token');

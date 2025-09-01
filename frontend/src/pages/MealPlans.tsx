@@ -16,6 +16,7 @@ import { useHouseholdStore } from '@/stores/householdStore';
 import { RecipeListDto, RecipeDto } from '@/services/recipeService';
 import { RecipeSelector } from '@/components/RecipeSelector';
 import BottomNavigation from '@/components/BottomNavigation';
+import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 
 interface MealPlanForm {
   date: Date | undefined;
@@ -25,6 +26,9 @@ interface MealPlanForm {
 }
 
 const MealPlans = () => {
+  // Protected route hook handles auth and household checks
+  const { selectedHouseholdId } = useProtectedRoute();
+  
   const [currentDate, setCurrentDate] = useState(new Date());
   const [weekDays, setWeekDays] = useState<Date[]>(getWeekDays(currentDate));
   const [isAddMealDialogOpen, setIsAddMealDialogOpen] = useState(false);
@@ -44,7 +48,6 @@ const MealPlans = () => {
   });
   const { mealPlans, fetchMealPlans, fetchMealPlansByDateRange, createMealPlan, deleteMealPlan, generateShoppingList: generateShoppingListFromStore, loading: mealPlansLoading, savingMealPlan, deletingMealPlan } = useMealPlanStore();
   const { recipes, fetchRecipes, loading: recipesLoading } = useRecipeStore();
-  const { selectedHouseholdId } = useHouseholdStore();
   const { toast } = useToast();
   const navigate = useNavigate();
 

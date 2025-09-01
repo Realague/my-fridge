@@ -7,11 +7,15 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, ArrowRight, Play, Pause, RotateCcw, Clock, ChefHat, Badge } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useHouseholdStore } from '@/stores/householdStore';
+import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 
 const RecipeCookingMode = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { selectedHouseholdId } = useHouseholdStore();
+  
+  // Protected route hook handles auth and household checks
+  const { selectedHouseholdId } = useProtectedRoute();
+  
   const { currentRecipe: recipe, fetchRecipeById, loading, error } = useRecipeStore();
 
   // Fetch the recipe when component mounts

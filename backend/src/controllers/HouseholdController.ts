@@ -3,6 +3,7 @@ import { HouseholdService } from '../services/HouseholdService';
 import { NotFoundError } from '../errors/CustomErrors';
 import { ApiResponse } from '../types/ApiResponse';
 import { CreateHouseholdDto, UpdateHouseholdDto, JoinHouseholdDto, HouseholdQueryDto } from '../types/HouseholdDto';
+import { AuthService } from '../services/AuthService';
 
 export class HouseholdController {
   constructor(private householdService: HouseholdService) {}
@@ -40,11 +41,11 @@ export class HouseholdController {
       const household = HouseholdService.transformToResponseDto(householdData);
 
       // Auto-select the household and get updated user data
-      const updatedUser = await this.householdService.selectHousehold(household.id, userId);
+      const user = await this.householdService.selectHousehold(household.id, userId);
       
-      const response: ApiResponse = {
+      let response: ApiResponse = {
         success: true,
-        data: { household, user: updatedUser },
+        data: { household, user },
         message: 'Household created successfully'
       };
       
@@ -141,11 +142,11 @@ export class HouseholdController {
       const household = HouseholdService.transformToResponseDto(householdData);
 
       // Auto-select the household and get updated user data
-      const updatedUser = await this.householdService.selectHousehold(household.id, userId);
+      const user = await this.householdService.selectHousehold(household.id, userId);
       
       const response: ApiResponse = {
         success: true,
-        data: { household, user: updatedUser },
+        data: { household, user },
         message: `Successfully joined ${household.name}`
       };
       

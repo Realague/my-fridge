@@ -114,7 +114,7 @@ If you get port conflicts, you can modify the ports in the docker-compose files:
 
 ```yaml
 ports:
-  - "3001:3000"  # Change local port from 3000 to 3001
+  - "3000:3000"  # Change local port from 3000 to 3001
 ```
 
 ### Database Connection Issues

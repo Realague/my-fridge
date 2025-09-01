@@ -13,12 +13,6 @@ export class HouseholdService {
   ) {}
 
   async getUserHouseholds(userId: string, query?: HouseholdQueryDto): Promise<any[]> {
-    // Validate user exists
-    const user = await this.userRepository.findById(userId);
-    if (!user) {
-      throw new NotFoundError('User not found');
-    }
-
     // Business logic: Get user's households with filters
     const households = await this.householdRepository.findByUserId(userId, {
       limit: query?.limit || 10,
@@ -49,14 +43,6 @@ export class HouseholdService {
 
     // Add creator as admin member
     await this.householdRepository.addMember(household.id, userId, 'admin');
-
-    // Auto-select this household if user has no selected household
-    const user = await this.userRepository.findById(userId);
-    if (!user?.selectedHouseholdId) {
-      await this.userRepository.update(userId, { 
-        selectedHouseholdId: household.id 
-      });
-    }
 
     // Create selected storage areas if specified
     if (this.storageAreaSeeder && createDto.storageAreas) {
@@ -154,15 +140,6 @@ export class HouseholdService {
     // Add user as member
     await this.householdRepository.addMember(household.id, userId, 'member');
 
-    // Auto-select this household if user has no selected household
-    const user = await this.userRepository.findById(userId);
-    if (!user?.selectedHouseholdId) {
-      await this.userRepository.update(userId, { 
-        selectedHouseholdId: household.id 
-      });
-    }
-
-    // Return household details
     return household;
   }
 

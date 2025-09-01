@@ -7,11 +7,16 @@ import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useEffect, useState } from 'react';
 
 const Household = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading: authLoading, user: currentUser, setUser } = useAuthStore();
+  
+  // Protected route hook handles auth and household checks
+  useProtectedRoute();
+  
+  const { user: currentUser, setUser } = useAuthStore();
   
   // Zustand store - selective subscriptions
   const households = useHouseholdStore(state => state.households);
@@ -24,14 +29,6 @@ const Household = () => {
   useEffect(() => {
     fetchHouseholds();
   }, [fetchHouseholds]);
-
-  // Redirect to auth if not authenticated
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      console.log('Household: User not authenticated, redirecting to auth');
-      navigate('/auth');
-    }
-  }, [authLoading, isAuthenticated, navigate]);
 
   const handleCreateNew = () => {
     navigate('/onboarding?step=2'); // Go directly to the "Create Your Household" step

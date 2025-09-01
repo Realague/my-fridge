@@ -12,6 +12,7 @@ import { ArrowLeft, Plus, X } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { CreateRecipeIngredientDto, RecipeDifficulty } from '@/services/recipeService';
 import { useToast } from '@/hooks/use-toast';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
@@ -42,7 +43,10 @@ interface RecipeFormData {
 const AddRecipe = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { selectedHouseholdId } = useHouseholdStore();
+  
+  // Protected route hook handles auth and household checks
+  const { selectedHouseholdId } = useProtectedRoute();
+  
   const { user } = useAuthStore();
   const { createRecipe, loading, clearError } = useRecipeStore();
   

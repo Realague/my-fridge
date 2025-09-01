@@ -28,10 +28,11 @@ import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 const Dashboard = () => {
   const navigate = useNavigate();
   
+  // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
+  const [showNotifications, setShowNotifications] = useState(false);
+  
   // Protected route hook handles auth and household checks
-  const { selectedHouseholdId, isLoading: authLoading, isAuthenticated } = useProtectedRoute();
-
-  const { getStoredItemsForHousehold } = useStoredItemStore();
+  const { selectedHouseholdId, isLoading: authLoading, isAuthenticated, hasHousehold } = useProtectedRoute();
   
   // Zustand stores - selective subscriptions for better performance
   const { user: currentUser, setUser } = useAuthStore();
@@ -47,13 +48,11 @@ const Dashboard = () => {
   const fetchHouseholds = useHouseholdStore(state => state.fetchHouseholds);
   const selectHousehold = useHouseholdStore(state => state.selectHousehold);
   
-  // Storage areas for current household
+  // Storage areas for current household - pass null if no household to prevent API calls
   const {
     storageAreasWithStats,
     fetchStorageAreas
-  } = useStorageAreasWithStats(selectedHouseholdId);
-  
-  const [showNotifications, setShowNotifications] = useState(false);
+  } = useStorageAreasWithStats(hasHousehold ? selectedHouseholdId : null);
 
   // Load households when authenticated
   useEffect(() => {
@@ -62,7 +61,7 @@ const Dashboard = () => {
 
   // Load storage areas and stored items when household changes
   useEffect(() => {
-    if (selectedHouseholdId && !authLoading) {
+    if (selectedHouseholdId && !authLoading && hasHousehold) {
       fetchStorageAreas();
       // Also fetch stored items so item counts are calculated correctly
       fetchStoredItems(selectedHouseholdId);
@@ -71,7 +70,20 @@ const Dashboard = () => {
       // Fetch recipes for the dashboard count
       fetchRecipes(selectedHouseholdId);
     }
-  }, [selectedHouseholdId, authLoading]); // Remove function dependencies to prevent infinite loops
+  }, [selectedHouseholdId, authLoading, hasHousehold]); // Remove function dependencies to prevent infinite loops
+
+  // Don't render dashboard content until we have a household
+  // This prevents rendering before redirect to onboarding
+  if (authLoading || !hasHousehold) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Note: Auth and household checks are now handled by useProtectedRoute hook
 

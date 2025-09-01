@@ -9,12 +9,17 @@ import BottomNavigation from '@/components/BottomNavigation';
 import StorageAreaManager from '@/components/StorageAreaManager';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useEffect } from 'react';
 
 const HouseholdDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { isAuthenticated, isLoading, user: currentUser } = useAuthStore();
+  
+  // Protected route hook handles auth and household checks
+  useProtectedRoute();
+  
+  const { user: currentUser } = useAuthStore();
   
   // Zustand store - selective subscriptions
   const householdDetailsMap = useHouseholdStore(state => state.householdDetails);
@@ -31,14 +36,6 @@ const HouseholdDetails = () => {
       fetchHouseholdDetails(id);
     }
   }, [id, fetchHouseholdDetails]);
-
-  // Redirect to auth if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      console.log('HouseholdDetails: User not authenticated, redirecting to auth');
-      navigate('/auth');
-    }
-  }, [isLoading, isAuthenticated, navigate]);
 
   const handleLeaveHousehold = async () => {
     if (!id) return;

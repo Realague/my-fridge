@@ -1,19 +1,12 @@
 import React, { useMemo } from 'react';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { useApiWithAuth } from '@/hooks/useApiWithAuth';
 import { toast } from 'sonner';
 import { useStoredItemStore } from './storedItemStore';
+import { createStorageAreaApiService, StorageArea, CreateStorageAreaData, UpdateStorageAreaData } from '@/services/storageAreaService';
 
-export interface StorageArea {
-  id: string;
-  name: string;
-  emoji: string;
-  type: 'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other';
-  householdId: string;
-  createdAt: string;
-  updatedAt: string;
-}
+// Import StorageArea from service
+// export interface StorageArea - moved to service
 
 export interface StorageAreaWithStats {
   id: string;
@@ -24,17 +17,9 @@ export interface StorageAreaWithStats {
   lowStockCount: number;
 }
 
-interface CreateStorageAreaData {
-  name: string;
-  emoji?: string;
-  type?: 'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other';
-}
-
-interface UpdateStorageAreaData {
-  name?: string;
-  emoji?: string;
-  type?: 'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other';
-}
+// Import CreateStorageAreaData and UpdateStorageAreaData from service
+// interface CreateStorageAreaData - moved to service
+// interface UpdateStorageAreaData - moved to service
 
 interface StorageAreaStore {
   // State - organized by household ID for efficient caching
@@ -60,21 +45,8 @@ interface StorageAreaStore {
   getStorageAreasWithStats: (householdId: string) => StorageAreaWithStats[];
 }
 
-// Create API instance outside the store to avoid circular dependencies
-let apiInstance: ReturnType<typeof useApiWithAuth> | null = null;
-
-const getApi = () => {
-  if (!apiInstance) {
-    // Return null instead of throwing error to allow graceful handling
-    console.warn('Storage area store: API instance not yet initialized');
-    return null;
-  }
-  return apiInstance;
-};
-
-export const initializeStorageAreaStore = (api: ReturnType<typeof useApiWithAuth>) => {
-  apiInstance = api;
-};
+// Create API service instance
+const apiService = createStorageAreaApiService();
 
 export const useStorageAreaStore = create<StorageAreaStore>()(
   devtools(
@@ -111,30 +83,12 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
           return;
         }
 
-        const api = getApi();
-        if (!api) {
-          console.log('fetchStorageAreas: API not initialized, skipping');
-          return;
-        }
-
         set({ loading: true, error: null });
         
         try {
-          const response = await api.get(`/api/households/${householdId}/storage-areas`);
-          
-          if (response.ok) {
-            const responseData = await response.json();
-            if (responseData.success) {
-              const store = get();
-              store.setStorageAreasForHousehold(householdId, responseData.data || []);
-            } else {
-              throw new Error(responseData.message || 'Failed to fetch storage areas');
-            }
-          } else {
-            const errorText = await response.text();
-            console.error('fetchStorageAreas: Error response:', response.status, errorText);
-            throw new Error(`Failed to fetch storage areas: ${response.status}`);
-          }
+          const storageAreas = await apiService.getStorageAreas(householdId);
+          const store = get();
+          store.setStorageAreasForHousehold(householdId, storageAreas);
         } catch (error) {
           if (error instanceof TypeError && error.message.includes('NetworkError')) {
             const message = 'Network error: Unable to connect to the server. Please check if the backend is running.';
@@ -153,35 +107,19 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
           throw new Error('No household ID provided');
         }
 
-        const api = getApi();
-        if (!api) {
-          throw new Error('API not initialized');
-        }
-
         set({ loading: true, error: null });
         
         try {
-          const response = await api.post(`/api/households/${householdId}/storage-areas`, data);
+          const createdArea = await apiService.createStorageArea(householdId, data);
           
-          if (response.ok) {
-            const responseData = await response.json();
-            
-            if (responseData.success) {
-              toast.success("Storage Area Created!", {
-                description: `${data.name} has been created successfully.`,
-              });
-              
-              // Refresh the storage areas list for this household
-              const store = get();
-              await store.fetchStorageAreas(householdId);
-              return responseData.data;
-            } else {
-              throw new Error(responseData.message || 'Failed to create storage area');
-            }
-          } else {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `Failed to create storage area: ${response.status}`);
-          }
+          toast.success("Storage Area Created!", {
+            description: `${data.name} has been created successfully.`,
+          });
+          
+          // Refresh the storage areas list for this household
+          const store = get();
+          await store.fetchStorageAreas(householdId);
+          return createdArea;
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to create storage area';
           set({ error: message });
@@ -199,34 +137,18 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
           throw new Error('No household ID provided');
         }
 
-        const api = getApi();
-        if (!api) {
-          throw new Error('API not initialized');
-        }
-
         set({ loading: true, error: null });
         
         try {
-          const response = await api.put(`/api/households/${householdId}/storage-areas/${storageAreaId}`, data);
+          await apiService.updateStorageArea(householdId, storageAreaId, data);
           
-          if (response.ok) {
-            const responseData = await response.json();
-            
-            if (responseData.success) {
-              toast.success("Storage Area Updated!", {
-                description: `Storage area has been updated successfully.`,
-              });
-              
-              // Refresh the storage areas list for this household
-              const store = get();
-              await store.fetchStorageAreas(householdId);
-            } else {
-              throw new Error(responseData.message || 'Failed to update storage area');
-            }
-          } else {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `Failed to update storage area: ${response.status}`);
-          }
+          toast.success("Storage Area Updated!", {
+            description: `Storage area has been updated successfully.`,
+          });
+          
+          // Refresh the storage areas list for this household
+          const store = get();
+          await store.fetchStorageAreas(householdId);
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to update storage area';
           set({ error: message });
@@ -244,34 +166,18 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
           throw new Error('No household ID provided');
         }
 
-        const api = getApi();
-        if (!api) {
-          throw new Error('API not initialized');
-        }
-
         set({ loading: true, error: null });
         
         try {
-          const response = await api.delete(`/api/households/${householdId}/storage-areas/${storageAreaId}`);
+          await apiService.deleteStorageArea(householdId, storageAreaId);
           
-          if (response.ok) {
-            const responseData = await response.json();
-            
-            if (responseData.success) {
-              toast.success("Storage Area Deleted!", {
-                description: `Storage area has been deleted successfully.`,
-              });
-              
-              // Refresh the storage areas list for this household
-              const store = get();
-              await store.fetchStorageAreas(householdId);
-            } else {
-              throw new Error(responseData.message || 'Failed to delete storage area');
-            }
-          } else {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `Failed to delete storage area: ${response.status}`);
-          }
+          toast.success("Storage Area Deleted!", {
+            description: `Storage area has been deleted successfully.`,
+          });
+          
+          // Refresh the storage areas list for this household
+          const store = get();
+          await store.fetchStorageAreas(householdId);
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to delete storage area';
           set({ error: message });
@@ -437,12 +343,6 @@ export const useStorageAreasWithStats = (currentHouseholdId: string | null) => {
       const targetHouseholdId = householdId || currentHouseholdId;
       if (!targetHouseholdId) {
         console.warn('fetchStorageAreas: No household ID available');
-        return Promise.resolve();
-      }
-      
-      // Check if API is initialized before attempting fetch
-      if (!apiInstance) {
-        console.log('fetchStorageAreas: API not yet initialized, skipping fetch');
         return Promise.resolve();
       }
       

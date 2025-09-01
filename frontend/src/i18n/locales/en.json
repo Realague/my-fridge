@@ -377,7 +377,14 @@
     "auth": {
       "noHouseholdSelected": "No Household Selected",
       "selectHouseholdFirst": "Please select a household first to view and manage your",
-      "goToHouseholdSettings": "Go to Household Settings"
+      "goToHouseholdSettings": "Go to Household Settings",
+      "backToHome": "Back to Home",
+      "welcomeToMyFridge": "Welcome to MyFridge",
+      "signInDescription": "Sign in to start managing your household food inventory",
+      "continueWithGoogle": "Continue with Google",
+      "signingIn": "Signing in...",
+      "loading": "Loading...",
+      "googleClientIdNotConfigured": "⚠️ Google Client ID not configured. Please set VITE_GOOGLE_CLIENT_ID in your .env file."
     }
   },
   "units": {

@@ -317,7 +317,14 @@
     "auth": {
       "noHouseholdSelected": "No se ha Seleccionado Hogar",
       "selectHouseholdFirst": "Por favor selecciona primero un hogar para ver y administrar tu",
-      "goToHouseholdSettings": "Ir a Configuración del Hogar"
+      "goToHouseholdSettings": "Ir a Configuración del Hogar",
+      "backToHome": "Volver al Inicio",
+      "welcomeToMyFridge": "Bienvenido a MyFridge",
+      "signInDescription": "Inicia sesión para comenzar a gestionar el inventario de alimentos de tu hogar",
+      "continueWithGoogle": "Continuar con Google",
+      "signingIn": "Iniciando sesión...",
+      "loading": "Cargando...",
+      "googleClientIdNotConfigured": "⚠️ ID de cliente de Google no configurado. Por favor establece VITE_GOOGLE_CLIENT_ID en tu archivo .env."
     }
   },
   "units": {

@@ -317,7 +317,14 @@
     "auth": {
       "noHouseholdSelected": "Aucun Foyer Sélectionné",
       "selectHouseholdFirst": "Veuillez d'abord sélectionner un foyer pour voir et gérer votre",
-      "goToHouseholdSettings": "Aller aux Paramètres du Foyer"
+      "goToHouseholdSettings": "Aller aux Paramètres du Foyer",
+      "backToHome": "Retour à l'Accueil",
+      "welcomeToMyFridge": "Bienvenue sur MyFridge",
+      "signInDescription": "Connectez-vous pour commencer à gérer l'inventaire alimentaire de votre foyer",
+      "continueWithGoogle": "Continuer avec Google",
+      "signingIn": "Connexion en cours...",
+      "loading": "Chargement...",
+      "googleClientIdNotConfigured": "⚠️ ID client Google non configuré. Veuillez définir VITE_GOOGLE_CLIENT_ID dans votre fichier .env."
     }
   },
   "units": {

@@ -4,8 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
+import { useTranslation } from 'react-i18next';
 
 const Auth = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { signInWithGoogle, isAuthenticated, isLoading, user } = useAuthStore();
@@ -87,7 +89,7 @@ const Auth = () => {
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">{t('pages.auth.loading')}</p>
         </div>
       </div>
     );
@@ -101,7 +103,7 @@ const Auth = () => {
           onClick={() => navigate('/')}
           className="mb-6 text-gray-600 hover:text-gray-900"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
+          <ArrowLeft className="mr-2 h-4 w-4" /> {t('pages.auth.backToHome')}
         </Button>
 
         <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl">
@@ -109,9 +111,9 @@ const Auth = () => {
             <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-500 to-orange-500 rounded-2xl flex items-center justify-center">
               <span className="text-2xl">🍃</span>
             </div>
-            <CardTitle className="text-2xl">Welcome to MyFridge</CardTitle>
+            <CardTitle className="text-2xl">{t('pages.auth.welcomeToMyFridge')}</CardTitle>
             <CardDescription>
-              Sign in to start managing your household food inventory
+              {t('pages.auth.signInDescription')}
             </CardDescription>
           </CardHeader>
 
@@ -136,14 +138,14 @@ const Auth = () => {
                       <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                     </svg>
                   )}
-                  {authLoading ? 'Signing in...' : 'Continue with Google'}
+                  {authLoading ? t('pages.auth.signingIn') : t('pages.auth.continueWithGoogle')}
                 </Button>
               )}
             </div>
 
             {!import.meta.env.VITE_GOOGLE_CLIENT_ID && (
               <div className="text-sm text-red-600 text-center p-3 bg-red-50 rounded">
-                ⚠️ Google Client ID not configured. Please set VITE_GOOGLE_CLIENT_ID in your .env file.
+                {t('pages.auth.googleClientIdNotConfigured')}
               </div>
             )}
           </CardContent>

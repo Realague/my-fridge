@@ -8,6 +8,7 @@ import { Bell, X, Check, CheckCheck, Trash2 } from 'lucide-react';
 import { useNotifications } from '@/contexts/NotificationContext';
 import { useNavigate } from 'react-router-dom';
 import { Notification } from '@/types/notification';
+import { useTranslation } from 'react-i18next';
 
 interface NotificationDrawerProps {
   open: boolean;
@@ -15,6 +16,7 @@ interface NotificationDrawerProps {
 }
 
 const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ open, onOpenChange }) => {
+  const { t } = useTranslation();
   const { notifications, markAsRead, markAllAsRead, removeNotification, clearAll } = useNotifications();
   const navigate = useNavigate();
 
@@ -74,7 +76,7 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ open, onOpenCha
           <div className="flex items-center justify-between">
             <DrawerTitle className="flex items-center gap-2">
               <Bell className="h-5 w-5" />
-              Notifications
+              {t('notifications.title')}
               {notifications.length > 0 && (
                 <Badge variant="secondary">{notifications.length}</Badge>
               )}
@@ -88,7 +90,7 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ open, onOpenCha
                   className="text-xs px-2"
                 >
                   <CheckCheck className="h-4 w-4" />
-                  Mark all read
+                  {t('notifications.markAllRead')}
                 </Button>
               )}
               {notifications.length > 0 && (
@@ -99,7 +101,7 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ open, onOpenCha
                   className="text-xs text-red-600 hover:text-red-700 px-2"
                 >
                   <Trash2 className="h-4 w-4" />
-                  Clear all
+                  {t('notifications.clearAll')}
                 </Button>
               )}
               <DrawerClose asChild>
@@ -115,8 +117,8 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ open, onOpenCha
           {notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Bell className="h-12 w-12 text-gray-300 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No notifications</h3>
-              <p className="text-gray-600">You're all caught up! Check back later for updates.</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">{t('notifications.noNotifications')}</h3>
+              <p className="text-gray-600">{t('notifications.allCaughtUp')}</p>
             </div>
           ) : (
             <div className="space-y-3">

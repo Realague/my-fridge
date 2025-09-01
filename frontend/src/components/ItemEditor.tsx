@@ -9,6 +9,7 @@ import { X } from 'lucide-react';
 import { Item } from '@/services/itemService';
 import { getUnitsForCategory, getUnitDisplayName } from '@/utils/unitSystem';
 import { ITEM_CATEGORIES, UNITS } from '@/types/enums';
+import { useTranslation } from 'react-i18next';
 
 interface ItemEditorProps {
   item: Item;
@@ -17,6 +18,7 @@ interface ItemEditorProps {
 }
 
 export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
+  const { t } = useTranslation();
   const [name, setName] = useState(item.name);
   const [category, setCategory] = useState(item.category);
   const [defaultUnit, setDefaultUnit] = useState(item.defaultUnit);
@@ -78,24 +80,24 @@ export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="pb-4">
           <DialogTitle>
-            {item.id ? 'Edit Item' : 'Create New Item'}
+            {item.id ? t('itemEditor.editItem') : t('itemEditor.createNewItem')}
           </DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
           <div>
-            <Label htmlFor="item-name">Name</Label>
+            <Label htmlFor="item-name">{t('forms.name')}</Label>
             <Input
               id="item-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Item name"
+              placeholder={t('itemEditor.itemNamePlaceholder')}
               className="mt-1"
             />
           </div>
           
           <div>
-            <Label htmlFor="item-category">Category</Label>
+            <Label htmlFor="item-category">{t('forms.category')}</Label>
             <Select value={category} onValueChange={handleCategoryChange}>
               <SelectTrigger>
                 <SelectValue />
@@ -103,7 +105,7 @@ export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
               <SelectContent>
                 {ITEM_CATEGORIES.map((cat) => (
                   <SelectItem key={cat} value={cat}>
-                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    {t(`categories.${cat}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -111,7 +113,7 @@ export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
           </div>
           
           <div>
-            <Label htmlFor="default-unit">Default Unit</Label>
+            <Label htmlFor="default-unit">{t('itemEditor.defaultUnit')}</Label>
             <Select value={defaultUnit} onValueChange={setDefaultUnit}>
               <SelectTrigger className="mt-1">
                 <SelectValue />
@@ -127,7 +129,7 @@ export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
           </div>
           
           <div>
-            <Label>Available Units</Label>
+            <Label>{t('itemEditor.availableUnits')}</Label>
             <div className="flex flex-wrap gap-2 mt-2">
               {availableUnits.map((unit) => (
                 <Badge
@@ -151,7 +153,7 @@ export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
             <div className="mt-2">
               <Select onValueChange={handleAddUnit}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Add unit" />
+                  <SelectValue placeholder={t('itemEditor.addUnit')} />
                 </SelectTrigger>
                 <SelectContent>
                   {UNITS.filter(unit => !availableUnits.includes(unit)).map((unit) => (
@@ -167,10 +169,10 @@ export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
         
         <div className="flex justify-end gap-2 pt-4 border-t">
           <Button variant="outline" onClick={onCancel}>
-            Cancel
+            {t('buttons.cancel')}
           </Button>
           <Button onClick={handleSave} disabled={!name.trim()}>
-            {item.id ? 'Update' : 'Create'}
+            {item.id ? t('buttons.update') : t('buttons.create')}
           </Button>
         </div>
       </DialogContent>

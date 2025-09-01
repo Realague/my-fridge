@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -7,20 +8,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus } from 'lucide-react';
 import { useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useTranslation } from 'react-i18next';
 
 interface AddStorageAreaDialogProps {
   trigger?: React.ReactNode;
 }
 
-const storageAreaTypes = [
-  { value: 'fridge', label: 'Refrigerator', emoji: '🥬' },
-  { value: 'freezer', label: 'Freezer', emoji: '🧊' },
-  { value: 'pantry', label: 'Pantry', emoji: '🏺' },
-  { value: 'kitchen_cupboard', label: 'Kitchen Cupboard', emoji: '🗄️' },
-  { value: 'other', label: 'Other', emoji: '📦' },
-];
-
 const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [type, setType] = useState<string>('');
@@ -28,6 +23,14 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
   
   const { user } = useAuthStore();
   const { createStorageArea, loading } = useCurrentHouseholdStorageAreas(user?.selectedHouseholdId);
+
+  const storageAreaTypes = [
+    { value: 'fridge', label: t('storageArea.types.fridge'), emoji: '🥬' },
+    { value: 'freezer', label: t('storageArea.types.freezer'), emoji: '🧊' },
+    { value: 'pantry', label: t('storageArea.types.pantry'), emoji: '🏺' },
+    { value: 'kitchen_cupboard', label: t('storageArea.types.kitchenCupboard'), emoji: '🗄️' },
+    { value: 'other', label: t('storageArea.types.other'), emoji: '📦' },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,7 +77,7 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
             className="border-green-600 text-green-600 hover:bg-green-50"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add Area
+            {t('storageArea.addArea')}
           </Button>
         )}
       </DialogTrigger>
@@ -82,18 +85,18 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Add Storage Area</DialogTitle>
+            <DialogTitle>{t('storageArea.addStorageArea')}</DialogTitle>
             <DialogDescription>
-              Create a new storage area for your household.
+              {t('storageArea.createNewDescription')}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="storage-name">Name</Label>
+              <Label htmlFor="storage-name">{t('forms.name')}</Label>
               <Input
                 id="storage-name"
-                placeholder="e.g., Main Fridge, Walk-in Pantry"
+                placeholder={t('storageArea.namePlaceholder')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -101,10 +104,10 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="storage-type">Type</Label>
+              <Label htmlFor="storage-type">{t('storageArea.type')}</Label>
               <Select value={type} onValueChange={handleTypeChange} required>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select storage type" />
+                  <SelectValue placeholder={t('storageArea.selectType')} />
                 </SelectTrigger>
                 <SelectContent>
                   {storageAreaTypes.map((option) => (
@@ -120,7 +123,7 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="storage-emoji">Emoji (optional)</Label>
+              <Label htmlFor="storage-emoji">{t('storageArea.emoji')}</Label>
               <Input
                 id="storage-emoji"
                 placeholder="🥬"
@@ -138,14 +141,14 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              Cancel
+              {t('buttons.cancel')}
             </Button>
             <Button
               type="submit"
               disabled={!name.trim() || !type || loading}
               className="bg-green-600 hover:bg-green-700"
             >
-              {loading ? 'Creating...' : 'Create Area'}
+              {loading ? t('storageArea.creating') : t('storageArea.createArea')}
             </Button>
           </DialogFooter>
         </form>
@@ -154,4 +157,4 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
   );
 };
 
-export default AddStorageAreaDialog; 
+export default AddStorageAreaDialog;

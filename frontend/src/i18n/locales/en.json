@@ -1,3 +1,4 @@
+
 {
   "navigation": {
     "home": "Home",
@@ -41,6 +42,65 @@
     "selected": "Selected",
     "householdItem": "Household Item",
     "adding": "Adding..."
+  },
+  "storageArea": {
+    "item": "item",
+    "items": "items",
+    "low": "low",
+    "addArea": "Add Area",
+    "addStorageArea": "Add Storage Area",
+    "createNewDescription": "Create a new storage area for your household.",
+    "namePlaceholder": "e.g., Main Fridge, Walk-in Pantry",
+    "type": "Type",
+    "selectType": "Select storage type",
+    "emoji": "Emoji (optional)",
+    "creating": "Creating...",
+    "createArea": "Create Area",
+    "types": {
+      "fridge": "Refrigerator",
+      "freezer": "Freezer", 
+      "pantry": "Pantry",
+      "kitchenCupboard": "Kitchen Cupboard",
+      "other": "Other"
+    }
+  },
+  "itemEditor": {
+    "editItem": "Edit Item",
+    "createNewItem": "Create New Item",
+    "itemNamePlaceholder": "Item name",
+    "defaultUnit": "Default Unit",
+    "availableUnits": "Available Units",
+    "addUnit": "Add unit"
+  },
+  "ingredientInput": {
+    "addIngredient": "Add Ingredient",
+    "noIngredients": "No ingredients added yet",
+    "clickToAdd": "Click \"Add Ingredient\" to get started",
+    "item": "Item",
+    "selectIngredient": "Select ingredient...",
+    "quantityAndUnit": "Quantity & Unit",
+    "notes": "Notes (optional)",
+    "notesPlaceholder": "e.g., diced, chopped fine..."
+  },
+  "addMealPlan": {
+    "addToMealPlan": "Add to Meal Plan",
+    "addRecipeToMealPlan": "Add Recipe to Meal Plan",
+    "defaultServings": "Default: {{servings}} servings",
+    "date": "Date",
+    "numberOfServings": "Number of servings",
+    "addedDescription": "{{recipeName}} has been added to your {{mealType}} on {{date}} for {{servings}} serving(s)."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "clearAll": "Clear all",
+    "noNotifications": "No notifications",
+    "allCaughtUp": "You're all caught up! Check back later for updates."
+  },
+  "recipeSelector": {
+    "loadingRecipes": "Loading recipes...",
+    "startTyping": "Start typing to search recipes...",
+    "noRecipesFound": "No recipes found matching \"{{query}}\"."
   },
   "messages": {
     "success": {

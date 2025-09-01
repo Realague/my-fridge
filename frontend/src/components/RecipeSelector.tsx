@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { RecipeDto } from '@/services/recipeService';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 interface RecipeSelectorProps {
   onRecipeSelect: (recipe: RecipeDto | null) => void;
@@ -18,12 +19,13 @@ interface RecipeSelectorProps {
 
 export const RecipeSelector = ({ 
   onRecipeSelect, 
-  placeholder = "Search recipes...", 
+  placeholder, 
   className,
   selectedRecipe = null,
   recipes,
   loading = false
 }: RecipeSelectorProps) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
@@ -75,7 +77,6 @@ export const RecipeSelector = ({
       }
     };
 
-    // Use 'mousedown' for faster detection
     document.addEventListener('mousedown', handleClickOutside);
     window.addEventListener('scroll', handleScroll, true);
     window.addEventListener('resize', handleResize);
@@ -86,8 +87,6 @@ export const RecipeSelector = ({
       window.removeEventListener('resize', handleResize);
     };
   }, [isOpen]);
-
-
 
   const handleRecipeSelect = (recipe: RecipeDto) => {
     console.log('RecipeSelector: handleRecipeSelect called with:', recipe.title);
@@ -133,7 +132,7 @@ export const RecipeSelector = ({
           value={displayValue}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
-          placeholder={placeholder}
+          placeholder={placeholder || t('pages.recipes.search')}
           className="pr-20"
         />
         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
@@ -175,7 +174,7 @@ export const RecipeSelector = ({
           {loading && (
             <div className="flex items-center justify-center p-4 text-sm text-gray-500 bg-white">
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              Loading recipes...
+              {t('recipeSelector.loadingRecipes')}
             </div>
           )}
 
@@ -193,10 +192,10 @@ export const RecipeSelector = ({
                       <div className="font-medium text-sm truncate">{recipe.title}</div>
                       <div className="flex items-center gap-2">
                         <Badge className={getDifficultyColor(recipe.difficulty)}>
-                          {recipe.difficulty}
+                          {t(`pages.recipes.${recipe.difficulty.toLowerCase()}`)}
                         </Badge>
                         <span className="text-xs text-gray-500">
-                          {recipe.prepTime + recipe.cookTime} min • {recipe.servings} servings
+                          {recipe.prepTime + recipe.cookTime} min • {recipe.servings} {t('pages.recipes.servings')}
                         </span>
                       </div>
                     </div>
@@ -208,13 +207,13 @@ export const RecipeSelector = ({
 
           {filteredRecipes.length === 0 && !query.trim() && !loading && (
             <div className="p-4 text-center text-sm text-gray-500 bg-white">
-              Start typing to search recipes...
+              {t('recipeSelector.startTyping')}
             </div>
           )}
 
           {filteredRecipes.length === 0 && query.trim() && !loading && (
             <div className="p-4 text-center text-sm text-gray-500 bg-white">
-              No recipes found matching "{query}".
+              {t('recipeSelector.noRecipesFound', { query })}
             </div>
           )}
         </div>,

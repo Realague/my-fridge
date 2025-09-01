@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useMealPlan } from '@/contexts/MealPlanContext';
 import { useRecipes } from '@/contexts/RecipeContext';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 interface Recipe {
   id: string;
@@ -30,6 +31,7 @@ export const AddMealPlanDialog = ({
   preselectedDate,
   preselectedMealType
 }: AddMealPlanDialogProps) => {
+  const { t } = useTranslation();
   const { addToMealPlan } = useMealPlan();
   const { recipes } = useRecipes();
   
@@ -38,7 +40,6 @@ export const AddMealPlanDialog = ({
   const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner'>('lunch');
   const [selectedServings, setSelectedServings] = useState(1);
 
-  // Update state when props change
   useEffect(() => {
     if (preselectedRecipe) {
       setSelectedRecipe(preselectedRecipe.id);
@@ -61,7 +62,6 @@ export const AddMealPlanDialog = ({
     }
   }, [preselectedMealType]);
 
-  // Reset form when dialog closes
   useEffect(() => {
     if (!isOpen) {
       if (!preselectedRecipe) {
@@ -85,8 +85,13 @@ export const AddMealPlanDialog = ({
     const recipe = recipes.find(r => r.id === selectedRecipe);
     const recipeName = recipe?.title || preselectedRecipe?.title || 'Recipe';
     
-    toast.success(`Added to meal plan`, {
-      description: `${recipeName} has been added to your ${selectedMealType} on ${new Date(selectedDate).toLocaleDateString()} for ${selectedServings} serving${selectedServings > 1 ? 's' : ''}.`,
+    toast.success(t('pages.mealPlans.mealPlanAdded'), {
+      description: t('addMealPlan.addedDescription', {
+        recipeName,
+        mealType: t(`pages.mealPlans.${selectedMealType}`),
+        date: new Date(selectedDate).toLocaleDateString(),
+        servings: selectedServings
+      }),
     });
     
     onClose();
@@ -97,28 +102,26 @@ export const AddMealPlanDialog = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {preselectedRecipe ? 'Add to Meal Plan' : 'Add Recipe to Meal Plan'}
+            {preselectedRecipe ? t('addMealPlan.addToMealPlan') : t('addMealPlan.addRecipeToMealPlan')}
           </DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
-          {/* Recipe Preview (when preselected) */}
           {preselectedRecipe && (
             <div className="bg-gray-50 p-3 rounded-lg">
               <div className="font-medium">{preselectedRecipe.title}</div>
               <div className="text-sm text-gray-600">
-                Default: {preselectedRecipe.servings} servings • {(preselectedRecipe.prepTime || 0) + (preselectedRecipe.cookTime || 0)} min
+                {t('addMealPlan.defaultServings', { servings: preselectedRecipe.servings })} • {(preselectedRecipe.prepTime || 0) + (preselectedRecipe.cookTime || 0)} min
               </div>
             </div>
           )}
 
-          {/* Recipe Selector (when not preselected) */}
           {!preselectedRecipe && (
             <div>
-              <label className="text-sm font-medium block mb-1">Recipe</label>
+              <label className="text-sm font-medium block mb-1">{t('pages.mealPlans.recipe')}</label>
               <Select value={selectedRecipe} onValueChange={setSelectedRecipe}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a recipe" />
+                  <SelectValue placeholder={t('pages.mealPlans.searchRecipe')} />
                 </SelectTrigger>
                 <SelectContent>
                   {recipes.map((recipe) => (
@@ -126,7 +129,7 @@ export const AddMealPlanDialog = ({
                       <div className="flex flex-col items-start">
                         <span>{recipe.title}</span>
                         <span className="text-xs text-gray-500">
-                          {recipe.servings} servings • {recipe.prepTime + recipe.cookTime} min
+                          {recipe.servings} {t('pages.recipes.servings')} • {recipe.prepTime + recipe.cookTime} min
                         </span>
                       </div>
                     </SelectItem>
@@ -136,9 +139,8 @@ export const AddMealPlanDialog = ({
             </div>
           )}
 
-          {/* Date Selector */}
           <div>
-            <label className="text-sm font-medium block mb-1">Date</label>
+            <label className="text-sm font-medium block mb-1">{t('addMealPlan.date')}</label>
             <Input
               type="date"
               value={selectedDate}
@@ -147,49 +149,46 @@ export const AddMealPlanDialog = ({
             />
           </div>
 
-          {/* Meal Type Selector */}
           <div>
-            <label className="text-sm font-medium block mb-1">Meal Type</label>
+            <label className="text-sm font-medium block mb-1">{t('pages.mealPlans.mealType')}</label>
             <Select value={selectedMealType} onValueChange={(value: 'breakfast' | 'lunch' | 'dinner') => setSelectedMealType(value)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="breakfast">🌅 Breakfast</SelectItem>
-                <SelectItem value="lunch">☀️ Lunch</SelectItem>
-                <SelectItem value="dinner">🌙 Dinner</SelectItem>
+                <SelectItem value="breakfast">🌅 {t('pages.mealPlans.breakfast')}</SelectItem>
+                <SelectItem value="lunch">☀️ {t('pages.mealPlans.lunch')}</SelectItem>
+                <SelectItem value="dinner">🌙 {t('pages.mealPlans.dinner')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* Servings Selector */}
           <div>
-            <label className="text-sm font-medium block mb-1">Servings</label>
+            <label className="text-sm font-medium block mb-1">{t('pages.recipes.servings')}</label>
             <Input
               type="number"
               min="1"
               max="20"
               value={selectedServings}
               onChange={(e) => setSelectedServings(Math.max(1, parseInt(e.target.value) || 1))}
-              placeholder="Number of servings"
+              placeholder={t('addMealPlan.numberOfServings')}
             />
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-2 pt-2">
             <Button variant="outline" onClick={onClose} className="flex-1">
-              Cancel
+              {t('buttons.cancel')}
             </Button>
             <Button 
               onClick={handleAddMeal} 
               disabled={!selectedRecipe} 
               className="flex-1"
             >
-              Add to Meal Plan
+              {t('addMealPlan.addToMealPlan')}
             </Button>
           </div>
         </div>
       </DialogContent>
     </Dialog>
   );
-}; 
+};

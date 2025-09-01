@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Plus, Trash2 } from 'lucide-react';
 import { ItemSelector } from './ItemSelector';
 import { QuantitySelector } from './QuantitySelector';
+import { useTranslation } from 'react-i18next';
 
 // Simplified item interface that matches what we get from the API
 interface SimpleItem {
@@ -45,6 +45,7 @@ export const StructuredIngredientInput = ({
   onIngredientsChange,
   className = ''
 }: StructuredIngredientInputProps) => {
+  const { t } = useTranslation();
   const [editingIngredient, setEditingIngredient] = useState<string | null>(null);
 
   const addIngredient = () => {
@@ -72,7 +73,6 @@ export const StructuredIngredientInput = ({
 
   const handleItemSelect = (index: number, item: FullItem | null) => {
     if (item) {
-      // Convert FullItem to SimpleItem for storage
       const simpleItem: SimpleItem = {
         id: item.id,
         name: item.name,
@@ -87,7 +87,6 @@ export const StructuredIngredientInput = ({
         unit: item.defaultUnit
       });
     } else {
-      // Clear the selection
       updateIngredient(ingredients[index].id, {
         itemId: '',
         item: undefined,
@@ -99,7 +98,7 @@ export const StructuredIngredientInput = ({
   return (
     <div className={`space-y-4 ${className}`}>
       <div className="flex items-center justify-between">
-        <Label className="text-base font-medium">Ingredients</Label>
+        <Label className="text-base font-medium">{t('pages.recipes.ingredients')}</Label>
         <Button
           type="button"
           variant="outline"
@@ -108,14 +107,14 @@ export const StructuredIngredientInput = ({
           className="flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
-          Add Ingredient
+          {t('ingredientInput.addIngredient')}
         </Button>
       </div>
 
       {ingredients.length === 0 && (
         <div className="text-center py-8 text-gray-500 border-2 border-dashed border-gray-200 rounded-lg">
-          <p>No ingredients added yet</p>
-          <p className="text-sm mt-1">Click "Add Ingredient" to get started</p>
+          <p>{t('ingredientInput.noIngredients')}</p>
+          <p className="text-sm mt-1">{t('ingredientInput.clickToAdd')}</p>
         </div>
       )}
 
@@ -124,7 +123,7 @@ export const StructuredIngredientInput = ({
           <div key={ingredient.id} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
             <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <Label className="text-sm">Item</Label>
+                <Label className="text-sm">{t('ingredientInput.item')}</Label>
                 <ItemSelector
                   onItemSelect={(item) => handleItemSelect(index, item)}
                   selectedItem={ingredient.item ? {
@@ -134,7 +133,7 @@ export const StructuredIngredientInput = ({
                     createdAt: '',
                     updatedAt: ''
                   } : null}
-                  placeholder="Select ingredient..."
+                  placeholder={t('ingredientInput.selectIngredient')}
                   className="mt-1"
                 />
               </div>
@@ -142,7 +141,7 @@ export const StructuredIngredientInput = ({
               {ingredient.itemId && (
                 <>
                   <div>
-                    <Label className="text-sm">Quantity & Unit</Label>
+                    <Label className="text-sm">{t('ingredientInput.quantityAndUnit')}</Label>
                     <div className="mt-1">
                       <QuantitySelector
                         item={ingredient.item ? {
@@ -175,11 +174,11 @@ export const StructuredIngredientInput = ({
                   </div>
                   
                   <div>
-                    <Label className="text-sm">Notes (optional)</Label>
+                    <Label className="text-sm">{t('ingredientInput.notes')}</Label>
                     <Input
                       value={ingredient.notes || ''}
                       onChange={(e) => updateIngredient(ingredient.id, { notes: e.target.value })}
-                      placeholder="e.g., diced, chopped fine..."
+                      placeholder={t('ingredientInput.notesPlaceholder')}
                       className="mt-1"
                     />
                   </div>

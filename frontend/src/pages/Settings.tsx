@@ -2,19 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, LogOut, Copy, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, LogOut, Copy, Eye, EyeOff, Globe } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from '@/stores/authStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useTranslation } from 'react-i18next';
 
 const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t, i18n } = useTranslation();
   
   // Protected route hook handles auth and household checks
   useProtectedRoute();
@@ -25,6 +28,12 @@ const Settings = () => {
   const [lastName, setLastName] = useState<string>('');
   const [isUpdating, setIsUpdating] = useState(false);
   const { user, updateUser, signOut } = useAuthStore();
+
+  const languages = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+  ];
 
   useEffect(() => {
     // Get the Google token from localStorage
@@ -42,7 +51,7 @@ const Settings = () => {
     try {
       await navigator.clipboard.writeText(googleToken);
       toast({
-        title: "Token Copied!",
+        title: t('messages.success.inviteCopied'),
         description: "Google token has been copied to clipboard for API testing.",
       });
     } catch (err) {
@@ -52,6 +61,14 @@ const Settings = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleLanguageChange = (languageCode: string) => {
+    i18n.changeLanguage(languageCode);
+    toast({
+      title: t('messages.success.settingsSaved'),
+      description: `Language changed to ${languages.find(lang => lang.code === languageCode)?.name}`,
+    });
   };
 
   const handleSaveChanges = async () => {
@@ -68,7 +85,7 @@ const Settings = () => {
     try {
       await updateUser(firstName.trim(), lastName.trim());
       toast({
-        title: "Profile Updated!",
+        title: t('messages.success.settingsSaved'),
         description: "Your profile has been updated successfully.",
       });
     } catch (error) {
@@ -97,7 +114,7 @@ const Settings = () => {
             <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-xl font-bold text-gray-900">Settings</h1>
+            <h1 className="text-xl font-bold text-gray-900">{t('pages.settings.title')}</h1>
             <div className="w-9" /> {/* Spacer */}
           </div>
         </div>
@@ -121,25 +138,25 @@ const Settings = () => {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="firstName">{t('forms.firstName')}</Label>
                   <Input 
                     id="firstName" 
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="Enter your first name"
+                    placeholder={`Enter your ${t('forms.firstName').toLowerCase()}`}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
+                  <Label htmlFor="lastName">{t('forms.lastName')}</Label>
                   <Input 
                     id="lastName" 
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Enter your last name"
+                    placeholder={`Enter your ${t('forms.lastName').toLowerCase()}`}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('forms.email')}</Label>
                   <Input id="email" type="email" defaultValue={user?.email} readOnly className="bg-gray-100" />
                   <p className="text-xs text-gray-500">Email cannot be changed.</p>
                 </div>
@@ -148,7 +165,7 @@ const Settings = () => {
                   onClick={handleSaveChanges}
                   disabled={isUpdating}
                 >
-                  {isUpdating ? 'Saving...' : 'Save Changes'}
+                  {isUpdating ? 'Saving...' : t('buttons.save')}
                 </Button>
               </CardContent>
             </Card>
@@ -186,10 +203,33 @@ const Settings = () => {
           <TabsContent value="appearance" className="mt-4">
             <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>Appearance Settings</CardTitle>
+                <CardTitle>{t('pages.settings.appearance')}</CardTitle>
                 <CardDescription>Customize the look and feel of the app.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
+                <div className="space-y-3">
+                  <Label htmlFor="language-select" className="flex items-center gap-2">
+                    <Globe className="h-4 w-4" />
+                    {t('pages.settings.language')}
+                  </Label>
+                  <Select value={i18n.language} onValueChange={handleLanguageChange}>
+                    <SelectTrigger id="language-select">
+                      <SelectValue placeholder={t('common.selectLanguage')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {languages.map((language) => (
+                        <SelectItem key={language.code} value={language.code}>
+                          <div className="flex items-center gap-2">
+                            <span>{language.flag}</span>
+                            <span>{language.name}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-gray-500">Choose your preferred language for the interface.</p>
+                </div>
+                
                 <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50/70">
                   <Label htmlFor="dark-mode" className="flex flex-col space-y-1 cursor-pointer flex-1">
                     <span className="font-medium">Dark Mode</span>

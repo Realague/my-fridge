@@ -3,6 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, ShoppingCart, Calendar, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 interface BottomNavigationProps {
   currentPage: string;
@@ -10,12 +11,13 @@ interface BottomNavigationProps {
 
 const BottomNavigation = ({ currentPage }: BottomNavigationProps) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const navItems = [
-    { id: 'dashboard', label: 'Home', icon: Home, route: '/dashboard' },
-    { id: 'shopping', label: 'Shopping', icon: ShoppingCart, route: '/shopping' },
-    { id: 'meal-plans', label: 'Meals', icon: Calendar, route: '/meal-plans' },
-    { id: 'recipes', label: 'Recipes', icon: BookOpen, route: '/recipes' },
+    { id: 'dashboard', label: t('navigation.home'), icon: Home, route: '/dashboard' },
+    { id: 'shopping', label: t('navigation.shopping'), icon: ShoppingCart, route: '/shopping' },
+    { id: 'meal-plans', label: t('navigation.meals'), icon: Calendar, route: '/meal-plans' },
+    { id: 'recipes', label: t('navigation.recipes'), icon: BookOpen, route: '/recipes' },
   ];
 
   return (

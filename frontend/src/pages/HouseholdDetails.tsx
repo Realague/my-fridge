@@ -12,10 +12,12 @@ import { useAuthStore } from '@/stores/authStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 const HouseholdDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
   
   // Protected route hook handles auth and household checks
   useProtectedRoute();
@@ -73,13 +75,16 @@ const HouseholdDetails = () => {
   const handleInviteMember = async () => {
     if (!householdDetails?.inviteCode) return;
     
-    const inviteMessage = `🏠 Join my household "${householdDetails.name}" on MyFridge!\n\nUse invite code: ${householdDetails.inviteCode}\n\nMyFridge helps manage your shared kitchen inventory, plan meals together, and reduce food waste. Download the app and join us!`;
+    const inviteMessage = t('messages.inviteMessage', { 
+      householdName: householdDetails.name, 
+      inviteCode: householdDetails.inviteCode 
+    });
     
     try {
       await navigator.clipboard.writeText(inviteMessage);
       toast({
-        title: "Invite copied!",
-        description: "Share this message with your household members to invite them.",
+        title: t('messages.success.inviteCopied'),
+        description: t('common.description'),
       });
     } catch (error) {
       // Fallback for older browsers
@@ -91,8 +96,8 @@ const HouseholdDetails = () => {
       document.body.removeChild(textArea);
       
       toast({
-        title: "Invite copied!",
-        description: "Share this message with your household members to invite them.",
+        title: t('messages.success.inviteCopied'),
+        description: t('common.description'),
       });
     }
   };
@@ -140,7 +145,7 @@ const HouseholdDetails = () => {
               onClick={handleInviteMember}
             >
               <UserPlus className="h-4 w-4 mr-2" />
-              Invite New Member
+              {t('buttons.inviteNewMember')}
             </Button>
             
             <AlertDialog>

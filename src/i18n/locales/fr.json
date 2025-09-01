@@ -1,0 +1,143 @@
+{
+  "navigation": {
+    "home": "Accueil",
+    "shopping": "Courses",
+    "meals": "Repas",
+    "recipes": "Recettes"
+  },
+  "buttons": {
+    "add": "Ajouter",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "update": "Mettre à jour",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "done": "Terminé",
+    "close": "Fermer",
+    "inviteNewMember": "Inviter un Nouveau Membre",
+    "removeMember": "Supprimer le Membre",
+    "leaveHousehold": "Quitter le Foyer"
+  },
+  "forms": {
+    "name": "Nom",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom de famille",
+    "householdName": "Nom du Foyer",
+    "inviteCode": "Code d'Invitation",
+    "quantity": "Quantité",
+    "unit": "Unité",
+    "category": "Catégorie",
+    "location": "Emplacement",
+    "expiryDate": "Date d'Expiration",
+    "notes": "Notes"
+  },
+  "messages": {
+    "success": {
+      "itemAdded": "Article ajouté avec succès",
+      "itemUpdated": "Article mis à jour avec succès",
+      "itemDeleted": "Article supprimé avec succès",
+      "memberRemoved": "Membre supprimé avec succès",
+      "inviteCopied": "Invitation copiée !",
+      "settingsSaved": "Paramètres enregistrés avec succès"
+    },
+    "error": {
+      "somethingWentWrong": "Quelque chose s'est mal passé",
+      "failedToLoad": "Échec du chargement des données",
+      "invalidCredentials": "Identifiants invalides",
+      "networkError": "Erreur réseau",
+      "permissionDenied": "Permission refusée"
+    },
+    "confirmation": {
+      "deleteItem": "Êtes-vous sûr de vouloir supprimer cet article ?",
+      "removeMember": "Êtes-vous sûr de vouloir supprimer {{name}} du foyer ?",
+      "leaveHousehold": "Êtes-vous sûr de vouloir quitter ce foyer ?"
+    },
+    "inviteMessage": "🏠 Rejoins mon foyer \"{{householdName}}\" sur MyFridge !\n\nUtilise le code d'invitation : {{inviteCode}}\n\nMyFridge aide à gérer l'inventaire partagé de votre cuisine, planifier les repas ensemble et réduire le gaspillage alimentaire. Télécharge l'app et rejoins-nous !"
+  },
+  "pages": {
+    "dashboard": {
+      "title": "Tableau de Bord",
+      "welcome": "Bienvenue sur MyFridge",
+      "recentItems": "Articles Récents",
+      "quickActions": "Actions Rapides"
+    },
+    "shopping": {
+      "title": "Liste de Courses",
+      "addItem": "Ajouter un Article",
+      "noItems": "Aucun article dans votre liste de courses",
+      "generateFromMeals": "Générer depuis les Plans de Repas"
+    },
+    "mealPlans": {
+      "title": "Plans de Repas",
+      "addMealPlan": "Ajouter un Plan de Repas",
+      "noMealPlans": "Aucun plan de repas créé pour le moment",
+      "generateShoppingList": "Générer la Liste de Courses"
+    },
+    "recipes": {
+      "title": "Recettes",
+      "addRecipe": "Ajouter une Recette",
+      "noRecipes": "Aucune recette trouvée",
+      "ingredients": "Ingrédients",
+      "instructions": "Instructions",
+      "servings": "Portions",
+      "cookingTime": "Temps de Cuisson"
+    },
+    "settings": {
+      "title": "Paramètres",
+      "language": "Langue",
+      "theme": "Thème",
+      "notifications": "Notifications",
+      "account": "Compte",
+      "household": "Foyer",
+      "privacy": "Confidentialité"
+    },
+    "household": {
+      "title": "Détails du Foyer",
+      "members": "Membres",
+      "inviteCode": "Code d'Invitation",
+      "role": {
+        "admin": "Administrateur",
+        "member": "Membre"
+      }
+    }
+  },
+  "units": {
+    "piece": "pièce",
+    "pieces": "pièces",
+    "kg": "kg",
+    "g": "g",
+    "l": "l",
+    "ml": "ml",
+    "cup": "tasse",
+    "cups": "tasses",
+    "tbsp": "cuillère à soupe",
+    "tsp": "cuillère à café",
+    "oz": "oz",
+    "lb": "lb"
+  },
+  "categories": {
+    "vegetables": "Légumes",
+    "fruits": "Fruits",
+    "meat": "Viande",
+    "dairy": "Produits laitiers",
+    "grains": "Céréales",
+    "spices": "Épices",
+    "beverages": "Boissons",
+    "snacks": "Collations",
+    "other": "Autre"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "noData": "Aucune donnée disponible",
+    "searchPlaceholder": "Rechercher...",
+    "selectLanguage": "Sélectionner la Langue",
+    "description": "Partagez ce message avec les membres de votre foyer pour les inviter."
+  }
+}

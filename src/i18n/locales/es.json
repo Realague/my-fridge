@@ -1,0 +1,143 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "shopping": "Compras",
+    "meals": "Comidas",
+    "recipes": "Recetas"
+  },
+  "buttons": {
+    "add": "Agregar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "update": "Actualizar",
+    "confirm": "Confirmar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "done": "Hecho",
+    "close": "Cerrar",
+    "inviteNewMember": "Invitar Nuevo Miembro",
+    "removeMember": "Remover Miembro",
+    "leaveHousehold": "Dejar Hogar"
+  },
+  "forms": {
+    "name": "Nombre",
+    "email": "Correo",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "householdName": "Nombre del Hogar",
+    "inviteCode": "Código de Invitación",
+    "quantity": "Cantidad",
+    "unit": "Unidad",
+    "category": "Categoría",
+    "location": "Ubicación",
+    "expiryDate": "Fecha de Vencimiento",
+    "notes": "Notas"
+  },
+  "messages": {
+    "success": {
+      "itemAdded": "Artículo agregado exitosamente",
+      "itemUpdated": "Artículo actualizado exitosamente",
+      "itemDeleted": "Artículo eliminado exitosamente",
+      "memberRemoved": "Miembro removido exitosamente",
+      "inviteCopied": "¡Invitación copiada!",
+      "settingsSaved": "Configuración guardada exitosamente"
+    },
+    "error": {
+      "somethingWentWrong": "Algo salió mal",
+      "failedToLoad": "Error al cargar datos",
+      "invalidCredentials": "Credenciales inválidas",
+      "networkError": "Error de red",
+      "permissionDenied": "Permiso denegado"
+    },
+    "confirmation": {
+      "deleteItem": "¿Estás seguro de que quieres eliminar este artículo?",
+      "removeMember": "¿Estás seguro de que quieres remover a {{name}} del hogar?",
+      "leaveHousehold": "¿Estás seguro de que quieres dejar este hogar?"
+    },
+    "inviteMessage": "🏠 ¡Únete a mi hogar \"{{householdName}}\" en MyFridge!\n\nUsa el código de invitación: {{inviteCode}}\n\nMyFridge ayuda a gestionar el inventario compartido de tu cocina, planificar comidas juntos y reducir el desperdicio de alimentos. ¡Descarga la app y únete!"
+  },
+  "pages": {
+    "dashboard": {
+      "title": "Panel Principal",
+      "welcome": "Bienvenido a MyFridge",
+      "recentItems": "Artículos Recientes",
+      "quickActions": "Acciones Rápidas"
+    },
+    "shopping": {
+      "title": "Lista de Compras",
+      "addItem": "Agregar Artículo",
+      "noItems": "No hay artículos en tu lista de compras",
+      "generateFromMeals": "Generar desde Planes de Comida"
+    },
+    "mealPlans": {
+      "title": "Planes de Comida",
+      "addMealPlan": "Agregar Plan de Comida",
+      "noMealPlans": "No hay planes de comida creados aún",
+      "generateShoppingList": "Generar Lista de Compras"
+    },
+    "recipes": {
+      "title": "Recetas",
+      "addRecipe": "Agregar Receta",
+      "noRecipes": "No se encontraron recetas",
+      "ingredients": "Ingredientes",
+      "instructions": "Instrucciones",
+      "servings": "Porciones",
+      "cookingTime": "Tiempo de Cocción"
+    },
+    "settings": {
+      "title": "Configuración",
+      "language": "Idioma",
+      "theme": "Tema",
+      "notifications": "Notificaciones",
+      "account": "Cuenta",
+      "household": "Hogar",
+      "privacy": "Privacidad"
+    },
+    "household": {
+      "title": "Detalles del Hogar",
+      "members": "Miembros",
+      "inviteCode": "Código de Invitación",
+      "role": {
+        "admin": "Administrador",
+        "member": "Miembro"
+      }
+    }
+  },
+  "units": {
+    "piece": "pieza",
+    "pieces": "piezas",
+    "kg": "kg",
+    "g": "g",
+    "l": "l",
+    "ml": "ml",
+    "cup": "taza",
+    "cups": "tazas",
+    "tbsp": "cucharada",
+    "tsp": "cucharadita",
+    "oz": "oz",
+    "lb": "lb"
+  },
+  "categories": {
+    "vegetables": "Verduras",
+    "fruits": "Frutas",
+    "meat": "Carne",
+    "dairy": "Lácteos",
+    "grains": "Granos",
+    "spices": "Especias",
+    "beverages": "Bebidas",
+    "snacks": "Aperitivos",
+    "other": "Otro"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "noData": "No hay datos disponibles",
+    "searchPlaceholder": "Buscar...",
+    "selectLanguage": "Seleccionar Idioma",
+    "description": "Comparte este mensaje con los miembros de tu hogar para invitarlos."
+  }
+}

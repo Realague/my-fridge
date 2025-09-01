@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import "./i18n/config"; // Initialize i18n
 
 
 import { RecipeProvider } from "@/contexts/RecipeContext";

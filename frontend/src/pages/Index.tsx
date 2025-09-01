@@ -51,7 +51,7 @@ const Index = () => {
             </div>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            <span className="text-green-600">{t('pages.index.title')}</span>
+            My<span className="text-green-600">Fridge</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             {t('pages.index.subtitle')}

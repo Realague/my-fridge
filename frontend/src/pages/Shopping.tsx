@@ -508,14 +508,14 @@ const Shopping = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-gray-900">Shopping List</h1>
+              <h1 className="text-xl font-bold text-gray-900">{t('pages.shopping.title')}</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-sm text-gray-600">
-                  {completedCount} of {totalItems} items completed
+                  {t('pages.shopping.itemsCompleted', { completed: completedCount, total: totalItems })}
                 </p>
                 <div className="flex items-center gap-1">
                   <Users className="h-4 w-4 text-green-600" />
-                  <span className="text-xs text-green-600">Synced</span>
+                  <span className="text-xs text-green-600">{t('pages.shopping.synced')}</span>
                 </div>
               </div>
             </div>
@@ -523,7 +523,7 @@ const Shopping = () => {
               <div className="text-2xl font-bold text-green-600">
                 {Math.round((completedCount / totalItems) * 100) || 0}%
               </div>
-              <div className="text-xs text-gray-600">Complete</div>
+              <div className="text-xs text-gray-600">{t('pages.shopping.complete')}</div>
             </div>
           </div>
         </div>
@@ -532,17 +532,17 @@ const Shopping = () => {
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Add New Item */}
         <AddItemCard
-          title="Add Item"
+          title={t('pages.shopping.addItem')}
           onItemAdd={handleAddItem}
-          placeholder="Search or add item..."
-          buttonText="Add"
+          placeholder={t('pages.shopping.searchPlaceholder')}
+          buttonText={t('pages.shopping.add')}
         />
 
         {loading && (
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
             <CardContent className="p-8 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading shopping list...</p>
+              <p className="text-gray-600">{t('pages.shopping.loadingShoppingList')}</p>
             </CardContent>
           </Card>
         )}
@@ -550,7 +550,7 @@ const Shopping = () => {
         {!loading && !selectedHouseholdId && (
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
             <CardContent className="p-8 text-center">
-              <p className="text-gray-600">Please select a household to view your shopping list.</p>
+              <p className="text-gray-600">{t('pages.shopping.selectHouseholdToView')}</p>
             </CardContent>
           </Card>
         )}
@@ -564,7 +564,7 @@ const Shopping = () => {
               <Filter className="h-5 w-5 text-gray-600" />
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                 <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Filter by category" />
+                  <SelectValue placeholder={t('pages.shopping.filterByCategory')} />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((category) => (
@@ -581,7 +581,7 @@ const Shopping = () => {
                   onClick={() => setCategoryFilter('All')}
                   className="text-gray-500"
                 >
-                  Clear filter
+                  {t('pages.shopping.clearFilter')}
                 </Button>
               )}
             </div>
@@ -592,7 +592,7 @@ const Shopping = () => {
         <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="text-lg">
-              To Buy ({pendingItems.length})
+              {t('pages.shopping.toBuy')} ({pendingItems.length})
               {categoryFilter !== 'All' && (
                 <span className="text-sm font-normal text-gray-600 ml-2">
                   • {categoryFilter}
@@ -613,14 +613,14 @@ const Shopping = () => {
                   </div>
                   <p>
                     {categoryFilter === 'All' 
-                      ? 'All items completed!' 
-                      : `No ${categoryFilter.toLowerCase()} items to buy`
+                      ? t('pages.shopping.allItemsCompleted')
+                      : t('pages.shopping.noItemsInCategory', { category: categoryFilter.toLowerCase() })
                     }
                   </p>
                   <p className="text-sm">
                     {categoryFilter === 'All' 
-                      ? 'Add new items to get started' 
-                      : 'Try a different category filter'
+                      ? t('pages.shopping.addNewItemsToGetStarted')
+                      : t('pages.shopping.tryDifferentCategory')
                     }
                   </p>
                 </div>
@@ -633,7 +633,7 @@ const Shopping = () => {
         <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="text-lg">
-              Completed ({completedItems.length})
+              {t('pages.shopping.completed')} ({completedItems.length})
               {categoryFilter !== 'All' && (
                 <span className="text-sm font-normal text-gray-600 ml-2">
                   • {categoryFilter}
@@ -642,7 +642,7 @@ const Shopping = () => {
               {loadingCompleted && (
                 <div className="inline-flex items-center gap-2 ml-2">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
-                  <span className="text-sm text-gray-500">Loading...</span>
+                  <span className="text-sm text-gray-500">{t('pages.shopping.loading')}</span>
                 </div>
               )}
             </CardTitle>
@@ -651,7 +651,7 @@ const Shopping = () => {
             {loadingCompleted && completedItems.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
-                <p>Loading completed items...</p>
+                <p>{t('pages.shopping.loadingCompletedItems')}</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -665,8 +665,8 @@ const Shopping = () => {
                 {completedItems.length === 0 && completedItemsLoaded && (
                   <div className="text-center py-8 text-gray-500">
                     <div className="text-4xl mb-2">✅</div>
-                    <p>No completed items yet</p>
-                    <p className="text-sm">Items you mark as complete will appear here</p>
+                    <p>{t('pages.shopping.noCompletedItemsYet')}</p>
+                    <p className="text-sm">{t('pages.shopping.completedItemsWillAppear')}</p>
                   </div>
                 )}
               </div>

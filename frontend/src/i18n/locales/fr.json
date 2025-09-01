@@ -221,12 +221,22 @@
     },
     "household": {
       "title": "Détails du Foyer",
+      "yourHouseholds": "Vos Foyers",
+      "switchOrManage": "Changer ou Gérer les Foyers",
+      "switchOrManageDescription": "Vous pouvez faire partie de plusieurs foyers.",
+      "active": "Actif",
+      "switch": "Changer",
+      "switching": "Changement...",
+      "manage": "Gérer",
+      "joinOrCreate": "Rejoindre ou Créer",
+      "createNew": "Créer Nouveau",
+      "joinExisting": "Rejoindre Existant",
       "members": "Membres",
       "inviteCode": "Code d'Invitation",
       "manageHousehold": "Gérer le Foyer",
       "manageMembers": "Gérer les Membres",
       "leaveHousehold": "Quitter le Foyer",
-      "leaveHouseholdDescription": "Êtes-vous sûr de vouloir quitter ce foyer ? Vous perdrez l'accès à tous les articles partagés, recettes et plans de repas.",
+      "leaveHouseholdDescription": "Êtes-vous sûr de vouloir quitter ce foyer ? Vous perdrez l'accès à tous les articles, recettes et plans de repas partagés.",
       "householdNotFound": "Foyer Non Trouvé",
       "householdNotFoundDescription": "Le foyer que vous recherchez n'existe pas.",
       "backToHouseholds": "Retour aux Foyers",
@@ -235,6 +245,32 @@
         "admin": "Administrateur",
         "member": "Membre"
       }
+    },
+    "index": {
+      "title": "MonFrigo",
+      "subtitle": "Gérez l'inventaire alimentaire de votre foyer, collaborez sur les achats et planifiez les repas ensemble. Réduisez le gaspillage, gagnez du temps et n'oubliez plus jamais ce qui se trouve dans votre frigo.",
+      "getStarted": "Commencer",
+      "seeDemo": "Voir la Démo",
+      "features": {
+        "householdSharing": "Partage de Foyer",
+        "householdSharingDescription": "Invitez les membres de la famille et les colocataires à collaborer sur l'inventaire partagé de votre cuisine.",
+        "smartInventory": "Inventaire Intelligent",
+        "smartInventoryDescription": "Suivez ce qui se trouve dans votre frigo, congélateur et garde-manger avec les dates d'expiration et les alertes de stock faible.",
+        "shoppingLists": "Listes de Courses",
+        "shoppingListsDescription": "Générez automatiquement des listes de courses à partir des plans de repas ou ajoutez des articles manuellement.",
+        "mealPlanning": "Planification des Repas",
+        "mealPlanningDescription": "Planifiez les repas hebdomadaires avec vos recettes sauvegardées et vérifiez automatiquement votre inventaire."
+      },
+      "demoSection": {
+        "title": "Voyez MonFrigo en Action",
+        "trackInventory": "Suivre l'Inventaire",
+        "trackInventoryDescription": "Voyez ce qui se trouve dans votre frigo, congélateur et garde-manger d'un coup d'œil",
+        "planTogether": "Planifier Ensemble",
+        "planTogetherDescription": "Collaborez avec les membres du foyer sur la planification des repas",
+        "shopSmart": "Acheter Intelligemment",
+        "shopSmartDescription": "Générez automatiquement des listes de courses à partir de vos plans de repas"
+      },
+      "footer": "© 2025 MonFrigo. Créé avec amour pour une meilleure gestion alimentaire."
     },
     "auth": {
       "noHouseholdSelected": "Aucun Foyer Sélectionné",

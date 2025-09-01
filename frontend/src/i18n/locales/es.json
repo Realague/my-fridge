@@ -221,12 +221,22 @@
     },
     "household": {
       "title": "Detalles del Hogar",
+      "yourHouseholds": "Tus Hogares",
+      "switchOrManage": "Cambiar o Gestionar Hogares",
+      "switchOrManageDescription": "Puedes ser parte de múltiples hogares.",
+      "active": "Activo",
+      "switch": "Cambiar",
+      "switching": "Cambiando...",
+      "manage": "Gestionar",
+      "joinOrCreate": "Unirse o Crear",
+      "createNew": "Crear Nuevo",
+      "joinExisting": "Unirse a Existente",
       "members": "Miembros",
       "inviteCode": "Código de Invitación",
-      "manageHousehold": "Administrar Hogar",
-      "manageMembers": "Administrar Miembros",
-      "leaveHousehold": "Dejar Hogar",
-      "leaveHouseholdDescription": "¿Estás seguro de que quieres dejar este hogar? Perderás acceso a todos los artículos compartidos, recetas y planes de comida.",
+      "manageHousehold": "Gestionar Hogar",
+      "manageMembers": "Gestionar Miembros",
+      "leaveHousehold": "Abandonar Hogar",
+      "leaveHouseholdDescription": "¿Estás seguro de que quieres abandonar este hogar? Perderás el acceso a todos los elementos, recetas y planes de comida compartidos.",
       "householdNotFound": "Hogar No Encontrado",
       "householdNotFoundDescription": "El hogar que buscas no existe.",
       "backToHouseholds": "Volver a Hogares",
@@ -235,6 +245,32 @@
         "admin": "Administrador",
         "member": "Miembro"
       }
+    },
+    "index": {
+      "title": "MiNevera",
+      "subtitle": "Gestiona el inventario de alimentos de tu hogar, colabora en las compras y planifica comidas juntos. Reduce el desperdicio, ahorra tiempo y nunca olvides lo que hay en tu nevera.",
+      "getStarted": "Comenzar",
+      "seeDemo": "Ver Demo",
+      "features": {
+        "householdSharing": "Compartir en el Hogar",
+        "householdSharingDescription": "Invita a familiares y compañeros de cuarto a colaborar en el inventario compartido de la cocina.",
+        "smartInventory": "Inventario Inteligente",
+        "smartInventoryDescription": "Rastrea lo que hay en tu nevera, congelador y despensa con fechas de caducidad y alertas de stock bajo.",
+        "shoppingLists": "Listas de Compras",
+        "shoppingListsDescription": "Genera listas de compras automáticamente desde planes de comidas o añade elementos manualmente.",
+        "mealPlanning": "Planificación de Comidas",
+        "mealPlanningDescription": "Planifica comidas semanales con tus recetas guardadas y verifica automáticamente tu inventario."
+      },
+      "demoSection": {
+        "title": "Ve MiNevera en Acción",
+        "trackInventory": "Rastrear Inventario",
+        "trackInventoryDescription": "Ve lo que hay en tu nevera, congelador y despensa de un vistazo",
+        "planTogether": "Planificar Juntos",
+        "planTogetherDescription": "Colabora con los miembros del hogar en la planificación de comidas",
+        "shopSmart": "Comprar Inteligentemente",
+        "shopSmartDescription": "Genera automáticamente listas de compras desde tus planes de comidas"
+      },
+      "footer": "© 2025 MiNevera. Construido con amor para un mejor manejo de alimentos."
     },
     "auth": {
       "noHouseholdSelected": "No se ha Seleccionado Hogar",

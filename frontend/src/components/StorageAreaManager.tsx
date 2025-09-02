@@ -170,7 +170,7 @@ const StorageAreaManager = () => {
               <span className="text-2xl">{area.emoji}</span>
               <div>
                 <p className="font-semibold text-gray-900">{area.name}</p>
-                <p className="text-sm text-gray-500 capitalize">{area.type}</p>
+                <p className="text-sm text-gray-500">{t(`storageArea.types.${area.type}`)}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">

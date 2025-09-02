@@ -64,6 +64,18 @@
       "other": "Other"
     }
   },
+  "storageAreaManager": {
+    "title": "Storage Areas",
+    "addStorage": "Add Storage",
+    "addNewStorageArea": "Add New Storage Area",
+    "editStorageArea": "Edit Storage Area",
+    "deleteStorageArea": "Delete Storage Area",
+    "deleteConfirmation": "Are you sure you want to delete \"{{name}}\"? This will also remove all items stored in this area.",
+    "updateStorageArea": "Update Storage Area",
+    "namePlaceholder": "Storage area name",
+    "emoji": "Emoji",
+    "pleaseEnterName": "Please enter a storage area name"
+  },
   "itemEditor": {
     "editItem": "Edit Item",
     "createNewItem": "Create New Item",

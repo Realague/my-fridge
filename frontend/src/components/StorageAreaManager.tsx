@@ -8,8 +8,10 @@ import { Plus, Edit3, Trash2 } from 'lucide-react';
 import { useStorageAreasWithStats, useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const StorageAreaManager = () => {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const { storageAreas } = useStorageAreasWithStats(user?.selectedHouseholdId);
   const { 
@@ -27,7 +29,7 @@ const StorageAreaManager = () => {
 
   const handleAddArea = async () => {
     if (!newAreaName.trim()) {
-      toast.error('Please enter a storage area name');
+      toast.error(t('storageAreaManager.pleaseEnterName'));
       return;
     }
 
@@ -57,7 +59,7 @@ const StorageAreaManager = () => {
 
   const handleUpdateArea = async () => {
     if (!editingArea || !newAreaName.trim()) {
-      toast.error('Please enter a storage area name');
+      toast.error(t('storageAreaManager.pleaseEnterName'));
       return;
     }
 
@@ -97,7 +99,7 @@ const StorageAreaManager = () => {
     <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <span>Storage Areas</span>
+          <span>{t('storageAreaManager.title')}</span>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
               <Button 
@@ -105,24 +107,24 @@ const StorageAreaManager = () => {
                 onClick={() => setIsAddDialogOpen(true)}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Add Storage
+                {t('storageAreaManager.addStorage')}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add New Storage Area</DialogTitle>
+                <DialogTitle>{t('storageAreaManager.addNewStorageArea')}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Name</label>
+                  <label className="block text-sm font-medium mb-2">{t('forms.name')}</label>
                   <Input
                     value={newAreaName}
                     onChange={(e) => setNewAreaName(e.target.value)}
-                    placeholder="Storage area name"
+                    placeholder={t('storageAreaManager.namePlaceholder')}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Emoji</label>
+                  <label className="block text-sm font-medium mb-2">{t('storageAreaManager.emoji')}</label>
                   <Input
                     value={newAreaEmoji}
                     onChange={(e) => setNewAreaEmoji(e.target.value)}
@@ -130,21 +132,21 @@ const StorageAreaManager = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Type</label>
+                  <label className="block text-sm font-medium mb-2">{t('storageArea.type')}</label>
                   <select 
                     value={newAreaType} 
                     onChange={(e) => setNewAreaType(e.target.value as any)}
                     className="w-full p-2 border rounded-md"
                   >
-                    <option value="fridge">Fridge</option>
-                    <option value="freezer">Freezer</option>
-                    <option value="pantry">Pantry</option>
-                    <option value="other">Other</option>
+                    <option value="fridge">{t('storageArea.types.fridge')}</option>
+                    <option value="freezer">{t('storageArea.types.freezer')}</option>
+                    <option value="pantry">{t('storageArea.types.pantry')}</option>
+                    <option value="other">{t('storageArea.types.other')}</option>
                   </select>
                 </div>
                 <div className="flex gap-2">
                   <Button onClick={handleAddArea} className="flex-1">
-                    Add Storage Area
+                    {t('storageArea.addStorageArea')}
                   </Button>
                   <Button 
                     variant="outline" 
@@ -153,7 +155,7 @@ const StorageAreaManager = () => {
                       setIsAddDialogOpen(false);
                     }}
                   >
-                    Cancel
+                    {t('buttons.cancel')}
                   </Button>
                 </div>
               </div>
@@ -192,18 +194,18 @@ const StorageAreaManager = () => {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Storage Area</AlertDialogTitle>
+                    <AlertDialogTitle>{t('storageAreaManager.deleteStorageArea')}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete "{area.name}"? This will also remove all items stored in this area.
+                      {t('storageAreaManager.deleteConfirmation', { name: area.name })}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t('buttons.cancel')}</AlertDialogCancel>
                     <AlertDialogAction 
                       onClick={() => handleDeleteArea(area)}
                       className="bg-red-600 hover:bg-red-700"
                     >
-                      Delete
+                      {t('buttons.delete')}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -216,19 +218,19 @@ const StorageAreaManager = () => {
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Edit Storage Area</DialogTitle>
+              <DialogTitle>{t('storageAreaManager.editStorageArea')}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Name</label>
+                <label className="block text-sm font-medium mb-2">{t('forms.name')}</label>
                 <Input
                   value={newAreaName}
                   onChange={(e) => setNewAreaName(e.target.value)}
-                  placeholder="Storage area name"
+                  placeholder={t('storageAreaManager.namePlaceholder')}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Emoji</label>
+                <label className="block text-sm font-medium mb-2">{t('storageAreaManager.emoji')}</label>
                 <Input
                   value={newAreaEmoji}
                   onChange={(e) => setNewAreaEmoji(e.target.value)}
@@ -236,21 +238,21 @@ const StorageAreaManager = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Type</label>
+                <label className="block text-sm font-medium mb-2">{t('storageArea.type')}</label>
                 <select 
                   value={newAreaType} 
                   onChange={(e) => setNewAreaType(e.target.value as any)}
                   className="w-full p-2 border rounded-md"
                 >
-                  <option value="fridge">Fridge</option>
-                  <option value="freezer">Freezer</option>
-                  <option value="pantry">Pantry</option>
-                  <option value="other">Other</option>
+                  <option value="fridge">{t('storageArea.types.fridge')}</option>
+                  <option value="freezer">{t('storageArea.types.freezer')}</option>
+                  <option value="pantry">{t('storageArea.types.pantry')}</option>
+                  <option value="other">{t('storageArea.types.other')}</option>
                 </select>
               </div>
               <div className="flex gap-2">
                 <Button onClick={handleUpdateArea} className="flex-1">
-                  Update Storage Area
+                  {t('storageAreaManager.updateStorageArea')}
                 </Button>
                 <Button 
                   variant="outline" 
@@ -259,7 +261,7 @@ const StorageAreaManager = () => {
                     setIsEditDialogOpen(false);
                   }}
                 >
-                  Cancel
+                  {t('buttons.cancel')}
                 </Button>
               </div>
             </div>

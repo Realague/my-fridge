@@ -42,6 +42,27 @@
     "householdItem": "Artículo del hogar",
     "adding": "Agregando..."
   },
+  "storageArea": {
+    "item": "artículo",
+    "items": "artículos",
+    "low": "bajo",
+    "addArea": "Agregar Área",
+    "addStorageArea": "Agregar Área de Almacenamiento",
+    "createNewDescription": "Crea una nueva área de almacenamiento para tu hogar.",
+    "namePlaceholder": "ej., Nevera Principal, Despensa",
+    "type": "Tipo",
+    "selectType": "Seleccionar tipo de almacenamiento",
+    "emoji": "Emoji (opcional)",
+    "creating": "Creando...",
+    "createArea": "Crear Área",
+    "types": {
+      "fridge": "Refrigerador",
+      "freezer": "Congelador",
+      "pantry": "Despensa",
+      "kitchenCupboard": "Alacena de Cocina",
+      "other": "Otro"
+    }
+  },
   "messages": {
     "success": {
       "itemAdded": "{{item}} agregado a la lista.",

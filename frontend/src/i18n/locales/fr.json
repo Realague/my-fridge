@@ -42,6 +42,27 @@
     "householdItem": "Article du foyer",
     "adding": "Ajout..."
   },
+  "storageArea": {
+    "item": "article",
+    "items": "articles",
+    "low": "faible",
+    "addArea": "Ajouter une Zone",
+    "addStorageArea": "Ajouter une Zone de Stockage",
+    "createNewDescription": "Créez une nouvelle zone de stockage pour votre foyer.",
+    "namePlaceholder": "ex., Réfrigérateur Principal, Garde-manger",
+    "type": "Type",
+    "selectType": "Sélectionner le type de stockage",
+    "emoji": "Emoji (facultatif)",
+    "creating": "Création...",
+    "createArea": "Créer une Zone",
+    "types": {
+      "fridge": "Réfrigérateur",
+      "freezer": "Congélateur",
+      "pantry": "Garde-manger",
+      "kitchenCupboard": "Placard de Cuisine",
+      "other": "Autre"
+    }
+  },
   "messages": {
     "success": {
       "itemAdded": "{{item}} ajouté à la liste.",

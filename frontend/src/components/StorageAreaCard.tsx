@@ -34,7 +34,7 @@ const StorageAreaCard = ({ area, onClick }: StorageAreaCardProps) => {
               <span className="text-2xl">{area.emoji}</span>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">{t('storageArea.name')} {area.name}</h3>
+              <h3 className="font-semibold text-gray-900">{t(`storageArea.types.${area.type}`)} {area.name}</h3>
               <p className="text-sm text-gray-600">
                 {area.itemCount} {area.itemCount === 1 ? t('storageArea.item') : t('storageArea.items')}
               </p>

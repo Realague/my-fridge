@@ -18,7 +18,6 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
     const timer = setTimeout(() => {
       if (!initialized.current) {
         try {
-          console.log('StoreProvider: Initializing stores...');
           
           // Sync household store with auth store
           // Note: Household store now uses direct fetch API, no initialization needed
@@ -32,7 +31,6 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
           // initializeStoredItemService(api);
           
           initialized.current = true;
-          console.log('StoreProvider: Household store synced successfully');
         } catch (error) {
           console.error('StoreProvider: Failed to sync stores:', error);
         }

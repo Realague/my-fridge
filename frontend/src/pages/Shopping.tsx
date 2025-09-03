@@ -12,7 +12,6 @@ import { AddItemCard } from '@/components/AddItemCard';
 import { QuantitySelector } from '@/components/QuantitySelector';
 import { Item } from '@/services/itemService';
 import { useShoppingStore, ShoppingItem } from '@/stores/shoppingStore';
-import { useHouseholdStore } from '@/stores/householdStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
@@ -39,7 +38,6 @@ const Shopping = () => {
     toggleShoppingItemCompleted,
     getPendingItems,
     getCompletedItems,
-    getItemsByCategory,
     getTotalItems,
     getCompletedCount
   } = useShoppingStore();
@@ -135,7 +133,6 @@ const Shopping = () => {
     if (!itemToStore || !selectedStorageArea || !selectedHouseholdId) return;
 
     try {
-      console.log('Adding to storage:', itemToStore);
       // Add to storage using the new API
       const createdStoredItem = await createStoredItem(selectedHouseholdId, {
         itemId: itemToStore.item?.id,

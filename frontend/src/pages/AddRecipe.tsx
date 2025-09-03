@@ -16,6 +16,7 @@ import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { CreateRecipeIngredientDto, RecipeDifficulty } from '@/services/recipeService';
 import { useToast } from '@/hooks/use-toast';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
+import { useTranslation } from 'react-i18next';
 
 interface RecipeIngredientWithId extends CreateRecipeIngredientDto {
   id: string;
@@ -43,7 +44,8 @@ interface RecipeFormData {
 const AddRecipe = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+  const { t } = useTranslation();
+
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
   
@@ -130,8 +132,8 @@ const AddRecipe = () => {
   const onSubmit = async (data: RecipeFormData) => {
     if (!selectedHouseholdId || !user?.id) {
       toast({
-        title: "Error",
-        description: "Missing household or user information.",
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.missingHouseholdOrUserInformation'),
         variant: "destructive",
       });
       return;
@@ -142,8 +144,8 @@ const AddRecipe = () => {
     
     if (validIngredients.length === 0) {
       toast({
-        title: "Error",
-        description: "Please add at least one ingredient.",
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.addAtLeastOneIngredient'),
         variant: "destructive",
       });
       return;
@@ -151,8 +153,8 @@ const AddRecipe = () => {
 
     if (filteredInstructions.length === 0) {
       toast({
-        title: "Error",
-        description: "Please add at least one instruction.",
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.addAtLeastOneInstruction'),
         variant: "destructive",
       });
       return;
@@ -186,8 +188,8 @@ const AddRecipe = () => {
       const newRecipe = await createRecipe(selectedHouseholdId, recipeData);
       
       toast({
-        title: "Recipe added!",
-        description: "Your new recipe has been saved to your collection.",
+        title: t('messages.success.recipeAdded'),
+        description: t('messages.success.recipeSavedToCollection'),
       });
       
       // Clear any errors that might have been set and navigate
@@ -196,9 +198,9 @@ const AddRecipe = () => {
     } catch (error) {
       console.error('Recipe creation failed:', error);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create recipe. Please try again.",
-        variant: "destructive",
+        title: t('messages.error.somethingWentWrong'),
+          description: error instanceof Error ? error.message : t('messages.error.failedToCreateRecipe'),
+          variant: "destructive",
       });
     }
   };
@@ -215,7 +217,7 @@ const AddRecipe = () => {
               className="text-gray-600"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Recipes
+              {t('pages.recipes.backToRecipes')}
             </Button>
             <h1 className="text-xl font-bold text-gray-900">Add New Recipe</h1>
             <div className="w-20"></div>
@@ -229,19 +231,19 @@ const AddRecipe = () => {
             {/* Basic Info */}
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
-                <CardDescription>Essential details about your recipe</CardDescription>
+                <CardTitle>{t('pages.recipes.basicInformation')}</CardTitle>
+                <CardDescription>{t('pages.recipes.basicInformationDescription')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <FormField
                   control={form.control}
                   name="title"
-                  rules={{ required: "Recipe title is required" }}
+                  rules={{ required: t('messages.error.recipeTitleRequired') }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Recipe Title</FormLabel>
+                      <FormLabel>{t('pages.recipes.recipeTitle')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Chicken Teriyaki" {...field} />
+                        <Input placeholder={t('pages.recipes.titlePlaceholder')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -251,13 +253,13 @@ const AddRecipe = () => {
                 <FormField
                   control={form.control}
                   name="description"
-                  rules={{ required: "Description is required" }}
+                  rules={{ required: t('messages.error.descriptionRequired') }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel>{t('pages.recipes.description')}</FormLabel>
                       <FormControl>
                         <Textarea 
-                          placeholder="Brief description of your recipe..."
+                          placeholder={t('pages.recipes.descriptionPlaceholder')}
                           className="min-h-[80px]"
                           {...field} 
                         />
@@ -273,7 +275,7 @@ const AddRecipe = () => {
                     name="prepTime"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Prep Time (min)</FormLabel>
+                        <FormLabel>{t('pages.recipes.prepTime')}</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
@@ -292,7 +294,7 @@ const AddRecipe = () => {
                     name="cookTime"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Cook Time (min)</FormLabel>
+                        <FormLabel>{t('pages.recipes.cookTime')}</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
@@ -311,7 +313,7 @@ const AddRecipe = () => {
                     name="servings"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Servings</FormLabel>
+                        <FormLabel>{t('pages.recipes.servings')}</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
@@ -330,7 +332,7 @@ const AddRecipe = () => {
                     name="difficulty"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Difficulty</FormLabel>
+                        <FormLabel>{t('pages.recipes.difficulty')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
@@ -338,9 +340,9 @@ const AddRecipe = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Easy">Easy</SelectItem>
-                            <SelectItem value="Medium">Medium</SelectItem>
-                            <SelectItem value="Hard">Hard</SelectItem>
+                            <SelectItem value="Easy">{t('pages.recipes.difficultyOptions.easy')}</SelectItem>
+                            <SelectItem value="Medium">{t('pages.recipes.difficultyOptions.medium')}</SelectItem>
+                            <SelectItem value="Hard">{t('pages.recipes.difficultyOptions.hard')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -362,8 +364,8 @@ const AddRecipe = () => {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>Instructions</CardTitle>
-                    <CardDescription>Step-by-step cooking instructions</CardDescription>
+                    <CardTitle>{t('pages.recipes.instructions')}</CardTitle>
+                    <CardDescription>{t('pages.recipes.instructionsDescription')}</CardDescription>
                   </div>
                   <Button type="button" onClick={addInstruction} size="sm">
                     <Plus className="h-4 w-4 mr-1" />
@@ -401,7 +403,7 @@ const AddRecipe = () => {
                     {ingredients.length > 0 && instruction.trim() && (
                       <div className="ml-8 p-3 bg-gray-50 rounded-lg">
                         <h4 className="text-sm font-medium text-gray-700 mb-2">
-                          Ingredients used in this step (optional):
+                          {t('pages.recipes.ingredientsUsedInThisStep')}
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                           {ingredients.map((ingredient) => {
@@ -431,8 +433,8 @@ const AddRecipe = () => {
             {/* Tags */}
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>Tags</CardTitle>
-                <CardDescription>Add tags to categorize your recipe</CardDescription>
+                <CardTitle>{t('pages.recipes.tags')}</CardTitle>
+                <CardDescription>{t('pages.recipes.tagsDescription')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex gap-2">
@@ -472,14 +474,14 @@ const AddRecipe = () => {
                 onClick={() => navigate('/recipes')}
                 className="flex-1"
               >
-                Cancel
+                {t('buttons.cancel')}
               </Button>
               <Button 
                 type="submit" 
                 className="flex-1 bg-green-600 hover:bg-green-700"
                 disabled={loading}
               >
-                {loading ? 'Saving...' : 'Save Recipe'}
+                {loading ? t('pages.recipes.saving') : t('pages.recipes.saveRecipe')}
               </Button>
             </div>
           </form>

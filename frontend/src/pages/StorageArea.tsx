@@ -16,9 +16,11 @@ import { itemService } from '@/services/itemService';
 import { format } from 'date-fns';
 import { Unit } from '@/types/enums';
 import { Item } from '@/services/itemService';
+import { useTranslation } from 'react-i18next';
 
 const StorageArea = () => {
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   
   // Store hooks
@@ -96,9 +98,9 @@ const StorageArea = () => {
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">🤔</div>
-          <p className="text-lg text-gray-600">Storage area not found</p>
+          <p className="text-lg text-gray-600">{t('pages.storageAreaNotFound')}</p>
           <Button onClick={() => navigate('/dashboard')} className="mt-4">
-            Go to Dashboard
+            {t('buttons.goToDashboard')}
           </Button>
         </div>
       </div>
@@ -165,8 +167,8 @@ const StorageArea = () => {
     if (!status || days === null) return null;
     
     const badges = {
-      'expired': <Badge variant="destructive" className="text-xs">Expired</Badge>,
-      'expiring-soon': <Badge variant="destructive" className="text-xs">Expires in {days}d</Badge>,
+      'expired': <Badge variant="destructive" className="text-xs">{t('pages.storageArea.expired')}</Badge>,
+      'expiring-soon': <Badge variant="destructive" className="text-xs">{t('pages.storageArea.expiresIn', { days })}</Badge>,
       'expiring-week': <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">Expires in {days}d</Badge>,
       'fresh': <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">Fresh ({days}d)</Badge>
     };
@@ -188,7 +190,7 @@ const StorageArea = () => {
       return (
         <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
           <CardContent className="p-4">
-            <div className="text-center text-gray-500">Loading item details...</div>
+            <div className="text-center text-gray-500">{t('common.loading')}</div>
           </CardContent>
         </Card>
       );
@@ -244,7 +246,7 @@ const StorageArea = () => {
               {isEditing ? (
                 <div className="space-y-3">
                   <div>
-                    <Label className="text-sm">Quantity</Label>
+                    <Label className="text-sm">{t('pages.storageArea.quantity')}</Label>
                     <QuantitySelector
                       item={item}
                       initialQuantity={editQuantity}
@@ -258,17 +260,17 @@ const StorageArea = () => {
                   </div>
                   
                   <div>
-                    <Label className="text-sm">Location</Label>
+                    <Label className="text-sm">{t('pages.storageArea.location')}</Label>
                     <Input
                       value={editLocation}
                       onChange={(e) => setEditLocation(e.target.value)}
-                      placeholder="e.g., Main shelf, Door"
+                      placeholder={t('pages.storageArea.locationPlaceholder')}
                       className="mt-1"
                     />
                   </div>
                   
                   <div>
-                    <Label className="text-sm">Expiration Date</Label>
+                    <Label className="text-sm">{t('pages.storageArea.expirationDate')}</Label>
                     <Input
                       type="date"
                       value={editExpiration}
@@ -280,11 +282,11 @@ const StorageArea = () => {
                   <div className="flex gap-2">
                     <Button size="sm" onClick={handleSave}>
                       <Save className="h-3 w-3 mr-1" />
-                      Save
+                      {t('buttons.save')}
                     </Button>
                     <Button variant="outline" size="sm" onClick={handleCancel}>
                       <X className="h-3 w-3 mr-1" />
-                      Cancel
+                      {t('buttons.cancel')}
                     </Button>
                   </div>
                 </div>
@@ -303,7 +305,7 @@ const StorageArea = () => {
                   <div className="flex items-center gap-4 text-xs text-gray-500">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
-                      <span>Added {format(new Date(storageItem.createdAt), 'MMM d')}</span>
+                      <span>{t('pages.storageArea.added')} {format(new Date(storageItem.createdAt), 'MMM d')}</span>
                     </div>
                     {storageItem.expirationDate && (
                       <div className="flex items-center gap-1">
@@ -363,7 +365,7 @@ const StorageArea = () => {
                   <h1 className="text-xl font-bold text-gray-900">{area.name}</h1>
                 </div>
                 <p className="text-sm text-gray-600">
-                  {storageItems.length} items
+                  {storageItems.length} {t('pages.storageArea.items')}
                 </p>
               </div>
             </div>
@@ -372,7 +374,7 @@ const StorageArea = () => {
               className="flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
-              Add Item
+              {t('pages.storageArea.addItem')}
             </Button>
           </div>
         </div>
@@ -383,14 +385,14 @@ const StorageArea = () => {
         {showAddForm && (
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
             <CardHeader>
-              <CardTitle className="text-lg">Add Item to {area.name}</CardTitle>
+              <CardTitle className="text-lg">{t('pages.storageArea.addItemTo', { name: area.name })}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label className="text-sm">Select Item</Label>
+                <Label className="text-sm">{t('pages.storageArea.selectItem')}</Label>
                 <ItemSelector
                   onItemSelect={handleItemSelect}
-                  placeholder="Search or add item..."
+                  placeholder={t('itemselector.searchOrAddItemPlaceholder')}
                   className="mt-1"
                 />
               </div>
@@ -398,7 +400,7 @@ const StorageArea = () => {
               {selectedItem && (
                 <>
                   <div>
-                    <Label className="text-sm">Quantity</Label>
+                    <Label className="text-sm">{t('pages.storageArea.quantity')}</Label>
                     <QuantitySelector
                       item={selectedItem}
                       initialQuantity={newItemQuantity}
@@ -409,7 +411,7 @@ const StorageArea = () => {
                   </div>
                   
                   <div>
-                    <Label className="text-sm">Location (optional)</Label>
+                    <Label className="text-sm">{t('pages.storageArea.location', { optional: t('common.optional') })}</Label>
                     <Input
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
@@ -419,7 +421,7 @@ const StorageArea = () => {
                   </div>
                   
                   <div>
-                    <Label className="text-sm">Expiration Date (optional)</Label>
+                    <Label className="text-sm">{t('pages.storageArea.expirationDate', { optional: t('common.optional') })}</Label>
                     <Input
                       type="date"
                       value={expirationDate}
@@ -430,14 +432,14 @@ const StorageArea = () => {
                   
                   <div className="flex gap-2">
                     <Button onClick={handleAddItem} className="flex-1" disabled={storedItemsLoading}>
-                      Add to {area.name}
+                      {t('pages.storageArea.addTo', { name: area.name })}
                     </Button>
                     <Button 
                       variant="outline" 
                       onClick={() => setShowAddForm(false)}
                       className="flex-1"
                     >
-                      Cancel
+                      {t('buttons.cancel')}
                     </Button>
                   </div>
                 </>
@@ -451,7 +453,7 @@ const StorageArea = () => {
           {storedItemsLoading ? (
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
               <CardContent className="p-8 text-center">
-                <div className="text-lg text-gray-600">Loading items...</div>
+                <div className="text-lg text-gray-600">{t('common.loading')}</div>
               </CardContent>
             </Card>
           ) : storageItems.length > 0 ? (
@@ -463,14 +465,14 @@ const StorageArea = () => {
               <CardContent className="p-8 text-center">
                 <div className="text-4xl mb-4">{area.emoji}</div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  Your {area.name.toLowerCase()} is empty
+                  {t('pages.storageArea.emptyArea', { name: area.name })}
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  Start adding items to track your inventory
+                  {t('pages.storageArea.startAddingItems')}
                 </p>
                 <Button onClick={() => setShowAddForm(true)}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Add First Item
+                  {t('pages.storageArea.addFirstItem')}
                 </Button>
               </CardContent>
             </Card>

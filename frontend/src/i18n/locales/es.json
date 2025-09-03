@@ -20,7 +20,8 @@
     "close": "Cerrar",
     "inviteNewMember": "Invitar Nuevo Miembro",
     "removeMember": "Remover Miembro",
-    "leaveHousehold": "Dejar Hogar"
+    "leaveHousehold": "Dejar Hogar",
+    "join": "Unirse"
   },
   "forms": {
     "name": "Nombre",
@@ -55,6 +56,20 @@
     "emoji": "Emoji (opcional)",
     "creating": "Creando...",
     "createArea": "Crear Área",
+    "goToDashboard": "Ir al Tablero",
+    "expired": "Vencido",
+    "expiresIn": "Vence en {{days}}d",
+    "quantity": "Cantidad",
+    "location": "Ubicación",
+    "expirationDate": "Fecha de Vencimiento",
+    "addItem": "Agregar Artículo",
+    "addItemTo": "Agregar Artículo a {{name}}",
+    "selectItem": "Seleccionar Artículo",
+    "addFirstItem": "Agregar Primer Artículo",
+    "startAddingItems": "Comience agregando artículos para rastrear su inventario",
+    "emptyArea": "Tu {{name}} está vacía",
+    "addTo": "Agregar a {{name}}",
+    "added": "Agregado",
     "types": {
       "fridge": "Refrigerador",
       "freezer": "Congelador",
@@ -62,6 +77,54 @@
       "kitchenCupboard": "Alacena de Cocina",
       "other": "Otro"
     }
+  },
+  "itemEditor": {
+    "editItem": "Editar Artículo",
+    "createNewItem": "Crear Nuevo Artículo",
+    "itemNamePlaceholder": "Nombre del artículo",
+    "defaultUnit": "Unidad Predeterminada",
+    "availableUnits": "Unidades Disponibles",
+    "addUnit": "Agregar unidad"
+  },
+  "itemSelector": {
+    "searchOrAddItemPlaceholder": "Buscar o agregar artículo...",
+    "quickAddWithDefaultSettings": "Agregar rápidamente con configuración predeterminada",
+    "createWithDetails": "Crear \"{{query}}\" con detalles",
+    "setCategoryUnitsAndOtherOptions": "Establecer categoría, unidades y otras opciones",
+    "add": "Agregar \"{{query}}\"",
+    "clickToLoadHouseholdItems": "Haz clic para cargar los artículos de tu hogar...",
+    "searchItemsPlaceholder": "Comienza a escribir para buscar artículos...",
+    "noItemsFound": "No se encontraron artículos. Usa las opciones de arriba para agregar uno nuevo."
+  },
+  "ingredientInput": {
+    "addIngredient": "Agregar Ingrediente",
+    "noIngredients": "Aún no se han agregado ingredientes",
+    "clickToAdd": "Haz clic en \"Agregar Ingrediente\" para comenzar",
+    "item": "Artículo",
+    "selectIngredient": "Seleccionar ingrediente...",
+    "quantityAndUnit": "Cantidad y Unidad",
+    "notes": "Notas (opcional)",
+    "notesPlaceholder": "ej., cortado en dados, picado fino..."
+  },
+  "addMealPlan": {
+    "addToMealPlan": "Agregar al Plan de Comidas",
+    "addRecipeToMealPlan": "Agregar Receta al Plan de Comidas",
+    "defaultServings": "Predeterminado: {{servings}} porciones",
+    "date": "Fecha",
+    "numberOfServings": "Número de porciones",
+    "addedDescription": "{{recipeName}} ha sido agregado a tu {{mealType}} el {{date}} para {{servings}} porción(es)."
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "markAllRead": "Marcar todas como leídas",
+    "clearAll": "Limpiar todo",
+    "noNotifications": "Sin notificaciones",
+    "allCaughtUp": "¡Estás al día! Revisa más tarde para actualizaciones."
+  },
+  "recipeSelector": {
+    "loadingRecipes": "Cargando recetas...",
+    "startTyping": "Comienza a escribir para buscar recetas...",
+    "noRecipesFound": "No se encontraron recetas que coincidan con \"{{query}}\"."
   },
   "messages": {
     "success": {
@@ -77,13 +140,19 @@
       "itemAddedToStorage": "Artículo agregado al almacenamiento y marcado como completado",
       "itemMarkedCompleted": "Artículo marcado como completado",
       "profileUpdated": "Tu perfil ha sido actualizado exitosamente.",
-      "languageChanged": "Idioma cambiado a"
+      "languageChanged": "Idioma cambiado a",
+      "recipeAdded": "¡Receta agregada!",
+      "recipeSaved": "Tu nueva receta ha sido guardada en tu colección.",
+      "recipeUpdated": "¡Receta actualizada!",
+      "recipeUpdatedSuccessfully": "Tu receta ha sido actualizada exitosamente.",
+      "success": "Éxito"
     },
     "error": {
       "somethingWentWrong": "Algo salió mal",
-      "failedToLoad": "Error al cargar datos",
+      "failedToLoad": "Error al cargar datos, por favor inténtalo de nuevo.",
       "invalidCredentials": "Credenciales inválidas",
-      "networkError": "Error de red",
+      "invalidInput": "Entrada Inválida",
+      "networkError": "Error de red ocurrido",
       "permissionDenied": "Permiso denegado",
       "validationError": "Error de Validación",
       "updateFailed": "Error de Actualización",
@@ -98,7 +167,29 @@
       "failedToAddToStorage": "Error al agregar artículo al almacenamiento",
       "failedToMarkCompleted": "Error al marcar artículo como completado",
       "selectItemFirst": "Por favor selecciona un artículo primero.",
-      "failedToAdd": "Error al agregar artículo. Inténtalo de nuevo."
+      "failedToAdd": "Error al agregar artículo. Inténtalo de nuevo.",
+      "invalidQuantity": "Cantidad inválida. Por favor ingrese una cantidad válida.",
+      "invalidItemName": "El nombre del artículo debe tener al menos 2 caracteres y solo puede contener caracteres alfanuméricos y espacios.",
+      "loginRequired": "Por favor inicia sesión para acceder a este recurso",
+      "failedToCreateItem": "Error al crear artículo",
+      "failedToUpdateItem": "Error al actualizar artículo",
+      "missingHouseholdOrUserInformation": "Falta información del hogar o usuario.",
+      "addAtLeastOneIngredient": "Por favor agrega al menos un ingrediente.",
+      "addAtLeastOneInstruction": "Por favor agrega al menos una instrucción.",
+      "failedToCreateRecipe": "Error al crear receta. Por favor inténtalo de nuevo.",
+      "recipeTitleRequired": "El título de la receta es requerido",
+      "descriptionRequired": "La descripción es requerida",
+      "failedToUpdateRecipe": "Error al actualizar receta. Por favor inténtalo de nuevo.",
+      "householdNameRequired": "El nombre del hogar es requerido",
+      "creationFailed": "Error de Creación",
+      "failedToCreateHousehold": "Error al crear hogar. Por favor inténtalo de nuevo.",
+      "invalidJoinCode": "Código de unión inválido",
+      "invalidJoinCodeDescription": "Por favor ingresa un código de unión válido de 6 caracteres.",
+      "joinFailed": "Error al Unirse",
+      "failedToJoinHousehold": "Error al unirse al hogar. Por favor inténtalo de nuevo.",
+      "failedToDeleteRecipe": "Error al eliminar receta. Por favor inténtalo de nuevo.",
+      "failedToUpdateFavoriteStatus": "Error al actualizar estado de favorito. Por favor inténtalo de nuevo.",
+      "storageAreaNotFound": "Área de almacenamiento no encontrada"
     },
     "confirmation": {
       "deleteItem": "¿Estás seguro de que quieres eliminar este artículo?",
@@ -203,11 +294,13 @@
       "mealPlanRemoved": "El plan de comida ha sido removido.",
       "generateShoppingListDialog": {
         "title": "Generar Lista de Compras",
+        "selectDateRange": "Seleccionar rango de fechas",
         "description": "Seleccionar rango de fechas para generar lista de compras desde planes de comida",
         "startDate": "Fecha de Inicio",
         "endDate": "Fecha de Fin",
         "selectStartDate": "Seleccionar fecha de inicio",
         "selectEndDate": "Seleccionar fecha de fin"
+      }
     }
   },
   "storageAreaManager": {
@@ -228,6 +321,7 @@
       "noRecipes": "No se encontraron recetas",
       "ingredients": "Ingredientes",
       "instructions": "Instrucciones",
+      "instructionsDescription": "Instrucciones de cocina paso a paso",
       "servings": "Porciones",
       "cookingTime": "Tiempo de Cocción",
       "search": "Buscar recetas, ingredientes o etiquetas...",
@@ -236,11 +330,49 @@
       "recipeSaved": "{{count}} recetas guardadas",
       "difficulty": "Dificultad",
       "tags": "Etiquetas",
-      "easy": "Fácil",
-      "medium": "Medio",
-      "hard": "Difícil",
+      "tagsDescription": "Agrega etiquetas para categorizar tu receta",
+      "addTagPlaceholder": "Agregar una etiqueta...",
+      "addTag": "Agregar Etiqueta",
       "recipeUpdated": "Estado de receta favorita actualizado",
-      "updateFailed": "Error al actualizar estado de favorita"
+      "updateFailed": "Error al actualizar estado de favorita",
+      "titlePlaceholder": "ej., Pollo Teriyaki",
+      "descriptionPlaceholder": "Breve descripción de tu receta...",
+      "difficultyOptions": {
+        "easy": "Fácil",
+        "medium": "Medio",
+        "hard": "Difícil"
+      },
+      "backToRecipes": "Volver a Recetas",
+      "basicInformation": "Información Básica",
+      "basicInformationDescription": "Detalles esenciales sobre tu receta",
+      "recipeTitle": "Título de la Receta",
+      "description": "Descripción",
+      "prepTime": "Tiempo de Preparación (min)",
+      "cookTime": "Tiempo de Cocción (min)",
+      "ingredientsUsedInThisStep": "Ingredientes usados en este paso (opcional)",
+      "saveRecipe": "Guardar Receta",
+      "saving": "Guardando...",
+      "loading": "Cargando...",
+      "loadingRecipe": "Cargando receta...",
+      "exitCooking": "Salir de Cocinar",
+      "cookingMode": "Modo de Cocción",
+      "complete": "Completo",
+      "currentStepCount": "Paso {{currentStep}} de {{instructionsLength}}",
+      "quickTimers": "Temporizadores Rápidos:",
+      "step": "Paso {{step}}",
+      "ingredientsForThisStep": "Ingredientes para este paso:",
+      "allIngredients": "Todos los Ingredientes",
+      "congratulations": "¡Felicitaciones!",
+      "congratulationsDescription": "¡Has completado cocinar {{recipeTitle}}!",
+      "recipeDeleted": "Receta eliminada",
+      "recipeRemovedFromCollection": "La receta ha sido removida de tu colección.",
+      "removedFromFavorites": "Removida de favoritas",
+      "addedToFavorites": "Agregada a favoritas",
+      "minTotal": "min total",
+      "startCooking": "Comenzar a Cocinar",
+      "addToMealPlan": "Agregar al Plan de Comidas",
+      "deleteRecipe": "Eliminar Receta",
+      "deleteWarning": "Esta acción no se puede deshacer."
     },
     "settings": {
       "title": "Configuración",
@@ -312,15 +444,32 @@
       "manageMembers": "Gestionar Miembros",
       "leaveHousehold": "Abandonar Hogar",
       "leaveHouseholdDescription": "¿Estás seguro de que quieres abandonar este hogar? Perderás el acceso a todos los elementos, recetas y planes de comida compartidos.",
+      "confirmationMemberRemoval": "¿Estás seguro de que quieres remover a {{name}} de este hogar?",
       "householdNotFound": "Hogar No Encontrado",
       "householdNotFoundDescription": "El hogar que buscas no existe.",
       "backToHouseholds": "Volver a Hogares",
       "you": "(Tú)",
+      "setupHousehold": "Configurar Tu Hogar",
+      "setupHouseholdDescription": "Elige si crear un nuevo hogar o unirte a uno existente",
+      "createNewHousehold": "Crear Nuevo Hogar",
+      "createNewHouseholdDescription": "Comenzar desde cero con tu propia cocina",
+      "joinExistingHousehold": "Unirse a Hogar Existente",
+      "joinExistingHouseholdDescription": "Usar un código de invitación para unirse",
+      "createYourHousehold": "Crear Tu Hogar",
+      "createYourHouseholdDescription": "Dale a tu hogar un nombre que todos reconozcan",
+      "householdName": "Nombre del Hogar",
+      "namePlaceholder": "ej., La Familia Smith, Compañeros de cuarto en Oak St",
+      "setupStorageAreas": "Configurar Áreas de Almacenamiento",
+      "setupStorageAreasDescription": "Selecciona las áreas de almacenamiento que tienes en tu cocina (opcional - puedes agregar más después)",
+      "joinHousehold": "Unirse a un Hogar",
+      "joinHouseholdDescription": "Ingresa el código de invitación compartido por tu miembro del hogar",
+      "inviteCodePlaceholder": "Ingresa código de 6 dígitos",
       "role": {
         "admin": "Administrador",
         "member": "Miembro"
       }
     },
+    "onboarding": {
     "index": {
       "title": "MyFridge",
       "subtitle": "Gestiona el inventario de alimentos de tu hogar, colabora en las compras y planifica comidas juntos. Reduce el desperdicio, ahorra tiempo y nunca olvides lo que hay en tu nevera.",
@@ -357,7 +506,8 @@
       "continueWithGoogle": "Continuar con Google",
       "signingIn": "Iniciando sesión...",
       "loading": "Cargando...",
-      "googleClientIdNotConfigured": "⚠️ ID de cliente de Google no configurado. Por favor establece VITE_GOOGLE_CLIENT_ID en tu archivo .env."
+      "googleClientIdNotConfigured": "⚠️ ID de cliente de Google no configurado. Por favor establece VITE_GOOGLE_CLIENT_ID en tu archivo .env.",
+      "completingAuthentication": "Completando autenticación..."
     }
   },
   "units": {
@@ -386,10 +536,13 @@
     "other": "Otro"
   },
   "common": {
+    "returnToHome": "Volver al Inicio",
     "loading": "Cargando...",
     "noData": "No hay datos disponibles",
     "searchPlaceholder": "Buscar...",
     "selectLanguage": "Seleccionar Idioma",
-    "description": "Comparte este mensaje con los miembros de tu hogar para invitarlos."
+    "description": "Comparte este mensaje con los miembros de tu hogar para invitarlos.",
+    "previous": "Anterior",
+    "next": "Siguiente"
   }
 }

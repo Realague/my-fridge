@@ -36,13 +36,9 @@ const Recipes = () => {
   const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
-    console.log('Recipes component - selectedHouseholdId:', selectedHouseholdId);
     if (selectedHouseholdId) {
-      console.log('Fetching recipes for household:', selectedHouseholdId);
       fetchRecipes(selectedHouseholdId);
       fetchFavoriteRecipes(selectedHouseholdId);
-    } else {
-      console.log('No selectedHouseholdId, skipping recipe fetch');
     }
   }, [selectedHouseholdId, fetchRecipes, fetchFavoriteRecipes]);
 

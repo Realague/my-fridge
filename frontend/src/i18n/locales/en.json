@@ -21,7 +21,8 @@
     "close": "Close",
     "inviteNewMember": "Invite New Member",
     "removeMember": "Remove Member",
-    "leaveHousehold": "Leave Household"
+    "leaveHousehold": "Leave Household",
+    "join": "Join"
   },
   "forms": {
     "name": "Name",
@@ -56,6 +57,20 @@
     "emoji": "Emoji (optional)",
     "creating": "Creating...",
     "createArea": "Create Area",
+    "goToDashboard": "Go to Dashboard",
+    "expired": "Expired",
+    "expiresIn": "Expires in {{days}}d",
+    "quantity": "Quantity",
+    "location": "Location",
+    "expirationDate": "Expiration Date",
+    "addItem": "Add Item",
+    "addItemTo": "Add Item to {{name}}",
+    "selectItem": "Select Item",
+    "addFirstItem": "Add First Item",
+    "startAddingItems": "Start adding items to track your inventory",
+    "emptyArea": "Your {{name}} is empty",
+    "addTo": "Add to {{name}}",
+    "added": "Added",
     "types": {
       "fridge": "Refrigerator",
       "freezer": "Freezer", 
@@ -83,6 +98,16 @@
     "defaultUnit": "Default Unit",
     "availableUnits": "Available Units",
     "addUnit": "Add unit"
+  },
+  "itemSelector": {
+    "searchOrAddItemPlaceholder": "Search or add item...",
+    "quickAddWithDefaultSettings": "Quick add with default settings",
+    "createWithDetails": "Create \"{{query}}\" with details",
+    "setCategoryUnitsAndOtherOptions": "Set category, units, and other options",
+    "add": "Add \"{{query}}\"",
+    "clickToLoadHouseholdItems": "Click to load your household items...",
+    "searchItemsPlaceholder": "Start typing to search items...",
+    "noItemsFound": "No items found. Use the options above to add a new one."
   },
   "ingredientInput": {
     "addIngredient": "Add Ingredient",
@@ -128,12 +153,18 @@
       "itemAddedToStorage": "Item added to storage and marked as completed",
       "itemMarkedCompleted": "Item marked as completed",
       "profileUpdated": "Your profile has been updated successfully.",
-      "languageChanged": "Language changed to"
+      "languageChanged": "Language changed to",
+      "recipeAdded": "Recipe added!",
+      "recipeSaved": "Your new recipe has been saved to your collection.",
+      "recipeUpdated": "Recipe updated!",
+      "recipeUpdatedSuccessfully": "Your recipe has been successfully updated.",
+      "success": "Success"
     },
     "error": {
       "somethingWentWrong": "Something went wrong",
-      "failedToLoad": "Failed to load data",
+      "failedToLoad": "Failed to load data, please try again.",
       "invalidCredentials": "Invalid credentials",
+      "invalidInput": "Invalid Input",
       "networkError": "Network error occurred",
       "permissionDenied": "Permission denied",
       "validationError": "Validation Error",
@@ -149,7 +180,29 @@
       "failedToAddToStorage": "Failed to add item to storage",
       "failedToMarkCompleted": "Failed to mark item as completed",
       "selectItemFirst": "Please select an item first.",
-      "failedToAdd": "Failed to add item. Please try again."
+      "failedToAdd": "Failed to add item. Please try again.",
+      "invalidQuantity": "Invalid quantity. Please enter a valid quantity.",
+      "invalidItemName": "Item name must be at least 2 characters and can only contain alphanumeric characters and spaces.",
+      "loginRequired": "Please log in to access this resource",
+      "failedToCreateItem": "Failed to create item",
+      "failedToUpdateItem": "Failed to update item",
+      "missingHouseholdOrUserInformation": "Missing household or user information.",
+      "addAtLeastOneIngredient": "Please add at least one ingredient.",
+      "addAtLeastOneInstruction": "Please add at least one instruction.",
+      "failedToCreateRecipe": "Failed to create recipe. Please try again.",
+      "recipeTitleRequired": "Recipe title is required",
+      "descriptionRequired": "Description is required",
+      "failedToUpdateRecipe": "Failed to update recipe. Please try again.",
+      "householdNameRequired": "Household name is required",
+      "creationFailed": "Creation Failed",
+      "failedToCreateHousehold": "Failed to create household. Please try again.",
+      "invalidJoinCode": "Invalid join code",
+      "invalidJoinCodeDescription": "Please enter a valid 6-character join code.",
+      "joinFailed": "Join Failed",
+      "failedToJoinHousehold": "Failed to join household. Please try again.",
+      "failedToDeleteRecipe": "Failed to delete recipe. Please try again.",
+      "failedToUpdateFavoriteStatus": "Failed to update favorite status. Please try again.",
+      "storageAreaNotFound": "Storage area not found"
     },
     "confirmation": {
       "deleteItem": "Are you sure you want to delete this item?",
@@ -254,6 +307,7 @@
       "mealPlanRemoved": "The meal plan has been removed.",
       "generateShoppingListDialog": {
         "title": "Generate Shopping List",
+        "selectDateRange": "Select date range",
         "description": "Select date range to generate shopping list from meal plans",
         "startDate": "Start Date",
         "endDate": "End Date",
@@ -267,6 +321,7 @@
       "noRecipes": "No recipes found",
       "ingredients": "Ingredients",
       "instructions": "Instructions",
+      "instructionsDescription": "Step-by-step cooking instructions",
       "servings": "Servings",
       "cookingTime": "Cooking Time",
       "search": "Search recipes, ingredients, or tags...",
@@ -275,11 +330,49 @@
       "recipeSaved": "{{count}} recipes saved",
       "difficulty": "Difficulty",
       "tags": "Tags",
-      "easy": "Easy",
-      "medium": "Medium",
-      "hard": "Hard",
+      "tagsDescription": "Add tags to categorize your recipe",
+      "addTagPlaceholder": "Add a tag...",
+      "addTag": "Add Tag",
       "recipeUpdated": "Recipe favorite status updated",
-      "updateFailed": "Failed to update favorite status"
+      "updateFailed": "Failed to update favorite status",
+      "titlePlaceholder": "e.g., Chicken Teriyaki",
+      "descriptionPlaceholder": "Brief description of your recipe...",
+      "difficultyOptions": {
+        "easy": "Easy",
+        "medium": "Medium",
+        "hard": "Hard"
+      },
+      "backToRecipes": "Back to Recipes",
+      "basicInformation": "Basic Information",
+      "basicInformationDescription": "Essential details about your recipe",
+      "recipeTitle": "Recipe Title",
+      "description": "Description",
+      "prepTime": "Prep Time (min)",
+      "cookTime": "Cook Time (min)",
+      "ingredientsUsedInThisStep": "Ingredients used in this step (optional)",
+      "saveRecipe": "Save Recipe",
+      "saving": "Saving...",
+      "loading": "Loading...",
+      "loadingRecipe": "Loading recipe...",
+      "exitCooking": "Exit Cooking",
+      "cookingMode": "Cooking Mode",
+      "complete": "Complete",
+      "currentStepCount": "Step {{currentStep}} of {{instructionsLength}}",
+      "quickTimers": "Quick Timers:",
+      "step": "Step {{step}}",
+      "ingredientsForThisStep": "Ingredients for this step:",
+      "allIngredients": "All Ingredients",
+      "congratulations": "Congratulations!",
+      "congratulationsDescription": "You've completed cooking {{recipeTitle}}!",
+      "recipeDeleted": "Recipe deleted",
+      "recipeRemovedFromCollection": "The recipe has been removed from your collection.",
+      "removedFromFavorites": "Removed from favorites",
+      "addedToFavorites": "Added to favorites",
+      "minTotal": "min total",
+      "startCooking": "Start Cooking",
+      "addToMealPlan": "Add to Meal Plan",
+      "deleteRecipe": "Delete Recipe",
+      "deleteWarning": "This action cannot be undone."
     },
     "settings": {
       "title": "Settings",
@@ -351,52 +444,71 @@
       "manageMembers": "Manage Members",
       "leaveHousehold": "Leave Household",
       "leaveHouseholdDescription": "Are you sure you want to leave this household? You will lose access to all shared items, recipes, and meal plans.",
+      "confirmationMemberRemoval": "Are you sure you want to remove {{name}} from this household?",
       "householdNotFound": "Household Not Found",
       "householdNotFoundDescription": "The household you're looking for doesn't exist.",
       "backToHouseholds": "Back to Households",
       "you": "(You)",
+      "setupHousehold": "Set Up Your Household",
+      "setupHouseholdDescription": "Choose whether to create a new household or join an existing one",
+      "createNewHousehold": "Create New Household",
+      "createNewHouseholdDescription": "Start fresh with your own kitchen",
+      "joinExistingHousehold": "Join Existing Household",
+      "joinExistingHouseholdDescription": "Use an invite code to join",
+      "createYourHousehold": "Create Your Household",
+      "createYourHouseholdDescription": "Give your household a name that everyone will recognize",
+      "householdName": "Household Name",
+      "namePlaceholder": "e.g., The Smith Family, Roommates at Oak St",
+      "setupStorageAreas": "Set Up Storage Areas",
+      "setupStorageAreasDescription": "Select the storage areas you have in your kitchen (optional - you can add more later)",
+      "joinHousehold": "Join a Household",
+      "joinHouseholdDescription": "Enter the invite code shared by your household member",
+      "inviteCodePlaceholder": "Enter 6-digit code",
       "role": {
         "admin": "Admin",
         "member": "Member"
       }
     },
-    "index": {
-      "title": "MyFridge",
-      "subtitle": "Manage your household food inventory, collaborate on shopping, and plan meals together. Reduce waste, save time, and never forget what's in your fridge again.",
-      "getStarted": "Get Started",
-      "seeDemo": "See Demo",
-      "features": {
-        "householdSharing": "Household Sharing",
-        "householdSharingDescription": "Invite family members and roommates to collaborate on your shared kitchen inventory.",
-        "smartInventory": "Smart Inventory",
-        "smartInventoryDescription": "Track what's in your fridge, freezer, and pantry with expiry dates and low-stock alerts.",
-        "shoppingLists": "Shopping Lists",
-        "shoppingListsDescription": "Generate shopping lists automatically from meal plans or add items manually.",
-        "mealPlanning": "Meal Planning",
-        "mealPlanningDescription": "Plan weekly meals with your saved recipes and automatically check your inventory."
+    "onboarding": {
+      "index": {
+        "title": "MyFridge",
+        "subtitle": "Manage your household food inventory, collaborate on shopping, and plan meals together. Reduce waste, save time, and never forget what's in your fridge again.",
+        "getStarted": "Get Started",
+        "seeDemo": "See Demo",
+        "features": {
+          "householdSharing": "Household Sharing",
+          "householdSharingDescription": "Invite family members and roommates to collaborate on your shared kitchen inventory.",
+          "smartInventory": "Smart Inventory",
+          "smartInventoryDescription": "Track what's in your fridge, freezer, and pantry with expiry dates and low-stock alerts.",
+          "shoppingLists": "Shopping Lists",
+          "shoppingListsDescription": "Generate shopping lists automatically from meal plans or add items manually.",
+          "mealPlanning": "Meal Planning",
+          "mealPlanningDescription": "Plan weekly meals with your saved recipes and automatically check your inventory."
+        },
+        "demoSection": {
+          "title": "See MyFridge in Action",
+          "trackInventory": "Track Inventory",
+          "trackInventoryDescription": "See what's in your fridge, freezer, and pantry at a glance",
+          "planTogether": "Plan Together",
+          "planTogetherDescription": "Collaborate with household members on meal planning",
+          "shopSmart": "Shop Smart",
+          "shopSmartDescription": "Auto-generate shopping lists from your meal plans"
+        },
+        "footer": "© 2025 MyFridge. Built with love for better food management."
       },
-      "demoSection": {
-        "title": "See MyFridge in Action",
-        "trackInventory": "Track Inventory",
-        "trackInventoryDescription": "See what's in your fridge, freezer, and pantry at a glance",
-        "planTogether": "Plan Together",
-        "planTogetherDescription": "Collaborate with household members on meal planning",
-        "shopSmart": "Shop Smart",
-        "shopSmartDescription": "Auto-generate shopping lists from your meal plans"
-      },
-      "footer": "© 2025 MyFridge. Built with love for better food management."
-    },
-    "auth": {
-      "noHouseholdSelected": "No Household Selected",
-      "selectHouseholdFirst": "Please select a household first to view and manage your",
-      "goToHouseholdSettings": "Go to Household Settings",
-      "backToHome": "Back to Home",
-      "welcomeToMyFridge": "Welcome to MyFridge",
-      "signInDescription": "Sign in to start managing your household food inventory",
-      "continueWithGoogle": "Continue with Google",
-      "signingIn": "Signing in...",
-      "loading": "Loading...",
-      "googleClientIdNotConfigured": "⚠️ Google Client ID not configured. Please set VITE_GOOGLE_CLIENT_ID in your .env file."
+      "auth": {
+        "noHouseholdSelected": "No Household Selected",
+        "selectHouseholdFirst": "Please select a household first to view and manage your",
+        "goToHouseholdSettings": "Go to Household Settings",
+        "backToHome": "Back to Home",
+        "welcomeToMyFridge": "Welcome to MyFridge",
+        "signInDescription": "Sign in to start managing your household food inventory",
+        "continueWithGoogle": "Continue with Google",
+        "signingIn": "Signing in...",
+        "loading": "Loading...",
+        "googleClientIdNotConfigured": "⚠️ Google Client ID not configured. Please set VITE_GOOGLE_CLIENT_ID in your .env file.",
+        "completingAuthentication": "Completing authentication..."
+      }
     }
   },
   "units": {
@@ -425,10 +537,13 @@
     "other": "Other"
   },
   "common": {
+    "returnToHome": "Return to Home",
     "loading": "Loading...",
     "noData": "No data available",
     "searchPlaceholder": "Search...",
     "selectLanguage": "Select Language",
-    "description": "Share this message with your household members to invite them."
+    "description": "Share this message with your household members to invite them.",
+    "previous": "Previous",
+    "next": "Next"
   }
 }

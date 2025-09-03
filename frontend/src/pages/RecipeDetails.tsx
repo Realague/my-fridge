@@ -5,20 +5,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, Plus, ChefHat } from 'lucide-react';
-import BottomNavigation from '@/components/BottomNavigation';
+import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, ChefHat } from 'lucide-react';
 import { AddMealPlanDialog } from '@/components/AddMealPlanDialog';
 import { useRecipeStore } from '@/stores/recipeStore';
-import { useShoppingStore } from '@/stores/shoppingStore';
-import { useHouseholdStore } from '@/stores/householdStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 const RecipeDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+  const { t } = useTranslation();
+
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
   
@@ -68,7 +67,7 @@ const RecipeDetails = () => {
                 className="text-gray-600"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
+                {t('common.back')}
               </Button>
               <div className="flex gap-2">
                 <Skeleton className="h-8 w-8" />
@@ -92,7 +91,7 @@ const RecipeDetails = () => {
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Recipe not found</h1>
           <Button onClick={() => navigate('/recipes')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Recipes
+            {t('pages.recipes.backToRecipes')}
           </Button>
         </div>
       </div>
@@ -114,14 +113,14 @@ const RecipeDetails = () => {
     try {
       await deleteRecipe(selectedHouseholdId, recipe.id);
       toast({
-        title: "Recipe deleted",
-        description: "The recipe has been removed from your collection.",
+        title: t('pages.recipes.recipeDeleted'),
+        description: t('pages.recipes.recipeRemovedFromCollection'),
       });
       navigate('/recipes');
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to delete recipe.",
+        title: t('messages.error.somethingWentWrong'),
+        description: t('pages.recipes.failedToDeleteRecipe'),
         variant: "destructive",
       });
     }
@@ -133,13 +132,13 @@ const RecipeDetails = () => {
     try {
       await toggleFavorite(selectedHouseholdId, recipe.id);
       toast({
-        title: "Success",
-        description: recipe.isFavorite ? "Removed from favorites" : "Added to favorites",
+        title: t('messages.success.success'),
+        description: recipe.isFavorite ? t('pages.recipes.removedFromFavorites') : t('pages.recipes.addedToFavorites'),
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to update favorite status.",
+        title: t('messages.error.somethingWentWrong'),
+        description: t('pages.recipes.failedToUpdateFavoriteStatus'),
         variant: "destructive",
       });
     }
@@ -172,7 +171,7 @@ const RecipeDetails = () => {
               className="text-gray-600"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
+              {t('common.back')}
             </Button>
             <div className="flex gap-2">
               <Button
@@ -227,12 +226,12 @@ const RecipeDetails = () => {
               <div className="flex items-center gap-1 text-gray-600">
                 <Clock className="h-4 w-4" />
                 <span className="text-sm">
-                  {recipe.totalTime} min total
+                  {recipe.totalTime} {t('pages.recipes.minTotal')}
                 </span>
               </div>
               <div className="flex items-center gap-1 text-gray-600">
                 <Users className="h-4 w-4" />
-                <span className="text-sm">{recipe.servings} servings</span>
+                <span className="text-sm">{recipe.servings} {t('pages.recipes.servings')}</span>
               </div>
               <Badge className={getDifficultyColor(recipe.difficulty)}>
                 {recipe.difficulty}
@@ -255,11 +254,11 @@ const RecipeDetails = () => {
                 size="lg"
               >
                 <ChefHat className="h-5 w-5 mr-2" />
-                Start Cooking
+                {t('pages.recipes.startCooking')}
               </Button>
               <Button onClick={() => setShowMealPlanDialog(true)} variant="outline" className="w-full md:w-auto">
                 <Calendar className="h-4 w-4 mr-2" />
-                Add to Meal Plan
+                {t('pages.recipes.addToMealPlan')}
               </Button>
             </div>
           </CardHeader>
@@ -270,13 +269,13 @@ const RecipeDetails = () => {
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-green-600">{recipe.prepTime}m</div>
-              <div className="text-sm text-gray-600">Prep Time</div>
+              <div className="text-sm text-gray-600">{t('pages.recipes.prepTime')}</div>
             </CardContent>
           </Card>
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-orange-600">{recipe.cookTime}m</div>
-              <div className="text-sm text-gray-600">Cook Time</div>
+              <div className="text-sm text-gray-600">{t('pages.recipes.cookTime')}</div>
             </CardContent>
           </Card>
         </div>
@@ -284,7 +283,7 @@ const RecipeDetails = () => {
         {/* Ingredients */}
         <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
-            <CardTitle className="text-lg">Ingredients</CardTitle>
+            <CardTitle className="text-lg">{t('pages.recipes.ingredients')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-3">
@@ -331,11 +330,11 @@ const RecipeDetails = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-medium text-red-900">Delete Recipe</h3>
-                <p className="text-sm text-red-700">This action cannot be undone.</p>
+                <h3 className="font-medium text-red-900">{t('pages.recipes.deleteRecipe')}</h3>
+                <p className="text-sm text-red-700">{t('pages.recipes.deleteWarning')}</p>
               </div>
               <Button variant="destructive" onClick={handleDelete}>
-                Delete Recipe
+                {t('pages.recipes.deleteRecipe')}
               </Button>
             </div>
           </CardContent>

@@ -11,11 +11,7 @@ import { ItemEditor } from '@/components/ItemEditor';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { z } from 'zod';
-
-const itemNameSchema = z.string()
-  .trim()
-  .min(2, { message: "Item name must be at least 2 characters." })
-  .regex(/^[a-zA-Z ]+$/, { message: "Item name can only contain letters and spaces." });
+import { useTranslation } from 'react-i18next';
 
 interface ItemSelectorProps {
   onItemSelect: (item: Item | null) => void;
@@ -26,10 +22,11 @@ interface ItemSelectorProps {
 
 export const ItemSelector = ({ 
   onItemSelect, 
-  placeholder = "Search or add item...", 
+  placeholder = t('itemSelector.searchOrAddItemPlaceholder'), 
   className,
   selectedItem = null 
 }: ItemSelectorProps) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [editingItem, setEditingItem] = useState<Item | null>(null);
@@ -45,6 +42,11 @@ export const ItemSelector = ({
   const { selectedHouseholdId } = useHouseholdStore();
   const userRef = useRef(user);
   const isAuthenticatedRef = useRef(isAuthenticated);
+
+  const itemNameSchema = z.string()
+  .trim()
+  .min(2, { message: t('messages.error.invalidItemName') })
+  .regex(/^[a-zA-Z0-9 ]+$/, { message: t('messages.error.invalidItemName') });
 
   // Keep refs updated
   useEffect(() => {
@@ -77,13 +79,10 @@ export const ItemSelector = ({
       console.warn('ItemSelector: No Google token found, skipping household items load');
       return;
     }
-    
-    console.log('ItemSelector: Loading household items on demand for household:', selectedHouseholdId);
 
     try {
       setApiLoading(true);
       const items = await itemService.getItemsByHousehold(selectedHouseholdId);
-      console.log('ItemSelector: Loaded household items:', items.length);
       setHouseholdItems(items);
       setApiResults(items);
       householdItemsRef.current = items;
@@ -92,9 +91,9 @@ export const ItemSelector = ({
       console.error('ItemSelector: Failed to load household items:', error);
       // Check if it's an auth error
       if (error instanceof Error && error.message.includes('Authentication')) {
-        toast.error('Please log in again to access items');
+        toast.error(t('messages.error.loginRequired'));
       } else {
-        toast.error('Failed to load items. Please try again.');
+        toast.error(t('messages.error.failedToLoad'));
       }
       setHouseholdItems([]);
       setApiResults([]);
@@ -137,21 +136,17 @@ export const ItemSelector = ({
           const token = localStorage.getItem('google_token');
           if (!token) {
             console.warn('No Google token found, skipping search');
-            toast.error('Please log in to search items');
+            toast.error(t('messages.error.loginRequired'));
             return;
           }
-          
-          console.log('Using Google token for search:', token.substring(0, 50) + '...');
 
           setApiLoading(true);
           
           try {
-            console.log('Searching items with query:', query);
             const response = await itemService.searchItems({
               search: query,
               limit: 10,
             });
-            console.log('Search results:', response.items.length, 'items');
             
             setApiResults(response.items);
             setLastSearchQuery(query);
@@ -160,9 +155,9 @@ export const ItemSelector = ({
             console.error('Failed to search API items:', error);
             // Check if it's an auth error
             if (error instanceof Error && error.message.includes('Authentication')) {
-              toast.error('Please log in again to search items');
+              toast.error(t('messages.error.loginRequired'));
             } else {
-              toast.error('Failed to search items');
+              toast.error(t('messages.error.failedToLoad'));
             }
             setApiResults([]);
           } finally {
@@ -279,7 +274,7 @@ export const ItemSelector = ({
         onItemSelect(newApiItem);
         setQuery('');
         setIsOpen(false);
-        toast.success(`Added new item: "${validationResult.data}"`);
+        toast.success(t('messages.success.itemAdded', { name: validationResult.data }));
         // Refresh the household items cache
         await refreshHouseholdItems();
         return;
@@ -288,7 +283,7 @@ export const ItemSelector = ({
       toast.error('Please select a household first');
     } catch (error) {
       console.error('Failed to create item:', error);
-      toast.error('Failed to create item');
+      toast.error(t('messages.error.failedToCreateItem'));
     }
   };
 
@@ -325,14 +320,14 @@ export const ItemSelector = ({
           defaultUnit: updates.defaultUnit,
           availableUnits: updates.availableUnits,
         }, selectedHouseholdId);
-        toast.success('Item updated successfully');
+        toast.success(t('messages.success.itemUpdated'));
         // Refresh the household items cache
         await refreshHouseholdItems();
       }
       setEditingItem(null);
     } catch (error) {
       console.error('Failed to update item:', error);
-      toast.error('Failed to update item');
+      toast.error(t('messages.error.failedToUpdateItem'));
     }
   };
 
@@ -359,16 +354,16 @@ export const ItemSelector = ({
         onItemSelect(newApiItem);
         setQuery('');
         setCreatingNewItem(false);
-        toast.success(`Added new item: "${newName}"`);
+        toast.success(t('messages.success.itemAdded', { name: newName }));
         // Refresh the household items cache
         await refreshHouseholdItems();
         return;
       }
       
-      toast.error('Please select a household first');
+      toast.error(t('messages.error.selectHouseholdFirst'));
     } catch (error) {
       console.error('Failed to create item:', error);
-      toast.error('Failed to create item');
+      toast.error(t('messages.error.failedToCreateItem'));
     }
   };
 
@@ -487,8 +482,8 @@ export const ItemSelector = ({
               >
                 <Plus className="h-4 w-4 mr-2 text-green-600" />
                 <div>
-                  <div className="font-medium">Add "{query}"</div>
-                  <div className="text-xs text-gray-500">Quick add with default settings</div>
+                  <div className="font-medium">{t('itemSelector.add', { query })}</div>
+                  <div className="text-xs text-gray-500">{t('itemSelector.quickAddWithDefaultSettings')}</div>
                 </div>
               </Button>
               <Button
@@ -499,8 +494,8 @@ export const ItemSelector = ({
               >
                 <Edit className="h-4 w-4 mr-2 text-blue-600" />
                 <div>
-                  <div className="font-medium">Create "{query}" with details</div>
-                  <div className="text-xs text-gray-500">Set category, units, and other options</div>
+                  <div className="font-medium">{t('itemSelector.createWithDetails', { query })}</div>
+                  <div className="text-xs text-gray-500">{t('itemSelector.setCategoryUnitsAndOtherOptions')}</div>
                 </div>
               </Button>
             </div>
@@ -549,19 +544,19 @@ export const ItemSelector = ({
               className="p-4 text-center text-sm text-gray-500 bg-white cursor-pointer hover:bg-gray-50"
               onClick={() => loadHouseholdItemsOnDemand()}
             >
-              Click to load your household items...
+              {t('itemSelector.clickToLoadHouseholdItems')}
             </div>
           )}
           
           {filteredResults.length === 0 && !query.trim() && hasLoadedHouseholdItems && (
             <div className="p-4 text-center text-sm text-gray-500 bg-white">
-              Start typing to search items...
+              {t('itemSelector.searchItemsPlaceholder')}
             </div>
           )}
 
           {filteredResults.length === 0 && query.trim() && !apiLoading && (
             <div className="p-4 text-center text-sm text-gray-500 bg-white">
-              No items found. Use the options above to add a new one.
+              {t('itemSelector.noItemsFound')}
             </div>
           )}
         </div>,

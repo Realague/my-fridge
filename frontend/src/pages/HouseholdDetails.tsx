@@ -56,10 +56,10 @@ const HouseholdDetails = () => {
     return (
       <div className="min-h-screen bg-gray-50 pb-24 flex items-center justify-center">
         <div className="text-center">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Household Not Found</h3>
-          <p className="text-gray-600 mb-4">The household you're looking for doesn't exist.</p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('pages.household.householdNotFound')}</h3>
+          <p className="text-gray-600 mb-4">{t('pages.household.householdNotFoundDescription')}</p>
           <Button onClick={() => navigate('/household')}>
-            Back to Households
+            {t('pages.household.backToHouseholds')}
           </Button>
         </div>
       </div>
@@ -105,7 +105,7 @@ const HouseholdDetails = () => {
   const handleRemoveMember = async (memberId: string, memberName: string) => {
     if (!id) return;
     
-    const confirmed = window.confirm(`Are you sure you want to remove ${memberName} from this household?`);
+    const confirmed = window.confirm(t('pages.household.confirmationMemberRemoval', { name: memberName }));
     if (!confirmed) return;
     
     try {
@@ -124,7 +124,7 @@ const HouseholdDetails = () => {
             <Button variant="ghost" size="icon" onClick={() => navigate('/household')}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">Manage Household</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t('pages.household.manageHousehold')}</h1>
             <Button variant="ghost" size="icon">
               <UserPlus className="h-5 w-5" />
             </Button>
@@ -137,7 +137,7 @@ const HouseholdDetails = () => {
         <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle>{householdDetails?.name}</CardTitle>
-            <CardDescription>{members.length} members</CardDescription>
+            <CardDescription>{members.length} {t('pages.household.members')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <Button 
@@ -152,20 +152,20 @@ const HouseholdDetails = () => {
               <AlertDialogTrigger asChild>
                 <Button variant="outline" className="w-full touch-friendly text-red-600 border-red-200 hover:bg-red-50">
                   <LogOut className="h-4 w-4 mr-2" />
-                  Leave Household
+                  {t('pages.household.leaveHousehold')}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Leave Household</AlertDialogTitle>
+                  <AlertDialogTitle>{t('pages.household.leaveHousehold')}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to leave "{householdDetails.name}"? You will lose access to all shared items, recipes, and meal plans.
+                    {t('pages.household.leaveHouseholdDescription', { name: householdDetails.name })}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>{t('buttons.cancel')}</AlertDialogCancel>
                   <AlertDialogAction onClick={handleLeaveHousehold} className="bg-red-600 hover:bg-red-700">
-                    Leave Household
+                    {t('pages.household.leaveHousehold')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -178,7 +178,7 @@ const HouseholdDetails = () => {
 
         <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
-            <CardTitle>Manage Members</CardTitle>
+            <CardTitle>{t('pages.household.manageMembers')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {members.map((member) => (

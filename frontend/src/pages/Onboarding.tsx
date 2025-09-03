@@ -10,8 +10,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { StorageAreaOption, StorageAreaSelections } from '@/types/household';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { toast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 const Onboarding = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isAuthenticated, isLoading } = useAuthStore();
@@ -74,8 +76,8 @@ const Onboarding = () => {
       // Validate inputs
       if (!householdName.trim()) {
         toast({
-          title: "Invalid Input",
-          description: "Household name is required.",
+          title: t('messages.error.invalidInput'),
+          description: t('messages.error.householdNameRequired'),
           variant: "destructive",
         });
         return;
@@ -94,8 +96,8 @@ const Onboarding = () => {
     } catch (error) {
       console.error('Failed to create household:', error);
       toast({
-        title: "Creation Failed",
-        description: "Failed to create household. Please try again.",
+        title: t('messages.error.creationFailed'),
+        description: t('messages.error.failedToCreateHousehold'),
         variant: "destructive",
       });
     }
@@ -105,9 +107,9 @@ const Onboarding = () => {
     try {
       // Validate inputs
       if (!joinCode.trim() || joinCode.trim().length !== 6) {
-        toast({
-          title: "Invalid Join Code",
-          description: "Please enter a valid 6-character join code.",
+        toast({ 
+          title: t('messages.error.invalidJoinCode'),
+          description: t('messages.error.invalidJoinCodeDescription'),
           variant: "destructive",
         });
         return;
@@ -118,8 +120,8 @@ const Onboarding = () => {
     } catch (error) {
       console.error('Failed to join household:', error);
       toast({
-        title: "Join Failed",
-        description: "Failed to join household. Please check the code and try again.",
+        title: t('messages.error.joinFailed'),
+        description: t('messages.error.failedToJoinHousehold'),
         variant: "destructive",
       });
     }
@@ -134,9 +136,9 @@ const Onboarding = () => {
               <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-500 to-orange-500 rounded-2xl flex items-center justify-center">
                 <span className="text-2xl">🏠</span>
               </div>
-              <CardTitle className="text-2xl">Set Up Your Household</CardTitle>
+              <CardTitle className="text-2xl">{t('pages.household.setupHousehold')}</CardTitle>
               <CardDescription>
-                Choose whether to create a new household or join an existing one
+                {t('pages.household.setupHouseholdDescription')}
               </CardDescription>
             </CardHeader>
 
@@ -150,8 +152,8 @@ const Onboarding = () => {
                     <Plus className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className="font-semibold">Create New Household</div>
-                    <div className="text-sm opacity-90">Start fresh with your own kitchen</div>
+                    <div className="font-semibold">{t('pages.household.createNewHousehold')}</div>
+                    <div className="text-sm opacity-90">{t('pages.household.createNewHouseholdDescription')}</div>
                   </div>
                 </div>
               </Button>
@@ -166,8 +168,8 @@ const Onboarding = () => {
                     <Users className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
-                    <div className="font-semibold">Join Existing Household</div>
-                    <div className="text-sm opacity-75">Use an invite code to join</div>
+                    <div className="font-semibold">{t('pages.household.joinExistingHousehold')}</div>
+                    <div className="text-sm opacity-75">{t('pages.household.joinExistingHouseholdDescription')}</div>
                   </div>
                 </div>
               </Button>
@@ -181,18 +183,18 @@ const Onboarding = () => {
               <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-500 to-orange-500 rounded-2xl flex items-center justify-center">
                 <Plus className="h-8 w-8 text-white" />
               </div>
-              <CardTitle className="text-2xl">Create Your Household</CardTitle>
+              <CardTitle className="text-2xl">{t('pages.household.createYourHousehold')}</CardTitle>
               <CardDescription>
-                Give your household a name that everyone will recognize
+                {t('pages.household.createYourHouseholdDescription')}
               </CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="household-name">Household Name</Label>
+                <Label htmlFor="household-name">{t('pages.household.householdName')}</Label>
                 <Input
                   id="household-name"
-                  placeholder="e.g., The Smith Family, Roommates at Oak St"
+                  placeholder={t('pages.household.namePlaceholder')}
                   value={householdName}
                   onChange={(e) => setHouseholdName(e.target.value)}
                   className="h-12"
@@ -226,9 +228,9 @@ const Onboarding = () => {
               <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-500 to-orange-500 rounded-2xl flex items-center justify-center">
                 <span className="text-2xl">🏺</span>
               </div>
-              <CardTitle className="text-2xl">Set Up Storage Areas</CardTitle>
+              <CardTitle className="text-2xl">{t('pages.household.setupStorageAreas')}</CardTitle>
               <CardDescription>
-                Select the storage areas you have in your kitchen (optional - you can add more later)
+                {t('pages.household.setupStorageAreasDescription')}
               </CardDescription>
             </CardHeader>
 
@@ -264,7 +266,7 @@ const Onboarding = () => {
                   className="flex-1"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
+                  {t('buttons.back')}
                 </Button>
                 <Button
                   onClick={handleCreateHousehold}
@@ -283,18 +285,18 @@ const Onboarding = () => {
               <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center">
                 <Users className="h-8 w-8 text-white" />
               </div>
-              <CardTitle className="text-2xl">Join a Household</CardTitle>
+              <CardTitle className="text-2xl">{t('pages.household.joinHousehold')}</CardTitle>
               <CardDescription>
-                Enter the invite code shared by your household member
+                {t('pages.household.joinHouseholdDescription')}
               </CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="join-code">Invite Code</Label>
+                <Label htmlFor="join-code">{t('pages.household.inviteCode')}</Label>
                 <Input
                   id="join-code"
-                  placeholder="Enter 6-digit code"
+                  placeholder={t('pages.household.inviteCodePlaceholder')}
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value)}
                   className="h-12 text-center text-lg tracking-widest"
@@ -309,14 +311,14 @@ const Onboarding = () => {
                   className="flex-1"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
+                  {t('buttons.back')}
                 </Button>
                 <Button
                   onClick={handleJoinHousehold}
                   disabled={joinCode.length !== 6}
                   className="flex-1 bg-blue-600 hover:bg-blue-700"
                 >
-                  Join <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('buttons.join')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             </CardContent>

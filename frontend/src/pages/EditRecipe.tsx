@@ -18,6 +18,7 @@ import { RecipeDto, UpdateRecipeDto, CreateRecipeIngredientDto, RecipeDifficulty
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
 import { useToast } from '@/hooks/use-toast';
 import { useItemService } from '@/services/itemService';
+import { useTranslation } from 'react-i18next';
 
 interface RecipeFormData {
   title: string;
@@ -31,6 +32,7 @@ interface RecipeFormData {
 const EditRecipe = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
@@ -44,7 +46,6 @@ const EditRecipe = () => {
   // Fetch recipe on component mount
   useEffect(() => {
     if (id && selectedHouseholdId && (!recipe || recipe.id !== id)) {
-      console.log('Fetching recipe for edit:', id);
       fetchRecipeById(selectedHouseholdId, id);
     }
   }, [id, selectedHouseholdId, recipe, fetchRecipeById]);
@@ -102,7 +103,7 @@ const EditRecipe = () => {
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading recipe...</p>
+          <p className="text-gray-600">{t('pages.recipes.loading')}</p>
         </div>
       </div>
     );
@@ -119,7 +120,7 @@ const EditRecipe = () => {
           {error && <p className="text-red-600 mb-4">{error}</p>}
           <Button onClick={() => navigate('/recipes')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Recipes
+            {t('pages.recipes.backToRecipes')}
           </Button>
         </div>
       </div>
@@ -181,8 +182,8 @@ const EditRecipe = () => {
   const onSubmit = async (data: RecipeFormData) => {
     if (!selectedHouseholdId || !recipe?.id) {
       toast({
-        title: "Error",
-        description: "Missing household or recipe information.",
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.missingHouseholdOrRecipeInformation'),
         variant: "destructive",
       });
       return;
@@ -193,8 +194,8 @@ const EditRecipe = () => {
     
     if (validIngredients.length === 0) {
       toast({
-        title: "Error",
-        description: "Please add at least one ingredient.",
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.addAtLeastOneIngredient'),
         variant: "destructive",
       });
       return;
@@ -202,8 +203,8 @@ const EditRecipe = () => {
 
     if (filteredInstructions.length === 0) {
       toast({
-        title: "Error",
-        description: "Please add at least one instruction.",
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.addAtLeastOneInstruction'),
         variant: "destructive",
       });
       return;
@@ -226,16 +227,16 @@ const EditRecipe = () => {
       await updateRecipe(selectedHouseholdId, recipe.id, updatedRecipe);
       
       toast({
-        title: "Recipe updated!",
-        description: "Your recipe has been successfully updated.",
+        title: t('messages.success.recipeUpdated'),
+        description: t('messages.success.recipeUpdatedSuccessfully'),
       });
       
       navigate(`/recipes/${recipe.id}`);
     } catch (error) {
       console.error('Recipe update failed:', error);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update recipe. Please try again.",
+        title: t('messages.error.somethingWentWrong'),
+        description: error instanceof Error ? error.message : t('messages.error.failedToUpdateRecipe'),
         variant: "destructive",
       });
     }
@@ -253,7 +254,7 @@ const EditRecipe = () => {
               className="text-gray-600"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
+              {t('buttons.back')}
             </Button>
             <h1 className="text-xl font-bold text-gray-900">Edit Recipe</h1>
             <div className="w-20"></div>
@@ -267,8 +268,8 @@ const EditRecipe = () => {
             {/* Basic Info */}
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
-                <CardDescription>Essential details about your recipe</CardDescription>
+                <CardTitle>{t('pages.recipes.basicInformation')}</CardTitle>
+                <CardDescription>{t('pages.recipes.basicInformationDescription')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <FormField
@@ -277,9 +278,9 @@ const EditRecipe = () => {
                   rules={{ required: "Recipe title is required" }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Recipe Title</FormLabel>
+                      <FormLabel>{t('pages.recipes.recipeTitle')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Chicken Teriyaki" {...field} />
+                        <Input placeholder={t('pages.recipes.titlePlaceholder')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -292,10 +293,10 @@ const EditRecipe = () => {
                   rules={{ required: "Description is required" }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel>{t('pages.recipes.description')}</FormLabel>
                       <FormControl>
                         <Textarea 
-                          placeholder="Brief description of your recipe..."
+                          placeholder={t('pages.recipes.descriptionPlaceholder')}
                           className="min-h-[80px]"
                           {...field} 
                         />
@@ -311,7 +312,7 @@ const EditRecipe = () => {
                     name="prepTime"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Prep Time (min)</FormLabel>
+                        <FormLabel>{t('pages.recipes.prepTime')}</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
@@ -330,7 +331,7 @@ const EditRecipe = () => {
                     name="cookTime"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Cook Time (min)</FormLabel>
+                        <FormLabel>{t('pages.recipes.cookTime')}</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
@@ -349,7 +350,7 @@ const EditRecipe = () => {
                     name="servings"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Servings</FormLabel>
+                        <FormLabel>{t('pages.recipes.servings')}</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
@@ -368,7 +369,7 @@ const EditRecipe = () => {
                     name="difficulty"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Difficulty</FormLabel>
+                        <FormLabel>{t('pages.recipes.difficulty')}</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger>
@@ -376,9 +377,9 @@ const EditRecipe = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Easy">Easy</SelectItem>
-                            <SelectItem value="Medium">Medium</SelectItem>
-                            <SelectItem value="Hard">Hard</SelectItem>
+                            <SelectItem value="Easy">{t('pages.recipes.difficultyOptions.easy')}</SelectItem>
+                            <SelectItem value="Medium">{t('pages.recipes.difficultyOptions.medium')}</SelectItem>
+                            <SelectItem value="Hard">{t('pages.recipes.difficultyOptions.hard')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -400,12 +401,12 @@ const EditRecipe = () => {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>Instructions</CardTitle>
-                    <CardDescription>Step-by-step cooking instructions</CardDescription>
+                    <CardTitle>{t('pages.recipes.instructions')}</CardTitle>
+                    <CardDescription>{t('pages.recipes.instructionsDescription')}</CardDescription>
                   </div>
                   <Button type="button" onClick={addInstruction} size="sm">
                     <Plus className="h-4 w-4 mr-1" />
-                    Add
+                    {t('buttons.add')}
                   </Button>
                 </div>
               </CardHeader>
@@ -439,7 +440,7 @@ const EditRecipe = () => {
                     {ingredients.length > 0 && instruction.trim() && (
                       <div className="ml-8 p-3 bg-gray-50 rounded-lg">
                         <h4 className="text-sm font-medium text-gray-700 mb-2">
-                          Ingredients used in this step (optional):
+                          {t('pages.recipes.ingredientsUsedInThisStep')}
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                           {ingredients.map((ingredient) => {
@@ -471,19 +472,19 @@ const EditRecipe = () => {
             {/* Tags */}
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>Tags</CardTitle>
-                <CardDescription>Add tags to categorize your recipe</CardDescription>
+                <CardTitle>{t('pages.recipes.tags')}</CardTitle>
+                <CardDescription>{t('pages.recipes.tagsDescription')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Add a tag..."
+                    placeholder={t('pages.recipes.addTagPlaceholder')}
                     value={newTag}
                     onChange={(e) => setNewTag(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                     className="flex-1"
                   />
-                  <Button type="button" onClick={addTag}>Add Tag</Button>
+                  <Button type="button" onClick={addTag}>{t('pages.recipes.addTag')}</Button>
                 </div>
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
@@ -515,7 +516,7 @@ const EditRecipe = () => {
                 Cancel
               </Button>
               <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
-                Save Recipe
+                {t('pages.recipes.saveRecipe')}
               </Button>
             </div>
           </form>

@@ -58,9 +58,9 @@ export const AddItemCard = ({
 
     const quantitySchema = z.string()
       .trim()
-      .min(1, { message: "Quantity cannot be empty." })
+      .min(1, { message: t('messages.error.invalidQuantity') })
       .refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
-        message: "Quantity must be a positive number."
+        message: t('messages.error.invalidQuantity')
       });
 
     const validationResult = quantitySchema.safeParse(newItemQuantity);

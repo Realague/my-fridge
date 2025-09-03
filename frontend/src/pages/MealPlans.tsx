@@ -498,7 +498,7 @@ const MealPlans = () => {
                 <div className="space-y-4">
                   {viewingMealPlan.recipe?.description && (
                     <div>
-                      <h4 className="font-medium mb-2">Description</h4>
+                      <h4 className="font-medium mb-2">{t('pages.recipes.description')}</h4>
                       <p className="text-sm text-gray-600">{viewingMealPlan.recipe.description}</p>
                     </div>
                   )}
@@ -506,23 +506,23 @@ const MealPlans = () => {
                   {viewingMealPlan.recipe && (
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="font-medium">Prep Time:</span> {viewingMealPlan.recipe.prepTime} min
+                        <span className="font-medium">{t('pages.recipes.prepTime')}:</span> {viewingMealPlan.recipe.prepTime} min
                       </div>
                       <div>
-                        <span className="font-medium">Cook Time:</span> {viewingMealPlan.recipe.cookTime} min
+                        <span className="font-medium">{t('pages.recipes.cookTime')}:</span> {viewingMealPlan.recipe.cookTime} min
                       </div>
                       <div>
-                        <span className="font-medium">Difficulty:</span> {viewingMealPlan.recipe.difficulty}
+                        <span className="font-medium">{t('pages.recipes.difficulty')}:</span> {viewingMealPlan.recipe.difficulty}
                       </div>
                       <div>
-                        <span className="font-medium">Recipe Servings:</span> {viewingMealPlan.recipe.servings}
+                        <span className="font-medium">{t('pages.recipes.servings')}:</span> {viewingMealPlan.recipe.servings}
                       </div>
                     </div>
                   )}
                   
                   {viewingMealPlan.recipe?.tags && viewingMealPlan.recipe.tags.length > 0 && (
                     <div>
-                      <h4 className="font-medium mb-2">Tags</h4>
+                      <h4 className="font-medium mb-2">{t('pages.recipes.tags')}</h4>
                       <div className="flex flex-wrap gap-1">
                         {viewingMealPlan.recipe.tags.map((tag, index) => (
                           <Badge key={index} variant="secondary" className="text-xs">
@@ -564,7 +564,7 @@ const MealPlans = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Select Date Range
+                  {t('pages.mealPlans.generateShoppingListDialog.selectDateRange')}
                   {shoppingListDateRange.from && shoppingListDateRange.to && (
                     <span className="text-sm text-gray-600 ml-2">
                       ({format(shoppingListDateRange.from, 'MMM d')} - {format(shoppingListDateRange.to, 'MMM d')})
@@ -590,7 +590,7 @@ const MealPlans = () => {
                 disabled={!shoppingListDateRange.from || !shoppingListDateRange.to}
                 className="bg-green-600 hover:bg-green-700"
               >
-                Generate List
+                {t('pages.mealPlans.generateShoppingList')}
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -301,20 +301,19 @@
         "selectStartDate": "Seleccionar fecha de inicio",
         "selectEndDate": "Seleccionar fecha de fin"
       }
-    }
-  },
-  "storageAreaManager": {
-    "title": "Áreas de almacenamiento",
-    "addStorage": "Agregar almacenamiento",
-    "addNewStorageArea": "Agregar nueva área de almacenamiento",
-    "editStorageArea": "Editar área de almacenamiento",
-    "deleteStorageArea": "Eliminar área de almacenamiento",
-    "deleteConfirmation": "¿Estás seguro de que quieres eliminar \"{{name}}\"? Esto también eliminará todos los artículos almacenados en esta área.",
-    "updateStorageArea": "Actualizar área de almacenamiento",
-    "namePlaceholder": "Nombre del área de almacenamiento",
-    "emoji": "Emoji",
-    "pleaseEnterName": "Por favor ingrese un nombre para el área de almacenamiento"
-  },
+    },
+    "storageAreaManager": {
+      "title": "Áreas de almacenamiento",
+      "addStorage": "Agregar almacenamiento",
+      "addNewStorageArea": "Agregar nueva área de almacenamiento",
+      "editStorageArea": "Editar área de almacenamiento",
+      "deleteStorageArea": "Eliminar área de almacenamiento",
+      "deleteConfirmation": "¿Estás seguro de que quieres eliminar \"{{name}}\"? Esto también eliminará todos los artículos almacenados en esta área.",
+      "updateStorageArea": "Actualizar área de almacenamiento",
+      "namePlaceholder": "Nombre del área de almacenamiento",
+      "emoji": "Emoji",
+      "pleaseEnterName": "Por favor ingrese un nombre para el área de almacenamiento"
+    },
     "recipes": {
       "title": "Recetas",
       "addRecipe": "Agregar Receta",
@@ -470,6 +469,7 @@
       }
     },
     "onboarding": {
+    },
     "index": {
       "title": "MyFridge",
       "subtitle": "Gestiona el inventario de alimentos de tu hogar, colabora en las compras y planifica comidas juntos. Reduce el desperdicio, ahorra tiempo y nunca olvides lo que hay en tu nevera.",

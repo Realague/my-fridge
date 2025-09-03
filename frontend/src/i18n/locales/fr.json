@@ -301,20 +301,19 @@
         "selectStartDate": "Sélectionner la date de début",
         "selectEndDate": "Sélectionner la date de fin"
       }
-    }
-  },
-  "storageAreaManager": {
-    "title": "Zones de stockage",
-    "addStorage": "Ajouter stockage",
-    "addNewStorageArea": "Ajouter une nouvelle zone de stockage",
-    "editStorageArea": "Modifier la zone de stockage",
-    "deleteStorageArea": "Supprimer la zone de stockage",
-    "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer \"{{name}}\" ? Cela supprimera également tous les articles stockés dans cette zone.",
-    "updateStorageArea": "Mettre à jour la zone de stockage",
-    "namePlaceholder": "Nom de la zone de stockage",
-    "emoji": "Emoji",
-    "pleaseEnterName": "Veuillez saisir un nom pour la zone de stockage"
-  },
+    },
+    "storageAreaManager": {
+      "title": "Zones de stockage",
+      "addStorage": "Ajouter stockage",
+      "addNewStorageArea": "Ajouter une nouvelle zone de stockage",
+      "editStorageArea": "Modifier la zone de stockage",
+      "deleteStorageArea": "Supprimer la zone de stockage",
+      "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer \"{{name}}\" ? Cela supprimera également tous les articles stockés dans cette zone.",
+      "updateStorageArea": "Mettre à jour la zone de stockage",
+      "namePlaceholder": "Nom de la zone de stockage",
+      "emoji": "Emoji",
+      "pleaseEnterName": "Veuillez saisir un nom pour la zone de stockage"
+    },
     "recipes": {
       "title": "Recettes",
       "addRecipe": "Ajouter une Recette",
@@ -470,6 +469,7 @@
       }
     },
     "onboarding": {
+    },
     "index": {
       "title": "MyFridge",
       "subtitle": "Gérez l'inventaire alimentaire de votre foyer, collaborez sur les achats et planifiez les repas ensemble. Réduisez le gaspillage, gagnez du temps et n'oubliez plus jamais ce qui se trouve dans votre frigo.",

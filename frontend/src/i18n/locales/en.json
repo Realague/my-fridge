@@ -470,45 +470,45 @@
       }
     },
     "onboarding": {
-      "index": {
-        "title": "MyFridge",
-        "subtitle": "Manage your household food inventory, collaborate on shopping, and plan meals together. Reduce waste, save time, and never forget what's in your fridge again.",
-        "getStarted": "Get Started",
-        "seeDemo": "See Demo",
-        "features": {
-          "householdSharing": "Household Sharing",
-          "householdSharingDescription": "Invite family members and roommates to collaborate on your shared kitchen inventory.",
-          "smartInventory": "Smart Inventory",
-          "smartInventoryDescription": "Track what's in your fridge, freezer, and pantry with expiry dates and low-stock alerts.",
-          "shoppingLists": "Shopping Lists",
-          "shoppingListsDescription": "Generate shopping lists automatically from meal plans or add items manually.",
-          "mealPlanning": "Meal Planning",
-          "mealPlanningDescription": "Plan weekly meals with your saved recipes and automatically check your inventory."
-        },
-        "demoSection": {
-          "title": "See MyFridge in Action",
-          "trackInventory": "Track Inventory",
-          "trackInventoryDescription": "See what's in your fridge, freezer, and pantry at a glance",
-          "planTogether": "Plan Together",
-          "planTogetherDescription": "Collaborate with household members on meal planning",
-          "shopSmart": "Shop Smart",
-          "shopSmartDescription": "Auto-generate shopping lists from your meal plans"
-        },
-        "footer": "© 2025 MyFridge. Built with love for better food management."
+    },
+    "index": {
+      "title": "MyFridge",
+      "subtitle": "Manage your household food inventory, collaborate on shopping, and plan meals together. Reduce waste, save time, and never forget what's in your fridge again.",
+      "getStarted": "Get Started",
+      "seeDemo": "See Demo",
+      "features": {
+        "householdSharing": "Household Sharing",
+        "householdSharingDescription": "Invite family members and roommates to collaborate on your shared kitchen inventory.",
+        "smartInventory": "Smart Inventory",
+        "smartInventoryDescription": "Track what's in your fridge, freezer, and pantry with expiry dates and low-stock alerts.",
+        "shoppingLists": "Shopping Lists",
+        "shoppingListsDescription": "Generate shopping lists automatically from meal plans or add items manually.",
+        "mealPlanning": "Meal Planning",
+        "mealPlanningDescription": "Plan weekly meals with your saved recipes and automatically check your inventory."
       },
-      "auth": {
-        "noHouseholdSelected": "No Household Selected",
-        "selectHouseholdFirst": "Please select a household first to view and manage your",
-        "goToHouseholdSettings": "Go to Household Settings",
-        "backToHome": "Back to Home",
-        "welcomeToMyFridge": "Welcome to MyFridge",
-        "signInDescription": "Sign in to start managing your household food inventory",
-        "continueWithGoogle": "Continue with Google",
-        "signingIn": "Signing in...",
-        "loading": "Loading...",
-        "googleClientIdNotConfigured": "⚠️ Google Client ID not configured. Please set VITE_GOOGLE_CLIENT_ID in your .env file.",
-        "completingAuthentication": "Completing authentication..."
-      }
+      "demoSection": {
+        "title": "See MyFridge in Action",
+        "trackInventory": "Track Inventory",
+        "trackInventoryDescription": "See what's in your fridge, freezer, and pantry at a glance",
+        "planTogether": "Plan Together",
+        "planTogetherDescription": "Collaborate with household members on meal planning",
+        "shopSmart": "Shop Smart",
+        "shopSmartDescription": "Auto-generate shopping lists from your meal plans"
+      },
+      "footer": "© 2025 MyFridge. Built with love for better food management."
+    },
+    "auth": {
+      "noHouseholdSelected": "No Household Selected",
+      "selectHouseholdFirst": "Please select a household first to view and manage your",
+      "goToHouseholdSettings": "Go to Household Settings",
+      "backToHome": "Back to Home",
+      "welcomeToMyFridge": "Welcome to MyFridge",
+      "signInDescription": "Sign in to start managing your household food inventory",
+      "continueWithGoogle": "Continue with Google",
+      "signingIn": "Signing in...",
+      "loading": "Loading...",
+      "googleClientIdNotConfigured": "⚠️ Google Client ID not configured. Please set VITE_GOOGLE_CLIENT_ID in your .env file.",
+      "completingAuthentication": "Completing authentication..."
     }
   },
   "units": {

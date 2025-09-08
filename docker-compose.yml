@@ -33,7 +33,7 @@ services:
       DB_PASSWORD: postgres
       DB_NAME: my_fridge_db
       PORT: 3000
-      FRONTEND_URL: https://30fb01b8fdbc.ngrok-free.app/
+      FRONTEND_URL: https://30fb01b8fdbc.ngrok-free.app
     ports:
       - "3000:3000"
     depends_on:
@@ -51,7 +51,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      VITE_API_URL: https://500e330807c9.ngrok-free.app/
+      VITE_API_URL: https://500e330807c9.ngrok-free.app
     ports:
       - "8080:8080"
     volumes:

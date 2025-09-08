@@ -75,7 +75,7 @@
       "fridge": "Refrigerator",
       "freezer": "Freezer", 
       "pantry": "Pantry",
-      "kitchenCupboard": "Kitchen Cupboard",
+      "kitchen_cupboard": "Kitchen Cupboard",
       "other": "Other"
     }
   },
@@ -202,7 +202,8 @@
       "failedToJoinHousehold": "Failed to join household. Please try again.",
       "failedToDeleteRecipe": "Failed to delete recipe. Please try again.",
       "failedToUpdateFavoriteStatus": "Failed to update favorite status. Please try again.",
-      "storageAreaNotFound": "Storage area not found"
+      "storageAreaNotFound": "Storage area not found",
+      "couldNotCopyToken": "Could not copy token to clipboard."
     },
     "confirmation": {
       "deleteItem": "Are you sure you want to delete this item?",
@@ -313,7 +314,9 @@
         "endDate": "End Date",
         "selectStartDate": "Select start date",
         "selectEndDate": "Select end date"
-      }
+      },
+      "serving": "serving",
+      "servings": "servings"
     },
     "recipes": {
       "title": "Recipes",

@@ -3,13 +3,13 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
-import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useTranslation } from 'react-i18next';
 
 interface StorageArea {
   id: string;
   name: string;
   emoji: string;
+  type: string;
   itemCount: number;
   lowStockCount: number;
 }
@@ -34,7 +34,8 @@ const StorageAreaCard = ({ area, onClick }: StorageAreaCardProps) => {
               <span className="text-2xl">{area.emoji}</span>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">{t(`storageArea.types.${area.type}`)} {area.name}</h3>
+              <h3 className="font-semibold text-gray-900">{area.name}</h3>
+              <p className="text-sm text-gray-500">{t(`storageArea.types.${area.type}`)}</p>
               <p className="text-sm text-gray-600">
                 {area.itemCount} {area.itemCount === 1 ? t('storageArea.item') : t('storageArea.items')}
               </p>

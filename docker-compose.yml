@@ -51,7 +51,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      VITE_API_URL: https://2b14-2a01-cb10-8dc5-8e00-7e31-6dd7-fe4f-90f5.ngrok-free.app
+      VITE_API_URL: https://500e330807c9.ngrok-free.app/
     ports:
       - "8080:8080"
     depends_on:

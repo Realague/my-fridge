@@ -56,8 +56,8 @@ const Settings = () => {
       });
     } catch (err) {
       toast({
-        title: "Copy Failed",
-        description: "Could not copy token to clipboard.",
+        title: t('messages.error.copyFailed'),
+        description: t('messages.error.couldNotCopyToken'),
         variant: "destructive",
       });
     }
@@ -74,8 +74,8 @@ const Settings = () => {
   const handleSaveChanges = async () => {
     if (!firstName.trim() || !lastName.trim()) {
       toast({
-        title: "Validation Error",
-        description: "First name and last name are required.",
+        title: t('messages.error.validationError'),
+        description: t('messages.error.firstNameLastNameRequired'),
         variant: "destructive",
       });
       return;
@@ -86,13 +86,13 @@ const Settings = () => {
       await updateUser(firstName.trim(), lastName.trim());
       toast({
         title: t('messages.success.settingsSaved'),
-        description: "Your profile has been updated successfully.",
+        description: t('messages.success.profileUpdated'),
       });
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
-        title: "Update Failed",
-        description: error instanceof Error ? error.message : "Failed to update profile. Please try again.",
+        title: t('messages.error.updateFailed'),
+        description: error instanceof Error ? error.message : t('messages.error.failedToUpdateProfile'),
         variant: "destructive",
       });
     } finally {

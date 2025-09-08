@@ -74,7 +74,7 @@
       "fridge": "Réfrigérateur",
       "freezer": "Congélateur",
       "pantry": "Garde-manger",
-      "kitchenCupboard": "Placard de Cuisine",
+      "kitchen_cupboard": "Placard de Cuisine",
       "other": "Autre"
     }
   },
@@ -189,7 +189,8 @@
       "failedToJoinHousehold": "Échec de la connexion au foyer. Veuillez réessayer.",
       "failedToDeleteRecipe": "Échec de la suppression de recette. Veuillez réessayer.",
       "failedToUpdateFavoriteStatus": "Échec de la mise à jour du statut de favori. Veuillez réessayer.",
-      "storageAreaNotFound": "Zone de stockage non trouvée"
+      "storageAreaNotFound": "Zone de stockage non trouvée",
+      "couldNotCopyToken": "Impossible de copier le jeton dans le presse-papiers."
     },
     "confirmation": {
       "deleteItem": "Êtes-vous sûr de vouloir supprimer cet article ?",
@@ -300,7 +301,9 @@
         "endDate": "Date de Fin",
         "selectStartDate": "Sélectionner la date de début",
         "selectEndDate": "Sélectionner la date de fin"
-      }
+      },
+      "serving": "portion",
+      "servings": "portions"
     },
     "storageAreaManager": {
       "title": "Zones de stockage",

@@ -246,10 +246,6 @@ const MealPlans = () => {
     } : undefined
   }));
 
-  console.log('MealPlans - recipes:', recipes?.length);
-  console.log('MealPlans - convertedRecipes:', convertedRecipes?.length);
-  console.log('MealPlans - recipesLoading:', recipesLoading);
-
   // Show message if no household is selected
   if (!selectedHouseholdId) {
     return (
@@ -446,7 +442,7 @@ const MealPlans = () => {
                   <SelectContent>
                     {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
                       <SelectItem key={num} value={num.toString()}>
-                        {num} {num === 1 ? 'serving' : 'servings'}
+                        {num} {num === 1 ? t('pages.mealPlans.serving') : t('pages.mealPlans.servings')}
                       </SelectItem>
                     ))}
                   </SelectContent>

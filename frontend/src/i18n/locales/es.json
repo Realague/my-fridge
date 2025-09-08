@@ -74,7 +74,7 @@
       "fridge": "Refrigerador",
       "freezer": "Congelador",
       "pantry": "Despensa",
-      "kitchenCupboard": "Alacena de Cocina",
+      "kitchen_cupboard": "Alacena de Cocina",
       "other": "Otro"
     }
   },
@@ -189,7 +189,8 @@
       "failedToJoinHousehold": "Error al unirse al hogar. Por favor inténtalo de nuevo.",
       "failedToDeleteRecipe": "Error al eliminar receta. Por favor inténtalo de nuevo.",
       "failedToUpdateFavoriteStatus": "Error al actualizar estado de favorito. Por favor inténtalo de nuevo.",
-      "storageAreaNotFound": "Área de almacenamiento no encontrada"
+      "storageAreaNotFound": "Área de almacenamiento no encontrada",
+      "couldNotCopyToken": "No se pudo copiar el token al portapapeles."
     },
     "confirmation": {
       "deleteItem": "¿Estás seguro de que quieres eliminar este artículo?",
@@ -300,7 +301,9 @@
         "endDate": "Fecha de Fin",
         "selectStartDate": "Seleccionar fecha de inicio",
         "selectEndDate": "Seleccionar fecha de fin"
-      }
+      },
+      "serving": "porción",
+      "servings": "porciones"
     },
     "storageAreaManager": {
       "title": "Áreas de almacenamiento",

@@ -55,15 +55,6 @@ const Recipes = () => {
 
   const currentRecipes = activeTab === 'favorites' ? favoriteRecipes : recipes;
   
-  console.log('Recipes component state:', { 
-    recipes: recipes?.length || 0, 
-    favoriteRecipes: favoriteRecipes?.length || 0, 
-    activeTab, 
-    currentRecipes: currentRecipes?.length || 0,
-    loading,
-    error 
-  });
-  
   const filteredRecipes = (currentRecipes || []).filter(recipe => {
     const searchLower = searchQuery.toLowerCase();
     return recipe.title.toLowerCase().includes(searchLower) ||

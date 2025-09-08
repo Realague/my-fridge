@@ -219,7 +219,7 @@ const AddRecipe = () => {
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('pages.recipes.backToRecipes')}
             </Button>
-            <h1 className="text-xl font-bold text-gray-900">Add New Recipe</h1>
+            <h1 className="text-xl font-bold text-gray-900">{t('pages.recipes.addNewRecipe')}</h1>
             <div className="w-20"></div>
           </div>
         </div>
@@ -369,7 +369,7 @@ const AddRecipe = () => {
                   </div>
                   <Button type="button" onClick={addInstruction} size="sm">
                     <Plus className="h-4 w-4 mr-1" />
-                    Add
+                    {t('buttons.add')}
                   </Button>
                 </div>
               </CardHeader>
@@ -445,7 +445,7 @@ const AddRecipe = () => {
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                     className="flex-1"
                   />
-                  <Button type="button" onClick={addTag}>Add Tag</Button>
+                  <Button type="button" onClick={addTag}>{t('pages.recipes.addTag')}</Button>
                 </div>
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">

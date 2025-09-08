@@ -374,7 +374,8 @@
       "startCooking": "Commencer à Cuisiner",
       "addToMealPlan": "Ajouter au Plan de Repas",
       "deleteRecipe": "Supprimer la Recette",
-      "deleteWarning": "Cette action ne peut pas être annulée."
+      "deleteWarning": "Cette action ne peut pas être annulée.",
+      "addNewRecipe": "Ajouter une Nouvelle Recette"
     },
     "settings": {
       "title": "Paramètres",

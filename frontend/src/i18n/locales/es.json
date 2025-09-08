@@ -374,7 +374,8 @@
       "startCooking": "Comenzar a Cocinar",
       "addToMealPlan": "Agregar al Plan de Comidas",
       "deleteRecipe": "Eliminar Receta",
-      "deleteWarning": "Esta acción no se puede deshacer."
+      "deleteWarning": "Esta acción no se puede deshacer.",
+      "addNewRecipe": "Agregar Nueva Receta"
     },
     "settings": {
       "title": "Configuración",

@@ -375,7 +375,8 @@
       "startCooking": "Start Cooking",
       "addToMealPlan": "Add to Meal Plan",
       "deleteRecipe": "Delete Recipe",
-      "deleteWarning": "This action cannot be undone."
+      "deleteWarning": "This action cannot be undone.",
+      "addNewRecipe": "Add New Recipe"
     },
     "settings": {
       "title": "Settings",

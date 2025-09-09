@@ -504,7 +504,7 @@ export const ItemSelector = ({
                 >
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm truncate">{item.name}</div>
+                      <div className="font-medium text-sm truncate">{getItemDisplayName(item, t)}</div>
                       <div className="flex items-center gap-2">
                         <Badge className={getCategoryColor(item.category)}>
                           {item.category}

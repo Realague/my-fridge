@@ -1,5 +1,4 @@
 import { useApiWithAuth } from '@/hooks/useApiWithAuth';
-import { ItemCategory, Unit } from '@/types/enums';
 
 export interface Item {
   id: string;

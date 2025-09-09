@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { MealPlanService } from '../services/MealPlanService';
-import { CreateMealPlanDto, UpdateMealPlanDto, MealPlanQueryParams } from '../types/MealPlanDto';
+import { CreateMealPlanDto, UpdateMealPlanDto } from '../types/MealPlanDto';
 import { ApiResponse } from '../types/ApiResponse';
 import { ValidationError } from '../errors/CustomErrors';
 

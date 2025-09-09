@@ -1,5 +1,3 @@
-
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, ShoppingCart, Calendar, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';

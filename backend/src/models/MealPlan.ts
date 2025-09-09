@@ -2,7 +2,6 @@ import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
 import { Recipe } from './Recipe';
 import { Household } from './Household';
-import { User } from './User';
 
 // These are all the attributes in the MealPlan model
 interface MealPlanAttributes {

@@ -9,22 +9,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from "@/hooks/use-toast"
-import { getWeekDays, getMealPlansForDay, MealPlan } from '@/utils/mealPlanHelpers';
+import { getWeekDays, MealPlan } from '@/utils/mealPlanHelpers';
 import { useMealPlanStore } from '@/stores/mealPlanStore';
 import { useRecipeStore } from '@/stores/recipeStore';
-import { useHouseholdStore } from '@/stores/householdStore';
-import { RecipeListDto, RecipeDto } from '@/services/recipeService';
+import { RecipeDto } from '@/services/recipeService';
 import { RecipeSelector } from '@/components/RecipeSelector';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next';
-
-interface MealPlanForm {
-  date: Date | undefined;
-  mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  servings: number;
-  recipeId: string;
-}
 
 const MealPlans = () => {
   const { t } = useTranslation();
@@ -48,7 +40,7 @@ const MealPlans = () => {
     from: weekDays[0],
     to: weekDays[6]
   });
-  const { mealPlans, fetchMealPlans, fetchMealPlansByDateRange, createMealPlan, deleteMealPlan, generateShoppingList: generateShoppingListFromStore, loading: mealPlansLoading, savingMealPlan, deletingMealPlan } = useMealPlanStore();
+  const { mealPlans, fetchMealPlansByDateRange, createMealPlan, deleteMealPlan, generateShoppingList: generateShoppingListFromStore, loading: mealPlansLoading, savingMealPlan, deletingMealPlan } = useMealPlanStore();
   const { recipes, fetchRecipes, loading: recipesLoading } = useRecipeStore();
   const { toast } = useToast();
   const navigate = useNavigate();

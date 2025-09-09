@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { ItemService } from '../services/ItemService';
 import { CreateItemDto, UpdateItemDto, GetItemsQueryDto } from '../types/ItemDto';
-import { ItemCategory } from '../types/enums';
 
 export class ItemController {
   private itemService: ItemService;

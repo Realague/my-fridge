@@ -1,6 +1,5 @@
 import { ItemRepository } from '../repositories/ItemRepository';
 import { CreateItemDto, UpdateItemDto, GetItemsQueryDto, ItemDto } from '../types/ItemDto';
-import { ItemCategory } from '../types/enums';
 import { ApiResponse } from '../types/ApiResponse';
 import { Item } from '../models';
 

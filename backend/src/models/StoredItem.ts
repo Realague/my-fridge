@@ -2,7 +2,6 @@ import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
 import { Unit, UNITS } from '../types/enums';
 import { User } from './User';
-import { Household } from './Household';
 import { Item } from './Item';
 import { StorageArea } from './StorageArea';
 

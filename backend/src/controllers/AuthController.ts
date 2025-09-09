@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/AuthService';
-import { NotFoundError } from '../errors/CustomErrors';
 import { ApiResponse } from '../types/ApiResponse';
 import { 
   GoogleOAuthExchangeDto, 

@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Check, ChevronDown, Plus, Edit, X, Search, Loader2 } from 'lucide-react';
+import { ChevronDown, Plus, Edit, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
+import { getItemDisplayName } from '@/utils/itemUtils';
 
 interface ItemSelectorProps {
   onItemSelect: (item: Item | null) => void;
@@ -22,7 +23,7 @@ interface ItemSelectorProps {
 
 export const ItemSelector = ({ 
   onItemSelect, 
-  placeholder = t('itemSelector.searchOrAddItemPlaceholder'), 
+  placeholder, 
   className,
   selectedItem = null 
 }: ItemSelectorProps) => {
@@ -33,9 +34,7 @@ export const ItemSelector = ({
   const [creatingNewItem, setCreatingNewItem] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const [apiResults, setApiResults] = useState<Item[]>([]);
-  const [householdItems, setHouseholdItems] = useState<Item[]>([]);
   const [apiLoading, setApiLoading] = useState(false);
-  const [lastSearchQuery, setLastSearchQuery] = useState('');
   const [hasLoadedHouseholdItems, setHasLoadedHouseholdItems] = useState(false);
 
   const { user, isAuthenticated } = useAuthStore();
@@ -83,7 +82,6 @@ export const ItemSelector = ({
     try {
       setApiLoading(true);
       const items = await itemService.getItemsByHousehold(selectedHouseholdId);
-      setHouseholdItems(items);
       setApiResults(items);
       householdItemsRef.current = items;
       setHasLoadedHouseholdItems(true);
@@ -95,7 +93,6 @@ export const ItemSelector = ({
       } else {
         toast.error(t('messages.error.failedToLoad'));
       }
-      setHouseholdItems([]);
       setApiResults([]);
       householdItemsRef.current = [];
     } finally {
@@ -107,7 +104,6 @@ export const ItemSelector = ({
   useEffect(() => {
     setHasLoadedHouseholdItems(false);
     setApiResults([]);
-    setHouseholdItems([]);
     householdItemsRef.current = [];
   }, [selectedHouseholdId]);
 
@@ -149,7 +145,6 @@ export const ItemSelector = ({
             });
             
             setApiResults(response.items);
-            setLastSearchQuery(query);
             lastSearchQueryRef.current = query;
           } catch (error) {
             console.error('Failed to search API items:', error);
@@ -169,7 +164,6 @@ export const ItemSelector = ({
     } else {
       // When query is empty, show household items if available
       setApiResults(householdItemsRef.current);
-      setLastSearchQuery('');
       lastSearchQueryRef.current = '';
     }
 
@@ -299,7 +293,6 @@ export const ItemSelector = ({
     
     try {
       const items = await itemService.getItemsByHousehold(selectedHouseholdId);
-      setHouseholdItems(items);
       householdItemsRef.current = items;
       if (!query.trim()) {
         setApiResults(items);

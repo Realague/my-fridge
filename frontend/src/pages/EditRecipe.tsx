@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -7,14 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, Plus, X } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
-import { useHouseholdStore } from '@/stores/householdStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
-import { RecipeDto, UpdateRecipeDto, CreateRecipeIngredientDto, RecipeDifficulty } from '@/services/recipeService';
+import { UpdateRecipeDto } from '@/services/recipeService';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
 import { useToast } from '@/hooks/use-toast';
 import { useItemService } from '@/services/itemService';

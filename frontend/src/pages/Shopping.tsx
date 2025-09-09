@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, Check, GripVertical, Trash2, Users, Edit, Save, X, Filter, Package } from 'lucide-react';
+import { Check, GripVertical, Trash2, Users, Edit, Save, X, Filter, Package } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { AddItemCard } from '@/components/AddItemCard';
 import { QuantitySelector } from '@/components/QuantitySelector';
@@ -17,6 +17,7 @@ import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { getItemDisplayName } from '@/utils/itemUtils';
 
 const Shopping = () => {
   const { t } = useTranslation();
@@ -30,7 +31,6 @@ const Shopping = () => {
   const {
     items,
     loading,
-    error,
     fetchShoppingItems,
     createShoppingItem,
     updateShoppingItem,
@@ -261,7 +261,7 @@ const Shopping = () => {
   };
 
   const getItemName = (shoppingItem: ShoppingItem) => {
-    return shoppingItem.item?.name || 'Unknown Item';
+    return shoppingItem.item ? getItemDisplayName(shoppingItem.item, t) : 'Unknown Item';
   };
 
   const getItemCategory = (shoppingItem: ShoppingItem) => {

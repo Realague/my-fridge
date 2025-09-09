@@ -3,7 +3,6 @@ import { HouseholdService } from '../services/HouseholdService';
 import { NotFoundError } from '../errors/CustomErrors';
 import { ApiResponse } from '../types/ApiResponse';
 import { CreateHouseholdDto, UpdateHouseholdDto, JoinHouseholdDto, HouseholdQueryDto } from '../types/HouseholdDto';
-import { AuthService } from '../services/AuthService';
 
 export class HouseholdController {
   constructor(private householdService: HouseholdService) {}

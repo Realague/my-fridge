@@ -10,6 +10,8 @@ import recipeRoutes from './routes/recipes';
 import mealPlanRoutes from './routes/mealPlans';
 import { sequelize } from './models';
 import { executeSmartMigration } from './utils/migrationStrategy';
+import { ItemRepository } from './repositories/ItemRepository';
+import { ItemSeeder } from './seeders/defaultItems';
 
 // Load environment variables
 dotenv.config();
@@ -94,6 +96,20 @@ app.use('*', (req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
+// Seed database with default items if empty
+async function seedDatabaseIfNeeded(): Promise<void> {
+  try {
+    const itemRepository = new ItemRepository();
+    const itemSeeder = new ItemSeeder(itemRepository);
+    
+    console.log('🔍 Checking if database seeding is needed...');
+    await itemSeeder.seedBasicItems();
+  } catch (error) {
+    console.error('❌ Database seeding failed:', error);
+    throw error;
+  }
+}
+
 // Start server with automatic migrations
 async function startServer() {
   try {
@@ -106,6 +122,9 @@ async function startServer() {
     if (!result.success && result.errors.length > 0) {
       console.warn('⚠️ Migration warnings:', result.errors.join(', '));
     }
+    
+    // Seed database with default items if needed
+    await seedDatabaseIfNeeded();
     
     app.listen(PORT, () => {
       console.log(`🚀 Server is running on port ${PORT}`);

@@ -79,7 +79,6 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
 
       fetchStorageAreas: async (householdId: string) => {
         if (!householdId) {
-          console.log('fetchStorageAreas: No household ID provided');
           return;
         }
 
@@ -218,11 +217,6 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
             
             itemCount = storedItems.length;
             
-            // Debug logging
-            if (area.name.toLowerCase().includes('freezer')) {
-              console.log(`Freezer debug - Area ID: ${area.id}, Household ID: ${householdId}, Items:`, storedItems);
-            }
-            
             // Calculate low stock count (items expiring within 3 days or already expired)
             const now = new Date();
             lowStockCount = storedItems.filter(item => {
@@ -233,7 +227,7 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
             }).length;
           } catch (error) {
             // If there's an error accessing the stored items store, use default values
-            console.log('Could not access stored items for stats calculation:', error);
+            console.error('Could not access stored items for stats calculation:', error);
           }
           
           return {
@@ -322,7 +316,7 @@ export const useStorageAreasWithStats = (currentHouseholdId: string | null) => {
         }).length;
       } catch (error) {
         // If there's an error accessing the stored items store, use default values
-        console.log('Could not access stored items for stats calculation:', error);
+        console.error('Could not access stored items for stats calculation:', error);
       }
       
       return {

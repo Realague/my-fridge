@@ -62,7 +62,7 @@ export class StoredItemService {
       storageAreaId: storedItem.storageAreaId,
       quantity: Number(storedItem.quantity),
       unit: storedItem.unit,
-      expirationDate: new Date(storedItem.expirationDate!).toISOString().split('T')[0],
+      expirationDate: storedItem.expirationDate ? new Date(storedItem.expirationDate).toISOString().split('T')[0] : null,
       location: storedItem.location,
       householdId: storedItem.householdId,
       createdBy: storedItem.createdBy,

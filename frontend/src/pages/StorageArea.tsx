@@ -98,7 +98,7 @@ const StorageArea = () => {
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">🤔</div>
-          <p className="text-lg text-gray-600">{t('pages.storageAreaNotFound')}</p>
+          <p className="text-lg text-gray-600">{t('storageAreaNotFound')}</p>
           <Button onClick={() => navigate('/dashboard')} className="mt-4">
             {t('buttons.goToDashboard')}
           </Button>
@@ -167,7 +167,7 @@ const StorageArea = () => {
     if (!status || days === null) return null;
     
     const badges = {
-      'expired': <Badge variant="destructive" className="text-xs">{t('pages.storageArea.expired')}</Badge>,
+      'expired': <Badge variant="destructive" className="text-xs">{t('storageArea.expired')}</Badge>,
       'expiring-soon': <Badge variant="destructive" className="text-xs">{t('pages.storageArea.expiresIn', { days })}</Badge>,
       'expiring-week': <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">Expires in {days}d</Badge>,
       'fresh': <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">Fresh ({days}d)</Badge>
@@ -246,7 +246,7 @@ const StorageArea = () => {
               {isEditing ? (
                 <div className="space-y-3">
                   <div>
-                    <Label className="text-sm">{t('pages.storageArea.quantity')}</Label>
+                    <Label className="text-sm">{t('storageArea.quantity')}</Label>
                     <QuantitySelector
                       item={item}
                       initialQuantity={editQuantity}
@@ -260,17 +260,17 @@ const StorageArea = () => {
                   </div>
                   
                   <div>
-                    <Label className="text-sm">{t('pages.storageArea.location')}</Label>
+                    <Label className="text-sm">{t('storageArea.location')}</Label>
                     <Input
                       value={editLocation}
                       onChange={(e) => setEditLocation(e.target.value)}
-                      placeholder={t('pages.storageArea.locationPlaceholder')}
+                      placeholder={t('storageArea.locationPlaceholder')}
                       className="mt-1"
                     />
                   </div>
                   
                   <div>
-                    <Label className="text-sm">{t('pages.storageArea.expirationDate')}</Label>
+                    <Label className="text-sm">{t('storageArea.expirationDate')}</Label>
                     <Input
                       type="date"
                       value={editExpiration}
@@ -305,7 +305,7 @@ const StorageArea = () => {
                   <div className="flex items-center gap-4 text-xs text-gray-500">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
-                      <span>{t('pages.storageArea.added')} {format(new Date(storageItem.createdAt), 'MMM d')}</span>
+                      <span>{t('storageArea.added')} {format(new Date(storageItem.createdAt), 'MMM d')}</span>
                     </div>
                     {storageItem.expirationDate && (
                       <div className="flex items-center gap-1">
@@ -365,7 +365,7 @@ const StorageArea = () => {
                   <h1 className="text-xl font-bold text-gray-900">{area.name}</h1>
                 </div>
                 <p className="text-sm text-gray-600">
-                  {storageItems.length} {t('pages.storageArea.items')}
+                  {storageItems.length} {t('storageArea.items')}
                 </p>
               </div>
             </div>
@@ -374,7 +374,7 @@ const StorageArea = () => {
               className="flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
-              {t('pages.storageArea.addItem')}
+              {t('storageArea.addItem')}
             </Button>
           </div>
         </div>
@@ -385,7 +385,7 @@ const StorageArea = () => {
         {showAddForm && (
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
             <CardHeader>
-              <CardTitle className="text-lg">{t('pages.storageArea.addItemTo', { name: area.name })}</CardTitle>
+              <CardTitle className="text-lg">{t('storageArea.addItemTo', { name: area.name })}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -411,7 +411,7 @@ const StorageArea = () => {
                   </div>
                   
                   <div>
-                    <Label className="text-sm">{t('pages.storageArea.location', { optional: t('common.optional') })}</Label>
+                    <Label className="text-sm">{t('storageArea.location', { optional: t('common.optional') })}</Label>
                     <Input
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}

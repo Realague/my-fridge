@@ -22,7 +22,6 @@ const RecipeCookingMode = () => {
   // Fetch the recipe when component mounts
   useEffect(() => {
     if (selectedHouseholdId && id && (!recipe || recipe.id !== id)) {
-      console.log('Fetching recipe for cooking mode:', id);
       fetchRecipeById(selectedHouseholdId, id);
     }
   }, [selectedHouseholdId, id, recipe, fetchRecipeById]);

@@ -380,7 +380,7 @@ const AddRecipe = () => {
                         {index + 1}
                       </div>
                       <Textarea
-                        placeholder={`Step ${index + 1} instructions...`}
+                        placeholder={t('pages.recipes.stepInstructionsPlaceholder', { step: index + 1 })}
                         value={instruction}
                         onChange={(e) => updateInstruction(index, e.target.value)}
                         className="flex-1 min-h-[60px]"
@@ -438,7 +438,7 @@ const AddRecipe = () => {
               <CardContent className="space-y-4">
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Add a tag..."
+                    placeholder={t('pages.recipes.addTagPlaceholder')}
                     value={newTag}
                     onChange={(e) => setNewTag(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}

@@ -22,8 +22,6 @@ export const useApiWithAuth = () => {
 
     // Check if token is expired before making the call
     if (checkTokenExpiry()) {
-      console.log('Token expired, attempting refresh...');
-      
       // Try to refresh the token
       const refreshSuccess = await refreshToken();
       
@@ -78,8 +76,6 @@ export const useApiWithAuth = () => {
 
       // Handle 401 Unauthorized responses
       if (response.status === 401) {
-        console.log('Received 401, token may be expired. Attempting refresh...');
-        
         // Try to refresh token
         const refreshSuccess = await refreshToken();
         

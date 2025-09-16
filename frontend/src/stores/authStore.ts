@@ -44,20 +44,18 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
 
       setUser: (user) => {
-        console.log('Auth store: Setting user:', user);
         set({ user });
         // Sync with household store when user changes
         if (user?.selectedHouseholdId) {
           try {
             import('./householdStore').then(({ useHouseholdStore }) => {
-              console.log("Auth store: Setting selected household id to:", user.selectedHouseholdId);
               useHouseholdStore.getState().setSelectedHouseholdId(user.selectedHouseholdId);
             }).catch((error) => {
-              console.log('Failed to import household store for sync:', error);
+              console.error('Failed to import household store for sync:', error);
             });
           } catch (error) {
             // Store might not be initialized yet, ignore error
-            console.log('Household store not ready for sync');
+            console.error('Household store not ready for sync');
           }
         } else if (user && !user.selectedHouseholdId) {
           // Clear household selection if user doesn't have one
@@ -65,10 +63,10 @@ export const useAuthStore = create<AuthState>()(
             import('./householdStore').then(({ useHouseholdStore }) => {
               useHouseholdStore.getState().setSelectedHouseholdId(null);
             }).catch((error) => {
-              console.log('Failed to import household store for clearing selection:', error);
+              console.error('Failed to import household store for clearing selection:', error);
             });
           } catch (error) {
-            console.log('Household store not ready for clearing selection');
+            console.error('Household store not ready for clearing selection');
           }
         }
       },
@@ -150,7 +148,6 @@ export const useAuthStore = create<AuthState>()(
           try {
             // Check if token is expired before trying to use it
             if (get().isTokenExpired(token)) {
-              console.log('Stored token is expired, attempting refresh...');
               const refreshed = await get().refreshToken();
               if (!refreshed) {
                 localStorage.removeItem('google_token');
@@ -191,19 +188,15 @@ export const useAuthStore = create<AuthState>()(
 
       refreshToken: async (): Promise<boolean> => {
         try {
-          console.log('Attempting to refresh Google token...');
-          
           return new Promise((resolve) => {
             if (window.google) {
               window.google.accounts.id.prompt((notification: any) => {
                 if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                  console.log('Token refresh failed - user interaction required');
                   resolve(false);
                 }
               });
               
               setTimeout(() => {
-                console.log('Token refresh timed out');
                 resolve(false);
               }, 10000);
             } else {

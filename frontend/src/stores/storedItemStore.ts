@@ -111,13 +111,11 @@ export const useStoredItemStore = create<StoredItemStore>()(
 
       fetchStoredItems: async (householdId: string, params?: GetStoredItemsRequest) => {
         if (!householdId) {
-          console.log('fetchStoredItems: No household ID provided');
           return;
         }
 
         const api = getApi();
         if (!api) {
-          console.log('fetchStoredItems: API not initialized, skipping');
           return;
         }
 
@@ -164,13 +162,11 @@ export const useStoredItemStore = create<StoredItemStore>()(
 
       fetchStoredItemsByStorageArea: async (householdId: string, storageAreaId: string) => {
         if (!householdId || !storageAreaId) {
-          console.log('fetchStoredItemsByStorageArea: Missing required parameters');
           return;
         }
 
         const api = getApi();
         if (!api) {
-          console.log('fetchStoredItemsByStorageArea: API not initialized, skipping');
           return;
         }
 
@@ -202,13 +198,11 @@ export const useStoredItemStore = create<StoredItemStore>()(
 
       fetchExpiringItems: async (householdId: string, days?: number) => {
         if (!householdId) {
-          console.log('fetchExpiringItems: No household ID provided');
           return;
         }
 
         const api = getApi();
         if (!api) {
-          console.log('fetchExpiringItems: API not initialized, skipping');
           return;
         }
 
@@ -243,13 +237,11 @@ export const useStoredItemStore = create<StoredItemStore>()(
 
       fetchExpiredItems: async (householdId: string) => {
         if (!householdId) {
-          console.log('fetchExpiredItems: No household ID provided');
           return;
         }
 
         const api = getApi();
         if (!api) {
-          console.log('fetchExpiredItems: API not initialized, skipping');
           return;
         }
 

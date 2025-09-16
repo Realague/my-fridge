@@ -70,6 +70,7 @@
     "emptyArea": "Votre {{name}} est vide",
     "addTo": "Ajouter à {{name}}",
     "added": "Ajouté",
+    "locationPlaceholder": "ex., Frigo, Placard",
     "types": {
       "fridge": "Réfrigérateur",
       "freezer": "Congélateur",
@@ -339,6 +340,7 @@
       "updateFailed": "Échec de la mise à jour du statut de favorite",
       "titlePlaceholder": "ex., Poulet Teriyaki",
       "descriptionPlaceholder": "Brève description de votre recette...",
+      "stepInstructionsPlaceholder": "Étape {{step}} instructions...",
       "difficultyOptions": {
         "easy": "Facile",
         "medium": "Moyen",

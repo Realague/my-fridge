@@ -57,7 +57,6 @@ export const useMealPlanStore = create<MealPlanStore>((set, get) => ({
     try {
       const houseId = getHouseholdId(householdId);
       if (!houseId) {
-        console.log('No household ID available, skipping meal plan fetch');
         set({ mealPlans: [], loading: false });
         return;
       }

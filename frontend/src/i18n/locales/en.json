@@ -71,6 +71,7 @@
     "emptyArea": "Your {{name}} is empty",
     "addTo": "Add to {{name}}",
     "added": "Added",
+    "locationPlaceholder": "e.g., Main shelf, Cupboard",
     "types": {
       "fridge": "Refrigerator",
       "freezer": "Freezer", 
@@ -340,6 +341,7 @@
       "updateFailed": "Failed to update favorite status",
       "titlePlaceholder": "e.g., Chicken Teriyaki",
       "descriptionPlaceholder": "Brief description of your recipe...",
+      "stepInstructionsPlaceholder": "Step {{step}} instructions...",
       "difficultyOptions": {
         "easy": "Easy",
         "medium": "Medium",

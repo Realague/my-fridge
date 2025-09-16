@@ -112,13 +112,12 @@ export const syncHouseholdStoreWithAuth = () => {
       const user = useAuthStore.getState().user;
       if (user?.selectedHouseholdId) {
         useHouseholdStore.getState().setSelectedHouseholdId(user.selectedHouseholdId);
-        console.log('Household store synced with auth store:', user.selectedHouseholdId);
       }
     }).catch((error) => {
-      console.log('Failed to import auth store for sync:', error);
+      console.error('Failed to import auth store for sync:', error);
     });
   } catch (error) {
-    console.log('Failed to sync household store with auth store:', error);
+    console.error('Failed to sync household store with auth store:', error);
   }
 };
 

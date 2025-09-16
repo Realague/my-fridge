@@ -70,6 +70,7 @@
     "emptyArea": "Tu {{name}} está vacía",
     "addTo": "Agregar a {{name}}",
     "added": "Agregado",
+    "locationPlaceholder": "ej., Main shelf, Door",
     "types": {
       "fridge": "Refrigerador",
       "freezer": "Congelador",
@@ -339,6 +340,7 @@
       "updateFailed": "Error al actualizar estado de favorita",
       "titlePlaceholder": "ej., Pollo Teriyaki",
       "descriptionPlaceholder": "Breve descripción de tu receta...",
+      "stepInstructionsPlaceholder": "Paso {{step}} instrucciones...",
       "difficultyOptions": {
         "easy": "Fácil",
         "medium": "Medio",

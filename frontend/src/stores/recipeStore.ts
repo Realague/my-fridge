@@ -101,17 +101,13 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
         }
       });
 
-      console.log('Fetching recipes for household:', householdId);
       const response = await makeApiCall(`/api/recipes/${householdId}/recipes?${queryParams}`);
-      console.log('Recipes API response:', response);
       
       // Handle backend response structure: { success: true, data: { recipes, total, hasMore } }
       const result = response.data || response;
       const recipes = result.recipes || result || [];
       const total = result.total || recipes.length;
       const hasMore = result.hasMore || false;
-      
-      console.log('Processed recipes:', { recipes, total, hasMore });
       
       set({
         recipes,
@@ -269,12 +265,10 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
 
   toggleFavorite: async (householdId: string, recipeId: string) => {
     try {
-      console.log('Toggling favorite for recipe:', recipeId);
       const response = await makeApiCall(`/api/recipes/${householdId}/recipes/${recipeId}/favorite`, {
         method: 'POST',
       });
       const updatedRecipe = response.data || response;
-      console.log('Toggle favorite response:', updatedRecipe);
       
       // Update in recipes list
       const { recipes, favoriteRecipes, currentRecipe } = get();

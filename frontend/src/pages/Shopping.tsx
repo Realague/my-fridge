@@ -24,7 +24,7 @@ const Shopping = () => {
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
   
-  const { getStorageAreasForHousehold } = useStorageAreaStore();
+  const { getStorageAreasForHousehold, fetchStorageAreas } = useStorageAreaStore();
   const { createStoredItem } = useStoredItemStore();
   
   const storageAreas = selectedHouseholdId ? getStorageAreasForHousehold(selectedHouseholdId) : [];
@@ -48,7 +48,7 @@ const Shopping = () => {
   const [completedItemsLoaded, setCompletedItemsLoaded] = useState(false);
   const [loadingCompleted, setLoadingCompleted] = useState(false);
 
-  // Load shopping items from API
+  // Load shopping items and storage areas from API
   useEffect(() => {
     if (selectedHouseholdId) {
       // Fetch pending items first
@@ -56,8 +56,10 @@ const Shopping = () => {
       setCompletedItemsLoaded(false);
       // Also fetch completed items
       fetchCompletedItems();
+      // Fetch storage areas for the storage dialog
+      fetchStorageAreas(selectedHouseholdId);
     }
-  }, [selectedHouseholdId, fetchShoppingItems]);
+  }, [selectedHouseholdId, fetchShoppingItems, fetchStorageAreas]);
 
   // Function to fetch completed items
   const fetchCompletedItems = async () => {
@@ -363,7 +365,7 @@ const Shopping = () => {
               <div className="flex items-center gap-2">
                 <span>{shoppingItem.quantity} {shoppingItem.unit}</span>
                 <span>•</span>
-                <span>{t('pages.shopping.addedBy')}</span>
+                <span>{t('storageArea.addedBy')}</span>
               </div>
             )}
           </div>

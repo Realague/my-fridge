@@ -118,9 +118,9 @@ export const StructuredIngredientInput = ({
         </div>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-3 ">
         {ingredients.map((ingredient, index) => (
-          <div key={ingredient.id} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
+          <div key={ingredient.id} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg bg-white">
             <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
                 <Label className="text-sm">{t('ingredientInput.item')}</Label>

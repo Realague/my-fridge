@@ -93,7 +93,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         // Check if token is expired before trying to use it
         if (isTokenExpired(token)) {
-          console.log('Stored token is expired, attempting refresh...');
           const refreshed = await refreshToken();
           if (!refreshed) {
             localStorage.removeItem('google_token');
@@ -134,21 +133,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Refresh the Google token
   const refreshToken = async (): Promise<boolean> => {
     try {
-      console.log('Attempting to refresh Google token...');
-      
       // Prompt user to re-authenticate with Google
       return new Promise((resolve) => {
         if (window.google) {
           window.google.accounts.id.prompt((notification: any) => {
             if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-              console.log('Token refresh failed - user interaction required');
               resolve(false);
             }
           });
           
           // Set a timeout for the refresh attempt
           setTimeout(() => {
-            console.log('Token refresh timed out');
             resolve(false);
           }, 10000);
         } else {

@@ -66,7 +66,6 @@ const MealPlans = () => {
     if (selectedHouseholdId && weekDays.length > 0) {
       const startDate = format(weekDays[0], 'yyyy-MM-dd');
       const endDate = format(weekDays[6], 'yyyy-MM-dd');
-      console.log('Fetching meal plans for week:', startDate, 'to', endDate);
       fetchMealPlansByDateRange(selectedHouseholdId, startDate, endDate);
     }
   }, [fetchMealPlansByDateRange, selectedHouseholdId, weekDays]);

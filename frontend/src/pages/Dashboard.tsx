@@ -121,8 +121,6 @@ const Dashboard = () => {
     { title: t('pages.recipes.title'), description: t('pages.dashboard.savedRecipes', { count: (recipes || []).length }), emoji: '📖', route: '/recipes' },
   ];
 
-  console.log("Current Household:", getCurrentHousehold());
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
       {/* Header */}

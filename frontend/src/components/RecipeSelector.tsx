@@ -89,7 +89,6 @@ export const RecipeSelector = ({
   }, [isOpen]);
 
   const handleRecipeSelect = (recipe: RecipeDto) => {
-    console.log('RecipeSelector: handleRecipeSelect called with:', recipe.title);
     onRecipeSelect(recipe);
     setQuery('');
     setIsOpen(false);

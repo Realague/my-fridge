@@ -79,6 +79,18 @@
       "other": "Autre"
     }
   },
+  "storageAreaManager": {
+    "title": "Zones de Stockage",
+    "addStorage": "Ajouter Stockage",
+    "addNewStorageArea": "Ajouter une Nouvelle Zone de Stockage",
+    "editStorageArea": "Modifier la Zone de Stockage",
+    "deleteStorageArea": "Supprimer la Zone de Stockage",
+    "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer \"{{name}}\" ? Cela supprimera également tous les articles stockés dans cette zone.",
+    "updateStorageArea": "Mettre à Jour la Zone de Stockage",
+    "namePlaceholder": "Nom de la zone de stockage",
+    "emoji": "Emoji",
+    "pleaseEnterName": "Veuillez saisir un nom pour la zone de stockage"
+  },
   "itemEditor": {
     "editItem": "Modifier l'Article",
     "createNewItem": "Créer un Nouvel Article",
@@ -146,7 +158,13 @@
       "recipeSaved": "Votre nouvelle recette a été sauvegardée dans votre collection.",
       "recipeUpdated": "Recette mise à jour !",
       "recipeUpdatedSuccessfully": "Votre recette a été mise à jour avec succès.",
-      "success": "Succès"
+      "success": "Succès",
+      "storageAreaCreated": "Zone de stockage créée !",
+      "storageAreaUpdated": "Zone de stockage mise à jour !",
+      "storageAreaDeleted": "Zone de stockage supprimée !",
+      "storageAreaCreatedDescription": "{{name}} a été créée avec succès.",
+      "storageAreaUpdatedDescription": "{{name}} a été mise à jour avec succès.",
+      "storageAreaDeletedDescription": "{{name}} a été supprimée avec succès."
     },
     "error": {
       "somethingWentWrong": "Quelque chose s'est mal passé",
@@ -191,7 +209,11 @@
       "failedToDeleteRecipe": "Échec de la suppression de recette. Veuillez réessayer.",
       "failedToUpdateFavoriteStatus": "Échec de la mise à jour du statut de favori. Veuillez réessayer.",
       "storageAreaNotFound": "Zone de stockage non trouvée",
-      "couldNotCopyToken": "Impossible de copier le jeton dans le presse-papiers."
+      "couldNotCopyToken": "Impossible de copier le jeton dans le presse-papiers.",
+      "failedToCreateStorageArea": "Échec de la création de zone de stockage. Veuillez réessayer.",
+      "failedToUpdateStorageArea": "Échec de la mise à jour de zone de stockage. Veuillez réessayer.",
+      "failedToDeleteStorageArea": "Échec de la suppression de zone de stockage. Veuillez réessayer.",
+      "deleteFailed": "Échec de la suppression de zone de stockage. Veuillez réessayer."
     },
     "confirmation": {
       "deleteItem": "Êtes-vous sûr de vouloir supprimer cet article ?",
@@ -305,18 +327,6 @@
       },
       "serving": "portion",
       "servings": "portions"
-    },
-    "storageAreaManager": {
-      "title": "Zones de stockage",
-      "addStorage": "Ajouter stockage",
-      "addNewStorageArea": "Ajouter une nouvelle zone de stockage",
-      "editStorageArea": "Modifier la zone de stockage",
-      "deleteStorageArea": "Supprimer la zone de stockage",
-      "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer \"{{name}}\" ? Cela supprimera également tous les articles stockés dans cette zone.",
-      "updateStorageArea": "Mettre à jour la zone de stockage",
-      "namePlaceholder": "Nom de la zone de stockage",
-      "emoji": "Emoji",
-      "pleaseEnterName": "Veuillez saisir un nom pour la zone de stockage"
     },
     "recipes": {
       "title": "Recettes",

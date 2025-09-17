@@ -79,6 +79,18 @@
       "other": "Otro"
     }
   },
+  "storageAreaManager": {
+    "title": "Áreas de Almacenamiento",
+    "addStorage": "Agregar Almacenamiento",
+    "addNewStorageArea": "Agregar Nueva Área de Almacenamiento",
+    "editStorageArea": "Editar Área de Almacenamiento",
+    "deleteStorageArea": "Eliminar Área de Almacenamiento",
+    "deleteConfirmation": "¿Estás seguro de que quieres eliminar \"{{name}}\"? Esto también eliminará todos los artículos almacenados en esta área.",
+    "updateStorageArea": "Actualizar Área de Almacenamiento",
+    "namePlaceholder": "Nombre del área de almacenamiento",
+    "emoji": "Emoji",
+    "pleaseEnterName": "Por favor ingrese un nombre para el área de almacenamiento"
+  },
   "itemEditor": {
     "editItem": "Editar Artículo",
     "createNewItem": "Crear Nuevo Artículo",
@@ -146,7 +158,13 @@
       "recipeSaved": "Tu nueva receta ha sido guardada en tu colección.",
       "recipeUpdated": "¡Receta actualizada!",
       "recipeUpdatedSuccessfully": "Tu receta ha sido actualizada exitosamente.",
-      "success": "Éxito"
+      "success": "Éxito",
+      "storageAreaCreated": "Área de almacenamiento creada!",
+      "storageAreaUpdated": "Área de almacenamiento actualizada!",
+      "storageAreaDeleted": "Área de almacenamiento eliminada!",
+      "storageAreaCreatedDescription": "{{name}} ha sido creada exitosamente.",
+      "storageAreaUpdatedDescription": "{{name}} ha sido actualizada exitosamente.",
+      "storageAreaDeletedDescription": "{{name}} ha sido eliminada exitosamente."
     },
     "error": {
       "somethingWentWrong": "Algo salió mal",
@@ -191,7 +209,11 @@
       "failedToDeleteRecipe": "Error al eliminar receta. Por favor inténtalo de nuevo.",
       "failedToUpdateFavoriteStatus": "Error al actualizar estado de favorito. Por favor inténtalo de nuevo.",
       "storageAreaNotFound": "Área de almacenamiento no encontrada",
-      "couldNotCopyToken": "No se pudo copiar el token al portapapeles."
+      "couldNotCopyToken": "No se pudo copiar el token al portapapeles.",
+      "failedToCreateStorageArea": "Error al crear área de almacenamiento. Por favor inténtalo de nuevo.",
+      "failedToUpdateStorageArea": "Error al actualizar área de almacenamiento. Por favor inténtalo de nuevo.",
+      "failedToDeleteStorageArea": "Error al eliminar área de almacenamiento. Por favor inténtalo de nuevo.",
+      "deleteFailed": "Error al eliminar área de almacenamiento. Por favor inténtalo de nuevo."
     },
     "confirmation": {
       "deleteItem": "¿Estás seguro de que quieres eliminar este artículo?",
@@ -305,18 +327,6 @@
       },
       "serving": "porción",
       "servings": "porciones"
-    },
-    "storageAreaManager": {
-      "title": "Áreas de almacenamiento",
-      "addStorage": "Agregar almacenamiento",
-      "addNewStorageArea": "Agregar nueva área de almacenamiento",
-      "editStorageArea": "Editar área de almacenamiento",
-      "deleteStorageArea": "Eliminar área de almacenamiento",
-      "deleteConfirmation": "¿Estás seguro de que quieres eliminar \"{{name}}\"? Esto también eliminará todos los artículos almacenados en esta área.",
-      "updateStorageArea": "Actualizar área de almacenamiento",
-      "namePlaceholder": "Nombre del área de almacenamiento",
-      "emoji": "Emoji",
-      "pleaseEnterName": "Por favor ingrese un nombre para el área de almacenamiento"
     },
     "recipes": {
       "title": "Recetas",

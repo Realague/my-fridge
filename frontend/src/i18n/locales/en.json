@@ -159,7 +159,14 @@
       "recipeSaved": "Your new recipe has been saved to your collection.",
       "recipeUpdated": "Recipe updated!",
       "recipeUpdatedSuccessfully": "Your recipe has been successfully updated.",
-      "success": "Success"
+      "success": "Success",
+      "storageAreaCreated": "Storage area created!",
+      "storageAreaUpdated": "Storage area updated!",
+      "storageAreaDeleted": "Storage area deleted!",
+      "storageAreaCreatedDescription": "{{name}} has been created successfully.",
+      "storageAreaUpdatedDescription": "{{name}} has been updated successfully.",
+      "storageAreaDeletedDescription": "{{name}} has been deleted successfully."
+
     },
     "error": {
       "somethingWentWrong": "Something went wrong",
@@ -204,7 +211,11 @@
       "failedToDeleteRecipe": "Failed to delete recipe. Please try again.",
       "failedToUpdateFavoriteStatus": "Failed to update favorite status. Please try again.",
       "storageAreaNotFound": "Storage area not found",
-      "couldNotCopyToken": "Could not copy token to clipboard."
+      "couldNotCopyToken": "Could not copy token to clipboard.",
+      "failedToCreateStorageArea": "Failed to create storage area",
+      "failedToUpdateStorageArea": "Failed to update storage area",
+      "failedToDeleteStorageArea": "Failed to delete storage area",
+      "deleteFailed": "Delete Failed"
     },
     "confirmation": {
       "deleteItem": "Are you sure you want to delete this item?",

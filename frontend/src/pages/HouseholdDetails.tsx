@@ -192,7 +192,7 @@ const HouseholdDetails = () => {
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-gray-900">
                       {`${member.firstName || ''} ${member.lastName || ''}`.trim()}
-                      {member.id === currentUser?.id && <span className="text-sm text-gray-500 ml-2">(You)</span>}
+                      {member.id === currentUser?.id && <span className="text-sm text-gray-500 ml-2">({t('pages.household.you')})</span>}
                     </p>
                     <p className="text-sm text-gray-500 truncate">{member.email || ''}</p>
                   </div>

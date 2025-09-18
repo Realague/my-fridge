@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => ({
     allowedHosts: [
       "localhost",
       "127.0.0.1",
-      "90.125.105.190"
+      "my-fridge.multiplus.ovh"
     ],
   },
   plugins: [

@@ -33,7 +33,7 @@ services:
       DB_PASSWORD: postgres
       DB_NAME: my_fridge_db
       PORT: 3000
-      FRONTEND_URL: http://90.125.105.190
+      FRONTEND_URL: https://my-fridge.multiplus.ovh
     ports:
       - "3000:3000"
     depends_on:
@@ -51,7 +51,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      VITE_API_URL: http://90.125.105.190
+      VITE_API_URL: https://my-fridge.multiplus.ovh
     ports:
       - "8080:8080"
     volumes:

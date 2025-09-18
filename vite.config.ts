@@ -8,8 +8,13 @@ export default defineConfig(({ mode }) => ({
   root: "./frontend",
   publicDir: "./public",
   server: {
-    host: "::",
+    host: "0.0.0.0",
     port: 8080,
+    allowedHosts: [
+      "localhost",
+      "127.0.0.1",
+      "my-fridge.multiplus.ovh"
+    ],
   },
   plugins: [
     react(),

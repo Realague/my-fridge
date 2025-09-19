@@ -29,6 +29,7 @@ const HouseholdDetails = () => {
   const fetchHouseholdDetails = useHouseholdStore(state => state.fetchHouseholdDetails);
   const removeMember = useHouseholdStore(state => state.removeMember);
   const leaveHousehold = useHouseholdStore(state => state.leaveHousehold);
+  const deleteHousehold = useHouseholdStore(state => state.deleteHousehold);
   
   // Compute household details from stable reference
   const householdDetails = id ? householdDetailsMap[id] || null : null;
@@ -49,6 +50,17 @@ const HouseholdDetails = () => {
     } catch (error) {
       console.error('Error leaving household:', error);
       // The useHouseholds hook already handles toast notifications for errors
+    }
+  };
+
+  const handleRemoveHousehold = async () => {
+    if (!id) return;
+    
+    try {
+      await deleteHousehold(id);
+      navigate('/household');
+    } catch (error) {
+      console.error('Error removing household:', error);
     }
   };
 
@@ -152,20 +164,20 @@ const HouseholdDetails = () => {
               <AlertDialogTrigger asChild>
                 <Button variant="outline" className="w-full touch-friendly text-red-600 border-red-200 hover:bg-red-50">
                   <LogOut className="h-4 w-4 mr-2" />
-                  {t('pages.household.leaveHousehold')}
+                  { members.length <= 1 && isAdmin ? t('buttons.removeHousehold') : t('pages.household.leaveHousehold')}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>{t('pages.household.leaveHousehold')}</AlertDialogTitle>
+                  <AlertDialogTitle>{ members.length <= 1 && isAdmin ? t('buttons.removeHousehold') : t('pages.household.leaveHousehold')}</AlertDialogTitle>
                   <AlertDialogDescription>
                     {t('pages.household.leaveHouseholdDescription', { name: householdDetails.name })}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>{t('buttons.cancel')}</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleLeaveHousehold} className="bg-red-600 hover:bg-red-700">
-                    {t('pages.household.leaveHousehold')}
+                  <AlertDialogAction onClick={ members.length <= 1 && isAdmin ? handleRemoveHousehold : handleLeaveHousehold} className="bg-red-600 hover:bg-red-700">
+                    {  members.length <= 1 && isAdmin ? t('buttons.removeHousehold') : t('buttons.leaveHousehold')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>

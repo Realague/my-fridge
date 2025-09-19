@@ -117,6 +117,12 @@ export class HouseholdController {
       }
       
       await this.householdService.deleteHousehold(householdId, userId);
+
+      const households = await this.householdService.getUserHouseholds(userId);
+
+      if (households.length !== 0) {
+        await this.householdService.selectHousehold(households[0].id, userId);
+      }
       
       const response: ApiResponse = {
         success: true,
@@ -165,6 +171,12 @@ export class HouseholdController {
       }
       
       await this.householdService.leaveHousehold(householdId, userId);
+      
+      const households = await this.householdService.getUserHouseholds(userId);
+
+      if (households.length !== 0) {
+        await this.householdService.selectHousehold(households[0].id, userId);
+      }
       
       const response: ApiResponse = {
         success: true,

@@ -54,16 +54,6 @@ export class HouseholdService {
       }
     }
 
-    // Create custom storage areas if specified
-    if (this.storageAreaSeeder && createDto.customStorageAreas && createDto.customStorageAreas.length > 0) {
-      try {
-        await this.storageAreaSeeder.seedCustomStorageAreas(household.id, createDto.customStorageAreas);
-      } catch (error) {
-        console.warn('Failed to create custom storage areas for household:', error);
-        // Don't fail household creation if storage areas fail
-      }
-    }
-
     return household;
   }
 

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { StorageAreaSelections, CustomStorageArea } from '@/types/household';
+import { StorageAreaSelections } from '@/types/household';
 import { toast } from '@/hooks/use-toast';
 import { mergeHeaders } from '@/utils/apiHeaders';
 
@@ -49,7 +49,7 @@ interface HouseholdStore {
   // Actions
   fetchHouseholds: () => Promise<void>;
   fetchHouseholdDetails: (householdId: string) => Promise<HouseholdDetails | null>;
-  createHousehold: (name: string, description?: string, storageAreas?: StorageAreaSelections, customStorageAreas?: CustomStorageArea[]) => Promise<Household>;
+  createHousehold: (name: string, description?: string, storageAreas?: StorageAreaSelections) => Promise<Household>;
   updateHousehold: (householdId: string, name: string, description?: string) => Promise<void>;
   selectHousehold: (householdId: string) => Promise<any>;
   joinHousehold: (inviteCode: string) => Promise<void>;
@@ -181,7 +181,7 @@ export const useHouseholdStore = create<HouseholdStore>()(
           }
         },
 
-        createHousehold: async (name: string, description?: string, storageAreas?: StorageAreaSelections, customStorageAreas?: CustomStorageArea[]) => {
+        createHousehold: async (name: string, description?: string, storageAreas?: StorageAreaSelections) => {
           set({ loading: true, error: null });
           
           try {
@@ -190,14 +190,9 @@ export const useHouseholdStore = create<HouseholdStore>()(
               description,
             };
 
-            // Add storage areas if provided (backward compatibility)
+            // Add storage areas if provided
             if (storageAreas) {
               requestBody.storageAreas = storageAreas;
-            }
-
-            // Add custom storage areas if provided
-            if (customStorageAreas && customStorageAreas.length > 0) {
-              requestBody.customStorageAreas = customStorageAreas;
             }
 
             const response = await apiService.post('/api/households', requestBody);
@@ -207,9 +202,7 @@ export const useHouseholdStore = create<HouseholdStore>()(
               
               if (responseData.success) {
                 const selectedCount = storageAreas ? Object.values(storageAreas).filter(Boolean).length : 0;
-                const customCount = customStorageAreas ? customStorageAreas.length : 0;
-                const totalCount = selectedCount + customCount;
-                const storageMessage = totalCount > 0 ? ` with ${totalCount} storage areas` : '';
+                const storageMessage = selectedCount > 0 ? ` with ${selectedCount} storage areas` : '';
                 
                 toast({
                   title: "Household Created!",

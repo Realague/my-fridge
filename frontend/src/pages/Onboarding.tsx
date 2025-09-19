@@ -3,14 +3,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowRight, Plus, Users, ArrowLeft } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { StorageAreaOption, CustomStorageArea } from '@/types/household';
+import { StorageAreaOption, StorageAreaSelections } from '@/types/household';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { toast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
-import OnboardingStorageSelector from '@/components/OnboardingStorageSelector';
 
 const Onboarding = () => {
   const { t } = useTranslation();
@@ -23,7 +23,7 @@ const Onboarding = () => {
   const [step, setStep] = useState(1);
   const [householdName, setHouseholdName] = useState('');
   const [joinCode, setJoinCode] = useState('');
-  const [selectedStorageAreas, setSelectedStorageAreas] = useState<CustomStorageArea[]>([]);
+  const [selectedStorageAreas, setSelectedStorageAreas] = useState<(keyof StorageAreaSelections)[]>([]);
 
   // Redirect to auth if not authenticated
   useEffect(() => {
@@ -55,6 +55,21 @@ const Onboarding = () => {
     }
   }, [searchParams]);
 
+  const storageOptions: StorageAreaOption[] = [
+    { id: 'hasFridge', name: 'Refrigerator', emoji: '🥬', description: 'Main fridge compartment' },
+    { id: 'hasFreezer', name: 'Freezer', emoji: '🧊', description: 'Frozen food storage' },
+    { id: 'hasPantry', name: 'Pantry', emoji: '🏺', description: 'Dry goods and canned items' },
+    { id: 'hasKitchenCupboard', name: 'Kitchen Cupboard', emoji: '🗄️', description: 'Spices and small items' },
+  ];
+
+  const handleStorageToggle = (storageId: keyof StorageAreaSelections) => {
+    setSelectedStorageAreas(prev => 
+      prev.includes(storageId) 
+        ? prev.filter(id => id !== storageId)
+        : [...prev, storageId]
+    );
+  };
+
   const handleCreateHousehold = async () => {
     try {
       // Validate inputs
@@ -67,7 +82,15 @@ const Onboarding = () => {
         return;
       }
 
-      await createHousehold(householdName.trim(), undefined, undefined, selectedStorageAreas);
+      // Convert selected storage areas to the format expected by the backend
+      const storageAreas: StorageAreaSelections = {
+        hasFridge: selectedStorageAreas.includes('hasFridge'),
+        hasFreezer: selectedStorageAreas.includes('hasFreezer'),
+        hasPantry: selectedStorageAreas.includes('hasPantry'),
+        hasKitchenCupboard: selectedStorageAreas.includes('hasKitchenCupboard'),
+      };
+
+      await createHousehold(householdName.trim(), undefined, storageAreas);
       navigate('/dashboard');
     } catch (error) {
       console.error('Failed to create household:', error);
@@ -211,10 +234,29 @@ const Onboarding = () => {
             </CardHeader>
 
             <CardContent className="space-y-6">
-              <OnboardingStorageSelector 
-                selectedAreas={selectedStorageAreas}
-                onChange={setSelectedStorageAreas}
-              />
+              <div className="space-y-3 max-h-80 overflow-y-auto">
+                {storageOptions.map((storage) => (
+                  <div
+                    key={storage.id}
+                    className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                    onClick={() => handleStorageToggle(storage.id)}
+                  >
+                    <Checkbox
+                      checked={selectedStorageAreas.includes(storage.id)}
+                      onChange={() => handleStorageToggle(storage.id)}
+                    />
+                    <div className="flex items-center space-x-3 flex-1">
+                      <div className="w-10 h-10 bg-gradient-to-r from-green-100 to-orange-100 rounded-lg flex items-center justify-center">
+                        <span className="text-lg">{storage.emoji}</span>
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-900">{storage.name}</div>
+                        <div className="text-sm text-gray-600">{storage.description}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
               <div className="flex gap-3">
                 <Button

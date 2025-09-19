@@ -203,7 +203,7 @@
       "creationFailed": "Error de Creación",
       "failedToCreateHousehold": "Error al crear hogar. Por favor inténtalo de nuevo.",
       "invalidJoinCode": "Código de unión inválido",
-      "invalidJoinCodeDescription": "Por favor ingresa un código de unión válido de 6 caracteres.",
+      "invalidJoinCodeDescription": "Por favor ingresa un código de unión válido de 8 caracteres.",
       "joinFailed": "Error al Unirse",
       "failedToJoinHousehold": "Error al unirse al hogar. Por favor inténtalo de nuevo.",
       "failedToDeleteRecipe": "Error al eliminar receta. Por favor inténtalo de nuevo.",
@@ -478,7 +478,7 @@
       "setupStorageAreasDescription": "Selecciona las áreas de almacenamiento que tienes en tu cocina (opcional - puedes agregar más después)",
       "joinHousehold": "Unirse a un Hogar",
       "joinHouseholdDescription": "Ingresa el código de invitación compartido por tu miembro del hogar",
-      "inviteCodePlaceholder": "Ingresa código de 6 dígitos",
+      "inviteCodePlaceholder": "Ingresa el código de 8 caracteres",
       "role": {
         "admin": "Administrador",
         "member": "Miembro"

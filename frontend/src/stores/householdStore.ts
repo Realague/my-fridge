@@ -362,14 +362,14 @@ export const useHouseholdStore = create<HouseholdStore>()(
           set({ loading: true, error: null });
           
           try {
-            const response = await apiService.delete(`/api/households/${householdId}/leave`);
+            const response = await apiService.post(`/api/households/${householdId}/leave`);
             const responseData = await response.json();
             
             if (responseData.success) {
               // Remove from local state and refresh
               set(state => ({
                 households: state.households.filter(h => h.id !== householdId),
-                selectedHouseholdId: state.selectedHouseholdId === householdId ? null : state.selectedHouseholdId
+                selectedHouseholdId: state.selectedHouseholdId === householdId ? state.households.length > 0 ? state.households[0].id : null : state.selectedHouseholdId
               }));
               
               // Clear details cache
@@ -402,7 +402,7 @@ export const useHouseholdStore = create<HouseholdStore>()(
               // Remove from local state
               set(state => ({
                 households: state.households.filter(h => h.id !== householdId),
-                selectedHouseholdId: state.selectedHouseholdId === householdId ? null : state.selectedHouseholdId
+                selectedHouseholdId: state.selectedHouseholdId === householdId ? state.households.length > 0 ? state.households[0].id : null : state.selectedHouseholdId
               }));
               
               // Clear details cache

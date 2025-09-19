@@ -1,3 +1,10 @@
+export interface CustomStorageAreaDto {
+  name: string;
+  description?: string;
+  emoji: string;
+  type: 'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other';
+}
+
 export interface CreateHouseholdDto {
   name: string;
   description?: string;
@@ -7,6 +14,7 @@ export interface CreateHouseholdDto {
     hasPantry?: boolean;
     hasKitchenCupboard?: boolean;
   };
+  customStorageAreas?: CustomStorageAreaDto[];
 }
 
 export interface UpdateHouseholdDto {

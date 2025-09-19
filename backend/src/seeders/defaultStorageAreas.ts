@@ -79,11 +79,67 @@ export class StorageAreaSeeder {
     }
   }
 
+  async seedCustomStorageAreas(
+    householdId: string,
+    customAreas: Array<{
+      name: string;
+      description?: string;
+      emoji: string;
+      type: 'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other';
+    }>
+  ): Promise<void> {
+    try {
+      // Check if storage areas already exist for this household
+      const existingAreas = await this.storageAreaRepository.findByHouseholdId(householdId);
+      
+      if (existingAreas.length > 0) {
+        console.log(`Storage areas already exist for household ${householdId}, skipping seeding`);
+        return;
+      }
+
+      // Create custom storage areas
+      for (const customArea of customAreas) {
+        await this.createCustomStorageArea(householdId, customArea);
+      }
+
+      console.log(`✅ Created ${customAreas.length} custom storage areas for household ${householdId}`);
+    } catch (error) {
+      console.error(`❌ Failed to seed custom storage areas for household ${householdId}:`, error);
+      throw error;
+    }
+  }
+
   private async createStorageArea(householdId: string, defaultArea: DefaultStorageArea): Promise<void> {
     await this.storageAreaRepository.create({
       name: defaultArea.name,
       emoji: defaultArea.emoji,
       type: defaultArea.type,
+      householdId: householdId
+    });
+  }
+
+  private async createCustomStorageArea(
+    householdId: string, 
+    customArea: {
+      name: string;
+      description?: string;
+      emoji: string;
+      type: 'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other';
+    }
+  ): Promise<void> {
+    // Map frontend types to backend enum values
+    const typeMapping: Record<string, StorageAreaType> = {
+      'fridge': StorageAreaType.FRIDGE,
+      'freezer': StorageAreaType.FREEZER,
+      'pantry': StorageAreaType.PANTRY,
+      'kitchen_cupboard': StorageAreaType.KITCHEN_CUPBOARD,
+      'other': StorageAreaType.OTHER
+    };
+
+    await this.storageAreaRepository.create({
+      name: customArea.name,
+      emoji: customArea.emoji,
+      type: typeMapping[customArea.type] || StorageAreaType.OTHER,
       householdId: householdId
     });
   }

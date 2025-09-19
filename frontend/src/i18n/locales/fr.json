@@ -203,7 +203,7 @@
       "creationFailed": "Échec de la Création",
       "failedToCreateHousehold": "Échec de la création du foyer. Veuillez réessayer.",
       "invalidJoinCode": "Code de connexion invalide",
-      "invalidJoinCodeDescription": "Veuillez entrer un code de connexion valide de 6 caractères.",
+      "invalidJoinCodeDescription": "Veuillez entrer un code de connexion valide de 8 caractères.",
       "joinFailed": "Échec de la Connexion",
       "failedToJoinHousehold": "Échec de la connexion au foyer. Veuillez réessayer.",
       "failedToDeleteRecipe": "Échec de la suppression de recette. Veuillez réessayer.",
@@ -478,7 +478,7 @@
       "setupStorageAreasDescription": "Sélectionnez les zones de stockage que vous avez dans votre cuisine (facultatif - vous pouvez en ajouter d'autres plus tard)",
       "joinHousehold": "Rejoindre un Foyer",
       "joinHouseholdDescription": "Entrez le code d'invitation partagé par votre membre du foyer",
-      "inviteCodePlaceholder": "Entrez le code à 6 chiffres",
+      "inviteCodePlaceholder": "Entrez le code à 8 caractères",
       "role": {
         "admin": "Administrateur",
         "member": "Membre"

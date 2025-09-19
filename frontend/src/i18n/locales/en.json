@@ -205,7 +205,7 @@
       "creationFailed": "Creation Failed",
       "failedToCreateHousehold": "Failed to create household. Please try again.",
       "invalidJoinCode": "Invalid join code",
-      "invalidJoinCodeDescription": "Please enter a valid 6-character join code.",
+      "invalidJoinCodeDescription": "Please enter a valid 8-character join code.",
       "joinFailed": "Join Failed",
       "failedToJoinHousehold": "Failed to join household. Please try again.",
       "failedToDeleteRecipe": "Failed to delete recipe. Please try again.",
@@ -480,7 +480,7 @@
       "setupStorageAreasDescription": "Select the storage areas you have in your kitchen (optional - you can add more later)",
       "joinHousehold": "Join a Household",
       "joinHouseholdDescription": "Enter the invite code shared by your household member",
-      "inviteCodePlaceholder": "Enter 6-digit code",
+      "inviteCodePlaceholder": "Enter the 8 characters long code",
       "role": {
         "admin": "Admin",
         "member": "Member"

@@ -105,7 +105,7 @@ const Onboarding = () => {
   const handleJoinHousehold = async () => {
     try {
       // Validate inputs
-      if (!joinCode.trim() || joinCode.trim().length !== 6) {
+      if (!joinCode.trim() || joinCode.trim().length !== 8) {
         toast({ 
           title: t('messages.error.invalidJoinCode'),
           description: t('messages.error.invalidJoinCodeDescription'),
@@ -299,7 +299,7 @@ const Onboarding = () => {
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value)}
                   className="h-12 text-center text-lg tracking-widest"
-                  maxLength={6}
+                  maxLength={8}
                 />
               </div>
 
@@ -314,7 +314,7 @@ const Onboarding = () => {
                 </Button>
                 <Button
                   onClick={handleJoinHousehold}
-                  disabled={joinCode.length !== 6}
+                  disabled={joinCode.length !== 8}
                   className="flex-1 bg-blue-600 hover:bg-blue-700"
                 >
                   {t('buttons.join')} <ArrowRight className="ml-2 h-4 w-4" />

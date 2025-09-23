@@ -71,7 +71,7 @@
     "emptyArea": "Tu {{name}} está vacía",
     "addTo": "Agregar a {{name}}",
     "added": "Agregado",
-    "locationPlaceholder": "ej., Main shelf, Door",
+    "locationPlaceholder": "ej., Almacén principal, Alacena",
     "types": {
       "fridge": "Refrigerador",
       "freezer": "Congelador",
@@ -108,7 +108,10 @@
     "add": "Agregar \"{{query}}\"",
     "clickToLoadHouseholdItems": "Haz clic para cargar los artículos de tu hogar...",
     "searchItemsPlaceholder": "Comienza a escribir para buscar artículos...",
-    "noItemsFound": "No se encontraron artículos. Usa las opciones de arriba para agregar uno nuevo."
+    "noItemsFound": "No se encontraron artículos. Usa las opciones de arriba para agregar uno nuevo.",
+    "household": "Hogar",
+    "global": "Global",
+    "searching": "Buscando..."
   },
   "ingredientInput": {
     "addIngredient": "Agregar Ingrediente",
@@ -539,20 +542,26 @@
     "tbsp": "cucharada",
     "tsp": "cucharadita",
     "oz": "oz",
-    "lb": "lb"
-  },
-  "categories": {
-    "vegetables": "Verduras",
-    "fruits": "Frutas",
-    "meat": "Carne",
-    "dairy": "Lácteos",
-    "grains": "Granos",
-    "spices": "Especias",
-    "beverages": "Bebidas",
-    "snacks": "Aperitivos",
-    "other": "Otro"
+    "lb": "lb",
+    "floz": "floz",
+    "gal": "gallon",
+    "pack": "pack",
+    "bunch": "bunch",
+    "dozen": "dozen"
   },
   "items": {
+    "categories": {
+      "all": "Todas las Categorías",
+      "vegetables": "Verduras",
+      "fruits": "Frutas",
+      "meat": "Carne",
+      "dairy": "Lácteos",
+      "grains": "Granos",
+      "spices": "Especias",
+      "beverages": "Bebidas",
+      "snacks": "Aperitivos",
+      "other": "Otro"
+    },
     "tomato": "Tomate",
     "carrot": "Zanahoria",
     "onion": "Cebolla",

@@ -103,9 +103,9 @@ export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {ITEM_CATEGORIES.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {t(`categories.${cat}`)}
+                {ITEM_CATEGORIES.map((itemCategory) => (
+                  <SelectItem key={itemCategory} value={itemCategory}>
+                    {t(`items.categories.${itemCategory}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -121,7 +121,7 @@ export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
               <SelectContent>
                 {availableUnits.map((unit) => (
                   <SelectItem key={unit} value={unit}>
-                    {getUnitDisplayName(unit)}
+                    {t(`units.${getUnitDisplayName(unit)}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -158,7 +158,7 @@ export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
                 <SelectContent>
                   {UNITS.filter(unit => !availableUnits.includes(unit)).map((unit) => (
                     <SelectItem key={unit} value={unit}>
-                      {getUnitDisplayName(unit)}
+                      {t(`units.${getUnitDisplayName(unit)}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>

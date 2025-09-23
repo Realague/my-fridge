@@ -40,8 +40,6 @@ export enum Unit {
   TABLESPOON = 'tbsp',
   TEASPOON = 'tsp',
   FLUID_OUNCE = 'fl_oz',
-  PINT = 'pint',
-  QUART = 'quart',
   GALLON = 'gallon',
   
   // Pieces

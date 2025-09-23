@@ -273,8 +273,6 @@ export const ItemSelector = ({
         await refreshHouseholdItems();
         return;
       }
-      
-      toast.error('Please select a household first');
     } catch (error) {
       console.error('Failed to create item:', error);
       toast.error(t('messages.error.failedToCreateItem'));
@@ -461,7 +459,7 @@ export const ItemSelector = ({
           {apiLoading && (
             <div className="flex items-center justify-center p-4 text-sm text-gray-500 bg-white">
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              Searching...
+              {t('itemSelector.searching')}
             </div>
           )}
 
@@ -507,10 +505,10 @@ export const ItemSelector = ({
                       <div className="font-medium text-sm truncate">{getItemDisplayName(item, t)}</div>
                       <div className="flex items-center gap-2">
                         <Badge className={getCategoryColor(item.category)}>
-                          {item.category}
+                          {t(`items.categories.${item.category}`) }
                         </Badge>
                         <span className="text-xs text-gray-500">
-                          {item.householdId ? 'Household' : 'Global'}
+                          {item.householdId ? t('itemSelector.household') : t('itemSelector.global')}
                         </span>
                       </div>
                     </div>

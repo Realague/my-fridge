@@ -89,7 +89,7 @@ const Household = () => {
                <div key={h.id} className="flex items-center justify-between p-3 bg-gray-50/70 rounded-lg">
                  <div className="flex-1 min-w-0">
                    <p className="font-semibold text-gray-900">{h.name}</p>
-                   <p className="text-sm text-gray-500">{h.memberCount} members • {h.userRole}</p>
+                   <p className="text-sm text-gray-500">{h.memberCount} {t('pages.household.members')} • {h.userRole}</p>
                  </div>
                  <div className="flex items-center gap-2">
                    {currentUser?.selectedHouseholdId === h.id ? (

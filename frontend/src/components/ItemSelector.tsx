@@ -44,8 +44,7 @@ export const ItemSelector = ({
 
   const itemNameSchema = z.string()
   .trim()
-  .min(2, { message: t('messages.error.invalidItemName') })
-  .regex(/^[a-zA-Z0-9 ]+$/, { message: t('messages.error.invalidItemName') });
+  .min(2, { message: t('messages.error.invalidItemName') });
 
   // Keep refs updated
   useEffect(() => {

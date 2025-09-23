@@ -59,7 +59,7 @@ export const QuantitySelector = ({
         placeholder="Qty"
         className="w-20"
         min="0"
-        step="0.1"
+        step="1"
       />
       <Select value={unit} onValueChange={handleUnitChange}>
         <SelectTrigger className="w-24">

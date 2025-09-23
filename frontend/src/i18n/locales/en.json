@@ -109,7 +109,10 @@
     "add": "Add \"{{query}}\"",
     "clickToLoadHouseholdItems": "Click to load your household items...",
     "searchItemsPlaceholder": "Start typing to search items...",
-    "noItemsFound": "No items found. Use the options above to add a new one."
+    "noItemsFound": "No items found. Use the options above to add a new one.",
+    "household": "Household",
+    "global": "Global",
+    "searching": "Searching..."
   },
   "ingredientInput": {
     "addIngredient": "Add Ingredient",
@@ -534,27 +537,33 @@
     "pieces": "pieces",
     "kg": "kg",
     "g": "g",
-    "l": "l",
+    "l": "L",
     "ml": "ml",
     "cup": "cup",
     "cups": "cups",
     "tbsp": "tbsp",
     "tsp": "tsp",
     "oz": "oz",
-    "lb": "lb"
-  },
-  "categories": {
-    "vegetables": "Vegetables",
-    "fruits": "Fruits",
-    "meat": "Meat",
-    "dairy": "Dairy",
-    "grains": "Grains",
-    "spices": "Spices",
-    "beverages": "Beverages",
-    "snacks": "Snacks",
-    "other": "Other"
+    "lb": "lb",
+    "floz": "fl.oz",
+    "gal": "gallon",
+    "bunch": "bunch",
+    "pack": "pack",
+    "dozen": "dozen"
   },
   "items": {
+    "categories": {
+      "all": "All Categories",
+      "vegetables": "Vegetables",
+      "fruits": "Fruits",
+      "meat": "Meat",
+      "dairy": "Dairy",
+      "grains": "Grains",
+      "spices": "Spices",
+      "beverages": "Beverages",
+      "snacks": "Snacks",
+      "other": "Other"
+    },
     "tomato": "Tomato",
     "carrot": "Carrot",
     "onion": "Onion",

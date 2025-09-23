@@ -108,7 +108,10 @@
     "add": "Ajouter \"{{query}}\"",
     "clickToLoadHouseholdItems": "Cliquez pour charger les articles de votre foyer...",
     "searchItemsPlaceholder": "Commencez à taper pour rechercher des articles...",
-    "noItemsFound": "Aucun article trouvé. Utilisez les options ci-dessus pour en ajouter un nouveau."
+    "noItemsFound": "Aucun article trouvé. Utilisez les options ci-dessus pour en ajouter un nouveau.",
+    "household": "Foyer",
+    "global": "Global",
+    "searching": "Recherche..."
   },
   "ingredientInput": {
     "addIngredient": "Ajouter un Ingrédient",
@@ -532,27 +535,34 @@
     "pieces": "pièces",
     "kg": "kg",
     "g": "g",
-    "l": "l",
+    "l": "L",
     "ml": "ml",
     "cup": "tasse",
     "cups": "tasses",
     "tbsp": "cuillère à soupe",
     "tsp": "cuillère à café",
-    "oz": "oz",
-    "lb": "lb"
-  },
-  "categories": {
-    "vegetables": "Légumes",
-    "fruits": "Fruits",
-    "meat": "Viande",
-    "dairy": "Produits laitiers",
-    "grains": "Céréales",
-    "spices": "Épices",
-    "beverages": "Boissons",
-    "snacks": "Collations",
-    "other": "Autre"
+    "oz": "once",
+    "lb": "lb",
+    "floz": "once fluide",
+    "gal": "gallon",
+    "bunch": "bouquet",
+    "dozen": "douzaine",
+    "pack": "pack",
+    "other": "autre"
   },
   "items": {
+    "categories": {
+      "all": "Toutes les Catégories",
+      "vegetables": "Légumes",
+      "fruits": "Fruits",
+      "meat": "Viande",
+      "dairy": "Produits laitiers",
+      "grains": "Céréales",
+      "spices": "Épices",
+      "beverages": "Boissons",
+      "snacks": "Collations",
+      "other": "Autre"
+    },
     "tomato": "Tomate",
     "carrot": "Carotte",
     "onion": "Oignon",

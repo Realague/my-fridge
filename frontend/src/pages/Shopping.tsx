@@ -43,7 +43,7 @@ const Shopping = () => {
   } = useShoppingStore();
   
   const [editingItem, setEditingItem] = useState<string | null>(null);
-  const [categoryFilter, setCategoryFilter] = useState<string>('All');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [completedItemsLoaded, setCompletedItemsLoaded] = useState(false);
   const [loadingCompleted, setLoadingCompleted] = useState(false);
@@ -248,7 +248,7 @@ const Shopping = () => {
   const completedCount = getCompletedCount();
 
   // Get unique categories from items
-  const categories = ['All', ...Array.from(new Set(items.map(item => item.item?.category).filter(Boolean)))];
+  const categories = ['all', ...Array.from(new Set(items.map(item => item.item?.category).filter(Boolean)))];
 
   const getCategoryColor = (category: string) => {
     const colors: { [key: string]: string } = {
@@ -466,7 +466,7 @@ const Shopping = () => {
                 <Input
                   value={storageLocation}
                   onChange={(e) => setStorageLocation(e.target.value)}
-                  placeholder="e.g., Main shelf, Door"
+                  placeholder={t('storageArea.locationPlaceholder')}
                   className="mt-1"
                 />
               </div>
@@ -568,16 +568,16 @@ const Shopping = () => {
                 <SelectContent>
                   {categories.map((category) => (
                     <SelectItem key={category} value={category}>
-                      {category}
+                      {t(`items.categories.${category}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {categoryFilter !== 'All' && (
+              {categoryFilter !== 'all' && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setCategoryFilter('All')}
+                  onClick={() => setCategoryFilter('all')}
                   className="text-gray-500"
                 >
                   {t('pages.shopping.clearFilter')}
@@ -592,9 +592,9 @@ const Shopping = () => {
           <CardHeader>
             <CardTitle className="text-lg">
               {t('pages.shopping.toBuy')} ({pendingItems.length})
-              {categoryFilter !== 'All' && (
+              {categoryFilter !== 'all' && (
                 <span className="text-sm font-normal text-gray-600 ml-2">
-                  • {categoryFilter}
+                  • {t(`storageArea.types.${categoryFilter}`)}
                 </span>
               )}
             </CardTitle>
@@ -608,16 +608,16 @@ const Shopping = () => {
               {pendingItems.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
                   <div className="text-4xl mb-2">
-                    {categoryFilter === 'All' ? '🎉' : '📋'}
+                    {categoryFilter === 'all' ? '🎉' : '📋'}
                   </div>
                   <p>
-                    {categoryFilter === 'All' 
+                    {categoryFilter === 'all' 
                       ? t('pages.shopping.allItemsCompleted')
                       : t('pages.shopping.noItemsInCategory', { category: categoryFilter.toLowerCase() })
                     }
                   </p>
                   <p className="text-sm">
-                    {categoryFilter === 'All' 
+                    {categoryFilter === 'all' 
                       ? t('pages.shopping.addNewItemsToGetStarted')
                       : t('pages.shopping.tryDifferentCategory')
                     }
@@ -633,7 +633,7 @@ const Shopping = () => {
           <CardHeader>
             <CardTitle className="text-lg">
               {t('pages.shopping.completed')} ({completedItems.length})
-              {categoryFilter !== 'All' && (
+              {categoryFilter !== 'all' && (
                 <span className="text-sm font-normal text-gray-600 ml-2">
                   • {categoryFilter}
                 </span>

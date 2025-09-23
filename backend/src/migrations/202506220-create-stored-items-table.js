@@ -2,7 +2,7 @@
 
 const { DataTypes } = require('sequelize');
 
-// Units: 'g', 'kg', 'lb', 'oz', 'ml', 'l', 'cup', 'tbsp', 'tsp', 'fl_oz', 'pint', 'quart', 'gallon', 'piece', 'pack', 'bunch', 'dozen', 'other'
+// Units: 'g', 'kg', 'lb', 'oz', 'ml', 'l', 'cup', 'tbsp', 'tsp', 'fl_oz', 'gallon', 'piece', 'pack', 'bunch', 'dozen', 'other'
 // Defined in: backend/src/types/enums.ts
 
 /** @type {import('sequelize-cli').Migration} */
@@ -44,7 +44,7 @@ module.exports = {
         }
       },
       unit: {
-        type: DataTypes.ENUM('g', 'kg', 'lb', 'oz', 'ml', 'l', 'cup', 'tbsp', 'tsp', 'fl_oz', 'pint', 'quart', 'gallon', 'piece', 'pack', 'bunch', 'dozen', 'other'),
+        type: DataTypes.ENUM('g', 'kg', 'lb', 'oz', 'ml', 'l', 'cup', 'tbsp', 'tsp', 'fl_oz', 'gallon', 'piece', 'pack', 'bunch', 'dozen', 'other'),
         allowNull: false,
         defaultValue: 'piece'
       },

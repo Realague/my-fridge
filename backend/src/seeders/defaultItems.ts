@@ -215,7 +215,7 @@ export const DEFAULT_ITEMS: DefaultItem[] = [
     name: 'milk',
     category: ItemCategory.DAIRY,
     defaultUnit: Unit.LITER,
-    availableUnits: [Unit.LITER, Unit.MILLILITER, Unit.CUP, Unit.FLUID_OUNCE, Unit.PINT, Unit.QUART, Unit.GALLON],
+    availableUnits: [Unit.LITER, Unit.MILLILITER, Unit.CUP, Unit.FLUID_OUNCE, Unit.GALLON],
   },
   {
     name: 'cheese',

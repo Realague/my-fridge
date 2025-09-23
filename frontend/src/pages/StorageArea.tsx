@@ -238,7 +238,7 @@ const StorageArea = () => {
               <div className="flex items-center gap-2 mb-2">
                 <h3 className="font-medium text-gray-900">{item.name}</h3>
                 <Badge variant="outline" className="text-xs">
-                  {item.category}
+                  { t(`items.categories.${item.category}`) }
                 </Badge>
                 {getExpirationBadge(storageItem.expirationDate)}
               </div>
@@ -389,10 +389,10 @@ const StorageArea = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label className="text-sm">{t('pages.storageArea.selectItem')}</Label>
+                <Label className="text-sm">{t('storageArea.selectItem')}</Label>
                 <ItemSelector
                   onItemSelect={handleItemSelect}
-                  placeholder={t('itemselector.searchOrAddItemPlaceholder')}
+                  placeholder={t('forms.searchOrAddItem')}
                   className="mt-1"
                 />
               </div>
@@ -400,7 +400,7 @@ const StorageArea = () => {
               {selectedItem && (
                 <>
                   <div>
-                    <Label className="text-sm">{t('pages.storageArea.quantity')}</Label>
+                    <Label className="text-sm">{t('storageArea.quantity')}</Label>
                     <QuantitySelector
                       item={selectedItem}
                       initialQuantity={newItemQuantity}
@@ -415,13 +415,13 @@ const StorageArea = () => {
                     <Input
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
-                      placeholder="e.g., Main shelf, Vegetable drawer"
+                      placeholder={t('storageArea.locationPlaceholder')}
                       className="mt-1"
                     />
                   </div>
                   
                   <div>
-                    <Label className="text-sm">{t('pages.storageArea.expirationDate', { optional: t('common.optional') })}</Label>
+                    <Label className="text-sm">{t('storageArea.expirationDate', { optional: t('common.optional') })}</Label>
                     <Input
                       type="date"
                       value={expirationDate}
@@ -432,7 +432,7 @@ const StorageArea = () => {
                   
                   <div className="flex gap-2">
                     <Button onClick={handleAddItem} className="flex-1" disabled={storedItemsLoading}>
-                      {t('pages.storageArea.addTo', { name: area.name })}
+                      {t('storageArea.addTo', { name: area.name })}
                     </Button>
                     <Button 
                       variant="outline" 
@@ -465,14 +465,14 @@ const StorageArea = () => {
               <CardContent className="p-8 text-center">
                 <div className="text-4xl mb-4">{area.emoji}</div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  {t('pages.storageArea.emptyArea', { name: area.name })}
+                  {t('storageArea.emptyArea', { name: area.name })}
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  {t('pages.storageArea.startAddingItems')}
+                  {t('storageArea.startAddingItems')}
                 </p>
                 <Button onClick={() => setShowAddForm(true)}>
                   <Plus className="h-4 w-4 mr-2" />
-                  {t('pages.storageArea.addFirstItem')}
+                  {t('storageArea.addFirstItem')}
                 </Button>
               </CardContent>
             </Card>

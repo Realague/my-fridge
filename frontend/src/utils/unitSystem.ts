@@ -10,7 +10,7 @@ export const UNIT_CATEGORIES: Record<string, UnitCategory> = {
   [ItemCategory.DAIRY]: {
     name: 'Dairy',
     defaultUnit: Unit.GALLON,
-    availableUnits: [Unit.GALLON, Unit.QUART, Unit.PINT, Unit.CUP, Unit.FLUID_OUNCE, Unit.LITER, Unit.MILLILITER]
+    availableUnits: [Unit.GALLON, Unit.CUP, Unit.FLUID_OUNCE, Unit.LITER, Unit.MILLILITER]
   },
   [ItemCategory.VEGETABLES]: {
     name: 'Vegetables',
@@ -35,7 +35,7 @@ export const UNIT_CATEGORIES: Record<string, UnitCategory> = {
   [ItemCategory.BEVERAGES]: {
     name: 'Beverages',
     defaultUnit: Unit.LITER,
-    availableUnits: [Unit.LITER, Unit.MILLILITER, Unit.GALLON, Unit.QUART, Unit.PINT, Unit.CUP, Unit.FLUID_OUNCE, Unit.PACK]
+    availableUnits: [Unit.LITER, Unit.MILLILITER, Unit.GALLON, Unit.CUP, Unit.FLUID_OUNCE, Unit.PACK]
   },
   [ItemCategory.CANNED]: {
     name: 'Canned',
@@ -85,13 +85,11 @@ export const getUnitDisplayName = (unit: string): string => {
     [Unit.POUND]: 'lb',
     [Unit.OUNCE]: 'oz',
     [Unit.MILLILITER]: 'ml',
-    [Unit.LITER]: 'L',
+    [Unit.LITER]: 'l',
     [Unit.CUP]: 'cup',
     [Unit.TABLESPOON]: 'tbsp',
     [Unit.TEASPOON]: 'tsp',
-    [Unit.FLUID_OUNCE]: 'fl oz',
-    [Unit.PINT]: 'pint',
-    [Unit.QUART]: 'qt',
+    [Unit.FLUID_OUNCE]: 'floz',
     [Unit.GALLON]: 'gal',
     [Unit.PIECE]: 'piece',
     [Unit.PACK]: 'pack',

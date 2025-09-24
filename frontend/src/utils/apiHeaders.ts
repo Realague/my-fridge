@@ -8,7 +8,6 @@
 export const getCommonHeaders = (): Record<string, string> => {
   return {
     'Content-Type': 'application/json',
-    'ngrok-skip-browser-warning': 'true',
   };
 };
 

@@ -9,6 +9,8 @@ interface UserAttributes {
   lastName: string;
   googleId?: string;
   selectedHouseholdId?: string;
+  refreshToken?: string;
+  refreshTokenExpiresAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -23,8 +25,16 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   public lastName!: string;
   public googleId?: string;
   public selectedHouseholdId?: string;
+  public refreshToken?: string;
+  public refreshTokenExpiresAt?: Date;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+
+  // Helper method to check if refresh token is valid
+  public isRefreshTokenValid(): boolean {
+    if (!this.refreshToken || !this.refreshTokenExpiresAt) return false;
+    return new Date() < this.refreshTokenExpiresAt;
+  }
 
   // Association attributes for TypeScript
   public readonly households?: any[];
@@ -67,6 +77,15 @@ User.init(
         key: 'id'
       },
       onDelete: 'SET NULL'
+    },
+    refreshToken: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      unique: true,
+    },
+    refreshTokenExpiresAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
   },
   {

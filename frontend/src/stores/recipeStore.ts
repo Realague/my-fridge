@@ -8,21 +8,13 @@ import {
   RecipeStats,
   IngredientStats
 } from '@/services/recipeService';
-import { mergeHeaders } from '@/utils/apiHeaders';
+import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'localhost:3000';
-
-// Helper function to make authenticated API calls
-const makeApiCall = async (endpoint: string, options: RequestInit = {}) => {
-  const token = localStorage.getItem('google_token');
-  
-  if (!token) {
-    throw new Error('No authentication token found');
-  }
-  
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers: mergeHeaders(options.headers, true, token),
+// Helper function to make authenticated API calls - uses exact same logic as useApiWithAuth
+const makeApiCall = async (endpoint: string, options: { method?: string; body?: any } = {}) => {
+  const response = await makeAuthenticatedApiCall(endpoint, {
+    method: options.method as any,
+    body: options.body
   });
 
   if (!response.ok) {

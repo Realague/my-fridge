@@ -13,7 +13,7 @@ export class UserRepository {
   
   async findById(id: string): Promise<any> {
     return await User.findByPk(id, {
-      attributes: ['id', 'firstName', 'lastName', 'email', 'googleId', 'selectedHouseholdId', 'createdAt', 'updatedAt']
+      attributes: ['id', 'firstName', 'lastName', 'email', 'googleId', 'selectedHouseholdId', 'refreshToken', 'refreshTokenExpiresAt', 'createdAt', 'updatedAt']
     });
   }
 
@@ -27,7 +27,14 @@ export class UserRepository {
   async findByGoogleId(googleId: string): Promise<any> {
     return await User.findOne({
       where: { googleId },
-      attributes: ['id', 'firstName', 'lastName', 'email', 'googleId', 'selectedHouseholdId','createdAt', 'updatedAt']
+      attributes: ['id', 'firstName', 'lastName', 'email', 'googleId', 'selectedHouseholdId', 'refreshToken', 'refreshTokenExpiresAt', 'createdAt', 'updatedAt']
+    });
+  }
+
+  async findByRefreshToken(refreshToken: string): Promise<any> {
+    return await User.findOne({
+      where: { refreshToken },
+      attributes: ['id', 'firstName', 'lastName', 'email', 'googleId', 'selectedHouseholdId', 'refreshToken', 'refreshTokenExpiresAt', 'createdAt', 'updatedAt']
     });
   }
 
@@ -69,6 +76,26 @@ export class UserRepository {
     return await User.update(data, {
       where: { id }
     });
+  }
+
+  async updateRefreshToken(id: string, refreshToken: string | null, expiresAt: Date | null): Promise<number> {
+    const [affectedCount] = await User.update({
+      refreshToken: refreshToken || undefined,
+      refreshTokenExpiresAt: expiresAt || undefined
+    }, {
+      where: { id }
+    });
+    return affectedCount;
+  }
+
+  async clearRefreshToken(id: string): Promise<number> {
+    const [affectedCount] = await User.update({
+      refreshToken: undefined,
+      refreshTokenExpiresAt: undefined
+    }, {
+      where: { id }
+    });
+    return affectedCount;
   }
 
   async delete(id: string): Promise<number> {

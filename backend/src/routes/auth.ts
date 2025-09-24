@@ -8,7 +8,6 @@ import { validateRequest } from '../middleware/validation';
 
 // Validation schemas for the middleware
 const GoogleOAuthExchangeSchema = { name: 'GoogleOAuthExchangeDto' };
-const GoogleTokenVerifySchema = { name: 'GoogleTokenVerifyDto' };
 const UpdateUserSchema = { name: 'UpdateUserDto' };
 
 // Dependency injection setup
@@ -46,10 +45,12 @@ router.post('/google/exchange',
   authController.exchangeGoogleCode.bind(authController)
 );
 
-// Verify Google token endpoint (called by frontend)
-router.post('/verify-google-token',
-  validateRequest(GoogleTokenVerifySchema),
-  authController.verifyGoogleToken.bind(authController)
+// Removed verify-google-token endpoint - using pure OAuth2 flow
+
+// Refresh JWT token endpoint (requires authentication)
+router.post('/refresh',
+  authenticateGoogleToken,
+  authController.refreshToken.bind(authController)
 );
 
 // Protected routes (authentication required)
@@ -82,15 +83,6 @@ router.get('/admin/status',
 // Logout route
 router.post('/logout',
   authController.logout.bind(authController)
-);
-
-// Admin-only routes
-
-// Get all users (admin only)
-router.get('/admin/users',
-  authenticateGoogleToken,
-  requireAdmin,
-  authController.getAllUsers.bind(authController)
 );
 
 export default router; 

@@ -1,5 +1,5 @@
 import { useApiWithAuth } from '@/hooks/useApiWithAuth';
-import { mergeHeaders } from '@/utils/apiHeaders';
+import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 
 // Types matching backend DTOs
 export interface CreateMealPlanDto {
@@ -57,20 +57,12 @@ interface ApiResponse<T> {
 // Non-hook version for use in stores
 export const createMealPlanApiService = () => {
   const makeApiCall = async (url: string, options: RequestInit = {}) => {
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-    const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
-    
-    const token = localStorage.getItem('google_token');
-    if (!token) {
-      throw new Error('No authentication token');
-    }
-
-    const requestOptions: RequestInit = {
-      ...options,
-      headers: mergeHeaders(options.headers, true, token),
-    };
-
-    const response = await fetch(fullUrl, requestOptions);
+    const body = options.body ? JSON.parse(options.body as string) : undefined;
+    const response = await makeAuthenticatedApiCall(url, {
+      method: options.method as any,
+      body,
+      headers: options.headers as Record<string, string>
+    });
     
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Network error' }));

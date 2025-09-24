@@ -3,9 +3,7 @@ import { AuthService } from '../services/AuthService';
 import { ApiResponse } from '../types/ApiResponse';
 import { 
   GoogleOAuthExchangeDto, 
-  GoogleTokenVerifyDto, 
   UpdateUserDto,
-  UserQueryDto
 } from '../types/AuthDto';
 
 export class AuthController {
@@ -21,24 +19,6 @@ export class AuthController {
         success: true,
         data: authResponse,
         message: authResponse.message || 'Authentication successful'
-      };
-      
-      res.json(response);
-    } catch (error) {
-      this.handleError(res, error);
-    }
-  }
-
-  async verifyGoogleToken(req: Request, res: Response): Promise<void> {
-    try {
-      const verifyDto: GoogleTokenVerifyDto = req.body;
-      
-      const authResponse = await this.authService.verifyGoogleToken(verifyDto);
-      
-      const response: ApiResponse = {
-        success: true,
-        data: authResponse,
-        message: authResponse.message || 'Token verification successful'
       };
       
       res.json(response);
@@ -102,28 +82,13 @@ export class AuthController {
     }
   }
 
-  async getAllUsers(req: Request, res: Response): Promise<void> {
-    try {
-      const query: UserQueryDto = req.query;
-      
-      const users = await this.authService.getAllUsers(query);
-      
-      const response: ApiResponse = {
-        success: true,
-        data: { users },
-        message: 'Users retrieved successfully'
-      };
-      
-      res.json(response);
-    } catch (error) {
-      this.handleError(res, error);
-    }
-  }
-
   async logout(req: Request, res: Response): Promise<void> {
     try {
-      // For Google OAuth with ID tokens, logout is primarily handled client-side
-      // Here we can perform any server-side cleanup if needed
+      // Revoke refresh token if user is authenticated
+      if (req.user) {
+        const userId = (req.user as any).id;
+        await this.authService.revokeAllUserTokens(userId);
+      }
       
       const response: ApiResponse = {
         success: true,
@@ -147,6 +112,24 @@ export class AuthController {
         success: true,
         data: { isAdmin },
         message: 'Admin status retrieved successfully'
+      };
+      
+      res.json(response);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  }
+
+  async refreshToken(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req.user as any).id;
+      
+      const tokenResponse = await this.authService.refreshTokenForUser(userId);
+      
+      const response: ApiResponse = {
+        success: true,
+        data: tokenResponse,
+        message: 'Token refreshed successfully'
       };
       
       res.json(response);

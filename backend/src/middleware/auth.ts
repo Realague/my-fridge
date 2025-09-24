@@ -18,7 +18,7 @@ export async function authenticateGoogleToken(req: Request, res: Response, next:
       });
     }
 
-    // Use AuthService to authenticate user
+    // Use AuthService to authenticate user with Google ID token
     const user = await authService.authenticateUserByToken(token);
     req.user = user;
     

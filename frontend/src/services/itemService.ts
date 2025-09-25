@@ -48,30 +48,30 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
-// Create API service that doesn't require React context
+// Non-hook API service for use in stores and non-React contexts
 const createApiService = () => {
-  const makeApiCall = async (url: string, options: RequestInit = {}) => {
-    const body = options.body ? JSON.parse(options.body as string) : undefined;
-    const response = await makeAuthenticatedApiCall(url, {
-      method: options.method as any,
-      body,
-      headers: options.headers as Record<string, string>
+  const makeApiCall = async (url: string, options: { method?: 'GET' | 'POST' | 'PUT' | 'DELETE'; body?: any; headers?: Record<string, string>; } = {}) => {
+    const response = await makeAuthenticatedApiCall(url, options, {
+      showToast: false // Let individual services handle their own error messaging
     });
-
+    
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Network error' }));
+      throw new Error(error.message || `HTTP ${response.status}`);
+    }
+    
     return response;
   };
 
   return {
-    get: (url: string) => makeApiCall(url, { method: 'GET' }),
-    post: (url: string, body?: any) => makeApiCall(url, { 
-      method: 'POST', 
-      body: body ? JSON.stringify(body) : undefined 
-    }),
-    put: (url: string, body?: any) => makeApiCall(url, { 
-      method: 'PUT', 
-      body: body ? JSON.stringify(body) : undefined 
-    }),
-    delete: (url: string) => makeApiCall(url, { method: 'DELETE' }),
+    get: (url: string, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'GET', headers }),
+    post: (url: string, body?: any, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'POST', body, headers }),
+    put: (url: string, body?: any, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'PUT', body, headers }),
+    delete: (url: string, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'DELETE', headers }),
   };
 };
 

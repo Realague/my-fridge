@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { syncHouseholdStoreWithAuth } from '@/stores/householdStore';
 import { useApiWithAuth } from '@/hooks/useApiWithAuth';
-import { initializeStoredItemService } from '@/services/storedItemService';
 import { initializeStoredItemStore } from '@/stores/storedItemStore';
 
 interface StoreProviderProps {
@@ -20,8 +19,7 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
           // Sync household store with auth store
           syncHouseholdStoreWithAuth();
           
-          // Initialize stored item service and store with API instance
-          initializeStoredItemService(api);
+          // Initialize stored item store with API instance
           initializeStoredItemStore(api);
           
           initialized.current = true;

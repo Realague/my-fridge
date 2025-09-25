@@ -69,14 +69,11 @@ interface ShoppingStore {
   getCompletedCount: () => number;
 }
 
-// Create API service for non-hook usage in stores
+// Non-hook API service for use in stores
 const createApiService = () => {
-  const makeApiCall = async (url: string, options: RequestInit = {}) => {
-    const body = options.body ? JSON.parse(options.body as string) : undefined;
-    const response = await makeAuthenticatedApiCall(url, {
-      method: options.method as any,
-      body,
-      headers: options.headers as Record<string, string>
+  const makeApiCall = async (url: string, options: { method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'; body?: any; headers?: Record<string, string>; } = {}) => {
+    const response = await makeAuthenticatedApiCall(url, options, {
+      showToast: false // Let individual stores handle their own error messaging
     });
     
     if (!response.ok) {
@@ -88,11 +85,16 @@ const createApiService = () => {
   };
 
   return {
-    get: (url: string) => makeApiCall(url, { method: 'GET' }),
-    post: (url: string, body?: any) => makeApiCall(url, { method: 'POST', body: JSON.stringify(body) }),
-    put: (url: string, body?: any) => makeApiCall(url, { method: 'PUT', body: JSON.stringify(body) }),
-    patch: (url: string, body?: any) => makeApiCall(url, { method: 'PATCH', body: JSON.stringify(body) }),
-    delete: (url: string) => makeApiCall(url, { method: 'DELETE' }),
+    get: (url: string, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'GET', headers }),
+    post: (url: string, body?: any, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'POST', body, headers }),
+    put: (url: string, body?: any, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'PUT', body, headers }),
+    patch: (url: string, body?: any, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'PATCH', body, headers }),
+    delete: (url: string, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'DELETE', headers }),
   };
 };
 

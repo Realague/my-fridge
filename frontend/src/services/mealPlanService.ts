@@ -56,12 +56,9 @@ interface ApiResponse<T> {
 
 // Non-hook version for use in stores
 export const createMealPlanApiService = () => {
-  const makeApiCall = async (url: string, options: RequestInit = {}) => {
-    const body = options.body ? JSON.parse(options.body as string) : undefined;
-    const response = await makeAuthenticatedApiCall(url, {
-      method: options.method as any,
-      body,
-      headers: options.headers as Record<string, string>
+  const makeApiCall = async (url: string, options: { method?: 'GET' | 'POST' | 'PUT' | 'DELETE'; body?: any; headers?: Record<string, string>; } = {}) => {
+    const response = await makeAuthenticatedApiCall(url, options, {
+      showToast: false // Let individual services handle their own error messaging
     });
     
     if (!response.ok) {
@@ -75,7 +72,7 @@ export const createMealPlanApiService = () => {
   const createMealPlan = async (householdId: string, data: CreateMealPlanDto): Promise<MealPlanDto> => {
     const response = await makeApiCall(`/api/households/${householdId}/meal-plans`, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: data,
     });
     
     const result: ApiResponse<MealPlanDto> = await response.json();
@@ -103,7 +100,7 @@ export const createMealPlanApiService = () => {
   const updateMealPlan = async (householdId: string, id: string, data: UpdateMealPlanDto): Promise<MealPlanDto> => {
     const response = await makeApiCall(`/api/households/${householdId}/meal-plans/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(data),
+      body: data,
     });
     
     const result: ApiResponse<MealPlanDto> = await response.json();
@@ -119,7 +116,7 @@ export const createMealPlanApiService = () => {
   const generateShoppingList = async (householdId: string, startDate: string, endDate: string): Promise<ShoppingListItemDto[]> => {
     const response = await makeApiCall(`/api/households/${householdId}/meal-plans/generate-shopping-list`, {
       method: 'POST',
-      body: JSON.stringify({ startDate, endDate }),
+      body: { startDate, endDate },
     });
     
     const result: ApiResponse<ShoppingListItemDto[]> = await response.json();

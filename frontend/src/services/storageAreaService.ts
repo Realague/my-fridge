@@ -31,12 +31,9 @@ interface ApiResponse<T = any> {
 
 // Non-hook version for use in stores
 export const createStorageAreaApiService = () => {
-  const makeApiCall = async (url: string, options: RequestInit = {}) => {
-    const body = options.body ? JSON.parse(options.body as string) : undefined;
-    const response = await makeAuthenticatedApiCall(url, {
-      method: options.method as any,
-      body,
-      headers: options.headers as Record<string, string>
+  const makeApiCall = async (url: string, options: { method?: 'GET' | 'POST' | 'PUT' | 'DELETE'; body?: any; headers?: Record<string, string>; } = {}) => {
+    const response = await makeAuthenticatedApiCall(url, options, {
+      showToast: false // Let individual services handle their own error messaging
     });
     
     if (!response.ok) {
@@ -61,7 +58,7 @@ export const createStorageAreaApiService = () => {
   const createStorageArea = async (householdId: string, data: CreateStorageAreaData): Promise<StorageArea> => {
     const response = await makeApiCall(`/api/households/${householdId}/storage-areas`, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: data,
     });
     
     const result: ApiResponse<StorageArea> = await response.json();
@@ -76,7 +73,7 @@ export const createStorageAreaApiService = () => {
   const updateStorageArea = async (householdId: string, storageAreaId: string, data: UpdateStorageAreaData): Promise<StorageArea> => {
     const response = await makeApiCall(`/api/households/${householdId}/storage-areas/${storageAreaId}`, {
       method: 'PUT',
-      body: JSON.stringify(data),
+      body: data,
     });
     
     const result: ApiResponse<StorageArea> = await response.json();

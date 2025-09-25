@@ -40,12 +40,19 @@ const StorageAreaManager = () => {
         type: newAreaType
       });
 
+      toast.success(t("messages.success.storageAreaCreated"), {
+        description: t("messages.success.storageAreaCreatedDescription", { name: newAreaName.trim() }),
+      });
+
       setNewAreaName('');
       setNewAreaEmoji('📦');
       setNewAreaType('other');
       setIsAddDialogOpen(false);
     } catch (error) {
-      // Error handled by store
+      const message = error instanceof Error ? error.message : t("messages.error.failedToCreateStorageArea");
+      toast.error(t("messages.error.creationFailed"), {
+        description: message,
+      });
     }
   };
 
@@ -70,21 +77,35 @@ const StorageAreaManager = () => {
         type: newAreaType
       });
 
+      toast.success(t("messages.success.storageAreaUpdated"), {
+        description: t("messages.success.storageAreaUpdatedDescription"),
+      });
+
       setEditingArea(null);
       setNewAreaName('');
       setNewAreaEmoji('📦');
       setNewAreaType('other');
       setIsEditDialogOpen(false);
     } catch (error) {
-      // Error handled by store
+      const message = error instanceof Error ? error.message : t("messages.error.failedToUpdateStorageArea");
+      toast.error(t("messages.error.updateFailed"), {
+        description: message,
+      });
     }
   };
 
   const handleDeleteArea = async (area: any) => {
     try {
       await deleteStorageArea(area.id);
+
+      toast.success(t("messages.success.storageAreaDeleted"), {
+        description: t("messages.success.storageAreaDeletedDescription"),
+      });
     } catch (error) {
-      // Error handled by store
+      const message = error instanceof Error ? error.message : t("messages.error.failedToDeleteStorageArea");
+      toast.error(t("messages.error.deleteFailed"), {
+        description: message,
+      });
     }
   };
 

@@ -1,10 +1,8 @@
 import React, { useMemo } from 'react';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { toast } from 'sonner';
 import { useStoredItemStore } from './storedItemStore';
 import { createStorageAreaApiService, StorageArea, CreateStorageAreaData, UpdateStorageAreaData } from '@/services/storageAreaService';
-import { useTranslation } from 'react-i18next';
 
 // Import StorageArea from service
 // export interface StorageArea - moved to service
@@ -17,10 +15,6 @@ export interface StorageAreaWithStats {
   itemCount: number;
   lowStockCount: number;
 }
-
-// Import CreateStorageAreaData and UpdateStorageAreaData from service
-// interface CreateStorageAreaData - moved to service
-// interface UpdateStorageAreaData - moved to service
 
 interface StorageAreaStore {
   // State - organized by household ID for efficient caching
@@ -104,7 +98,6 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
       },
 
       createStorageArea: async (householdId: string, data: CreateStorageAreaData) => {
-      const { t } = useTranslation();
         if (!householdId) {
           throw new Error('No household ID provided');
         }
@@ -114,20 +107,13 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
         try {
           const createdArea = await apiService.createStorageArea(householdId, data);
           
-          toast.success(t("messages.success.storageAreaCreated"), {
-            description: t("messages.success.storageAreaCreatedDescription", { name: data.name }),
-          });
-          
           // Refresh the storage areas list for this household
           const store = get();
           await store.fetchStorageAreas(householdId);
           return createdArea;
         } catch (error) {
-          const message = error instanceof Error ? error.message : t("messages.error.failedToCreateStorageArea");
+          const message = error instanceof Error ? error.message : 'Failed to create storage area';
           set({ error: message });
-          toast.error(t("messages.error.creationFailed"), {
-            description: message,
-          });
           throw error;
         } finally {
           set({ loading: false });
@@ -135,7 +121,6 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
       },
 
       updateStorageArea: async (householdId: string, storageAreaId: string, data: UpdateStorageAreaData) => {
-        const { t } = useTranslation();
         if (!householdId) {
           throw new Error('No household ID provided');
         }
@@ -145,19 +130,12 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
         try {
           await apiService.updateStorageArea(householdId, storageAreaId, data);
           
-          toast.success("Storage Area Updated!", {
-            description: `Storage area has been updated successfully.`,
-          });
-          
           // Refresh the storage areas list for this household
           const store = get();
           await store.fetchStorageAreas(householdId);
         } catch (error) {
-          const message = error instanceof Error ? error.message : t("messages.error.failedToUpdateStorageArea");
+          const message = error instanceof Error ? error.message : 'Failed to update storage area';
           set({ error: message });
-          toast.error(t("messages.error.updateFailed"), {
-            description: message,
-          });
           throw error;
         } finally {
           set({ loading: false });
@@ -165,7 +143,6 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
       },
 
       deleteStorageArea: async (householdId: string, storageAreaId: string) => {
-        const { t } = useTranslation();
         if (!householdId) {
           throw new Error('No household ID provided');
         }
@@ -174,20 +151,13 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
         
         try {
           await apiService.deleteStorageArea(householdId, storageAreaId);
-
-          toast.success(t("messages.success.storageAreaDeleted"), {
-            description: t("messages.success.storageAreaDeletedDescription"),
-          });
           
           // Refresh the storage areas list for this household
           const store = get();
           await store.fetchStorageAreas(householdId);
         } catch (error) {
-          const message = error instanceof Error ? error.message : t("messages.error.failedToDeleteStorageArea");
+          const message = error instanceof Error ? error.message : 'Failed to delete storage area';
           set({ error: message });
-          toast.error(t("messages.error.deleteFailed"), {
-            description: message,
-          });
           throw error;
         } finally {
           set({ loading: false });

@@ -9,6 +9,7 @@ import { Plus } from 'lucide-react';
 import { useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 interface AddStorageAreaDialogProps {
   trigger?: React.ReactNode;
@@ -46,6 +47,11 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
         emoji: emoji || storageAreaTypes.find(t => t.value === type)?.emoji || '📦',
       });
       
+      // Show success toast
+      toast.success(t("messages.success.storageAreaCreated"), {
+        description: t("messages.success.storageAreaCreatedDescription", { name: name.trim() }),
+      });
+      
       // Reset form and close dialog
       setName('');
       setType('');
@@ -53,6 +59,12 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
       setOpen(false);
     } catch (error) {
       console.error('Failed to create storage area:', error);
+      
+      // Show error toast
+      const message = error instanceof Error ? error.message : t("messages.error.failedToCreateStorageArea");
+      toast.error(t("messages.error.creationFailed"), {
+        description: message,
+      });
     }
   };
 

@@ -1,4 +1,4 @@
-import { mergeHeaders } from '@/utils/apiHeaders';
+import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 
 export interface StorageArea {
   id: string;
@@ -31,21 +31,10 @@ interface ApiResponse<T = any> {
 
 // Non-hook version for use in stores
 export const createStorageAreaApiService = () => {
-  const makeApiCall = async (url: string, options: RequestInit = {}) => {
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-    const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
-    
-    const token = localStorage.getItem('google_token');
-    if (!token) {
-      throw new Error('No authentication token');
-    }
-
-    const requestOptions: RequestInit = {
-      ...options,
-      headers: mergeHeaders(options.headers, true, token),
-    };
-
-    const response = await fetch(fullUrl, requestOptions);
+  const makeApiCall = async (url: string, options: { method?: 'GET' | 'POST' | 'PUT' | 'DELETE'; body?: any; headers?: Record<string, string>; } = {}) => {
+    const response = await makeAuthenticatedApiCall(url, options, {
+      showToast: false // Let individual services handle their own error messaging
+    });
     
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Network error' }));
@@ -69,7 +58,7 @@ export const createStorageAreaApiService = () => {
   const createStorageArea = async (householdId: string, data: CreateStorageAreaData): Promise<StorageArea> => {
     const response = await makeApiCall(`/api/households/${householdId}/storage-areas`, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: data,
     });
     
     const result: ApiResponse<StorageArea> = await response.json();
@@ -84,7 +73,7 @@ export const createStorageAreaApiService = () => {
   const updateStorageArea = async (householdId: string, storageAreaId: string, data: UpdateStorageAreaData): Promise<StorageArea> => {
     const response = await makeApiCall(`/api/households/${householdId}/storage-areas/${storageAreaId}`, {
       method: 'PUT',
-      body: JSON.stringify(data),
+      body: data,
     });
     
     const result: ApiResponse<StorageArea> = await response.json();

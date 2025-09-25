@@ -8,30 +8,36 @@ import {
   RecipeStats,
   IngredientStats
 } from '@/services/recipeService';
-import { mergeHeaders } from '@/utils/apiHeaders';
+import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'localhost:3000';
+// Non-hook API service for use in stores
+const createApiService = () => {
+  const makeApiCall = async (url: string, options: { method?: 'GET' | 'POST' | 'PUT' | 'DELETE'; body?: any; headers?: Record<string, string>; } = {}) => {
+    const response = await makeAuthenticatedApiCall(url, options, {
+      showToast: false // Let individual stores handle their own error messaging
+    });
+    
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Network error' }));
+      throw new Error(error.message || `HTTP ${response.status}`);
+    }
+    
+    return response;
+  };
 
-// Helper function to make authenticated API calls
-const makeApiCall = async (endpoint: string, options: RequestInit = {}) => {
-  const token = localStorage.getItem('google_token');
-  
-  if (!token) {
-    throw new Error('No authentication token found');
-  }
-  
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers: mergeHeaders(options.headers, true, token),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ message: 'Request failed' }));
-    throw new Error(errorData.message || errorData.error || `HTTP ${response.status}`);
-  }
-
-  return response.json();
+  return {
+    get: (url: string, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'GET', headers }),
+    post: (url: string, body?: any, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'POST', body, headers }),
+    put: (url: string, body?: any, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'PUT', body, headers }),
+    delete: (url: string, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'DELETE', headers }),
+  };
 };
+
+const apiService = createApiService();
 
 interface RecipeState {
   // Data
@@ -101,10 +107,11 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
         }
       });
 
-      const response = await makeApiCall(`/api/recipes/${householdId}/recipes?${queryParams}`);
+      const response = await apiService.get(`/api/recipes/${householdId}/recipes?${queryParams}`);
+      const responseData = await response.json();
       
       // Handle backend response structure: { success: true, data: { recipes, total, hasMore } }
-      const result = response.data || response;
+      const result = responseData.data || responseData;
       const recipes = result.recipes || result || [];
       const total = result.total || recipes.length;
       const hasMore = result.hasMore || false;
@@ -129,8 +136,9 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     set({ loading: true, error: null });
     
     try {
-      const response = await makeApiCall(`/api/recipes/${householdId}/recipes/${recipeId}`);
-      const recipe = response.data || response;
+      const response = await apiService.get(`/api/recipes/${householdId}/recipes/${recipeId}`);
+      const responseData = await response.json();
+      const recipe = responseData.data || responseData;
       set({
         currentRecipe: recipe,
         loading: false,
@@ -147,11 +155,9 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     set({ loading: true, error: null });
     
     try {
-      const response = await makeApiCall(`/api/recipes/${householdId}/recipes`, {
-        method: 'POST',
-        body: JSON.stringify(recipeData),
-      });
-      const newRecipe = response.data || response;
+      const response = await apiService.post(`/api/recipes/${householdId}/recipes`, recipeData);
+      const responseData = await response.json();
+      const newRecipe = responseData.data || responseData;
       
       // Add to recipes list
       const { recipes, total } = get();
@@ -194,11 +200,9 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     set({ loading: true, error: null });
     
     try {
-      const response = await makeApiCall(`/api/recipes/${householdId}/recipes/${recipeId}`, {
-        method: 'PUT',
-        body: JSON.stringify(updates),
-      });
-      const updatedRecipe = response.data || response;
+      const response = await apiService.put(`/api/recipes/${householdId}/recipes/${recipeId}`, updates);
+      const responseData = await response.json();
+      const updatedRecipe = responseData.data || responseData;
       
       // Update in recipes list
       const { recipes } = get();
@@ -241,9 +245,7 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     set({ loading: true, error: null });
     
     try {
-      await makeApiCall(`/api/recipes/${householdId}/recipes/${recipeId}`, {
-        method: 'DELETE',
-      });
+      await apiService.delete(`/api/recipes/${householdId}/recipes/${recipeId}`);
       
       // Remove from recipes list
       const { recipes, favoriteRecipes, currentRecipe, total } = get();
@@ -265,10 +267,9 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
 
   toggleFavorite: async (householdId: string, recipeId: string) => {
     try {
-      const response = await makeApiCall(`/api/recipes/${householdId}/recipes/${recipeId}/favorite`, {
-        method: 'POST',
-      });
-      const updatedRecipe = response.data || response;
+      const response = await apiService.post(`/api/recipes/${householdId}/recipes/${recipeId}/favorite`);
+      const responseData = await response.json();
+      const updatedRecipe = responseData.data || responseData;
       
       // Update in recipes list
       const { recipes, favoriteRecipes, currentRecipe } = get();
@@ -319,8 +320,9 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     set({ loading: true, error: null });
     
     try {
-      const response = await makeApiCall(`/api/recipes/${householdId}/recipes/favorites`);
-      const favorites = response.data || response || [];
+      const response = await apiService.get(`/api/recipes/${householdId}/recipes/favorites`);
+      const responseData = await response.json();
+      const favorites = responseData.data || responseData || [];
       set({
         favoriteRecipes: favorites,
         loading: false,
@@ -335,8 +337,9 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
 
   fetchTags: async (householdId: string) => {
     try {
-      const response = await makeApiCall(`/api/recipes/${householdId}/recipes/tags`);
-      const tags = response.data || response || [];
+      const response = await apiService.get(`/api/recipes/${householdId}/recipes/tags`);
+      const responseData = await response.json();
+      const tags = responseData.data || responseData || [];
       set({ tags });
     } catch (error) {
       set({
@@ -347,8 +350,9 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
 
   fetchStats: async (householdId: string) => {
     try {
-      const response = await makeApiCall(`/api/recipes/${householdId}/recipes/stats`);
-      const stats = response.data || response;
+      const response = await apiService.get(`/api/recipes/${householdId}/recipes/stats`);
+      const responseData = await response.json();
+      const stats = responseData.data || responseData;
       set({ stats });
     } catch (error) {
       set({
@@ -359,8 +363,9 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
 
   fetchIngredientStats: async (householdId: string) => {
     try {
-      const response = await makeApiCall(`/api/recipes/${householdId}/recipes/ingredients/stats`);
-      const ingredientStats = response.data || response || [];
+      const response = await apiService.get(`/api/recipes/${householdId}/recipes/ingredients/stats`);
+      const responseData = await response.json();
+      const ingredientStats = responseData.data || responseData || [];
       set({ ingredientStats });
     } catch (error) {
       set({
@@ -371,8 +376,9 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
 
   getRecipesByUser: async (householdId: string, userId: string) => {
     try {
-      const response = await makeApiCall(`/api/recipes/${householdId}/users/${userId}/recipes`);
-      return response.data || response || [];
+      const response = await apiService.get(`/api/recipes/${householdId}/users/${userId}/recipes`);
+      const responseData = await response.json();
+      return responseData.data || responseData || [];
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : 'Failed to fetch user recipes',

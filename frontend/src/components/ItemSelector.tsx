@@ -71,13 +71,6 @@ export const ItemSelector = ({
       return;
     }
 
-    // Check if we have a valid token
-    const token = localStorage.getItem('google_token');
-    if (!token) {
-      console.warn('ItemSelector: No Google token found, skipping household items load');
-      return;
-    }
-
     try {
       setApiLoading(true);
       const items = await itemService.getItemsByHousehold(selectedHouseholdId);
@@ -124,14 +117,6 @@ export const ItemSelector = ({
               isAuthenticated: isAuthenticatedRef.current, 
               hasQuery: !!query.trim() 
             });
-            return;
-          }
-
-          // Check if we have a valid token
-          const token = localStorage.getItem('google_token');
-          if (!token) {
-            console.warn('No Google token found, skipping search');
-            toast.error(t('messages.error.loginRequired'));
             return;
           }
 

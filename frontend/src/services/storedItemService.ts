@@ -1,4 +1,4 @@
-import { useApiWithAuth } from '@/hooks/useApiWithAuth';
+import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 import { Unit } from '@/types/enums';
 
 export interface StoredItem {
@@ -78,23 +78,37 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
-// Create API instance outside the service to avoid circular dependencies
-let apiInstance: ReturnType<typeof useApiWithAuth> | null = null;
+// Non-hook API service for use in stores and non-React contexts
+const createApiService = () => {
+  const makeApiCall = async (url: string, options: { method?: 'GET' | 'POST' | 'PUT' | 'DELETE'; body?: any; headers?: Record<string, string>; } = {}) => {
+    const response = await makeAuthenticatedApiCall(url, options, {
+      showToast: false // Let individual services handle their own error messaging
+    });
+    
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Network error' }));
+      throw new Error(error.message || `HTTP ${response.status}`);
+    }
+    
+    return response;
+  };
 
-const getApi = () => {
-  if (!apiInstance) {
-    throw new Error('API instance not initialized. Make sure to call initializeStoredItemService.');
-  }
-  return apiInstance;
+  return {
+    get: (url: string, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'GET', headers }),
+    post: (url: string, body?: any, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'POST', body, headers }),
+    put: (url: string, body?: any, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'PUT', body, headers }),
+    delete: (url: string, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'DELETE', headers }),
+  };
 };
 
-export const initializeStoredItemService = (api: ReturnType<typeof useApiWithAuth>) => {
-  apiInstance = api;
-};
+const apiService = createApiService();
 
 // Stored item service methods
 const getStoredItems = async (householdId: string, params?: GetStoredItemsRequest): Promise<StoredItemsResponse> => {
-  const { get } = getApi();
   const searchParams = new URLSearchParams();
   
   if (params?.storageAreaId) searchParams.append('storageAreaId', params.storageAreaId);
@@ -105,7 +119,7 @@ const getStoredItems = async (householdId: string, params?: GetStoredItemsReques
   if (params?.limit) searchParams.append('limit', params.limit.toString());
   if (params?.offset) searchParams.append('offset', params.offset.toString());
 
-  const response = await get(`/api/households/${householdId}/stored-items?${searchParams.toString()}`);
+  const response = await apiService.get(`/api/households/${householdId}/stored-items?${searchParams.toString()}`);
   const result: ApiResponse<StoredItemsResponse> = await response.json();
   
   if (!result.success) {
@@ -116,8 +130,7 @@ const getStoredItems = async (householdId: string, params?: GetStoredItemsReques
 };
 
 const getStoredItemById = async (householdId: string, id: string): Promise<StoredItem> => {
-  const { get } = getApi();
-  const response = await get(`/api/households/${householdId}/stored-items/${id}`);
+  const response = await apiService.get(`/api/households/${householdId}/stored-items/${id}`);
   const result: ApiResponse<StoredItem> = await response.json();
   
   if (!result.success) {
@@ -128,8 +141,7 @@ const getStoredItemById = async (householdId: string, id: string): Promise<Store
 };
 
 const createStoredItem = async (householdId: string, itemData: CreateStoredItemRequest): Promise<StoredItem> => {
-  const { post } = getApi();
-  const response = await post(`/api/households/${householdId}/stored-items`, itemData);
+  const response = await apiService.post(`/api/households/${householdId}/stored-items`, itemData);
   const result: ApiResponse<StoredItem> = await response.json();
   
   if (!result.success) {
@@ -140,8 +152,7 @@ const createStoredItem = async (householdId: string, itemData: CreateStoredItemR
 };
 
 const updateStoredItem = async (householdId: string, id: string, updates: UpdateStoredItemRequest): Promise<StoredItem> => {
-  const { put } = getApi();
-  const response = await put(`/api/households/${householdId}/stored-items/${id}`, updates);
+  const response = await apiService.put(`/api/households/${householdId}/stored-items/${id}`, updates);
   const result: ApiResponse<StoredItem> = await response.json();
   
   if (!result.success) {
@@ -152,8 +163,7 @@ const updateStoredItem = async (householdId: string, id: string, updates: Update
 };
 
 const deleteStoredItem = async (householdId: string, id: string): Promise<void> => {
-  const { delete: del } = getApi();
-  const response = await del(`/api/households/${householdId}/stored-items/${id}`);
+  const response = await apiService.delete(`/api/households/${householdId}/stored-items/${id}`);
   const result: ApiResponse<void> = await response.json();
   
   if (!result.success) {
@@ -162,8 +172,7 @@ const deleteStoredItem = async (householdId: string, id: string): Promise<void> 
 };
 
 const getStoredItemsByStorageArea = async (householdId: string, storageAreaId: string): Promise<StoredItem[]> => {
-  const { get } = getApi();
-  const response = await get(`/api/households/${householdId}/storage-areas/${storageAreaId}/stored-items`);
+  const response = await apiService.get(`/api/households/${householdId}/storage-areas/${storageAreaId}/stored-items`);
   const result: ApiResponse<StoredItem[]> = await response.json();
   
   if (!result.success) {
@@ -174,11 +183,10 @@ const getStoredItemsByStorageArea = async (householdId: string, storageAreaId: s
 };
 
 const getExpiringItems = async (householdId: string, days?: number): Promise<StoredItem[]> => {
-  const { get } = getApi();
   const searchParams = new URLSearchParams();
   if (days) searchParams.append('days', days.toString());
 
-  const response = await get(`/api/households/${householdId}/stored-items/expiring?${searchParams.toString()}`);
+  const response = await apiService.get(`/api/households/${householdId}/stored-items/expiring?${searchParams.toString()}`);
   const result: ApiResponse<StoredItem[]> = await response.json();
   
   if (!result.success) {
@@ -189,8 +197,7 @@ const getExpiringItems = async (householdId: string, days?: number): Promise<Sto
 };
 
 const getExpiredItems = async (householdId: string): Promise<StoredItem[]> => {
-  const { get } = getApi();
-  const response = await get(`/api/households/${householdId}/stored-items/expired`);
+  const response = await apiService.get(`/api/households/${householdId}/stored-items/expired`);
   const result: ApiResponse<StoredItem[]> = await response.json();
   
   if (!result.success) {
@@ -201,8 +208,7 @@ const getExpiredItems = async (householdId: string): Promise<StoredItem[]> => {
 };
 
 const getTotalQuantityByItem = async (householdId: string, itemId: string): Promise<number> => {
-  const { get } = getApi();
-  const response = await get(`/api/households/${householdId}/items/${itemId}/total-quantity`);
+  const response = await apiService.get(`/api/households/${householdId}/items/${itemId}/total-quantity`);
   const result: ApiResponse<{ totalQuantity: number }> = await response.json();
   
   if (!result.success) {

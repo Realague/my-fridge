@@ -2,10 +2,6 @@ export interface GoogleOAuthExchangeDto {
   code: string;
 }
 
-export interface GoogleTokenVerifyDto {
-  token: string;
-}
-
 export interface UpdateUserDto {
   firstName?: string;
   lastName?: string;
@@ -24,7 +20,8 @@ export interface UserResponseDto {
 
 export interface AuthResponseDto {
   user: UserResponseDto;
-  token?: string;
+  accessToken: string;
+  accessTokenExpiresAt: Date;
   message?: string;
 }
 
@@ -32,11 +29,3 @@ export interface AuthErrorDto {
   message: string;
   error?: string;
 }
-
-export interface UserQueryDto {
-  limit?: number;
-  offset?: number;
-  sortBy?: 'firstName' | 'lastName' | 'email' | 'createdAt';
-  sortOrder?: 'ASC' | 'DESC';
-  search?: string;
-} 

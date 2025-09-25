@@ -1,5 +1,5 @@
 import { useApiWithAuth } from '@/hooks/useApiWithAuth';
-import { mergeHeaders } from '@/utils/apiHeaders';
+import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 
 // Types matching backend DTOs
 export interface CreateMealPlanDto {
@@ -56,21 +56,10 @@ interface ApiResponse<T> {
 
 // Non-hook version for use in stores
 export const createMealPlanApiService = () => {
-  const makeApiCall = async (url: string, options: RequestInit = {}) => {
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-    const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
-    
-    const token = localStorage.getItem('google_token');
-    if (!token) {
-      throw new Error('No authentication token');
-    }
-
-    const requestOptions: RequestInit = {
-      ...options,
-      headers: mergeHeaders(options.headers, true, token),
-    };
-
-    const response = await fetch(fullUrl, requestOptions);
+  const makeApiCall = async (url: string, options: { method?: 'GET' | 'POST' | 'PUT' | 'DELETE'; body?: any; headers?: Record<string, string>; } = {}) => {
+    const response = await makeAuthenticatedApiCall(url, options, {
+      showToast: false // Let individual services handle their own error messaging
+    });
     
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Network error' }));
@@ -83,7 +72,7 @@ export const createMealPlanApiService = () => {
   const createMealPlan = async (householdId: string, data: CreateMealPlanDto): Promise<MealPlanDto> => {
     const response = await makeApiCall(`/api/households/${householdId}/meal-plans`, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: data,
     });
     
     const result: ApiResponse<MealPlanDto> = await response.json();
@@ -111,7 +100,7 @@ export const createMealPlanApiService = () => {
   const updateMealPlan = async (householdId: string, id: string, data: UpdateMealPlanDto): Promise<MealPlanDto> => {
     const response = await makeApiCall(`/api/households/${householdId}/meal-plans/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(data),
+      body: data,
     });
     
     const result: ApiResponse<MealPlanDto> = await response.json();
@@ -127,7 +116,7 @@ export const createMealPlanApiService = () => {
   const generateShoppingList = async (householdId: string, startDate: string, endDate: string): Promise<ShoppingListItemDto[]> => {
     const response = await makeApiCall(`/api/households/${householdId}/meal-plans/generate-shopping-list`, {
       method: 'POST',
-      body: JSON.stringify({ startDate, endDate }),
+      body: { startDate, endDate },
     });
     
     const result: ApiResponse<ShoppingListItemDto[]> = await response.json();

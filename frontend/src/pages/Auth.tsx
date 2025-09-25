@@ -5,14 +5,72 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { useTranslation } from 'react-i18next';
+import { getUnauthHeaders } from '@/utils/apiHeaders';
 
 const Auth = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { signInWithGoogle, isAuthenticated, isLoading, user } = useAuthStore();
+  const { signInWithGoogle, isAuthenticated, isLoading, user, setUser, setTokens, setAuthenticated, setLoading } = useAuthStore();
   const [authLoading, setAuthLoading] = useState(false);
   const googleButtonRef = useRef<HTMLDivElement>(null);
+
+  // Handle OAuth callback
+  useEffect(() => {
+    const handleOAuthCallback = async () => {
+      const code = searchParams.get('code');
+      const error = searchParams.get('error');
+
+      if (error) {
+        console.error('OAuth error:', error);
+        return;
+      }
+
+      if (code) {
+        try {
+          setAuthLoading(true);
+          setLoading(true);
+          
+          console.log('Processing OAuth callback with code:', code);
+          
+          // Exchange the authorization code for tokens
+          const response = await fetch(`${import.meta.env.VITE_API_URL || 'localhost:3000'}/auth/google/exchange`, {
+            method: 'POST',
+            headers: getUnauthHeaders(),
+            body: JSON.stringify({ code }),
+          });
+
+          if (response.ok) {
+            const responseData = await response.json();
+            const authData = responseData.data;
+            
+            // Store the access token
+            const tokens = {
+              accessToken: authData.accessToken,
+              accessTokenExpiresAt: new Date(authData.accessTokenExpiresAt)
+            };
+            
+            setUser(authData.user);
+            setTokens(tokens);
+            setAuthenticated(true);
+            
+            // Clear the URL parameters
+            window.history.replaceState({}, document.title, window.location.pathname);
+          } else {
+            const errorData = await response.json();
+            console.error('Token exchange failed:', errorData);
+          }
+        } catch (error) {
+          console.error('OAuth callback error:', error);
+        } finally {
+          setAuthLoading(false);
+          setLoading(false);
+        }
+      }
+    };
+
+    handleOAuthCallback();
+  }, [searchParams, setUser, setTokens, setAuthenticated, setLoading]);
 
   useEffect(() => {
     // Redirect if already authenticated
@@ -84,7 +142,7 @@ const Auth = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
         <div className="text-center">

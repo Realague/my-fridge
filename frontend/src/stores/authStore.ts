@@ -11,35 +11,36 @@ export interface User {
   selectedHouseholdId: string | null;
 }
 
+interface TokenInfo {
+  accessToken: string;
+  accessTokenExpiresAt: Date;
+}
+
 interface AuthState {
   user: User | null;
+  tokens: TokenInfo | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   // Actions
   setUser: (user: User | null) => void;
+  setTokens: (tokens: TokenInfo | null) => void;
   setLoading: (loading: boolean) => void;
   setAuthenticated: (authenticated: boolean) => void;
   signInWithGoogle: () => void;
   signOut: () => void;
-  refreshToken: () => Promise<boolean>;
-  checkTokenExpiry: () => boolean;
-  verifyTokenWithBackend: (token: string) => Promise<void>;
+  refreshTokens: () => Promise<boolean>;
   updateUser: (firstName: string, lastName: string) => Promise<void>;
   initializeGoogleAuth: () => void;
   checkStoredAuth: () => Promise<void>;
   isTokenExpired: (token: string) => boolean;
-}
-
-declare global {
-  interface Window {
-    google: any;
-  }
+  getValidAccessToken: () => Promise<string | null>;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
+      tokens: null,
       isLoading: true,
       isAuthenticated: false,
 
@@ -70,100 +71,46 @@ export const useAuthStore = create<AuthState>()(
           }
         }
       },
+      setTokens: (tokens) => set({ tokens }),
       setLoading: (loading) => set({ isLoading: loading }),
       setAuthenticated: (authenticated) => set({ isAuthenticated: authenticated }),
 
       initializeGoogleAuth: () => {
-        const loadGoogleSDK = () => {
-          const script = document.createElement('script');
-          script.src = 'https://accounts.google.com/gsi/client';
-          script.async = true;
-          script.defer = true;
-          script.onload = () => {
-            if (window.google && import.meta.env.VITE_GOOGLE_CLIENT_ID) {
-              try {
-                const handleGoogleResponseLocal = async (response: any) => {
-                  try {
-                    const token = response.credential;
-                    localStorage.setItem('google_token', token);
-                    await get().verifyTokenWithBackend(token);
-                  } catch (error) {
-                    console.error('Google auth failed:', error);
-                  }
-                };
-
-                window.google.accounts.id.initialize({
-                  client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-                  callback: handleGoogleResponseLocal,
-                  auto_select: false,
-                  cancel_on_tap_outside: false,
-                });
-                
-                // Check if user is already authenticated - this will set isLoading to false
-                get().checkStoredAuth();
-              } catch (error) {
-                console.error('Error initializing Google Auth:', error);
-                set({ isLoading: false });
-              }
-            } else {
-              console.error('Google SDK not available or Client ID missing');
-              if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) {
-                console.error('VITE_GOOGLE_CLIENT_ID environment variable is not set');
-              }
-              set({ isLoading: false });
-            }
-          };
-          script.onerror = () => {
-            console.error('Failed to load Google SDK');
-            set({ isLoading: false });
-          };
-          document.head.appendChild(script);
-        };
-
-        loadGoogleSDK();
+        // Pure OAuth2 flow - no Google SDK needed
+        console.log('Initializing OAuth2-only authentication');
+        get().checkStoredAuth();
       },
 
-      verifyTokenWithBackend: async (token: string) => {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'localhost:3000'}/auth/verify-google-token`, {
-          method: 'POST',
-          headers: getUnauthHeaders(),
-          body: JSON.stringify({ token }),
-        });
-
-        if (response.ok) {
-          const responseData = await response.json();
-          set({ 
-            user: responseData.data.user,
-            isAuthenticated: true 
-          });
-        } else {
-          console.error('Backend token verification failed:', response.status);
-          throw new Error('Token verification failed');
-        }
-      },
 
       checkStoredAuth: async () => {
-        const token = localStorage.getItem('google_token');
-        if (token) {
+        const state = get();
+        
+        // Check if we have stored tokens
+        if (state.tokens?.accessToken) {
           try {
-            // Check if token is expired before trying to use it
-            if (get().isTokenExpired(token)) {
-              const refreshed = await get().refreshToken();
+            console.log('Checking stored access token...');
+            // Check if access token is expired
+            if (get().isTokenExpired(state.tokens.accessToken)) {
+              console.log('Access token is expired, attempting refresh...');
+              // Try to refresh the token
+              const refreshed = await get().refreshTokens();
               if (!refreshed) {
-                localStorage.removeItem('google_token');
-                set({ user: null, isAuthenticated: false });
+                console.log('Token refresh failed, clearing auth state');
+                set({ user: null, tokens: null, isAuthenticated: false });
+              } else {
+                console.log('Token refresh successful');
               }
             } else {
-              await get().verifyTokenWithBackend(token);
+              // Token is still valid, keep current state
+              set({ isAuthenticated: true });
             }
           } catch (error) {
-            console.error('Stored token verification failed:', error);
-            localStorage.removeItem('google_token');
-            set({ user: null, isAuthenticated: false });
+            console.error('Token validation failed:', error);
+            set({ user: null, tokens: null, isAuthenticated: false });
           }
         } else {
-          // No token found, ensure auth state is clear
-          set({ user: null, isAuthenticated: false });
+          // No tokens found, ensure auth state is clear
+          set({ user: null, tokens: null, isAuthenticated: false });
         }
         // Always set loading to false after checking stored auth
         set({ isLoading: false });
@@ -180,29 +127,33 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      checkTokenExpiry: (): boolean => {
-        const token = localStorage.getItem('google_token');
-        if (!token) return true;
-        return get().isTokenExpired(token);
-      },
-
-      refreshToken: async (): Promise<boolean> => {
+      refreshTokens: async (): Promise<boolean> => {
         try {
-          return new Promise((resolve) => {
-            if (window.google) {
-              window.google.accounts.id.prompt((notification: any) => {
-                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                  resolve(false);
-                }
-              });
-              
-              setTimeout(() => {
-                resolve(false);
-              }, 10000);
-            } else {
-              resolve(false);
-            }
+          const state = get();
+          if (!state.tokens?.accessToken) {
+            return false;
+          }
+
+          const response = await fetch(`${import.meta.env.VITE_API_URL || 'localhost:3000'}/auth/refresh`, {
+            method: 'POST',
+            headers: getAuthHeaders(state.tokens.accessToken),
           });
+
+          if (response.ok) {
+            const responseData = await response.json();
+            const tokenData = responseData.data;
+            
+            const newTokens: TokenInfo = {
+              accessToken: tokenData.accessToken,
+              accessTokenExpiresAt: new Date(tokenData.accessTokenExpiresAt)
+            };
+            
+            set({ tokens: newTokens });
+            return true;
+          } else {
+            console.error('Token refresh failed:', response.status);
+            return false;
+          }
         } catch (error) {
           console.error('Token refresh failed:', error);
           return false;
@@ -210,15 +161,50 @@ export const useAuthStore = create<AuthState>()(
       },
 
       signInWithGoogle: () => {
-        if (window.google) {
-          window.google.accounts.id.prompt();
+        // Pure OAuth2 authorization code flow
+        console.log('Starting OAuth2 flow...');
+        const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+        const redirectUri = `${window.location.origin}/auth`;
+        
+        const params = new URLSearchParams({
+          client_id: clientId,
+          redirect_uri: redirectUri,
+          response_type: 'code',
+          scope: 'openid email profile',
+          access_type: 'offline', // Required for refresh tokens
+          prompt: 'consent',      // Force consent to get refresh token
+          include_granted_scopes: 'true'
+        });
+
+        const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+        console.log('Redirecting to:', authUrl);
+        window.location.href = authUrl;
+      },
+
+      getValidAccessToken: async (): Promise<string | null> => {
+        const state = get();
+        if (!state.tokens?.accessToken) {
+          return null;
         }
+
+        // Check if token is expired
+        if (get().isTokenExpired(state.tokens.accessToken)) {
+          // Try to refresh
+          const refreshed = await get().refreshTokens();
+          if (!refreshed) {
+            return null;
+          }
+          // Get the new token after refresh
+          return get().tokens?.accessToken || null;
+        }
+
+        return state.tokens.accessToken;
       },
 
       updateUser: async (firstName: string, lastName: string) => {
-        const token = localStorage.getItem('google_token');
+        const token = await get().getValidAccessToken();
         if (!token) {
-          throw new Error('No authentication token found');
+          throw new Error('No valid authentication token found');
         }
 
         const response = await fetch(`${import.meta.env.VITE_API_URL || 'localhost:3000'}/auth/me`, {
@@ -241,21 +227,18 @@ export const useAuthStore = create<AuthState>()(
       },
 
       signOut: () => {
-        localStorage.removeItem('google_token');
         set({ 
-          user: null, 
+          user: null,
+          tokens: null,
           isAuthenticated: false 
         });
-        
-        if (window.google) {
-          window.google.accounts.id.disableAutoSelect();
-        }
       },
     }),
     {
       name: 'auth-storage',
       partialize: (state) => ({ 
         user: state.user,
+        tokens: state.tokens,
         isAuthenticated: state.isAuthenticated 
       }),
     }

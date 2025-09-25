@@ -1,4 +1,4 @@
-import { mergeHeaders } from '@/utils/apiHeaders';
+import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 
 export interface Item {
   id: string;
@@ -48,46 +48,30 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
-// Create API service that doesn't require React context
+// Non-hook API service for use in stores and non-React contexts
 const createApiService = () => {
-  const makeApiCall = async (url: string, options: RequestInit = {}) => {
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-    const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
-
-    // Get the current token
-    const token = localStorage.getItem('google_token');
+  const makeApiCall = async (url: string, options: { method?: 'GET' | 'POST' | 'PUT' | 'DELETE'; body?: any; headers?: Record<string, string>; } = {}) => {
+    const response = await makeAuthenticatedApiCall(url, options, {
+      showToast: false // Let individual services handle their own error messaging
+    });
     
-    if (!token) {
-      throw new Error('No authentication token found');
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Network error' }));
+      throw new Error(error.message || `HTTP ${response.status}`);
     }
-
-    // Prepare the request
-    const requestOptions: RequestInit = {
-      ...options,
-      headers: mergeHeaders(options.headers as Record<string, string>, true, token),
-    };
-
-    const response = await fetch(fullUrl, requestOptions);
     
-    // Handle 401 Unauthorized responses
-    if (response.status === 401) {
-      throw new Error('Authentication failed - please log in again');
-    }
-
     return response;
   };
 
   return {
-    get: (url: string) => makeApiCall(url, { method: 'GET' }),
-    post: (url: string, body?: any) => makeApiCall(url, { 
-      method: 'POST', 
-      body: body ? JSON.stringify(body) : undefined 
-    }),
-    put: (url: string, body?: any) => makeApiCall(url, { 
-      method: 'PUT', 
-      body: body ? JSON.stringify(body) : undefined 
-    }),
-    delete: (url: string) => makeApiCall(url, { method: 'DELETE' }),
+    get: (url: string, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'GET', headers }),
+    post: (url: string, body?: any, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'POST', body, headers }),
+    put: (url: string, body?: any, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'PUT', body, headers }),
+    delete: (url: string, headers?: Record<string, string>) => 
+      makeApiCall(url, { method: 'DELETE', headers }),
   };
 };
 

@@ -27,7 +27,7 @@ const Settings = () => {
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [isUpdating, setIsUpdating] = useState(false);
-  const { user, updateUser, signOut } = useAuthStore();
+  const { user, updateUser, signOut, tokens } = useAuthStore();
 
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -36,16 +36,15 @@ const Settings = () => {
   ];
 
   useEffect(() => {
-    // Get the Google token from localStorage
-    const token = localStorage.getItem('google_token');
-    setGoogleToken(token || 'No token found');
+    // Get the access token from auth store (OAuth2 flow)
+    setGoogleToken(tokens?.accessToken || 'No token found');
     
     // Initialize form fields with current user data
     if (user) {
       setFirstName(user.firstName || '');
       setLastName(user.lastName || '');
     }
-  }, [user]);
+  }, [user, tokens]);
 
   const copyTokenToClipboard = async () => {
     try {

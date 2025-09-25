@@ -17,9 +17,11 @@ import { RecipeSelector } from '@/components/RecipeSelector';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const MealPlans = () => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
   
@@ -265,14 +267,14 @@ const MealPlans = () => {
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">{t('pages.mealPlans.title')}</h1>
+          <div className={`flex items-center ${isMobile ? 'flex-col gap-3' : 'justify-between'}`}>
+            <h1 className={`font-bold text-gray-900 ${isMobile ? 'text-xl text-center' : 'text-2xl'}`}>{t('pages.mealPlans.title')}</h1>
             <Button
               onClick={() => generateShoppingList()}
-              className="bg-green-600 hover:bg-green-700"
+              className={`bg-green-600 hover:bg-green-700 touch-friendly ${isMobile ? 'w-full' : ''}`}
             >
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              {t('pages.mealPlans.generateShoppingList')}
+              <ShoppingCart className="h-5 w-5 mr-2" />
+              {isMobile ? t('pages.mealPlans.generateShoppingList').split(' ')[0] + ' List' : t('pages.mealPlans.generateShoppingList')}
             </Button>
           </div>
         </div>
@@ -281,109 +283,198 @@ const MealPlans = () => {
       <div className="container mx-auto px-4 py-6">
         {/* Calendar Header */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-0 mb-6">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">
+          <div className={`${isMobile ? 'p-4' : 'p-6'}`}>
+            <div className={`flex items-center ${isMobile ? 'flex-col gap-4' : 'justify-between'} mb-4`}>
+              <h2 className={`font-semibold text-gray-900 ${isMobile ? 'text-lg text-center' : 'text-xl'}`}>
                 {format(currentDate, 'MMMM yyyy')}
               </h2>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
-                  size="sm"
+                  size={isMobile ? "default" : "sm"}
                   onClick={() => setCurrentDate(subWeeks(currentDate, 1))}
-                  className="text-gray-600"
+                  className={`text-gray-600 touch-friendly ${isMobile ? 'h-12 w-12' : ''}`}
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className={isMobile ? "h-5 w-5" : "h-4 w-4"} />
                 </Button>
                 <Button
                   variant="outline"
-                  size="sm"
+                  size={isMobile ? "default" : "sm"}
                   onClick={() => setCurrentDate(new Date())}
-                  className="text-gray-600"
+                  className={`text-gray-600 touch-friendly ${isMobile ? 'px-6' : ''}`}
                 >
                   {t('pages.mealPlans.today')}
                 </Button>
                 <Button
                   variant="outline"
-                  size="sm"
+                  size={isMobile ? "default" : "sm"}
                   onClick={() => setCurrentDate(addWeeks(currentDate, 1))}
-                  className="text-gray-600"
+                  className={`text-gray-600 touch-friendly ${isMobile ? 'h-12 w-12' : ''}`}
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className={isMobile ? "h-5 w-5" : "h-4 w-4"} />
                 </Button>
               </div>
             </div>
 
-            {/* Week Grid */}
-            <div className="grid grid-cols-7 gap-2">
-              {[t('pages.mealPlans.mon'), t('pages.mealPlans.tue'), t('pages.mealPlans.wed'), t('pages.mealPlans.thu'), t('pages.mealPlans.fri'), t('pages.mealPlans.sat'), t('pages.mealPlans.sun')].map((day) => (
-                <div key={day} className="text-center text-sm font-medium text-gray-500 p-2">
-                  {day}
-                </div>
-              ))}
-              
-              {weekDays.map((day) => (
-                <div
-                  key={day.toISOString()}
-                  className={`
-                    min-h-[120px] p-2 border border-gray-200 rounded-lg
-                    ${!isSameMonth(day, currentDate) ? 'opacity-50 bg-gray-50' : 'bg-white'}
-                    ${isToday(day) ? 'ring-2 ring-green-500' : ''}
-                  `}
-                >
-                  <div className="text-sm font-medium text-gray-900 mb-2">
-                    {format(day, 'd')}
-                  </div>
-                  
-                  {/* Meal Plans for this day */}
-                  <div className="space-y-1">
-                    {getMealPlansForDay(day).map((mealPlan) => (
-                      <Card
-                        key={mealPlan.id}
-                        className="cursor-pointer hover:shadow-md transition-shadow border-0 bg-gradient-to-r from-green-50 to-orange-50 group relative"
-                        onClick={() => handleViewMealPlan(mealPlan)}
-                      >
-                        <CardContent className="p-2">
-                          <div className="text-xs font-medium text-gray-900 truncate mb-1">
-                            {mealPlan.recipe?.title || 'Recipe not found'}
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <Badge variant="secondary" className="text-xs px-1 py-0">
-                              {mealPlan.mealType}
-                            </Badge>
-                              <span className="text-xs text-gray-600">
-                                {mealPlan.servings}
-                              </span>
-                          </div>
-                        </CardContent>
-                        
-                        {/* Quick Delete Button */}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => handleQuickDeleteMealPlan(e, mealPlan.id)}
-                          className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-red-50 hover:bg-red-100 text-red-600"
-                          disabled={deletingMealPlan}
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </Card>
-                    ))}
-                  </div>
-                  
-                  {/* Add Meal Button */}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleAddMeal(day)}
-                    className="w-full mt-2 text-xs text-gray-500 hover:text-green-600 hover:bg-green-50"
+            {/* Mobile and Desktop Views */}
+            {isMobile ? (
+              // Mobile: Vertical card layout
+              <div className="space-y-4">
+                {weekDays.map((day) => (
+                  <Card
+                    key={day.toISOString()}
+                    className={`
+                      border border-gray-200 
+                      ${!isSameMonth(day, currentDate) ? 'opacity-50 bg-gray-50' : 'bg-white'}
+                      ${isToday(day) ? 'ring-2 ring-green-500 bg-green-50/50' : ''}
+                    `}
                   >
-                    <Plus className="h-3 w-3 mr-1" />
-                    {t('pages.mealPlans.addMeal')}
-                  </Button>
-                </div>
-              ))}
-            </div>
+                    <CardContent className="p-4">
+                      {/* Day Header */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="text-2xl font-bold text-gray-900">
+                            {format(day, 'd')}
+                          </div>
+                          <div className="text-sm font-medium text-gray-600">
+                            {format(day, 'EEEE')}
+                          </div>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleAddMeal(day)}
+                          className="touch-friendly bg-green-50 hover:bg-green-100 border-green-200"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          {t('pages.mealPlans.addMeal')}
+                        </Button>
+                      </div>
+                      
+                      {/* Meal Plans for this day */}
+                      <div className="space-y-3">
+                        {getMealPlansForDay(day).length === 0 ? (
+                          <div className="text-sm text-gray-400 italic py-2">
+                            No meals planned
+                          </div>
+                        ) : (
+                          getMealPlansForDay(day).map((mealPlan) => (
+                            <Card
+                              key={mealPlan.id}
+                              className="cursor-pointer hover:shadow-md transition-all border-0 bg-gradient-to-r from-green-50 to-orange-50 group"
+                              onClick={() => handleViewMealPlan(mealPlan)}
+                            >
+                              <CardContent className="p-4">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1 min-w-0">
+                                    <div className="font-medium text-gray-900 truncate mb-1">
+                                      {mealPlan.recipe?.title || 'Recipe not found'}
+                                    </div>
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <Badge variant="secondary" className="text-xs">
+                                        {mealPlan.mealType}
+                                      </Badge>
+                                      <span className="text-sm text-gray-600">
+                                        {mealPlan.servings} servings
+                                      </span>
+                                    </div>
+                                    {mealPlan.recipe && (
+                                      <div className="text-xs text-gray-500">
+                                        {mealPlan.recipe.prepTime + mealPlan.recipe.cookTime} min • {mealPlan.recipe.difficulty}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => handleQuickDeleteMealPlan(e, mealPlan.id)}
+                                    className="h-8 w-8 p-0 opacity-60 group-hover:opacity-100 transition-opacity bg-red-50 hover:bg-red-100 text-red-600 touch-friendly"
+                                    disabled={deletingMealPlan}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              // Desktop: Grid layout
+              <div className="grid grid-cols-7 gap-2">
+                {[t('pages.mealPlans.mon'), t('pages.mealPlans.tue'), t('pages.mealPlans.wed'), t('pages.mealPlans.thu'), t('pages.mealPlans.fri'), t('pages.mealPlans.sat'), t('pages.mealPlans.sun')].map((day) => (
+                  <div key={day} className="text-center text-sm font-medium text-gray-500 p-2">
+                    {day}
+                  </div>
+                ))}
+                
+                {weekDays.map((day) => (
+                  <div
+                    key={day.toISOString()}
+                    className={`
+                      min-h-[120px] p-2 border border-gray-200 rounded-lg
+                      ${!isSameMonth(day, currentDate) ? 'opacity-50 bg-gray-50' : 'bg-white'}
+                      ${isToday(day) ? 'ring-2 ring-green-500' : ''}
+                    `}
+                  >
+                    <div className="text-sm font-medium text-gray-900 mb-2">
+                      {format(day, 'd')}
+                    </div>
+                    
+                    {/* Meal Plans for this day */}
+                    <div className="space-y-1">
+                      {getMealPlansForDay(day).map((mealPlan) => (
+                        <Card
+                          key={mealPlan.id}
+                          className="cursor-pointer hover:shadow-md transition-shadow border-0 bg-gradient-to-r from-green-50 to-orange-50 group relative"
+                          onClick={() => handleViewMealPlan(mealPlan)}
+                        >
+                          <CardContent className="p-2">
+                            <div className="text-xs font-medium text-gray-900 truncate mb-1">
+                              {mealPlan.recipe?.title || 'Recipe not found'}
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <Badge variant="secondary" className="text-xs px-1 py-0">
+                                {mealPlan.mealType}
+                              </Badge>
+                                <span className="text-xs text-gray-600">
+                                  {mealPlan.servings}
+                                </span>
+                            </div>
+                          </CardContent>
+                          
+                          {/* Quick Delete Button */}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => handleQuickDeleteMealPlan(e, mealPlan.id)}
+                            className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-red-50 hover:bg-red-100 text-red-600"
+                            disabled={deletingMealPlan}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </Card>
+                      ))}
+                    </div>
+                    
+                    {/* Add Meal Button */}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleAddMeal(day)}
+                      className="w-full mt-2 text-xs text-gray-500 hover:text-green-600 hover:bg-green-50"
+                    >
+                      <Plus className="h-3 w-3 mr-1" />
+                      {t('pages.mealPlans.addMeal')}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

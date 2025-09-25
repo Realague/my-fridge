@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import passport from 'passport';
 import { AuthController } from '../controllers/AuthController';
 import { AuthService } from '../services/AuthService';
 import { UserRepository } from '../repositories/UserRepository';
@@ -18,26 +17,6 @@ const authController = new AuthController(authService);
 const router = Router();
 
 // Public routes (no authentication required)
-
-// Google OAuth routes
-router.get(
-  '/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
-
-router.get(
-  '/google/callback',
-  passport.authenticate('google', { session: false }),
-  (req, res) => {
-    if (!req.user) {
-      return res.redirect(`${process.env.FRONTEND_URL}/auth?error=authentication_failed`);
-    }
-
-    // Instead of creating our own JWT, we'll let the frontend handle the Google token
-    // The frontend will get the token from Google's OAuth flow
-    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?success=true`);
-  }
-);
 
 // Exchange OAuth code for tokens (called by frontend)
 router.post('/google/exchange',

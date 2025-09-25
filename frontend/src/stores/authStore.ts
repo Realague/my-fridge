@@ -36,12 +36,6 @@ interface AuthState {
   getValidAccessToken: () => Promise<string | null>;
 }
 
-declare global {
-  interface Window {
-    google: any;
-  }
-}
-
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -126,13 +120,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           const payload = JSON.parse(atob(token.split('.')[1]));
           const currentTime = Math.floor(Date.now() / 1000);
-          const isExpired = payload.exp < currentTime;
-          
-          if (isExpired) {
-            const expiredAgo = currentTime - payload.exp;
-          }
-          
-          return isExpired;
+          return payload.exp < currentTime;
         } catch (error) {
           console.error('Error parsing token:', error);
           return true;

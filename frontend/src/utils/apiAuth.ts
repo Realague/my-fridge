@@ -1,10 +1,11 @@
 /**
- * Shared authentication logic extracted from useApiWithAuth
- * This contains the exact same logic but without React hooks for use in stores/services
+ * Core authenticated API call utility - consolidated authentication logic
+ * Used by both React hooks and stores/services
  */
 
-import { mergeHeaders } from '@/utils/apiHeaders';
+import { getAuthHeaders, getCommonHeaders } from '@/utils/apiHeaders';
 import { toast } from "sonner";
+import i18n from '@/i18n/config';
 
 interface ApiOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -13,119 +14,108 @@ interface ApiOptions {
   timeout?: number;
 }
 
+interface AuthCallbacks {
+  onAuthError?: () => void;
+  showToast?: boolean;
+}
+
 /**
- * Core authenticated API call - extracted from useApiWithAuth for stores/services
- * This mirrors the exact same authentication logic as the hook
+ * Core authenticated API call function
  */
-export const makeAuthenticatedApiCall = async (url: string, options: ApiOptions = {}): Promise<Response> => {
+export const makeAuthenticatedApiCall = async (
+  url: string, 
+  options: ApiOptions = {}, 
+  callbacks: AuthCallbacks = {}
+): Promise<Response> => {
   const baseUrl = import.meta.env.VITE_API_URL || 'localhost:3000';
   const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
-  const timeout = options.timeout || 10000; // Default 10 seconds
+  const timeout = options.timeout || 10000;
+  const { onAuthError, showToast = true } = callbacks;
 
-  // Get a valid access token (will refresh if needed) - same as useApiWithAuth
+  // Get auth store
   const { useAuthStore } = await import('../stores/authStore');
   const { getValidAccessToken, refreshTokens, signOut } = useAuthStore.getState();
-  const token = await getValidAccessToken();
   
+  const token = await getValidAccessToken();
   if (!token) {
-    toast.error("Authentication required. Please log in to continue.");
+    if (showToast) {
+      toast.error(i18n.t('messages.error.authenticationRequired'));
+    }
     signOut();
-    if (typeof window !== 'undefined') {
+    if (onAuthError) {
+      onAuthError();
+    } else if (typeof window !== 'undefined') {
       window.location.href = '/auth';
     }
     throw new Error('No valid authentication token');
   }
 
-  // Create abort controller for timeout - same as useApiWithAuth
+  // Setup request with timeout
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => {
-    controller.abort();
-  }, timeout);
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-  // Prepare the request - exact same logic as useApiWithAuth
   const requestOptions: RequestInit = {
     method: options.method || 'GET',
-    headers: mergeHeaders(options.headers, true, token),
+    headers: {
+      ...getCommonHeaders(),
+      ...getAuthHeaders(token),
+      ...options.headers,
+    },
     signal: controller.signal,
+    ...(options.body && { body: JSON.stringify(options.body) }),
   };
-
-  if (options.body) {
-    requestOptions.body = JSON.stringify(options.body);
-  }
 
   try {
     const response = await fetch(fullUrl, requestOptions);
-    
-    // Clear timeout on successful response
     clearTimeout(timeoutId);
 
-    // Handle 401 Unauthorized responses - exact same logic as useApiWithAuth
+    // Handle 401 - try refresh once
     if (response.status === 401) {
-      // Try to refresh token
       const refreshSuccess = await refreshTokens();
       
       if (refreshSuccess) {
-        // Get the new token and retry the original request
         const newToken = await getValidAccessToken();
-        
         if (newToken) {
-          // Create new controller for retry
-          const retryController = new AbortController();
-          const retryTimeoutId = setTimeout(() => {
-            retryController.abort();
-          }, timeout);
-          
-          const retryOptions = {
+          // Retry with new token
+          const retryResponse = await fetch(fullUrl, {
             ...requestOptions,
-            headers: mergeHeaders(options.headers, true, newToken),
-            signal: retryController.signal,
-          };
+            headers: {
+              ...getCommonHeaders(),
+              ...getAuthHeaders(newToken),
+              ...options.headers,
+            },
+          });
           
-          try {
-            const retryResponse = await fetch(fullUrl, retryOptions);
-            clearTimeout(retryTimeoutId);
-            
-            if (retryResponse.status === 401) {
-              // Still unauthorized after refresh, force logout
-              throw new Error('Authentication failed after token refresh');
-            }
-            
-            return retryResponse;
-          } catch (retryError) {
-            clearTimeout(retryTimeoutId);
-            if (retryError instanceof Error && retryError.name === 'AbortError') {
-              throw new Error('Request timeout during retry');
-            }
-            throw retryError;
+          if (retryResponse.status === 401) {
+            throw new Error('Authentication failed after token refresh');
           }
+          return retryResponse;
         }
       }
-      
-      // Refresh failed, force logout
       throw new Error('Token refresh failed');
     }
 
     return response;
   } catch (error) {
-    // Clear timeout on error
     clearTimeout(timeoutId);
     
-    // Handle timeout errors - same as useApiWithAuth
     if (error instanceof Error && error.name === 'AbortError') {
       const timeoutError = new Error(`Request timeout after ${timeout / 1000} seconds`);
-      toast.error('Request timeout. Please try again.');
+      if (showToast) toast.error(i18n.t('messages.error.requestTimeout'));
       throw timeoutError;
     }
     
-    // Handle authentication errors - same as useApiWithAuth
+    // Handle auth errors
     if (error instanceof Error && 
         (error.message.includes('Authentication') || 
          error.message.includes('Token') ||
          error.message.includes('401'))) {
       
-      toast.error('Session expired. Please log in again.');
+      if (showToast) toast.error(i18n.t('messages.error.sessionExpired'));
       signOut();
-      if (typeof window !== 'undefined') {
+      if (onAuthError) {
+        onAuthError();
+      } else if (typeof window !== 'undefined') {
         window.location.href = '/auth';
       }
     }

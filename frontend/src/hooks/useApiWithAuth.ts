@@ -1,141 +1,42 @@
-import { useAuthStore } from '@/stores/authStore';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { mergeHeaders } from '@/utils/apiHeaders';
+import { useTranslation } from 'react-i18next';
+import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 
 interface ApiOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   body?: any;
   headers?: Record<string, string>;
-  timeout?: number; // Timeout in milliseconds
+  timeout?: number;
 }
 
 export const useApiWithAuth = () => {
-  const { getValidAccessToken, refreshTokens, signOut } = useAuthStore();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const makeApiCall = async (url: string, options: ApiOptions = {}) => {
-    const baseUrl = import.meta.env.VITE_API_URL || 'localhost:3000';
-    const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
-    const timeout = options.timeout || 10000; // Default 10 seconds
-
-    // Get a valid access token (will refresh if needed)
-    const token = await getValidAccessToken();
-    
-    if (!token) {
-      toast({
-        title: "Authentication Required",
-        description: "Please log in to continue.",
-        variant: "destructive",
-      });
-      signOut();
-      navigate('/auth');
-      throw new Error('No valid authentication token');
-    }
-
-    // Create abort controller for timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-      controller.abort();
-    }, timeout);
-
-    // Prepare the request
-    const requestOptions: RequestInit = {
-      method: options.method || 'GET',
-      headers: mergeHeaders(options.headers, true, token),
-      signal: controller.signal,
-    };
-
-    if (options.body) {
-      requestOptions.body = JSON.stringify(options.body);
-    }
-
-    try {
-      const response = await fetch(fullUrl, requestOptions);
-      
-      // Clear timeout on successful response
-      clearTimeout(timeoutId);
-
-      // Handle 401 Unauthorized responses
-      if (response.status === 401) {
-        // Try to refresh token
-        const refreshSuccess = await refreshTokens();
-        
-        if (refreshSuccess) {
-          // Get the new token and retry the original request
-          const newToken = await getValidAccessToken();
-          
-          if (newToken) {
-            // Create new controller for retry
-            const retryController = new AbortController();
-            const retryTimeoutId = setTimeout(() => {
-              retryController.abort();
-            }, timeout);
-            
-            const retryOptions = {
-              ...requestOptions,
-              headers: mergeHeaders(options.headers, true, newToken),
-              signal: retryController.signal,
-            };
-            
-            try {
-              const retryResponse = await fetch(fullUrl, retryOptions);
-              clearTimeout(retryTimeoutId);
-              
-              if (retryResponse.status === 401) {
-                // Still unauthorized after refresh, force logout
-                throw new Error('Authentication failed after token refresh');
-              }
-              
-              return retryResponse;
-            } catch (retryError) {
-              clearTimeout(retryTimeoutId);
-              if (retryError instanceof Error && retryError.name === 'AbortError') {
-                throw new Error('Request timeout during retry');
-              }
-              throw retryError;
-            }
-          }
-        }
-        
-        // Refresh failed, force logout
-        throw new Error('Token refresh failed');
-      }
-
-      return response;
-    } catch (error) {
-      // Clear timeout on error
-      clearTimeout(timeoutId);
-      
-      // Handle timeout errors
-      if (error instanceof Error && error.name === 'AbortError') {
-        const timeoutError = new Error(`Request timeout after ${timeout / 1000} seconds`);
+    return makeAuthenticatedApiCall(url, options, {
+      onAuthError: () => navigate('/auth'),
+      showToast: false, // We'll handle toasts ourselves for better UX
+    }).catch((error) => {
+      // Handle React-specific toast notifications
+      if (error.message.includes('timeout')) {
         toast({
-          title: "Request Timeout",
-          description: `The request took too long to complete. Please try again.`,
+          title: t("messages.error.requestTimeout"),
+          description: t("messages.error.requestTimeout"),
           variant: "destructive",
         });
-        throw timeoutError;
-      }
-      
-      // Handle authentication errors
-      if (error instanceof Error && 
-          (error.message.includes('Authentication') || 
-           error.message.includes('Token') ||
-           error.message.includes('401'))) {
-        
+      } else if (error.message.includes('Authentication') || 
+                 error.message.includes('Token')) {
         toast({
-          title: "Session Expired",
-          description: "Please log in again to continue.",
+          title: t("messages.error.sessionExpired"),
+          description: t("messages.error.sessionExpired"),
           variant: "destructive",
         });
-        signOut();
-        navigate('/auth');
       }
-      
       throw error;
-    }
+    });
   };
 
   // Convenience methods with optional timeout parameter

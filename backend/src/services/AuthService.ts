@@ -25,9 +25,6 @@ export class AuthService {
     try {
       const redirectUri = process.env.FRONTEND_URL ? `${process.env.FRONTEND_URL}/auth` : 'http://localhost:3000/auth';
       
-      // Set the redirect URI for this request
-      this.googleClient.setCredentials({});
-      
       // Exchange code for tokens using client secret (backend only)
       const { tokens } = await this.googleClient.getToken({
         code: exchangeDto.code,
@@ -85,7 +82,6 @@ export class AuthService {
     }
   }
 
-  // Removed verifyGoogleToken method - using pure OAuth2 flow
   async authenticateUserByToken(token: string): Promise<UserResponseDto> {
     try {
       // Verify Google ID token
@@ -225,7 +221,6 @@ export class AuthService {
     }
   }
 
-  // Removed validateGoogleTokenVerifyDto - not needed for pure OAuth2 flow
 
   private validateUpdateUserDto(dto: UpdateUserDto): void {
     if (dto.firstName !== undefined && (!dto.firstName || dto.firstName.trim().length === 0)) {

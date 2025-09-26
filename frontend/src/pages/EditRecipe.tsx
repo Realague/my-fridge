@@ -13,7 +13,7 @@ import { ArrowLeft, Plus, X } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { UpdateRecipeDto } from '@/services/recipeService';
-import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
+import { StructuredIngredientInput, StructuredIngredient } from '@/components/StructuredIngredientInput';
 import { useToast } from '@/hooks/use-toast';
 import { useItemService } from '@/services/itemService';
 import { useTranslation } from 'react-i18next';
@@ -53,11 +53,16 @@ const EditRecipe = () => {
     clearError();
   }, [clearError]);
   
-  const [ingredients, setIngredients] = useState(recipe?.ingredients || []);
+  const [ingredients, setIngredients] = useState<StructuredIngredient[]>(recipe?.ingredients || []);
   const [instructions, setInstructions] = useState(recipe?.instructions || []);
   const [tags, setTags] = useState<string[]>(recipe?.tags || []);
   const [newTag, setNewTag] = useState('');
-  const [ingredientStepMap, setIngredientStepMap] = useState<{[ingredientId: string]: number[]}>({});
+  const [ingredientStepMap, setIngredientStepMap] = useState<{[ingredientKey: string]: number[]}>({});
+
+  // Helper function to generate a unique key for ingredients
+  const getIngredientKey = (ingredient: any, index: number) => {
+    return ingredient.id || `new-${index}-${ingredient.itemId}`;
+  };
 
   const form = useForm<RecipeFormData>({
     defaultValues: {
@@ -85,10 +90,11 @@ const EditRecipe = () => {
       setTags(recipe.tags);
       
       // Initialize ingredient-step mapping from existing recipe
-      const initialMap: {[ingredientId: string]: number[]} = {};
-      recipe.ingredients.forEach(ingredient => {
+      const initialMap: {[ingredientKey: string]: number[]} = {};
+      recipe.ingredients.forEach((ingredient, index) => {
         if (ingredient.usedInSteps && ingredient.usedInSteps.length > 0) {
-          initialMap[ingredient.id] = ingredient.usedInSteps;
+          const key = getIngredientKey(ingredient, index);
+          initialMap[key] = ingredient.usedInSteps;
         }
       });
       setIngredientStepMap(initialMap);
@@ -160,19 +166,20 @@ const EditRecipe = () => {
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
 
-  const toggleIngredientForStep = (ingredientId: string, stepIndex: number) => {
-    const currentSteps = ingredientStepMap[ingredientId] || [];
+  const toggleIngredientForStep = (ingredient: any, ingredientIndex: number, stepIndex: number) => {
+    const ingredientKey = getIngredientKey(ingredient, ingredientIndex);
+    const currentSteps = ingredientStepMap[ingredientKey] || [];
     const isLinked = currentSteps.includes(stepIndex);
     
     if (isLinked) {
       setIngredientStepMap({
         ...ingredientStepMap,
-        [ingredientId]: currentSteps.filter(step => step !== stepIndex)
+        [ingredientKey]: currentSteps.filter(step => step !== stepIndex)
       });
     } else {
       setIngredientStepMap({
         ...ingredientStepMap,
-        [ingredientId]: [...currentSteps, stepIndex].sort((a, b) => a - b)
+        [ingredientKey]: [...currentSteps, stepIndex].sort((a, b) => a - b)
       });
     }
   };
@@ -208,11 +215,15 @@ const EditRecipe = () => {
       return;
     }
 
-    // Add step mapping to ingredients
-    const ingredientsWithSteps = validIngredients.map(ingredient => ({
-      ...ingredient,
-      usedInSteps: ingredientStepMap[ingredient.id] || []
-    }));
+    // Add step mapping to ingredients and remove client-generated IDs
+    const ingredientsWithSteps = validIngredients.map((ingredient, index) => {
+      const { id, ...ingredientWithoutId } = ingredient;
+      const ingredientKey = getIngredientKey(ingredient, index);
+      return {
+        ...ingredientWithoutId,
+        usedInSteps: ingredientStepMap[ingredientKey] || []
+      };
+    });
 
     const updatedRecipe: UpdateRecipeDto = {
       ...data,
@@ -441,17 +452,18 @@ const EditRecipe = () => {
                           {t('pages.recipes.ingredientsUsedInThisStep')}
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                          {ingredients.map((ingredient) => {
+                          {ingredients.map((ingredient, ingredientIndex) => {
                             const item = getItemById(ingredient.itemId);
                             if (!item) return null;
                             
-                            const isLinked = (ingredientStepMap[ingredient.id] || []).includes(index);
+                            const ingredientKey = getIngredientKey(ingredient, ingredientIndex);
+                            const isLinked = (ingredientStepMap[ingredientKey] || []).includes(index);
                             
                             return (
-                              <div key={ingredient.id} className="flex items-center space-x-2">
+                              <div key={ingredientKey} className="flex items-center space-x-2">
                                 <Checkbox
                                   checked={isLinked}
-                                  onCheckedChange={() => toggleIngredientForStep(ingredient.id, index)}
+                                  onCheckedChange={() => toggleIngredientForStep(ingredient, ingredientIndex, index)}
                                 />
                                 <span className="text-sm text-gray-600">
                                   {ingredient.quantity} {ingredient.unit} {/*{item.name}*/}

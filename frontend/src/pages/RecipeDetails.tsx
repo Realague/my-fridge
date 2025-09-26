@@ -67,7 +67,7 @@ const RecipeDetails = () => {
                 className="text-gray-600"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                {t('common.back')}
+                {t('buttons.back')}
               </Button>
               <div className="flex gap-2">
                 <Skeleton className="h-8 w-8" />
@@ -171,7 +171,7 @@ const RecipeDetails = () => {
               className="text-gray-600"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('common.back')}
+              {t('buttons.back')}
             </Button>
             <div className="flex gap-2">
               <Button

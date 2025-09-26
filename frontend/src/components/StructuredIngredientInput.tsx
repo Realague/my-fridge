@@ -25,7 +25,7 @@ interface FullItem extends SimpleItem {
 }
 
 export interface StructuredIngredient {
-  id: string;
+  id?: string;
   itemId: string;
   item?: SimpleItem;
   quantity: number;
@@ -50,25 +50,24 @@ export const StructuredIngredientInput = ({
 
   const addIngredient = () => {
     const newIngredient: StructuredIngredient = {
-      id: Date.now().toString(),
       itemId: '',
       quantity: 1,
       unit: 'piece',
       notes: ''
     };
     onIngredientsChange([...ingredients, newIngredient]);
-    setEditingIngredient(newIngredient.id);
+    setEditingIngredient(ingredients.length.toString()); // Use index as editing identifier
   };
 
-  const updateIngredient = (id: string, updates: Partial<StructuredIngredient>) => {
-    const updatedIngredients = ingredients.map(ingredient =>
-      ingredient.id === id ? { ...ingredient, ...updates } : ingredient
+  const updateIngredient = (index: number, updates: Partial<StructuredIngredient>) => {
+    const updatedIngredients = ingredients.map((ingredient, i) =>
+      i === index ? { ...ingredient, ...updates } : ingredient
     );
     onIngredientsChange(updatedIngredients);
   };
 
-  const removeIngredient = (id: string) => {
-    onIngredientsChange(ingredients.filter(ingredient => ingredient.id !== id));
+  const removeIngredient = (index: number) => {
+    onIngredientsChange(ingredients.filter((_, i) => i !== index));
   };
 
   const handleItemSelect = (index: number, item: FullItem | null) => {
@@ -81,13 +80,13 @@ export const StructuredIngredientInput = ({
         availableUnits: item.availableUnits
       };
       
-      updateIngredient(ingredients[index].id, {
+      updateIngredient(index, {
         itemId: item.id,
         item: simpleItem,
         unit: item.defaultUnit
       });
     } else {
-      updateIngredient(ingredients[index].id, {
+      updateIngredient(index, {
         itemId: '',
         item: undefined,
         unit: 'piece'
@@ -120,7 +119,7 @@ export const StructuredIngredientInput = ({
 
       <div className="space-y-3 ">
         {ingredients.map((ingredient, index) => (
-          <div key={ingredient.id} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg bg-white">
+          <div key={ingredient.id || `new-${index}`} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg bg-white">
             <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
                 <Label className="text-sm">{t('ingredientInput.item')}</Label>
@@ -164,7 +163,7 @@ export const StructuredIngredientInput = ({
                         initialQuantity={ingredient.quantity.toString()}
                         initialUnit={ingredient.unit}
                         onQuantityChange={(quantity, unit) => {
-                          updateIngredient(ingredient.id, {
+                          updateIngredient(index, {
                             quantity: parseFloat(quantity) || 0,
                             unit
                           });
@@ -177,7 +176,7 @@ export const StructuredIngredientInput = ({
                     <Label className="text-sm">{t('ingredientInput.notes')}</Label>
                     <Input
                       value={ingredient.notes || ''}
-                      onChange={(e) => updateIngredient(ingredient.id, { notes: e.target.value })}
+                      onChange={(e) => updateIngredient(index, { notes: e.target.value })}
                       placeholder={t('ingredientInput.notesPlaceholder')}
                       className="mt-1"
                     />
@@ -190,7 +189,7 @@ export const StructuredIngredientInput = ({
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => removeIngredient(ingredient.id)}
+              onClick={() => removeIngredient(index)}
               className="text-red-500 hover:text-red-700 hover:bg-red-50"
             >
               <Trash2 className="h-4 w-4" />

@@ -16,11 +16,13 @@ import { RecipeDto } from '@/services/recipeService';
 import { RecipeSelector } from '@/components/RecipeSelector';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useDateFormat } from '@/utils/dateFormatting';
 import { useTranslation } from 'react-i18next';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const MealPlans = () => {
   const { t } = useTranslation();
+  const { formatDate } = useDateFormat();
   const isMobile = useIsMobile();
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
@@ -350,7 +352,7 @@ const MealPlans = () => {
                             {format(day, 'd')}
                           </div>
                           <div className="text-sm font-medium text-gray-600">
-                            {t(`pages.mealPlans.${format(day, 'EEEE').toLowerCase()}`)}
+                            {formatDate(day, 'EEEE').toLowerCase()}
                           </div>
                         </div>
                         <Button
@@ -389,7 +391,7 @@ const MealPlans = () => {
                                         {mealPlan.mealType}
                                       </Badge>
                                       <span className="text-sm text-gray-600">
-                                        {mealPlan.servings} servings
+                                        {mealPlan.servings} {t('pages.mealPlans.servings')}
                                       </span>
                                     </div>
                                     {mealPlan.recipe && (
@@ -420,21 +422,18 @@ const MealPlans = () => {
             ) : (
               // Desktop: Grid layout
               <div className="grid grid-cols-7 gap-2">
-                {[t('pages.mealPlans.mon'), t('pages.mealPlans.tue'), t('pages.mealPlans.wed'), t('pages.mealPlans.thu'), t('pages.mealPlans.fri'), t('pages.mealPlans.sat'), t('pages.mealPlans.sun')].map((day) => (
-                  <div key={day} className="text-center text-sm font-medium text-gray-500 p-2">
-                    {day}
-                  </div>
-                ))}
-                
                 {weekDays.map((day) => (
-                  <div
-                    key={day.toISOString()}
-                    className={`
-                      min-h-[120px] p-2 border border-gray-200 rounded-lg
-                      ${new Date() > new Date(day) && !isToday(day) ? 'opacity-50 bg-gray-50' : 'bg-white'}
-                      ${isToday(day) ? 'ring-2 ring-green-500' : ''}
-                    `}
-                  >
+                  <div key={day.toISOString()}>
+                    <div className="text-center text-sm font-medium text-gray-500 p-2">
+                      {formatDate(day, 'EEEE')}
+                    </div>
+                    <div
+                      className={`
+                        min-h-[120px] p-2 border border-gray-200 rounded-lg
+                        ${new Date() > new Date(day) && !isToday(day) ? 'opacity-50 bg-gray-50' : 'bg-white'}
+                        ${isToday(day) ? 'ring-2 ring-green-500' : ''}
+                      `}
+                    >
                     <div className="text-sm font-medium text-gray-900 mb-2">
                       {format(day, 'd')}
                     </div>
@@ -487,7 +486,8 @@ const MealPlans = () => {
                       {t('pages.mealPlans.addMeal')}
                     </Button>
                   </div>
-                ))}
+                </div>
+              ))}
               </div>
             )}
           </div>
@@ -499,7 +499,7 @@ const MealPlans = () => {
             <DialogHeader>
               <DialogTitle>{t('pages.mealPlans.addMealPlan')}</DialogTitle>
               <DialogDescription>
-                {t('pages.mealPlans.addMealFor')} {selectedDate ? format(selectedDate, 'EEEE, MMMM d') : ''}
+                {t('pages.mealPlans.addMealFor')} {selectedDate ? formatDate(selectedDate, 'EEEE, MMMM d') : ''}
               </DialogDescription>
             </DialogHeader>
             
@@ -583,7 +583,7 @@ const MealPlans = () => {
                     )}
                   </DialogTitle>
                   <DialogDescription>
-                    {format(new Date(viewingMealPlan.plannedFor), 'EEEE, MMMM d')} • {viewingMealPlan.mealType}
+                    {formatDate(new Date(viewingMealPlan.plannedFor), 'EEEE, MMMM d')} • {viewingMealPlan.mealType}
                     {` • ${viewingMealPlan.servings} servings`}
                   </DialogDescription>
                 </DialogHeader>
@@ -660,7 +660,7 @@ const MealPlans = () => {
                   {t('pages.mealPlans.generateShoppingListDialog.selectDateRange')}
                   {shoppingListDateRange.from && shoppingListDateRange.to && (
                     <span className="text-sm text-gray-600 ml-2">
-                      ({format(shoppingListDateRange.from, 'MMM d')} - {format(shoppingListDateRange.to, 'MMM d')})
+                      ({formatDate(shoppingListDateRange.from, 'MMM d')} - {formatDate(shoppingListDateRange.to, 'MMM d')})
                     </span>
                   )}
                 </label>

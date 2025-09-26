@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { format, isToday, isSameMonth, addWeeks, subWeeks } from 'date-fns';
+import { format, isToday, isSameMonth, addWeeks, subWeeks, isSameWeek, startOfWeek, endOfWeek } from 'date-fns';
 import { ChevronLeft, ChevronRight, Plus, Trash2, ExternalLink, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -46,6 +46,21 @@ const MealPlans = () => {
   const { recipes, fetchRecipes, loading: recipesLoading } = useRecipeStore();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Helper function to get the week label
+  const getWeekLabel = () => {
+    const today = new Date();
+    
+    // Show date range for non-current weeks
+    const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+    const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
+    
+    // Format as DD/MM/YYYY-DD/MM/YYYY
+    const startFormatted = format(weekStart, 'dd/MM/yyyy');
+    const endFormatted = format(weekEnd, 'dd/MM/yyyy');
+    
+    return `${startFormatted}-${endFormatted}`;
+  };
 
   useEffect(() => {
     const newWeekDays = getWeekDays(currentDate);
@@ -274,7 +289,7 @@ const MealPlans = () => {
               className={`bg-green-600 hover:bg-green-700 touch-friendly ${isMobile ? 'w-full' : ''}`}
             >
               <ShoppingCart className="h-5 w-5 mr-2" />
-              {isMobile ? t('pages.mealPlans.generateShoppingList').split(' ')[0] + ' List' : t('pages.mealPlans.generateShoppingList')}
+              {t('pages.mealPlans.generateShoppingList')}
             </Button>
           </div>
         </div>
@@ -286,7 +301,7 @@ const MealPlans = () => {
           <div className={`${isMobile ? 'p-4' : 'p-6'}`}>
             <div className={`flex items-center ${isMobile ? 'flex-col gap-4' : 'justify-between'} mb-4`}>
               <h2 className={`font-semibold text-gray-900 ${isMobile ? 'text-lg text-center' : 'text-xl'}`}>
-                {format(currentDate, 'MMMM yyyy')}
+                {getWeekLabel()}
               </h2>
               <div className="flex gap-2">
                 <Button
@@ -301,9 +316,9 @@ const MealPlans = () => {
                   variant="outline"
                   size={isMobile ? "default" : "sm"}
                   onClick={() => setCurrentDate(new Date())}
-                  className={`text-gray-600 touch-friendly ${isMobile ? 'px-6' : ''}`}
+                  className={`text-gray-600 touch-friendly ${isMobile ? 'px-6' : 'px-4'} whitespace-nowrap text-xs`}
                 >
-                  {t('pages.mealPlans.today')}
+                  {t('pages.mealPlans.currentWeek')}
                 </Button>
                 <Button
                   variant="outline"
@@ -325,7 +340,7 @@ const MealPlans = () => {
                     key={day.toISOString()}
                     className={`
                       border border-gray-200 
-                      ${!isSameMonth(day, currentDate) ? 'opacity-50 bg-gray-50' : 'bg-white'}
+                      ${new Date() > new Date(day) && !isToday(day) ? 'opacity-50 bg-gray-50' : 'bg-white'}
                       ${isToday(day) ? 'ring-2 ring-green-500 bg-green-50/50' : ''}
                     `}
                   >
@@ -337,7 +352,7 @@ const MealPlans = () => {
                             {format(day, 'd')}
                           </div>
                           <div className="text-sm font-medium text-gray-600">
-                            {format(day, 'EEEE')}
+                            {t(`pages.mealPlans.${format(day, 'EEEE').toLowerCase()}`)}
                           </div>
                         </div>
                         <Button
@@ -355,7 +370,7 @@ const MealPlans = () => {
                       <div className="space-y-3">
                         {getMealPlansForDay(day).length === 0 ? (
                           <div className="text-sm text-gray-400 italic py-2">
-                            No meals planned
+                            {t('pages.mealPlans.noMealsPlanned')}
                           </div>
                         ) : (
                           getMealPlansForDay(day).map((mealPlan) => (

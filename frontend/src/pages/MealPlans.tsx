@@ -49,8 +49,6 @@ const MealPlans = () => {
 
   // Helper function to get the week label
   const getWeekLabel = () => {
-    const today = new Date();
-    
     // Show date range for non-current weeks
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
     const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
@@ -358,6 +356,7 @@ const MealPlans = () => {
                         <Button
                           variant="outline"
                           size="sm"
+                          disabled={new Date() > new Date(day) && !isToday(day)}
                           onClick={() => handleAddMeal(day)}
                           className="touch-friendly bg-green-50 hover:bg-green-100 border-green-200"
                         >
@@ -432,7 +431,7 @@ const MealPlans = () => {
                     key={day.toISOString()}
                     className={`
                       min-h-[120px] p-2 border border-gray-200 rounded-lg
-                      ${!isSameMonth(day, currentDate) ? 'opacity-50 bg-gray-50' : 'bg-white'}
+                      ${new Date() > new Date(day) && !isToday(day) ? 'opacity-50 bg-gray-50' : 'bg-white'}
                       ${isToday(day) ? 'ring-2 ring-green-500' : ''}
                     `}
                   >
@@ -480,6 +479,7 @@ const MealPlans = () => {
                     <Button
                       variant="ghost"
                       size="sm"
+                      disabled={new Date() > new Date(day) && !isToday(day)}
                       onClick={() => handleAddMeal(day)}
                       className="w-full mt-2 text-xs text-gray-500 hover:text-green-600 hover:bg-green-50"
                     >

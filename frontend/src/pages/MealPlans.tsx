@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { format, isToday, isSameMonth, addWeeks, subWeeks } from 'date-fns';
+import { format, isToday, isSameMonth, addWeeks, subWeeks, isSameWeek, startOfWeek, endOfWeek } from 'date-fns';
 import { ChevronLeft, ChevronRight, Plus, Trash2, ExternalLink, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -16,11 +16,13 @@ import { RecipeDto } from '@/services/recipeService';
 import { RecipeSelector } from '@/components/RecipeSelector';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useDateFormat } from '@/utils/dateFormatting';
 import { useTranslation } from 'react-i18next';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const MealPlans = () => {
   const { t } = useTranslation();
+  const { formatDate } = useDateFormat();
   const isMobile = useIsMobile();
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
@@ -46,6 +48,19 @@ const MealPlans = () => {
   const { recipes, fetchRecipes, loading: recipesLoading } = useRecipeStore();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Helper function to get the week label
+  const getWeekLabel = () => {
+    // Show date range for non-current weeks
+    const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+    const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
+    
+    // Format as DD/MM/YYYY-DD/MM/YYYY
+    const startFormatted = format(weekStart, 'dd/MM/yyyy');
+    const endFormatted = format(weekEnd, 'dd/MM/yyyy');
+    
+    return `${startFormatted}-${endFormatted}`;
+  };
 
   useEffect(() => {
     const newWeekDays = getWeekDays(currentDate);
@@ -274,7 +289,7 @@ const MealPlans = () => {
               className={`bg-green-600 hover:bg-green-700 touch-friendly ${isMobile ? 'w-full' : ''}`}
             >
               <ShoppingCart className="h-5 w-5 mr-2" />
-              {isMobile ? t('pages.mealPlans.generateShoppingList').split(' ')[0] + ' List' : t('pages.mealPlans.generateShoppingList')}
+              {t('pages.mealPlans.generateShoppingList')}
             </Button>
           </div>
         </div>
@@ -286,7 +301,7 @@ const MealPlans = () => {
           <div className={`${isMobile ? 'p-4' : 'p-6'}`}>
             <div className={`flex items-center ${isMobile ? 'flex-col gap-4' : 'justify-between'} mb-4`}>
               <h2 className={`font-semibold text-gray-900 ${isMobile ? 'text-lg text-center' : 'text-xl'}`}>
-                {format(currentDate, 'MMMM yyyy')}
+                {getWeekLabel()}
               </h2>
               <div className="flex gap-2">
                 <Button
@@ -301,9 +316,9 @@ const MealPlans = () => {
                   variant="outline"
                   size={isMobile ? "default" : "sm"}
                   onClick={() => setCurrentDate(new Date())}
-                  className={`text-gray-600 touch-friendly ${isMobile ? 'px-6' : ''}`}
+                  className={`text-gray-600 touch-friendly ${isMobile ? 'px-6' : 'px-4'} whitespace-nowrap text-xs`}
                 >
-                  {t('pages.mealPlans.today')}
+                  {t('pages.mealPlans.currentWeek')}
                 </Button>
                 <Button
                   variant="outline"
@@ -325,7 +340,7 @@ const MealPlans = () => {
                     key={day.toISOString()}
                     className={`
                       border border-gray-200 
-                      ${!isSameMonth(day, currentDate) ? 'opacity-50 bg-gray-50' : 'bg-white'}
+                      ${new Date() > new Date(day) && !isToday(day) ? 'opacity-50 bg-gray-50' : 'bg-white'}
                       ${isToday(day) ? 'ring-2 ring-green-500 bg-green-50/50' : ''}
                     `}
                   >
@@ -337,12 +352,13 @@ const MealPlans = () => {
                             {format(day, 'd')}
                           </div>
                           <div className="text-sm font-medium text-gray-600">
-                            {format(day, 'EEEE')}
+                            {formatDate(day, 'EEEE').toLowerCase()}
                           </div>
                         </div>
                         <Button
                           variant="outline"
                           size="sm"
+                          disabled={new Date() > new Date(day) && !isToday(day)}
                           onClick={() => handleAddMeal(day)}
                           className="touch-friendly bg-green-50 hover:bg-green-100 border-green-200"
                         >
@@ -355,7 +371,7 @@ const MealPlans = () => {
                       <div className="space-y-3">
                         {getMealPlansForDay(day).length === 0 ? (
                           <div className="text-sm text-gray-400 italic py-2">
-                            No meals planned
+                            {t('pages.mealPlans.noMealsPlanned')}
                           </div>
                         ) : (
                           getMealPlansForDay(day).map((mealPlan) => (
@@ -375,7 +391,7 @@ const MealPlans = () => {
                                         {mealPlan.mealType}
                                       </Badge>
                                       <span className="text-sm text-gray-600">
-                                        {mealPlan.servings} servings
+                                        {mealPlan.servings} {t('pages.mealPlans.servings')}
                                       </span>
                                     </div>
                                     {mealPlan.recipe && (
@@ -406,21 +422,18 @@ const MealPlans = () => {
             ) : (
               // Desktop: Grid layout
               <div className="grid grid-cols-7 gap-2">
-                {[t('pages.mealPlans.mon'), t('pages.mealPlans.tue'), t('pages.mealPlans.wed'), t('pages.mealPlans.thu'), t('pages.mealPlans.fri'), t('pages.mealPlans.sat'), t('pages.mealPlans.sun')].map((day) => (
-                  <div key={day} className="text-center text-sm font-medium text-gray-500 p-2">
-                    {day}
-                  </div>
-                ))}
-                
                 {weekDays.map((day) => (
-                  <div
-                    key={day.toISOString()}
-                    className={`
-                      min-h-[120px] p-2 border border-gray-200 rounded-lg
-                      ${!isSameMonth(day, currentDate) ? 'opacity-50 bg-gray-50' : 'bg-white'}
-                      ${isToday(day) ? 'ring-2 ring-green-500' : ''}
-                    `}
-                  >
+                  <div key={day.toISOString()}>
+                    <div className="text-center text-sm font-medium text-gray-500 p-2">
+                      {formatDate(day, 'EEEE')}
+                    </div>
+                    <div
+                      className={`
+                        min-h-[120px] p-2 border border-gray-200 rounded-lg
+                        ${new Date() > new Date(day) && !isToday(day) ? 'opacity-50 bg-gray-50' : 'bg-white'}
+                        ${isToday(day) ? 'ring-2 ring-green-500' : ''}
+                      `}
+                    >
                     <div className="text-sm font-medium text-gray-900 mb-2">
                       {format(day, 'd')}
                     </div>
@@ -465,6 +478,7 @@ const MealPlans = () => {
                     <Button
                       variant="ghost"
                       size="sm"
+                      disabled={new Date() > new Date(day) && !isToday(day)}
                       onClick={() => handleAddMeal(day)}
                       className="w-full mt-2 text-xs text-gray-500 hover:text-green-600 hover:bg-green-50"
                     >
@@ -472,7 +486,8 @@ const MealPlans = () => {
                       {t('pages.mealPlans.addMeal')}
                     </Button>
                   </div>
-                ))}
+                </div>
+              ))}
               </div>
             )}
           </div>
@@ -484,7 +499,7 @@ const MealPlans = () => {
             <DialogHeader>
               <DialogTitle>{t('pages.mealPlans.addMealPlan')}</DialogTitle>
               <DialogDescription>
-                {t('pages.mealPlans.addMealFor')} {selectedDate ? format(selectedDate, 'EEEE, MMMM d') : ''}
+                {t('pages.mealPlans.addMealFor')} {selectedDate ? formatDate(selectedDate, 'EEEE, MMMM d') : ''}
               </DialogDescription>
             </DialogHeader>
             
@@ -568,7 +583,7 @@ const MealPlans = () => {
                     )}
                   </DialogTitle>
                   <DialogDescription>
-                    {format(new Date(viewingMealPlan.plannedFor), 'EEEE, MMMM d')} • {viewingMealPlan.mealType}
+                    {formatDate(new Date(viewingMealPlan.plannedFor), 'EEEE, MMMM d')} • {viewingMealPlan.mealType}
                     {` • ${viewingMealPlan.servings} servings`}
                   </DialogDescription>
                 </DialogHeader>
@@ -645,7 +660,7 @@ const MealPlans = () => {
                   {t('pages.mealPlans.generateShoppingListDialog.selectDateRange')}
                   {shoppingListDateRange.from && shoppingListDateRange.to && (
                     <span className="text-sm text-gray-600 ml-2">
-                      ({format(shoppingListDateRange.from, 'MMM d')} - {format(shoppingListDateRange.to, 'MMM d')})
+                      ({formatDate(shoppingListDateRange.from, 'MMM d')} - {formatDate(shoppingListDateRange.to, 'MMM d')})
                     </span>
                   )}
                 </label>

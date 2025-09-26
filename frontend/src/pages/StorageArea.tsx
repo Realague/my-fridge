@@ -17,10 +17,12 @@ import { format } from 'date-fns';
 import { Unit } from '@/types/enums';
 import { Item } from '@/services/itemService';
 import { useTranslation } from 'react-i18next';
+import { useDateFormat } from '@/utils/dateFormatting';
 
 const StorageArea = () => {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
+  const { formatDate } = useDateFormat();
   const navigate = useNavigate();
   
   // Store hooks
@@ -305,12 +307,12 @@ const StorageArea = () => {
                   <div className="flex items-center gap-4 text-xs text-gray-500">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
-                      <span>{t('storageArea.added')} {format(new Date(storageItem.createdAt), 'MMM d')}</span>
+                      <span>{t('storageArea.added')} {formatDate(new Date(storageItem.createdAt), 'MMM d')}</span>
                     </div>
                     {storageItem.expirationDate && (
                       <div className="flex items-center gap-1">
                         <AlertTriangle className="h-3 w-3" />
-                        <span>Expires {format(new Date(storageItem.expirationDate), 'MMM d')}</span>
+                        <span>Expires {formatDate(new Date(storageItem.expirationDate), 'MMM d')}</span>
                       </div>
                     )}
                   </div>

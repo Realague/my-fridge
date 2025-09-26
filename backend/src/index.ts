@@ -25,6 +25,8 @@ app.use(cors({
     process.env.FRONTEND_URL || 'http://localhost:8080',
     'https://preview--my-fridge.lovable.app',
     'https://my-fridge.multiplus.ovh',
+    'http://my-fridge.multiplus.ovh',
+    'http://my-fridge.multiplus.ovh:3000',
   ],
   credentials: true
 }));

@@ -3,11 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowRight, Plus, Users, ArrowLeft } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { StorageAreaOption, StorageAreaSelections } from '@/types/household';
+import { StorageAreaSelections, CustomStorageArea } from '@/types/household';
+import { OnboardingStorageSelector } from '@/components/OnboardingStorageSelector';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { toast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +24,7 @@ const Onboarding = () => {
   const [householdName, setHouseholdName] = useState('');
   const [joinCode, setJoinCode] = useState('');
   const [selectedStorageAreas, setSelectedStorageAreas] = useState<(keyof StorageAreaSelections)[]>([]);
+  const [customStorageAreas, setCustomStorageAreas] = useState<CustomStorageArea[]>([]);
 
   // Redirect to auth if not authenticated
   useEffect(() => {
@@ -55,21 +56,6 @@ const Onboarding = () => {
     }
   }, [searchParams]);
 
-  const storageOptions: StorageAreaOption[] = [
-    { id: 'hasFridge', name: 'Refrigerator', emoji: '🥬', description: 'Main fridge compartment' },
-    { id: 'hasFreezer', name: 'Freezer', emoji: '🧊', description: 'Frozen food storage' },
-    { id: 'hasPantry', name: 'Pantry', emoji: '🏺', description: 'Dry goods and canned items' },
-    { id: 'hasKitchenCupboard', name: 'Kitchen Cupboard', emoji: '🗄️', description: 'Spices and small items' },
-  ];
-
-  const handleStorageToggle = (storageId: keyof StorageAreaSelections) => {
-    setSelectedStorageAreas(prev => 
-      prev.includes(storageId) 
-        ? prev.filter(id => id !== storageId)
-        : [...prev, storageId]
-    );
-  };
-
   const handleCreateHousehold = async () => {
     try {
       // Validate inputs
@@ -90,7 +76,22 @@ const Onboarding = () => {
         hasKitchenCupboard: selectedStorageAreas.includes('hasKitchenCupboard'),
       };
 
-      await createHousehold(householdName.trim(), undefined, storageAreas);
+      const household = await createHousehold(householdName.trim(), undefined, storageAreas, customStorageAreas);
+      
+      // Show success toast with translation
+      const selectedCount = Object.values(storageAreas).filter(Boolean).length;
+      const customCount = customStorageAreas ? customStorageAreas.length : 0;
+      const totalStorageCount = selectedCount + customCount;
+      const storageMessage = totalStorageCount > 0 ? t('messages.success.withStorageAreas', { count: totalStorageCount }) : '';
+      
+      toast({
+        title: t('messages.success.householdCreated'),
+        description: t('messages.success.householdCreatedDescription', { 
+          name: householdName.trim(),
+          storageMessage: storageMessage
+        }),
+      });
+      
       navigate('/dashboard');
     } catch (error) {
       console.error('Failed to create household:', error);
@@ -115,6 +116,13 @@ const Onboarding = () => {
       }
 
       await joinHousehold(joinCode.trim());
+      
+      // Show success toast with translation
+      toast({
+        title: t('messages.success.householdJoined'),
+        description: t('messages.success.householdJoinedDescription'),
+      });
+      
       navigate('/dashboard');
     } catch (error) {
       console.error('Failed to join household:', error);
@@ -207,14 +215,14 @@ const Onboarding = () => {
                   className="flex-1"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
+                  {t('buttons.back')}
                 </Button>
                 <Button
                   onClick={() => setStep(3)}
                   disabled={!householdName.trim()}
                   className="flex-1 bg-green-600 hover:bg-green-700"
                 >
-                  Next <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('buttons.next')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             </CardContent>
@@ -234,29 +242,10 @@ const Onboarding = () => {
             </CardHeader>
 
             <CardContent className="space-y-6">
-              <div className="space-y-3 max-h-80 overflow-y-auto">
-                {storageOptions.map((storage) => (
-                  <div
-                    key={storage.id}
-                    className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                    onClick={() => handleStorageToggle(storage.id)}
-                  >
-                    <Checkbox
-                      checked={selectedStorageAreas.includes(storage.id)}
-                      onChange={() => handleStorageToggle(storage.id)}
-                    />
-                    <div className="flex items-center space-x-3 flex-1">
-                      <div className="w-10 h-10 bg-gradient-to-r from-green-100 to-orange-100 rounded-lg flex items-center justify-center">
-                        <span className="text-lg">{storage.emoji}</span>
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-900">{storage.name}</div>
-                        <div className="text-sm text-gray-600">{storage.description}</div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <OnboardingStorageSelector
+                selectedAreas={customStorageAreas}
+                onAreasChange={setCustomStorageAreas}
+              />
 
               <div className="flex gap-3">
                 <Button
@@ -271,7 +260,7 @@ const Onboarding = () => {
                   onClick={handleCreateHousehold}
                   className="flex-1 bg-green-600 hover:bg-green-700"
                 >
-                  Create <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('buttons.create')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             </CardContent>

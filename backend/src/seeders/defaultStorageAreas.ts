@@ -79,7 +79,7 @@ export class StorageAreaSeeder {
     }
   }
 
-  private async createStorageArea(householdId: string, defaultArea: DefaultStorageArea): Promise<void> {
+  public async createStorageArea(householdId: string, defaultArea: DefaultStorageArea): Promise<void> {
     await this.storageAreaRepository.create({
       name: defaultArea.name,
       emoji: defaultArea.emoji,

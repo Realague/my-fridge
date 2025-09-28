@@ -355,7 +355,13 @@ const AddRecipe = () => {
             {/* Structured Ingredients */}
             <StructuredIngredientInput
               ingredients={ingredients}
-              onIngredientsChange={setIngredients}
+              onIngredientsChange={(structuredIngredients) => {
+                const ingredientsWithId = structuredIngredients.map((ingredient) => ({
+                  ...ingredient,
+                  id: ingredient.id || `temp-${Date.now()}-${Math.random()}`
+                } as RecipeIngredientWithId));
+                setIngredients(ingredientsWithId);
+              }}
             />
 
             {/* Instructions */}

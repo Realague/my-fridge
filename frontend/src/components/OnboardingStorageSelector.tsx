@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -24,44 +23,6 @@ interface StorageTypeOption {
   suggestedNames: string[];
 }
 
-const storageTypeOptions: StorageTypeOption[] = [
-  { 
-    id: 'fridge', 
-    name: 'Refrigerator', 
-    emoji: '🥬', 
-    description: 'Fresh food storage',
-    suggestedNames: ['Main Fridge', 'Kitchen Fridge', 'Cold Storage']
-  },
-  { 
-    id: 'freezer', 
-    name: 'Freezer', 
-    emoji: '🧊', 
-    description: 'Frozen food storage',
-    suggestedNames: ['Main Freezer', 'Chest Freezer', 'Ice Box']
-  },
-  { 
-    id: 'pantry', 
-    name: 'Pantry', 
-    emoji: '🏺', 
-    description: 'Dry goods and canned items',
-    suggestedNames: ['Main Pantry', 'Walk-in Pantry', 'Food Closet']
-  },
-  { 
-    id: 'kitchen_cupboard', 
-    name: 'Kitchen Cupboard', 
-    emoji: '🗄️', 
-    description: 'Spices and small items',
-    suggestedNames: ['Upper Cabinets', 'Lower Cabinets', 'Spice Cabinet']
-  },
-  { 
-    id: 'other', 
-    name: 'Other Storage', 
-    emoji: '📦', 
-    description: 'Custom storage area',
-    suggestedNames: ['Basement Storage', 'Garage Shelf', 'Wine Cellar']
-  }
-];
-
 const emojiOptions = ['🥬', '🧊', '🏺', '🗄️', '📦', '🛒', '🍎', '🥖', '🧄', '🫙', '🥫', '🍯'];
 
 export const OnboardingStorageSelector = ({ 
@@ -76,6 +37,44 @@ export const OnboardingStorageSelector = ({
   const [areaName, setAreaName] = useState('');
   const [areaDescription, setAreaDescription] = useState('');
   const [selectedEmoji, setSelectedEmoji] = useState('🥬');
+
+  const storageTypeOptions: StorageTypeOption[] = [
+    { 
+      id: 'fridge', 
+      name: t('storageArea.types.fridge'),
+      emoji: '🥬', 
+      description: t('storageArea.mainFridgeDescription'),
+      suggestedNames: [t('storageArea.mainFridge'), t('storageArea.kitchenFridge'), t('storageArea.coldStorage')]
+    },
+    { 
+      id: 'freezer', 
+      name: t('storageArea.types.freezer'), 
+      emoji: '🧊', 
+      description: t('storageArea.mainFreezerDescription'),
+      suggestedNames: [t('storageArea.mainFreezer'), t('storageArea.chestFreezer'), t('storageArea.iceBox')]
+    },
+    { 
+      id: 'pantry', 
+      name: t('storageArea.types.pantry'), 
+      emoji: '🏺', 
+      description: t('storageArea.mainPantryDescription'),
+      suggestedNames: [t('storageArea.mainPantry'), t('storageArea.walkInPantry'), t('storageArea.foodCloset')]
+    },
+    {
+      id: 'kitchen_cupboard', 
+      name: t('storageArea.types.kitchen_cupboard'), 
+      emoji: '🗄️', 
+      description: t('storageArea.mainKitchenCupboardDescription'),
+      suggestedNames: [t('storageArea.upperCabinets'), t('storageArea.lowerCabinets'), t('storageArea.spiceCabinet')]
+    },
+    { 
+      id: 'other', 
+      name: 'Other Storage', 
+      emoji: '📦', 
+      description: 'Custom storage area',
+      suggestedNames: ['Basement Storage', 'Garage Shelf', 'Wine Cellar']
+    }
+  ];
 
   const resetForm = () => {
     setAreaName('');
@@ -217,20 +216,20 @@ export const OnboardingStorageSelector = ({
             }}
           >
             <Plus className="h-4 w-4" />
-            Add Custom Storage Area
+            {t('storageArea.addCustomStorageArea')}
           </Button>
         </SheetTrigger>
         <SheetContent side="bottom" className="h-[90vh]">
           <SheetHeader>
             <SheetTitle>
-              {editingArea !== null ? 'Edit Storage Area' : 'Add Storage Area'}
+              {editingArea !== null ? t('storageArea.editStorageArea') : t('storageArea.addStorageArea')}
             </SheetTitle>
           </SheetHeader>
           
           <div className="space-y-6 mt-6">
             {/* Storage Type Selection */}
             <div className="space-y-3">
-              <Label>Storage Type</Label>
+              <Label>{t('storageArea.type')}</Label>
               <div className="grid grid-cols-3 gap-2">
                 {storageTypeOptions.map((type) => (
                   <Button
@@ -259,31 +258,31 @@ export const OnboardingStorageSelector = ({
 
             {/* Name Input */}
             <div className="space-y-2">
-              <Label htmlFor="area-name">Storage Area Name *</Label>
+              <Label htmlFor="area-name">{t('storageArea.name')} *</Label>
               <Input
                 id="area-name"
                 value={areaName}
                 onChange={(e) => setAreaName(e.target.value)}
-                placeholder="e.g., Main Fridge, Spice Cabinet"
+                placeholder={t('storageArea.namePlaceholder')}
                 className="h-12"
               />
             </div>
 
             {/* Description Input */}
             <div className="space-y-2">
-              <Label htmlFor="area-description">Description (optional)</Label>
+              <Label htmlFor="area-description">{t('storageArea.description')}</Label>
               <Textarea
                 id="area-description"
                 value={areaDescription}
                 onChange={(e) => setAreaDescription(e.target.value)}
-                placeholder="Brief description of what you store here"
+                placeholder={t('storageArea.descriptionPlaceholder')}
                 rows={2}
               />
             </div>
 
             {/* Emoji Selection */}
             <div className="space-y-3">
-              <Label>Choose Icon</Label>
+              <Label>{t('storageArea.chooseIcon')}</Label>
               <div className="grid grid-cols-6 gap-2">
                 {emojiOptions.map((emoji) => (
                   <Button
@@ -310,14 +309,14 @@ export const OnboardingStorageSelector = ({
                 }}
                 className="flex-1"
               >
-                Cancel
+                {t('buttons.cancel')}
               </Button>
               <Button
                 onClick={handleAddArea}
                 disabled={!areaName.trim()}
                 className="flex-1 bg-green-600 hover:bg-green-700"
               >
-                {editingArea !== null ? 'Update Area' : 'Add Area'}
+                {editingArea !== null ? t('buttons.update') : t('buttons.add')}
               </Button>
             </div>
           </div>

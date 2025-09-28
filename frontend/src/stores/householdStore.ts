@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { StorageAreaSelections, CustomStorageArea } from '@/types/household';
-import { toast } from '@/hooks/use-toast';
 import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 
 export interface Household {
@@ -199,16 +198,6 @@ export const useHouseholdStore = create<HouseholdStore>()(
             if (response.ok) {
               
               if (responseData.success) {
-                const selectedCount = storageAreas ? Object.values(storageAreas).filter(Boolean).length : 0;
-                const customCount = customStorageAreas ? customStorageAreas.length : 0;
-                const totalStorageCount = selectedCount + customCount;
-                const storageMessage = totalStorageCount > 0 ? ` with ${totalStorageCount} storage areas` : '';
-                
-                toast({
-                  title: "Household Created!",
-                  description: `${name} has been created successfully${storageMessage}.`,
-                });
-                
                 // Update auth store with updated user data first
                 if (responseData.data.user) {
                   try {
@@ -319,11 +308,6 @@ export const useHouseholdStore = create<HouseholdStore>()(
             if (response.ok) {
               
               if (responseData.success) {
-                toast({
-                  title: "Household Joined!",
-                  description: `You have successfully joined the household.`,
-                });
-                
                 // Update auth store with updated user data first
                 if (responseData.data.user) {
                   try {

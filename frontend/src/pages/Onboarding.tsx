@@ -3,11 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowRight, Plus, Users, ArrowLeft } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { StorageAreaOption, StorageAreaSelections, CustomStorageArea } from '@/types/household';
+import { StorageAreaSelections, CustomStorageArea } from '@/types/household';
 import { OnboardingStorageSelector } from '@/components/OnboardingStorageSelector';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { toast } from '@/hooks/use-toast';
@@ -57,21 +56,6 @@ const Onboarding = () => {
     }
   }, [searchParams]);
 
-  const storageOptions: StorageAreaOption[] = [
-    { id: 'hasFridge', name: 'Refrigerator', emoji: '🥬', description: 'Main fridge compartment' },
-    { id: 'hasFreezer', name: 'Freezer', emoji: '🧊', description: 'Frozen food storage' },
-    { id: 'hasPantry', name: 'Pantry', emoji: '🏺', description: 'Dry goods and canned items' },
-    { id: 'hasKitchenCupboard', name: 'Kitchen Cupboard', emoji: '🗄️', description: 'Spices and small items' },
-  ];
-
-  const handleStorageToggle = (storageId: keyof StorageAreaSelections) => {
-    setSelectedStorageAreas(prev => 
-      prev.includes(storageId) 
-        ? prev.filter(id => id !== storageId)
-        : [...prev, storageId]
-    );
-  };
-
   const handleCreateHousehold = async () => {
     try {
       // Validate inputs
@@ -92,7 +76,22 @@ const Onboarding = () => {
         hasKitchenCupboard: selectedStorageAreas.includes('hasKitchenCupboard'),
       };
 
-      await createHousehold(householdName.trim(), undefined, storageAreas, customStorageAreas);
+      const household = await createHousehold(householdName.trim(), undefined, storageAreas, customStorageAreas);
+      
+      // Show success toast with translation
+      const selectedCount = Object.values(storageAreas).filter(Boolean).length;
+      const customCount = customStorageAreas ? customStorageAreas.length : 0;
+      const totalStorageCount = selectedCount + customCount;
+      const storageMessage = totalStorageCount > 0 ? t('messages.success.withStorageAreas', { count: totalStorageCount }) : '';
+      
+      toast({
+        title: t('messages.success.householdCreated'),
+        description: t('messages.success.householdCreatedDescription', { 
+          name: householdName.trim(),
+          storageMessage: storageMessage
+        }),
+      });
+      
       navigate('/dashboard');
     } catch (error) {
       console.error('Failed to create household:', error);
@@ -117,6 +116,13 @@ const Onboarding = () => {
       }
 
       await joinHousehold(joinCode.trim());
+      
+      // Show success toast with translation
+      toast({
+        title: t('messages.success.householdJoined'),
+        description: t('messages.success.householdJoinedDescription'),
+      });
+      
       navigate('/dashboard');
     } catch (error) {
       console.error('Failed to join household:', error);
@@ -209,14 +215,14 @@ const Onboarding = () => {
                   className="flex-1"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
+                  {t('buttons.back')}
                 </Button>
                 <Button
                   onClick={() => setStep(3)}
                   disabled={!householdName.trim()}
                   className="flex-1 bg-green-600 hover:bg-green-700"
                 >
-                  Next <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('buttons.next')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             </CardContent>
@@ -254,7 +260,7 @@ const Onboarding = () => {
                   onClick={handleCreateHousehold}
                   className="flex-1 bg-green-600 hover:bg-green-700"
                 >
-                  Create <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('buttons.create')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             </CardContent>

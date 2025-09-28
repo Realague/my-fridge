@@ -67,13 +67,13 @@ export const OnboardingStorageSelector = ({
       description: t('storageArea.mainKitchenCupboardDescription'),
       suggestedNames: [t('storageArea.upperCabinets'), t('storageArea.lowerCabinets'), t('storageArea.spiceCabinet')]
     },
-    { 
+/*{ 
       id: 'other', 
       name: 'Other Storage', 
       emoji: '📦', 
       description: 'Custom storage area',
       suggestedNames: ['Basement Storage', 'Garage Shelf', 'Wine Cellar']
-    }
+    }*/
   ];
 
   const resetForm = () => {

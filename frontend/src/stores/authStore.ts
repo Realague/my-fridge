@@ -14,6 +14,7 @@ export interface User {
 interface TokenInfo {
   accessToken: string;
   accessTokenExpiresAt: Date;
+  sessionToken: string;
 }
 
 interface AuthState {
@@ -76,8 +77,6 @@ export const useAuthStore = create<AuthState>()(
       setAuthenticated: (authenticated) => set({ isAuthenticated: authenticated }),
 
       initializeGoogleAuth: () => {
-        // Pure OAuth2 flow - no Google SDK needed
-        console.log('Initializing OAuth2-only authentication');
         get().checkStoredAuth();
       },
 
@@ -88,17 +87,12 @@ export const useAuthStore = create<AuthState>()(
         // Check if we have stored tokens
         if (state.tokens?.accessToken) {
           try {
-            console.log('Checking stored access token...');
             // Check if access token is expired
             if (get().isTokenExpired(state.tokens.accessToken)) {
-              console.log('Access token is expired, attempting refresh...');
               // Try to refresh the token
               const refreshed = await get().refreshTokens();
               if (!refreshed) {
-                console.log('Token refresh failed, clearing auth state');
                 set({ user: null, tokens: null, isAuthenticated: false });
-              } else {
-                console.log('Token refresh successful');
               }
             } else {
               // Token is still valid, keep current state
@@ -130,13 +124,15 @@ export const useAuthStore = create<AuthState>()(
       refreshTokens: async (): Promise<boolean> => {
         try {
           const state = get();
-          if (!state.tokens?.accessToken) {
+          if (!state.tokens?.sessionToken) {
+            console.error('No session token available for refresh');
             return false;
           }
 
           const response = await fetch(`${import.meta.env.VITE_API_URL || 'localhost:3000'}/auth/refresh`, {
             method: 'POST',
-            headers: getAuthHeaders(state.tokens.accessToken),
+            headers: getUnauthHeaders(),
+            body: JSON.stringify({ sessionToken: state.tokens.sessionToken }),
           });
 
           if (response.ok) {
@@ -145,7 +141,8 @@ export const useAuthStore = create<AuthState>()(
             
             const newTokens: TokenInfo = {
               accessToken: tokenData.accessToken,
-              accessTokenExpiresAt: new Date(tokenData.accessTokenExpiresAt)
+              accessTokenExpiresAt: new Date(tokenData.accessTokenExpiresAt),
+              sessionToken: state.tokens.sessionToken
             };
             
             set({ tokens: newTokens });
@@ -162,7 +159,6 @@ export const useAuthStore = create<AuthState>()(
 
       signInWithGoogle: () => {
         // Pure OAuth2 authorization code flow
-        console.log('Starting OAuth2 flow...');
         const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
         const redirectUri = `${window.location.origin}/auth`;
         
@@ -177,7 +173,6 @@ export const useAuthStore = create<AuthState>()(
         });
 
         const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
-        console.log('Redirecting to:', authUrl);
         window.location.href = authUrl;
       },
 

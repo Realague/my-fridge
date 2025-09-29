@@ -62,12 +62,6 @@ export const ItemSelector = ({
   const loadHouseholdItemsOnDemand = async () => {
     // Wait for authentication to complete
     if (!user || !isAuthenticated || !selectedHouseholdId || hasLoadedHouseholdItems) {
-      console.log('ItemSelector: Skipping household items load:', { 
-        hasUser: !!user, 
-        isAuthenticated, 
-        hasHouseholdId: !!selectedHouseholdId, 
-        hasLoaded: hasLoadedHouseholdItems 
-      });
       return;
     }
 
@@ -112,11 +106,6 @@ export const ItemSelector = ({
       if (query !== lastSearchQueryRef.current) {
         const timeout = setTimeout(async () => {
           if (!userRef.current || !isAuthenticatedRef.current || !query.trim()) {
-            console.log('Skipping search:', { 
-              hasUser: !!userRef.current, 
-              isAuthenticated: isAuthenticatedRef.current, 
-              hasQuery: !!query.trim() 
-            });
             return;
           }
 

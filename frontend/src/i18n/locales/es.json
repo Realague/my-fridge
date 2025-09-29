@@ -193,10 +193,9 @@
       "storageAreaUpdatedDescription": "{{name}} ha sido actualizada exitosamente.",
       "storageAreaDeletedDescription": "{{name}} ha sido eliminada exitosamente.",
       "householdCreated": "¡Hogar Creado!",
-      "householdCreatedDescription": "{{name}} ha sido creado exitosamente{{storageMessage}}.",
+      "householdCreatedDescription": "{{name}} ha sido creado exitosamente con {{count}} áreas de almacenamiento.",
       "householdJoined": "¡Hogar Unido!",
-      "householdJoinedDescription": "Te has unido al hogar exitosamente.",
-      "withStorageAreas": " con {{count}} áreas de almacenamiento"
+      "householdJoinedDescription": "Te has unido al hogar exitosamente."
     },
     "error": {
       "somethingWentWrong": "Algo salió mal",

@@ -122,9 +122,29 @@ export class AuthController {
 
   async refreshToken(req: Request, res: Response): Promise<void> {
     try {
-      const userId = (req.user as any).id;
+      // Get the session token from the request body or Authorization header
+      let sessionToken: string | undefined;
       
-      const tokenResponse = await this.authService.refreshTokenForUser(userId);
+      // Check if session token is in the request body
+      if (req.body && req.body.sessionToken) {
+        sessionToken = req.body.sessionToken;
+      } else {
+        // Check Authorization header for session token
+        const authHeader = req.headers['authorization'];
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          sessionToken = authHeader.split(' ')[1];
+        }
+      }
+      
+      if (!sessionToken) {
+        res.status(400).json({
+          success: false,
+          error: 'Session token is required'
+        });
+        return;
+      }
+      
+      const tokenResponse = await this.authService.refreshTokenWithSessionToken(sessionToken);
       
       const response: ApiResponse = {
         success: true,

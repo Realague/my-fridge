@@ -194,10 +194,9 @@
       "storageAreaUpdatedDescription": "{{name}} has been updated successfully.",
       "storageAreaDeletedDescription": "{{name}} has been deleted successfully.",
       "householdCreated": "Household Created!",
-      "householdCreatedDescription": "{{name}} has been created successfully{{storageMessage}}.",
+      "householdCreatedDescription": "{{name}} has been created successfully with {{count}} storage areas.",
       "householdJoined": "Household Joined!",
-      "householdJoinedDescription": "You have successfully joined the household.",
-      "withStorageAreas": " with {{count}} storage areas"
+      "householdJoinedDescription": "You have successfully joined the household."
     },
     "error": {
       "somethingWentWrong": "Something went wrong",

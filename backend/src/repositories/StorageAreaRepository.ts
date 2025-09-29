@@ -9,10 +9,10 @@ export interface FindOptions {
 }
 
 export interface CreateStorageAreaData {
+  householdId: string;
   name: string;
   emoji?: string;
   type?: StorageAreaType;
-  householdId: string;
 }
 
 export class StorageAreaRepository {
@@ -47,10 +47,10 @@ export class StorageAreaRepository {
 
   async create(data: CreateStorageAreaData): Promise<any> {
     return await StorageArea.create({
+      householdId: data.householdId,
       name: data.name,
       emoji: data.emoji || '📦',
       type: data.type || StorageAreaType.OTHER,
-      householdId: data.householdId,
     });
   }
 

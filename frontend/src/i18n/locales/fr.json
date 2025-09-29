@@ -193,10 +193,9 @@
       "storageAreaUpdatedDescription": "{{name}} a été mise à jour avec succès.",
       "storageAreaDeletedDescription": "{{name}} a été supprimée avec succès.",
       "householdCreated": "Foyer Créé !",
-      "householdCreatedDescription": "{{name}} a été créé avec succès{{storageMessage}}.",
+      "householdCreatedDescription": "{{name}} a été créé avec succès avec {{count}} zones de stockage.",
       "householdJoined": "Foyer Rejoint !",
-      "householdJoinedDescription": "Vous avez rejoint le foyer avec succès.",
-      "withStorageAreas": " avec {{count}} zones de stockage"
+      "householdJoinedDescription": "Vous avez rejoint le foyer avec succès."
     },
     "error": {
       "somethingWentWrong": "Quelque chose s'est mal passé",

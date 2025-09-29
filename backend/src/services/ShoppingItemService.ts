@@ -211,7 +211,6 @@ export class ShoppingItemService {
           );
           
           if (deleteSuccess) {
-            console.log(`Deleted stored item ${shoppingItem.storedItemId} when unmarking shopping item ${id}`);
             // Clear the storedItemId reference
             await this.shoppingItemRepository.update(id, { storedItemId: null });
           }

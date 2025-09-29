@@ -71,6 +71,7 @@ export class AuthService {
         user: this.transformToUserResponseDto(user),
         accessToken: tokens.id_token, // Use Google ID token as access token
         accessTokenExpiresAt: new Date(Date.now() + 60 * 60 * 1000), // ID tokens expire in 1 hour
+        sessionToken: user.googleId, // Use Google ID as session token for refresh
         message: 'Authentication successful'
       };
     } catch (error) {
@@ -163,12 +164,13 @@ export class AuthService {
     return adminEmails.includes(user.email);
   }
 
-  async refreshTokenForUser(userId: string): Promise<{ accessToken: string; accessTokenExpiresAt: Date }> {
+  async refreshTokenWithSessionToken(sessionToken: string): Promise<{ accessToken: string; accessTokenExpiresAt: Date }> {
     try {
-      // Find user by ID
-      const user = await this.userRepository.findById(userId);
+      // For now, we'll use a simple approach: the session token is the user's Google ID
+      // In a production system, you'd want to implement proper session management
+      const user = await this.userRepository.findByGoogleId(sessionToken);
       if (!user || !user.isRefreshTokenValid()) {
-        throw new UnauthorizedError('Invalid or expired refresh token');
+        throw new UnauthorizedError('Invalid or expired session');
       }
 
       // Use Google's refresh token to get new access token
@@ -200,7 +202,7 @@ export class AuthService {
       if (error instanceof NotFoundError || error instanceof UnauthorizedError) {
         throw error;
       }
-      throw new UnauthorizedError('Invalid refresh token');
+      throw new UnauthorizedError('Invalid session token');
     }
   }
 

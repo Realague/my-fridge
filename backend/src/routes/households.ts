@@ -4,7 +4,6 @@ import { HouseholdService } from '../services/HouseholdService';
 import { HouseholdRepository } from '../repositories/HouseholdRepository';
 import { UserRepository } from '../repositories/UserRepository';
 import { StorageAreaRepository } from '../repositories/StorageAreaRepository';
-import { StorageAreaSeeder } from '../seeders/defaultStorageAreas';
 import { authenticateGoogleToken } from '../middleware/auth';
 import { validateRequest } from '../middleware/validation';
 import storageAreaRoutes from './storageAreas';
@@ -19,8 +18,7 @@ const JoinHouseholdSchema = { name: 'JoinHouseholdDto' };
 const householdRepository = new HouseholdRepository();
 const userRepository = new UserRepository();
 const storageAreaRepository = new StorageAreaRepository();
-const storageAreaSeeder = new StorageAreaSeeder(storageAreaRepository);
-const householdService = new HouseholdService(householdRepository, userRepository, storageAreaSeeder);
+const householdService = new HouseholdService(householdRepository, userRepository, storageAreaRepository);
 const householdController = new HouseholdController(householdService);
 
 const router = Router();

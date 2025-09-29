@@ -173,10 +173,49 @@ export const ItemSelector = ({
   const updateDropdownPosition = () => {
     if (inputRef.current) {
       const rect = inputRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
+      
+      // Calculate available space below the input
+      const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      
+      // Determine if dropdown should open above or below
+      // Open above if there's not enough space below (less than 300px) 
+      // or if there's significantly more space above
+      const shouldOpenAbove = spaceBelow < 300 || (spaceAbove > spaceBelow + 100);
+      
+      // Debug logging
+      console.log('Dropdown positioning:', {
+        spaceBelow,
+        spaceAbove,
+        shouldOpenAbove,
+        viewportHeight,
+        rectBottom: rect.bottom
+      });
+      
+      // For fixed positioning, use viewport coordinates directly
+      // When opening above, we need to account for the dropdown height
+      const dropdownHeight = 256; // max-h-64 = 16rem = 256px
+      let top = shouldOpenAbove 
+        ? Math.max(10, rect.top - dropdownHeight - 4)  // Position above input with margin
+        : rect.bottom + 4; // Position below input
+      
+      // Ensure dropdown doesn't go off-screen horizontally
+      let left = rect.left;
+      const dropdownWidth = Math.max(rect.width, 300); // Minimum width
+      
+      if (left + dropdownWidth > viewportWidth) {
+        left = viewportWidth - dropdownWidth - 10; // 10px margin from edge
+      }
+      if (left < 10) {
+        left = 10; // 10px margin from left edge
+      }
+      
       setDropdownPosition({
-        top: rect.bottom + window.scrollY + 4,
-        left: rect.left + window.scrollX,
-        width: rect.width
+        top,
+        left,
+        width: dropdownWidth
       });
     }
   };
@@ -191,7 +230,10 @@ export const ItemSelector = ({
 
     const handleScroll = () => {
       if (isOpen) {
-        updateDropdownPosition();
+        // Use requestAnimationFrame to ensure smooth updates
+        requestAnimationFrame(() => {
+          updateDropdownPosition();
+        });
       }
     };
 
@@ -204,11 +246,13 @@ export const ItemSelector = ({
     document.addEventListener('mousedown', handleClickOutside);
     window.addEventListener('scroll', handleScroll, true);
     window.addEventListener('resize', handleResize);
+    document.addEventListener('scroll', handleScroll, true);
     
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       window.removeEventListener('scroll', handleScroll, true);
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('scroll', handleScroll, true);
     };
   }, [isOpen]);
 

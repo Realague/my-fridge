@@ -170,9 +170,9 @@ const StorageArea = () => {
     
     const badges = {
       'expired': <Badge variant="destructive" className="text-xs">{t('storageArea.expired')}</Badge>,
-      'expiring-soon': <Badge variant="destructive" className="text-xs">{t('pages.storageArea.expiresIn', { days })}</Badge>,
-      'expiring-week': <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">Expires in {days}d</Badge>,
-      'fresh': <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">Fresh ({days}d)</Badge>
+      'expiring-soon': <Badge variant="destructive" className="text-xs">{t('storageArea.expiresIn', { days })}</Badge>,
+      'expiring-week': <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">{t('storageArea.expiresIn', { days })}</Badge>,
+      'fresh': <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">{t('storageArea.fresh', { days })}</Badge>
     };
     
     return badges[status];
@@ -312,7 +312,7 @@ const StorageArea = () => {
                     {storageItem.expirationDate && (
                       <div className="flex items-center gap-1">
                         <AlertTriangle className="h-3 w-3" />
-                        <span>Expires {formatDate(new Date(storageItem.expirationDate), 'MMM d')}</span>
+                        <span>{t('storageArea.expiresIn', { days: getDaysUntilExpiration(storageItem.expirationDate) })}</span>
                       </div>
                     )}
                   </div>

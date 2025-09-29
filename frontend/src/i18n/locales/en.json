@@ -62,6 +62,7 @@
     "goToDashboard": "Go to Dashboard",
     "expired": "Expired",
     "expiresIn": "Expires in {{days}}d",
+    "fresh": "Fresh ({{days}}d)",
     "quantity": "Quantity",
     "location": "Location",
     "expirationDate": "Expiration Date",

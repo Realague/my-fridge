@@ -22,6 +22,7 @@ export interface AuthResponseDto {
   user: UserResponseDto;
   accessToken: string;
   accessTokenExpiresAt: Date;
+  sessionToken: string;
   message?: string;
 }
 

@@ -569,17 +569,17 @@ export class ItemSeeder {
       const { items: existingItems } = await this.itemRepository.findAll({ limit: 1 });
       
       if (existingItems.length > 0) {
-        console.log('Items already exist in database, skipping seeding');
+        console.info('Items already exist in database, skipping seeding');
         return;
       }
 
-      console.log('🌱 Seeding basic items with available units...');
+      console.info('🌱 Seeding basic items with available units...');
       
       for (const defaultItem of DEFAULT_ITEMS) {
         await this.createItem(defaultItem, null, null);
       }
 
-      console.log(`✅ Successfully seeded ${DEFAULT_ITEMS.length} items with available units`);
+      console.info(`✅ Successfully seeded ${DEFAULT_ITEMS.length} items with available units`);
     } catch (error) {
       console.error('❌ Failed to seed basic items:', error);
       throw error;
@@ -597,6 +597,5 @@ export class ItemSeeder {
     };
 
     await this.itemRepository.create(itemData);
-    console.log(`  ✓ Created item: ${defaultItem.name} (${defaultItem.availableUnits.length} available units)`);
   }
 } 

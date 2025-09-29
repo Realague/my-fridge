@@ -31,8 +31,6 @@ const Auth = () => {
           setAuthLoading(true);
           setLoading(true);
           
-          console.log('Processing OAuth callback with code:', code);
-          
           // Exchange the authorization code for tokens
           const response = await fetch(`${import.meta.env.VITE_API_URL || 'localhost:3000'}/auth/google/exchange`, {
             method: 'POST',
@@ -44,10 +42,11 @@ const Auth = () => {
             const responseData = await response.json();
             const authData = responseData.data;
             
-            // Store the access token
+            // Store the access token and session token
             const tokens = {
               accessToken: authData.accessToken,
-              accessTokenExpiresAt: new Date(authData.accessTokenExpiresAt)
+              accessTokenExpiresAt: new Date(authData.accessTokenExpiresAt),
+              sessionToken: authData.sessionToken
             };
             
             setUser(authData.user);

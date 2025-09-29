@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { StorageAreaSelections, CustomStorageArea } from '@/types/household';
+import { StorageArea } from '@/types/household';
 import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 
 export interface Household {
@@ -48,7 +48,7 @@ interface HouseholdStore {
   // Actions
   fetchHouseholds: () => Promise<void>;
   fetchHouseholdDetails: (householdId: string) => Promise<HouseholdDetails | null>;
-  createHousehold: (name: string, description?: string, storageAreas?: StorageAreaSelections, customStorageAreas?: CustomStorageArea[]) => Promise<Household>;
+  createHousehold: (name: string, description?: string, storageAreas?: StorageArea[]) => Promise<Household>;
   updateHousehold: (householdId: string, name: string, description?: string) => Promise<void>;
   selectHousehold: (householdId: string) => Promise<any>;
   joinHousehold: (inviteCode: string) => Promise<void>;
@@ -173,7 +173,7 @@ export const useHouseholdStore = create<HouseholdStore>()(
           }
         },
 
-        createHousehold: async (name: string, description?: string, storageAreas?: StorageAreaSelections, customStorageAreas?: CustomStorageArea[]) => {
+        createHousehold: async (name: string, description?: string, storageAreas?: StorageArea[]) => {
           set({ loading: true, error: null });
           
           try {
@@ -181,15 +181,8 @@ export const useHouseholdStore = create<HouseholdStore>()(
               name,
               description,
             };
-
-            // Add storage areas if provided
-            if (storageAreas) {
+            if (storageAreas && storageAreas.length > 0) {
               requestBody.storageAreas = storageAreas;
-            }
-
-            // Add custom storage areas if provided
-            if (customStorageAreas && customStorageAreas.length > 0) {
-              requestBody.customStorageAreas = customStorageAreas;
             }
 
             const response = await apiService.post('/api/households', requestBody);

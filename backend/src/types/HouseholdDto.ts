@@ -1,13 +1,7 @@
 export interface CreateHouseholdDto {
   name: string;
   description?: string;
-  storageAreas?: {
-    hasFridge?: boolean;
-    hasFreezer?: boolean;
-    hasPantry?: boolean;
-    hasKitchenCupboard?: boolean;
-  };
-  customStorageAreas?: Array<{
+  storageAreas?: Array<{
     name: string;
     description?: string;
     emoji: string;

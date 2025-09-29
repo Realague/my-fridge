@@ -292,14 +292,6 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
         updatedFavorites = favoriteRecipes.filter(r => r.id !== recipeId);
       }
       
-      console.log('Updated recipes state:', {
-        originalRecipesCount: recipes.length,
-        updatedRecipesCount: updatedRecipes.length,
-        originalFavoritesCount: favoriteRecipes.length,
-        updatedFavoritesCount: updatedFavorites.length,
-        recipeIsFavorite: updatedRecipe.isFavorite
-      });
-      
       set({
         recipes: updatedRecipes,
         favoriteRecipes: updatedFavorites,

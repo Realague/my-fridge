@@ -3,13 +3,13 @@ import { UserRepository } from '../repositories/UserRepository';
 import { CreateHouseholdDto, UpdateHouseholdDto, JoinHouseholdDto, HouseholdQueryDto, HouseholdResponseDto, HouseholdDetailResponseDto, SetSelectedHouseholdDto } from '../types/HouseholdDto';
 import { UserResponseDto } from '../types/AuthDto';
 import { ValidationError, NotFoundError, UnauthorizedError } from '../errors/CustomErrors';
-import { StorageAreaSeeder } from '../seeders/defaultStorageAreas';
+import { StorageAreaRepository } from '../repositories/StorageAreaRepository';
 
 export class HouseholdService {
   constructor(
     private householdRepository: HouseholdRepository,
     private userRepository: UserRepository,
-    private storageAreaSeeder?: StorageAreaSeeder
+    private storageAreaRepository: StorageAreaRepository
   ) {}
 
   async getUserHouseholds(userId: string, query?: HouseholdQueryDto): Promise<any[]> {
@@ -44,21 +44,12 @@ export class HouseholdService {
     // Add creator as admin member
     await this.householdRepository.addMember(household.id, userId, 'admin');
 
-    // Create selected storage areas if specified
-    if (this.storageAreaSeeder && createDto.storageAreas) {
-      try {
-        await this.storageAreaSeeder.seedSelectedStorageAreas(household.id, createDto.storageAreas);
-      } catch (error) {
-        console.warn('Failed to create storage areas for household:', error);
-        // Don't fail household creation if storage areas fail
-      }
-    }
-
     // Create custom storage areas if specified
-    if (createDto.customStorageAreas && createDto.customStorageAreas.length > 0) {
+    if (createDto.storageAreas && createDto.storageAreas.length > 0) {
       try {
-        for (const customArea of createDto.customStorageAreas) {
-          await this.storageAreaSeeder!.createStorageArea(household.id, {
+        for (const customArea of createDto.storageAreas) {
+          await this.storageAreaRepository.create({
+            householdId: household.id,
             name: customArea.name,
             emoji: customArea.emoji,
             type: customArea.type as any

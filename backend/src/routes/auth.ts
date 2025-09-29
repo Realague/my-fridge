@@ -26,9 +26,8 @@ router.post('/google/exchange',
 
 // Removed verify-google-token endpoint - using pure OAuth2 flow
 
-// Refresh JWT token endpoint (requires authentication)
+// Refresh JWT token endpoint (no authentication required - uses refresh token validation)
 router.post('/refresh',
-  authenticateGoogleToken,
   authController.refreshToken.bind(authController)
 );
 

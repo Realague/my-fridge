@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { ArrowRight, Plus, Users, ArrowLeft } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { StorageAreaSelections, CustomStorageArea } from '@/types/household';
+import { StorageArea } from '@/types/household';
 import { OnboardingStorageSelector } from '@/components/OnboardingStorageSelector';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { toast } from '@/hooks/use-toast';
@@ -23,8 +23,7 @@ const Onboarding = () => {
   const [step, setStep] = useState(1);
   const [householdName, setHouseholdName] = useState('');
   const [joinCode, setJoinCode] = useState('');
-  const [selectedStorageAreas, setSelectedStorageAreas] = useState<(keyof StorageAreaSelections)[]>([]);
-  const [customStorageAreas, setCustomStorageAreas] = useState<CustomStorageArea[]>([]);
+  const [storageAreas, setStorageAreas] = useState<StorageArea[]>([]);
 
   // Redirect to auth if not authenticated
   useEffect(() => {
@@ -68,27 +67,13 @@ const Onboarding = () => {
         return;
       }
 
-      // Convert selected storage areas to the format expected by the backend
-      const storageAreas: StorageAreaSelections = {
-        hasFridge: selectedStorageAreas.includes('hasFridge'),
-        hasFreezer: selectedStorageAreas.includes('hasFreezer'),
-        hasPantry: selectedStorageAreas.includes('hasPantry'),
-        hasKitchenCupboard: selectedStorageAreas.includes('hasKitchenCupboard'),
-      };
+      await createHousehold(householdName.trim(), undefined, storageAreas);
 
-      const household = await createHousehold(householdName.trim(), undefined, storageAreas, customStorageAreas);
-      
-      // Show success toast with translation
-      const selectedCount = Object.values(storageAreas).filter(Boolean).length;
-      const customCount = customStorageAreas ? customStorageAreas.length : 0;
-      const totalStorageCount = selectedCount + customCount;
-      const storageMessage = totalStorageCount > 0 ? t('messages.success.withStorageAreas', { count: totalStorageCount }) : '';
-      
       toast({
         title: t('messages.success.householdCreated'),
         description: t('messages.success.householdCreatedDescription', { 
           name: householdName.trim(),
-          storageMessage: storageMessage
+          count: storageAreas.length
         }),
       });
       
@@ -243,8 +228,8 @@ const Onboarding = () => {
 
             <CardContent className="space-y-6">
               <OnboardingStorageSelector
-                selectedAreas={customStorageAreas}
-                onAreasChange={setCustomStorageAreas}
+                selectedAreas={storageAreas}
+                onAreasChange={setStorageAreas}
               />
 
               <div className="flex gap-3">

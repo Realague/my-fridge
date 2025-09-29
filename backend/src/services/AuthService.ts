@@ -164,47 +164,6 @@ export class AuthService {
     return adminEmails.includes(user.email);
   }
 
-  async refreshTokenForUser(userId: string): Promise<{ accessToken: string; accessTokenExpiresAt: Date }> {
-    try {
-      // Find user by ID
-      const user = await this.userRepository.findById(userId);
-      if (!user || !user.isRefreshTokenValid()) {
-        throw new UnauthorizedError('Invalid or expired refresh token');
-      }
-
-      // Use Google's refresh token to get new access token
-      this.googleClient.setCredentials({
-        refresh_token: user.refreshToken
-      });
-
-      const { credentials } = await this.googleClient.refreshAccessToken();
-      
-      if (!credentials.id_token) {
-        throw new UnauthorizedError('Failed to refresh token');
-      }
-
-      // Update refresh token if we got a new one
-      if (credentials.refresh_token && credentials.refresh_token !== user.refreshToken) {
-        await this.userRepository.updateRefreshToken(
-          user.id,
-          credentials.refresh_token,
-          new Date(Date.now() + 180 * 24 * 60 * 60 * 1000) // ~6 months
-        );
-      }
-
-      return {
-        accessToken: credentials.id_token,
-        accessTokenExpiresAt: new Date(Date.now() + 60 * 60 * 1000), // ID tokens expire in 1 hour
-      };
-    } catch (error) {
-      console.error('Refresh token error:', error);
-      if (error instanceof NotFoundError || error instanceof UnauthorizedError) {
-        throw error;
-      }
-      throw new UnauthorizedError('Invalid refresh token');
-    }
-  }
-
   async refreshTokenWithSessionToken(sessionToken: string): Promise<{ accessToken: string; accessTokenExpiresAt: Date }> {
     try {
       // For now, we'll use a simple approach: the session token is the user's Google ID

@@ -523,7 +523,7 @@ const EditRecipe = () => {
                 onClick={() => navigate(`/recipes/${recipe.id}`)}
                 className="flex-1"
               >
-                Cancel
+                {t('buttons.cancel')}
               </Button>
               <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
                 {t('pages.recipes.saveRecipe')}

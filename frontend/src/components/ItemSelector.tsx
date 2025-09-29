@@ -185,15 +185,6 @@ export const ItemSelector = ({
       // or if there's significantly more space above
       const shouldOpenAbove = spaceBelow < 300 || (spaceAbove > spaceBelow + 100);
       
-      // Debug logging
-      console.log('Dropdown positioning:', {
-        spaceBelow,
-        spaceAbove,
-        shouldOpenAbove,
-        viewportHeight,
-        rectBottom: rect.bottom
-      });
-      
       // For fixed positioning, use viewport coordinates directly
       // When opening above, we need to account for the dropdown height
       const dropdownHeight = 256; // max-h-64 = 16rem = 256px

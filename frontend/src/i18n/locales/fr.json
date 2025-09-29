@@ -60,6 +60,7 @@
     "goToDashboard": "Aller au Tableau de Bord",
     "expired": "Expiré",
     "expiresIn": "Expire dans {{days}}j",
+    "fresh": "Frais ({{days}}j)",
     "quantity": "Quantité",
     "location": "Emplacement",
     "expirationDate": "Date d'Expiration",

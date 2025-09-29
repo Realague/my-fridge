@@ -60,6 +60,7 @@
     "goToDashboard": "Ir al Tablero",
     "expired": "Vencido",
     "expiresIn": "Vence en {{days}}d",
+    "fresh": "Fresco ({{days}}d)",
     "quantity": "Cantidad",
     "location": "Ubicación",
     "expirationDate": "Fecha de Vencimiento",

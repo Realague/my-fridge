@@ -32,6 +32,29 @@ export const formatDate = (date: Date, formatString: string, language?: string) 
 };
 
 /**
+ * Get locale-specific format patterns
+ */
+const getLocaleSpecificFormat = (formatString: string, language: string): string => {
+  // For French locale, adjust common format patterns to match French conventions
+  if (language === 'fr') {
+    // Change 'MMM d' to 'd MMM' for French (29 sept instead of sept. 29)
+    if (formatString === 'MMM d') {
+      return 'd MMM';
+    }
+    // Change 'MMMM d' to 'd MMMM' for French
+    if (formatString === 'MMMM d') {
+      return 'd MMMM';
+    }
+    // Change 'MMM dd' to 'dd MMM' for French
+    if (formatString === 'MMM dd') {
+      return 'dd MMM';
+    }
+  }
+  
+  return formatString;
+};
+
+/**
  * Hook for internationalized date formatting
  * Uses the current i18n language
  */
@@ -39,8 +62,10 @@ export const useDateFormat = () => {
   const { i18n } = useTranslation();
   
   return {
-    formatDate: (date: Date, formatString: string) => 
-      formatDate(date, formatString, i18n.language),
+    formatDate: (date: Date, formatString: string) => {
+      const localeSpecificFormat = getLocaleSpecificFormat(formatString, i18n.language);
+      return formatDate(date, localeSpecificFormat, i18n.language);
+    },
     getLocale: () => getDateLocale(i18n.language),
   };
 };

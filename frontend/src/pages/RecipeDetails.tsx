@@ -293,7 +293,7 @@ const RecipeDetails = () => {
                     <span className="text-green-600 mt-1.5 text-xs">●</span>
                     <div className="flex-1">
                       <div className="font-medium text-gray-900">
-                        {ingredient.quantity} {ingredient.unit} {/*{ingredient.item?.name || 'Unknown item'}*/}
+                        {ingredient.item?.name} {ingredient.quantity} {ingredient.unit}
                       </div>
                       {ingredient.notes && (
                         <div className="text-sm text-gray-600 mt-1">{ingredient.notes}</div>

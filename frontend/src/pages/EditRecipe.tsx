@@ -466,7 +466,7 @@ const EditRecipe = () => {
                                   onCheckedChange={() => toggleIngredientForStep(ingredient, ingredientIndex, index)}
                                 />
                                 <span className="text-sm text-gray-600">
-                                  {ingredient.quantity} {ingredient.unit} {/*{item.name}*/}
+                                  {ingredient.item?.name} {ingredient.quantity} {ingredient.unit}
                                 </span>
                               </div>
                             );
@@ -523,7 +523,7 @@ const EditRecipe = () => {
                 onClick={() => navigate(`/recipes/${recipe.id}`)}
                 className="flex-1"
               >
-                Cancel
+                {t('buttons.cancel')}
               </Button>
               <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
                 {t('pages.recipes.saveRecipe')}

@@ -230,8 +230,8 @@ const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGri
 
             <div className="flex items-center justify-between">
               <div className="flex flex-wrap gap-1">
-                <Badge className={getDifficultyColor(recipe.difficulty || t('pages.recipes.easy'))}>
-                  {recipe.difficulty || t('pages.recipes.easy')}
+                <Badge className={getDifficultyColor(recipe.difficulty)}>
+                  {t(`pages.recipes.difficultyOptions.${recipe.difficulty.toLowerCase()}`)}
                 </Badge>
                 {(recipe.tags || []).slice(0, 2).map((tag, index) => (
                   <Badge key={index} variant="outline" className="text-xs">

@@ -358,7 +358,7 @@ const RecipeCookingMode = () => {
             {/* Recipe Info */}
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg mt-4">
               <CardContent className="p-4">
-                <h3 className="font-semibold text-gray-900 mb-3">Recipe Info</h3>
+                <h3 className="font-semibold text-gray-900 mb-3">{t('pages.recipes.recipeInfo')}</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('pages.recipes.prepTime')}:</span>

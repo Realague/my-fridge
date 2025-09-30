@@ -331,10 +331,12 @@
       "recipe": "Recette",
       "selectMealType": "Sélectionner le type de repas",
       "selectServings": "Sélectionner les portions",
-      "breakfast": "Petit-déjeuner",
-      "lunch": "Déjeuner",
-      "dinner": "Dîner",
-      "snack": "Collation",
+      "mealTypes": {
+        "breakfast": "Petit-déjeuner",
+        "lunch": "Déjeuner",
+        "dinner": "Dîner",
+        "snack": "Collation"
+      },
       "searchRecipe": "Rechercher une recette...",
       "addMealFor": "Ajouter un repas pour",
       "viewRecipe": "Voir la Recette",

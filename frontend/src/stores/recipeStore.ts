@@ -9,6 +9,7 @@ import {
   IngredientStats
 } from '@/services/recipeService';
 import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
+import { useHouseholdStore } from './householdStore';
 
 // Non-hook API service for use in stores
 const createApiService = () => {
@@ -37,6 +38,22 @@ const createApiService = () => {
   };
 };
 
+const getHouseholdId = (providedId?: string): string | null => {
+  if (providedId) return providedId;
+  
+  // Get from household store
+  const selectedHouseholdId = useHouseholdStore.getState().selectedHouseholdId;
+  if (selectedHouseholdId) return selectedHouseholdId;
+  
+  // Check if user has any households
+  const households = useHouseholdStore.getState().households;
+  if (households.length > 0) {
+    return households[0].id; // Use first household if none selected
+  }
+  
+  return null; // No household available
+};
+
 const apiService = createApiService();
 
 interface RecipeState {
@@ -58,17 +75,17 @@ interface RecipeState {
   searchParams: RecipeSearchParams;
   
   // Actions
-  fetchRecipes: (householdId: string, params?: RecipeSearchParams) => Promise<void>;
-  fetchRecipeById: (householdId: string, recipeId: string) => Promise<void>;
-  createRecipe: (householdId: string, recipeData: CreateRecipeDto) => Promise<RecipeDto>;
-  updateRecipe: (householdId: string, recipeId: string, updates: UpdateRecipeDto) => Promise<RecipeDto>;
-  deleteRecipe: (householdId: string, recipeId: string) => Promise<void>;
-  toggleFavorite: (householdId: string, recipeId: string) => Promise<RecipeDto>;
-  fetchFavoriteRecipes: (householdId: string) => Promise<void>;
-  fetchTags: (householdId: string) => Promise<void>;
-  fetchStats: (householdId: string) => Promise<void>;
-  fetchIngredientStats: (householdId: string) => Promise<void>;
-  getRecipesByUser: (householdId: string, userId: string) => Promise<RecipeListDto[]>;
+  fetchRecipes: (params?: RecipeSearchParams) => Promise<void>;
+  fetchRecipeById: (recipeId: string) => Promise<void>;
+  createRecipe: (recipeData: CreateRecipeDto) => Promise<RecipeDto>;
+  updateRecipe: (recipeId: string, updates: UpdateRecipeDto) => Promise<RecipeDto>;
+  deleteRecipe: (recipeId: string) => Promise<void>;
+  toggleFavorite: (recipeId: string) => Promise<RecipeDto>;
+  fetchFavoriteRecipes: () => Promise<void>;
+  fetchTags: () => Promise<void>;
+  fetchStats: () => Promise<void>;
+  fetchIngredientStats: () => Promise<void>;
+  getRecipesByUser: (userId: string) => Promise<RecipeListDto[]>;
   setSearchParams: (params: RecipeSearchParams) => void;
   clearCurrentRecipe: () => void;
   clearError: () => void;
@@ -92,7 +109,7 @@ const initialState = {
 export const useRecipeStore = create<RecipeState>((set, get) => ({
   ...initialState,
 
-  fetchRecipes: async (householdId: string, params: RecipeSearchParams = {}) => {
+  fetchRecipes: async (params: RecipeSearchParams = {}) => {
     set({ loading: true, error: null });
     
     try {
@@ -106,6 +123,11 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
           }
         }
       });
+
+      const householdId = getHouseholdId();
+      if (!householdId) {
+        throw new Error('No household available');
+      }
 
       const response = await apiService.get(`/api/recipes/${householdId}/recipes?${queryParams}`);
       const responseData = await response.json();
@@ -132,10 +154,15 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
   },
 
-  fetchRecipeById: async (householdId: string, recipeId: string) => {
+  fetchRecipeById: async (recipeId: string) => {
     set({ loading: true, error: null });
     
     try {
+      const householdId = getHouseholdId();
+      if (!householdId) {
+        throw new Error('No household available');
+      }
+
       const response = await apiService.get(`/api/recipes/${householdId}/recipes/${recipeId}`);
       const responseData = await response.json();
       const recipe = responseData.data || responseData;
@@ -151,10 +178,15 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
   },
 
-  createRecipe: async (householdId: string, recipeData: CreateRecipeDto) => {
+  createRecipe: async (recipeData: CreateRecipeDto) => {
     set({ loading: true, error: null });
     
     try {
+      const householdId = getHouseholdId();
+      if (!householdId) {
+        throw new Error('No household available');
+      }
+
       const response = await apiService.post(`/api/recipes/${householdId}/recipes`, recipeData);
       const responseData = await response.json();
       const newRecipe = responseData.data || responseData;
@@ -196,10 +228,15 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
   },
 
-  updateRecipe: async (householdId: string, recipeId: string, updates: UpdateRecipeDto) => {
+  updateRecipe: async (recipeId: string, updates: UpdateRecipeDto) => {
     set({ loading: true, error: null });
     
     try {
+      const householdId = getHouseholdId();
+      if (!householdId) {
+        throw new Error('No household available');
+      }
+
       const response = await apiService.put(`/api/recipes/${householdId}/recipes/${recipeId}`, updates);
       const responseData = await response.json();
       const updatedRecipe = responseData.data || responseData;
@@ -241,10 +278,15 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
   },
 
-  deleteRecipe: async (householdId: string, recipeId: string) => {
+  deleteRecipe: async (recipeId: string) => {
     set({ loading: true, error: null });
     
     try {
+      const householdId = getHouseholdId();
+      if (!householdId) {
+        throw new Error('No household available');
+      }
+
       await apiService.delete(`/api/recipes/${householdId}/recipes/${recipeId}`);
       
       // Remove from recipes list
@@ -265,8 +307,13 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
   },
 
-  toggleFavorite: async (householdId: string, recipeId: string) => {
+  toggleFavorite: async (recipeId: string) => {
     try {
+      const householdId = getHouseholdId();
+      if (!householdId) {
+        throw new Error('No household available');
+      }
+
       const response = await apiService.post(`/api/recipes/${householdId}/recipes/${recipeId}/favorite`);
       const responseData = await response.json();
       const updatedRecipe = responseData.data || responseData;
@@ -308,10 +355,15 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
   },
 
-  fetchFavoriteRecipes: async (householdId: string) => {
+  fetchFavoriteRecipes: async () => {
     set({ loading: true, error: null });
     
     try {
+      const householdId = getHouseholdId();
+      if (!householdId) {
+        throw new Error('No household available');
+      }
+
       const response = await apiService.get(`/api/recipes/${householdId}/recipes/favorites`);
       const responseData = await response.json();
       const favorites = responseData.data || responseData || [];
@@ -327,7 +379,12 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
   },
 
-  fetchTags: async (householdId: string) => {
+  fetchTags: async () => {
+    const householdId = getHouseholdId();
+    if (!householdId) {
+      throw new Error('No household available');
+    }
+
     try {
       const response = await apiService.get(`/api/recipes/${householdId}/recipes/tags`);
       const responseData = await response.json();
@@ -340,7 +397,12 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
   },
 
-  fetchStats: async (householdId: string) => {
+  fetchStats: async () => {
+    const householdId = getHouseholdId();
+    if (!householdId) {
+      throw new Error('No household available');
+    }
+
     try {
       const response = await apiService.get(`/api/recipes/${householdId}/recipes/stats`);
       const responseData = await response.json();
@@ -353,7 +415,12 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
   },
 
-  fetchIngredientStats: async (householdId: string) => {
+  fetchIngredientStats: async () => {
+    const householdId = getHouseholdId();
+    if (!householdId) {
+      throw new Error('No household available');
+    }
+
     try {
       const response = await apiService.get(`/api/recipes/${householdId}/recipes/ingredients/stats`);
       const responseData = await response.json();
@@ -366,7 +433,12 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
   },
 
-  getRecipesByUser: async (householdId: string, userId: string) => {
+  getRecipesByUser: async (userId: string) => {
+    const householdId = getHouseholdId();
+    if (!householdId) {
+      throw new Error('No household available');
+    }
+
     try {
       const response = await apiService.get(`/api/recipes/${householdId}/users/${userId}/recipes`);
       const responseData = await response.json();

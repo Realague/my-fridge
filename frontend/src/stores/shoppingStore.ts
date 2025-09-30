@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
+import { useHouseholdStore } from './householdStore';
 
 export interface ShoppingItem {
   id: string;
@@ -48,14 +49,14 @@ interface ShoppingStore {
   error: string | null;
   
   // Actions
-  fetchShoppingItems: (householdId: string, completed?: boolean) => Promise<void>;
-  createShoppingItem: (householdId: string, itemData: CreateShoppingItemRequest) => Promise<ShoppingItem | null>;
-  updateShoppingItem: (householdId: string, id: string, updates: UpdateShoppingItemRequest) => Promise<boolean>;
-  deleteShoppingItem: (householdId: string, id: string) => Promise<boolean>;
-  toggleShoppingItemCompleted: (householdId: string, id: string) => Promise<boolean>;
-  bulkUpdateCompleted: (householdId: string, ids: string[], completed: boolean) => Promise<boolean>;
-  clearCompleted: (householdId: string) => Promise<boolean>;
-  reorderItems: (householdId: string, itemPriorities: Array<{ id: string; priority: number }>) => Promise<boolean>;
+  fetchShoppingItems: (completed?: boolean) => Promise<void>;
+  createShoppingItem: (itemData: CreateShoppingItemRequest) => Promise<ShoppingItem | null>;
+  updateShoppingItem: (id: string, updates: UpdateShoppingItemRequest) => Promise<boolean>;
+  deleteShoppingItem: (id: string) => Promise<boolean>;
+  toggleShoppingItemCompleted: (id: string) => Promise<boolean>;
+  bulkUpdateCompleted: (ids: string[], completed: boolean) => Promise<boolean>;
+  clearCompleted: () => Promise<boolean>;
+  reorderItems: (itemPriorities: Array<{ id: string; priority: number }>) => Promise<boolean>;
   
   // Internal actions
   setLoading: (loading: boolean) => void;
@@ -98,6 +99,22 @@ const createApiService = () => {
   };
 };
 
+const getHouseholdId = (providedId?: string): string | null => {
+  if (providedId) return providedId;
+  
+  // Get from household store
+  const selectedHouseholdId = useHouseholdStore.getState().selectedHouseholdId;
+  if (selectedHouseholdId) return selectedHouseholdId;
+  
+  // Check if user has any households
+  const households = useHouseholdStore.getState().households;
+  if (households.length > 0) {
+    return households[0].id; // Use first household if none selected
+  }
+  
+  return null; // No household available
+};
+
 const apiService = createApiService();
 
 export const useShoppingStore = create<ShoppingStore>()(
@@ -112,13 +129,18 @@ export const useShoppingStore = create<ShoppingStore>()(
       setLoading: (loading) => set({ loading }),
       setError: (error) => set({ error }),
 
-      fetchShoppingItems: async (householdId: string, completed?: boolean) => {
+      fetchShoppingItems: async (completed?: boolean) => {
         set({ loading: true, error: null });
         
         try {
           const searchParams = new URLSearchParams();
           
           if (completed !== undefined) searchParams.append('completed', completed.toString());
+
+          const householdId = getHouseholdId();
+          if (!householdId) {
+            throw new Error('No household available');
+          }
           
           const queryString = searchParams.toString();
           const url = `/api/households/${householdId}/shopping${queryString ? `?${queryString}` : ''}`;
@@ -153,10 +175,15 @@ export const useShoppingStore = create<ShoppingStore>()(
         }
       },
 
-      createShoppingItem: async (householdId: string, itemData: CreateShoppingItemRequest) => {
+      createShoppingItem: async (itemData: CreateShoppingItemRequest) => {
         set({ error: null });
         
         try {
+          const householdId = getHouseholdId();
+          if (!householdId) {
+            throw new Error('No household available');
+          }
+
           const response = await apiService.post(`/api/households/${householdId}/shopping`, itemData);
           const result = await response.json();
           
@@ -177,10 +204,15 @@ export const useShoppingStore = create<ShoppingStore>()(
         }
       },
 
-      updateShoppingItem: async (householdId: string, id: string, updates: UpdateShoppingItemRequest) => {
+      updateShoppingItem: async (id: string, updates: UpdateShoppingItemRequest) => {
         set({ error: null });
         
         try {
+          const householdId = getHouseholdId();
+          if (!householdId) {
+            throw new Error('No household available');
+          }
+
           const response = await apiService.put(`/api/households/${householdId}/shopping/${id}`, updates);
           const result = await response.json();
           
@@ -203,10 +235,15 @@ export const useShoppingStore = create<ShoppingStore>()(
         }
       },
 
-      deleteShoppingItem: async (householdId: string, id: string) => {
+      deleteShoppingItem: async (id: string) => {
         set({ error: null });
         
         try {
+          const householdId = getHouseholdId();
+          if (!householdId) {
+            throw new Error('No household available');
+          }
+
           const response = await apiService.delete(`/api/households/${householdId}/shopping/${id}`);
           const result = await response.json();
           
@@ -226,10 +263,15 @@ export const useShoppingStore = create<ShoppingStore>()(
         }
       },
 
-      toggleShoppingItemCompleted: async (householdId: string, id: string) => {
+      toggleShoppingItemCompleted: async (id: string) => {
         set({ error: null });
         
-        try {
+        try { 
+          const householdId = getHouseholdId();
+          if (!householdId) {
+            throw new Error('No household available');
+          }
+
           const response = await apiService.patch(`/api/households/${householdId}/shopping/${id}/toggle`);
           const result = await response.json();
           
@@ -252,10 +294,15 @@ export const useShoppingStore = create<ShoppingStore>()(
         }
       },
 
-      bulkUpdateCompleted: async (householdId: string, ids: string[], completed: boolean) => {
+      bulkUpdateCompleted: async (ids: string[], completed: boolean) => {
         set({ error: null });
         
         try {
+          const householdId = getHouseholdId();
+          if (!householdId) {
+            throw new Error('No household available');
+          }
+
           const response = await apiService.put(`/api/households/${householdId}/shopping/bulk-update`, { ids, completed });
           const result = await response.json();
           
@@ -277,10 +324,15 @@ export const useShoppingStore = create<ShoppingStore>()(
         }
       },
 
-      clearCompleted: async (householdId: string) => {
+      clearCompleted: async () => {
         set({ error: null });
         
         try {
+          const householdId = getHouseholdId();
+          if (!householdId) {
+            throw new Error('No household available');
+          }
+
           const response = await apiService.delete(`/api/households/${householdId}/shopping/completed`);
           const result = await response.json();
           
@@ -300,10 +352,15 @@ export const useShoppingStore = create<ShoppingStore>()(
         }
       },
 
-      reorderItems: async (householdId: string, itemPriorities: Array<{ id: string; priority: number }>) => {
+      reorderItems: async (itemPriorities: Array<{ id: string; priority: number }>) => {
         set({ error: null });
         
         try {
+          const householdId = getHouseholdId();
+          if (!householdId) {
+            throw new Error('No household available');
+          }
+
           const response = await apiService.put(`/api/households/${householdId}/shopping/reorder`, { itemPriorities });
           const result = await response.json();
           

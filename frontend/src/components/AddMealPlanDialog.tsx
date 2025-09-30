@@ -1,193 +1,228 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useMealPlan } from '@/contexts/MealPlanContext';
-import { useRecipes } from '@/contexts/RecipeContext';
-import { toast } from 'sonner';
+import { useToast } from "@/hooks/use-toast";
+import { useMealPlanStore } from '@/stores/mealPlanStore';
+import { useRecipeStore } from '@/stores/recipeStore';
+import { RecipeDto } from '@/services/recipeService';
+import { RecipeSelector } from '@/components/RecipeSelector';
 import { useTranslation } from 'react-i18next';
-
-interface Recipe {
-  id: string;
-  title: string;
-  servings: number;
-  prepTime: number;
-  cookTime: number;
-}
+import { useDateFormat } from '@/utils/dateFormatting';
 
 interface AddMealPlanDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  preselectedRecipe?: Recipe;
-  preselectedDate?: string;
-  preselectedMealType?: 'breakfast' | 'lunch' | 'dinner';
+  selectedDate?: Date;
+  preselectedRecipe?: RecipeDto;
+  preselectedMealType?: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  preselectedServings?: number;
 }
 
 export const AddMealPlanDialog = ({
   isOpen,
   onClose,
+  selectedDate,
   preselectedRecipe,
-  preselectedDate,
-  preselectedMealType
+  preselectedMealType = 'lunch',
+  preselectedServings = 1
 }: AddMealPlanDialogProps) => {
   const { t } = useTranslation();
-  const { addToMealPlan } = useMealPlan();
-  const { recipes } = useRecipes();
+  const { formatDate } = useDateFormat();
+  const { toast } = useToast();
+  const { createMealPlan, savingMealPlan } = useMealPlanStore();
+  const { recipes, fetchRecipes, loading: recipesLoading } = useRecipeStore();
   
-  const [selectedRecipe, setSelectedRecipe] = useState('');
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner'>('lunch');
+  const [selectedRecipe, setSelectedRecipe] = useState<RecipeDto | null>(null);
+  const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('lunch');
   const [selectedServings, setSelectedServings] = useState(1);
+  const [selectedDateInput, setSelectedDateInput] = useState('');
 
+  // Fetch recipes when dialog opens
   useEffect(() => {
-    if (preselectedRecipe) {
-      setSelectedRecipe(preselectedRecipe.id);
-      setSelectedServings(preselectedRecipe.servings || 1);
-    } else {
-      setSelectedRecipe('');
-      setSelectedServings(1);
+    if (isOpen && preselectedRecipe === undefined) {
+      fetchRecipes();
     }
-  }, [preselectedRecipe]);
+  }, [isOpen, fetchRecipes]);
 
+  // Initialize form with preselected values
   useEffect(() => {
-    if (preselectedDate) {
-      setSelectedDate(preselectedDate);
-    }
-  }, [preselectedDate]);
-
-  useEffect(() => {
-    if (preselectedMealType) {
+    if (isOpen) {
+      setSelectedRecipe(preselectedRecipe || null);
       setSelectedMealType(preselectedMealType);
+      setSelectedServings(preselectedServings);
+      // Set default date input if no preselected date
+      if (!selectedDate) {
+        setSelectedDateInput(new Date().toISOString().split('T')[0]);
+      }
     }
-  }, [preselectedMealType]);
+  }, [isOpen, preselectedRecipe, preselectedMealType, preselectedServings, selectedDate]);
 
+  // Reset form when dialog closes
   useEffect(() => {
     if (!isOpen) {
-      if (!preselectedRecipe) {
-        setSelectedRecipe('');
-      }
-      if (!preselectedDate) {
-        setSelectedDate(new Date().toISOString().split('T')[0]);
-      }
-      if (!preselectedMealType) {
-        setSelectedMealType('lunch');
-      }
-      setSelectedServings(preselectedRecipe?.servings || 1);
+      setSelectedRecipe(null);
+      setSelectedMealType('lunch');
+      setSelectedServings(1);
+      setSelectedDateInput('');
     }
-  }, [isOpen, preselectedRecipe, preselectedDate, preselectedMealType]);
+  }, [isOpen]);
 
-  const handleAddMeal = () => {
-    if (!selectedRecipe || !selectedDate || !selectedMealType) return;
+  const handleSaveMeal = async () => {
+    const dateToUse = selectedDate || (selectedDateInput ? new Date(selectedDateInput) : null);
+    
+    if (!dateToUse || !selectedMealType || !selectedRecipe) {
+      toast({
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.selectDateMealTypeRecipe'),
+        variant: "destructive",
+      });
+      return;
+    }
 
-    addToMealPlan(selectedRecipe, selectedDate, selectedMealType, selectedServings);
-    
-    const recipe = recipes.find(r => r.id === selectedRecipe);
-    const recipeName = recipe?.title || preselectedRecipe?.title || 'Recipe';
-    
-    toast.success(t('pages.mealPlans.mealPlanAdded'), {
-      description: t('addMealPlan.addedDescription', {
-        recipeName,
-        mealType: t(`pages.mealPlans.${selectedMealType}`),
-        date: new Date(selectedDate).toLocaleDateString(),
-        servings: selectedServings
-      }),
-    });
-    
-    onClose();
+    try {
+      // Use format from date-fns to avoid timezone issues
+      const formattedDate = format(dateToUse, 'yyyy-MM-dd');
+      
+      await createMealPlan({
+        date: formattedDate,
+        mealType: selectedMealType,
+        servings: selectedServings,
+        recipeId: selectedRecipe.id,
+      });
+
+      onClose();
+      toast({
+        title: t('pages.mealPlans.mealPlanAdded'),
+        description: t('pages.mealPlans.mealPlanSaved'),
+      });
+    } catch (error) {
+      console.error('Error creating meal plan:', error);
+      toast({
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.failedToCreateMealPlan'),
+        variant: "destructive",
+      });
+    }
   };
+
+  // Convert RecipeListDto to RecipeDto format expected by RecipeSelector
+  const convertedRecipes: RecipeDto[] = recipes.map(recipe => ({
+    id: recipe.id,
+    title: recipe.title,
+    description: recipe.description || '',
+    prepTime: recipe.prepTime,
+    cookTime: recipe.cookTime,
+    totalTime: recipe.totalTime || recipe.prepTime + recipe.cookTime,
+    servings: recipe.servings,
+    difficulty: recipe.difficulty,
+    instructions: [],
+    tags: Array.isArray(recipe.tags) ? recipe.tags : [],
+    image: recipe.image,
+    isFavorite: recipe.isFavorite,
+    householdId: '',
+    createdBy: recipe.createdBy,
+    createdAt: recipe.createdAt,
+    updatedAt: recipe.createdAt,
+    ingredients: [],
+    creator: recipe.creator ? {
+      id: recipe.creator.id,
+      displayName: recipe.creator.displayName,
+      email: ''
+    } : undefined
+  }));
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>
-            {preselectedRecipe ? t('addMealPlan.addToMealPlan') : t('addMealPlan.addRecipeToMealPlan')}
-          </DialogTitle>
+          <DialogTitle>{t('pages.mealPlans.addMealPlan')}</DialogTitle>
+          <DialogDescription>
+            {selectedDate ? t('pages.mealPlans.addMealFor') + ' ' + formatDate(selectedDate, 'EEEE, MMMM d') : ''}
+          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">
-          {preselectedRecipe && (
+        {/* Show preselected recipe if it exists or show recipe selector */}
+          {preselectedRecipe ? (
             <div className="bg-gray-50 p-3 rounded-lg">
               <div className="font-medium">{preselectedRecipe.title}</div>
               <div className="text-sm text-gray-600">
                 {t('addMealPlan.defaultServings', { servings: preselectedRecipe.servings })} • {(preselectedRecipe.prepTime || 0) + (preselectedRecipe.cookTime || 0)} min
               </div>
             </div>
-          )}
-
-          {!preselectedRecipe && (
+            ) : (
             <div>
-              <label className="text-sm font-medium block mb-1">{t('pages.mealPlans.recipe')}</label>
-              <Select value={selectedRecipe} onValueChange={setSelectedRecipe}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('pages.mealPlans.searchRecipe')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {recipes.map((recipe) => (
-                    <SelectItem key={recipe.id} value={recipe.id}>
-                      <div className="flex flex-col items-start">
-                        <span>{recipe.title}</span>
-                        <span className="text-xs text-gray-500">
-                          {recipe.servings} {t('pages.recipes.servings')} • {recipe.prepTime + recipe.cookTime} min
-                        </span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <label className="block text-sm font-medium mb-2">{t('pages.mealPlans.recipe')}</label>
+              <RecipeSelector
+                onRecipeSelect={(recipe) => setSelectedRecipe(recipe)}
+                selectedRecipe={selectedRecipe}
+                recipes={convertedRecipes}
+                loading={recipesLoading}
+                placeholder={t('pages.mealPlans.searchRecipe')}
+              />
+            </div>
+            )}
+
+          {/* Show date input only if no preselected date */}
+          {!selectedDate && (
+            <div>
+              <label className="block text-sm font-medium mb-2">{t('addMealPlan.date')}</label>
+              <Input
+                type="date"
+                value={selectedDateInput}
+                onChange={(e) => setSelectedDateInput(e.target.value)}
+                className="w-full"
+              />
             </div>
           )}
 
           <div>
-            <label className="text-sm font-medium block mb-1">{t('addMealPlan.date')}</label>
-            <Input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium block mb-1">{t('pages.mealPlans.mealType')}</label>
-            <Select value={selectedMealType} onValueChange={(value: 'breakfast' | 'lunch' | 'dinner') => setSelectedMealType(value)}>
+            <label className="block text-sm font-medium mb-2">{t('pages.mealPlans.mealType')}</label>
+            <Select value={selectedMealType} onValueChange={(value) => setSelectedMealType(value as 'breakfast' | 'lunch' | 'dinner' | 'snack')}>
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder={t('pages.mealPlans.selectMealType')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="breakfast">🌅 {t('pages.mealPlans.breakfast')}</SelectItem>
-                <SelectItem value="lunch">☀️ {t('pages.mealPlans.lunch')}</SelectItem>
-                <SelectItem value="dinner">🌙 {t('pages.mealPlans.dinner')}</SelectItem>
+                <SelectItem value="breakfast">{t('pages.mealPlans.mealTypes.breakfast')}</SelectItem>
+                <SelectItem value="lunch">{t('pages.mealPlans.mealTypes.lunch')}</SelectItem>
+                <SelectItem value="dinner">{t('pages.mealPlans.mealTypes.dinner')}</SelectItem>
+                <SelectItem value="snack">{t('pages.mealPlans.mealTypes.snack')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <label className="text-sm font-medium block mb-1">{t('pages.recipes.servings')}</label>
-            <Input
-              type="number"
-              min="1"
-              max="20"
-              value={selectedServings}
-              onChange={(e) => setSelectedServings(Math.max(1, parseInt(e.target.value) || 1))}
-              placeholder={t('addMealPlan.numberOfServings')}
-            />
-          </div>
-
-          <div className="flex gap-2 pt-2">
-            <Button variant="outline" onClick={onClose} className="flex-1">
-              {t('buttons.cancel')}
-            </Button>
-            <Button 
-              onClick={handleAddMeal} 
-              disabled={!selectedRecipe} 
-              className="flex-1"
-            >
-              {t('addMealPlan.addToMealPlan')}
-            </Button>
+            <label className="block text-sm font-medium mb-2">{t('pages.recipes.servings')}</label>
+            <Select value={selectedServings.toString()} onValueChange={(value) => setSelectedServings(parseInt(value))}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('pages.mealPlans.selectServings')} />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+                  <SelectItem key={num} value={num.toString()}>
+                    {num} {num === 1 ? t('pages.mealPlans.serving') : t('pages.mealPlans.servings')}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            {t('buttons.cancel')}
+          </Button>
+          <Button 
+            onClick={handleSaveMeal}
+            disabled={!selectedRecipe || !selectedMealType || savingMealPlan}
+            className="bg-green-600 hover:bg-green-700"
+          >
+            {savingMealPlan ? t('forms.adding') : t('pages.mealPlans.addMeal')}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

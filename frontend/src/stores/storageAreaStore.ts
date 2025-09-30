@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { useStoredItemStore } from './storedItemStore';
 import { createStorageAreaApiService, StorageArea, CreateStorageAreaData, UpdateStorageAreaData } from '@/services/storageAreaService';
+import { useHouseholdStore } from './householdStore';
 
 // Import StorageArea from service
 // export interface StorageArea - moved to service
@@ -24,22 +25,38 @@ interface StorageAreaStore {
   
 
   // Actions
-  fetchStorageAreas: (householdId: string) => Promise<void>;
-  createStorageArea: (householdId: string, data: CreateStorageAreaData) => Promise<StorageArea>;
-  updateStorageArea: (householdId: string, storageAreaId: string, data: UpdateStorageAreaData) => Promise<void>;
-  deleteStorageArea: (householdId: string, storageAreaId: string) => Promise<void>;
+  fetchStorageAreas: () => Promise<void>;
+  createStorageArea: (data: CreateStorageAreaData) => Promise<StorageArea>;
+  updateStorageArea: (storageAreaId: string, data: UpdateStorageAreaData) => Promise<void>;
+  deleteStorageArea: (storageAreaId: string) => Promise<void>;
   
   // Internal actions
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  setStorageAreasForHousehold: (householdId: string, storageAreas: StorageArea[]) => void;
-  clearStorageAreasForHousehold: (householdId: string) => void;
+  setStorageAreasForHousehold: (storageAreas: StorageArea[]) => void;
+  clearStorageAreasForHousehold: () => void;
   
   // Computed getters
-  getStorageAreasForHousehold: (householdId: string) => StorageArea[];
-  getStorageAreaById: (householdId: string, storageAreaId: string) => StorageArea | null;
-  getStorageAreasWithStats: (householdId: string) => StorageAreaWithStats[];
+  getStorageAreasForHousehold: () => StorageArea[];
+  getStorageAreaById: (storageAreaId: string) => StorageArea | null;
+  getStorageAreasWithStats: () => StorageAreaWithStats[];
 }
+
+const getHouseholdId = (providedId?: string): string | null => {
+  if (providedId) return providedId;
+  
+  // Get from household store
+  const selectedHouseholdId = useHouseholdStore.getState().selectedHouseholdId;
+  if (selectedHouseholdId) return selectedHouseholdId;
+  
+  // Check if user has any households
+  const households = useHouseholdStore.getState().households;
+  if (households.length > 0) {
+    return households[0].id; // Use first household if none selected
+  }
+  
+  return null; // No household available
+};
 
 // Create API service instance
 const apiService = createStorageAreaApiService();
@@ -56,16 +73,18 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
       setLoading: (loading) => set({ loading }),
       setError: (error) => set({ error }),
       
-      setStorageAreasForHousehold: (householdId: string, storageAreas: StorageArea[]) => {
+      setStorageAreasForHousehold: (storageAreas: StorageArea[]) => {
+        const householdId = getHouseholdId();
         set(state => ({
           storageAreasByHousehold: {
             ...state.storageAreasByHousehold,
-            [householdId]: storageAreas
+            [householdId]: storageAreas,
           }
         }));
       },
 
-      clearStorageAreasForHousehold: (householdId: string) => {
+      clearStorageAreasForHousehold: () => {
+        const householdId = getHouseholdId();
         set(state => {
           const newStorageAreas = { ...state.storageAreasByHousehold };
           delete newStorageAreas[householdId];
@@ -73,7 +92,8 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
         });
       },
 
-      fetchStorageAreas: async (householdId: string) => {
+      fetchStorageAreas: async () => {
+        const householdId = getHouseholdId();
         if (!householdId) {
           return;
         }
@@ -83,7 +103,7 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
         try {
           const storageAreas = await apiService.getStorageAreas(householdId);
           const store = get();
-          store.setStorageAreasForHousehold(householdId, storageAreas);
+          store.setStorageAreasForHousehold(storageAreas);
         } catch (error) {
           if (error instanceof TypeError && error.message.includes('NetworkError')) {
             const message = 'Network error: Unable to connect to the server. Please check if the backend is running.';
@@ -97,7 +117,8 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
         }
       },
 
-      createStorageArea: async (householdId: string, data: CreateStorageAreaData) => {
+      createStorageArea: async (data: CreateStorageAreaData) => {
+        const householdId = getHouseholdId();
         if (!householdId) {
           throw new Error('No household ID provided');
         }
@@ -109,7 +130,7 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
           
           // Refresh the storage areas list for this household
           const store = get();
-          await store.fetchStorageAreas(householdId);
+          await store.fetchStorageAreas();
           return createdArea;
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to create storage area';
@@ -120,7 +141,8 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
         }
       },
 
-      updateStorageArea: async (householdId: string, storageAreaId: string, data: UpdateStorageAreaData) => {
+      updateStorageArea: async (storageAreaId: string, data: UpdateStorageAreaData) => {
+        const householdId = getHouseholdId();
         if (!householdId) {
           throw new Error('No household ID provided');
         }
@@ -132,7 +154,7 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
           
           // Refresh the storage areas list for this household
           const store = get();
-          await store.fetchStorageAreas(householdId);
+          await store.fetchStorageAreas();
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to update storage area';
           set({ error: message });
@@ -142,7 +164,8 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
         }
       },
 
-      deleteStorageArea: async (householdId: string, storageAreaId: string) => {
+      deleteStorageArea: async (storageAreaId: string) => {
+        const householdId = getHouseholdId();
         if (!householdId) {
           throw new Error('No household ID provided');
         }
@@ -154,7 +177,7 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
           
           // Refresh the storage areas list for this household
           const store = get();
-          await store.fetchStorageAreas(householdId);
+          await store.fetchStorageAreas();
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to delete storage area';
           set({ error: message });
@@ -165,18 +188,21 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
       },
 
       // Computed getters
-      getStorageAreasForHousehold: (householdId: string) => {
+      getStorageAreasForHousehold: () => {
+        const householdId = getHouseholdId();
         const state = get();
         return state.storageAreasByHousehold[householdId] || [];
       },
 
-      getStorageAreaById: (householdId: string, storageAreaId: string) => {
+      getStorageAreaById: (storageAreaId: string) => {
+        const householdId = getHouseholdId();
         const state = get();
         const storageAreas = state.storageAreasByHousehold[householdId] || [];
         return storageAreas.find(area => area.id === storageAreaId) || null;
       },
 
-      getStorageAreasWithStats: (householdId: string) => {
+      getStorageAreasWithStats: () => {
+        const householdId = getHouseholdId();
         const state = get();
         const storageAreas = state.storageAreasByHousehold[householdId] || [];
         
@@ -188,7 +214,7 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
           try {
             // Get stored items for this storage area
             const storedItemsStore = useStoredItemStore.getState();
-            const storedItems = storedItemsStore.getStoredItemsByStorageArea(householdId, area.id);
+            const storedItems = storedItemsStore.getStoredItemsByStorageArea(area.id);
             
             itemCount = storedItems.length;
             
@@ -232,11 +258,11 @@ export const useCurrentHouseholdStorageAreas = (currentHouseholdId: string | nul
     loading,
     error,
     createStorageArea: (data: CreateStorageAreaData) => 
-      currentHouseholdId ? createStorageArea(currentHouseholdId, data) : Promise.reject(new Error('No household selected')),
+      currentHouseholdId ? createStorageArea(data) : Promise.reject(new Error('No household selected')),
     updateStorageArea: (storageAreaId: string, data: UpdateStorageAreaData) =>
-      currentHouseholdId ? updateStorageArea(currentHouseholdId, storageAreaId, data) : Promise.reject(new Error('No household selected')),
+      currentHouseholdId ? updateStorageArea(storageAreaId, data) : Promise.reject(new Error('No household selected')),
     deleteStorageArea: (storageAreaId: string) =>
-      currentHouseholdId ? deleteStorageArea(currentHouseholdId, storageAreaId) : Promise.reject(new Error('No household selected')),
+      currentHouseholdId ? deleteStorageArea(storageAreaId) : Promise.reject(new Error('No household selected')),
   };
 };
 
@@ -277,7 +303,7 @@ export const useStorageAreasWithStats = (currentHouseholdId: string | null) => {
       try {
         // Get stored items for this storage area
         const storedItemsStore = useStoredItemStore.getState();
-        const storedItems = storedItemsStore.getStoredItemsByStorageArea(currentHouseholdId, area.id);
+        const storedItems = storedItemsStore.getStoredItemsByStorageArea(area.id);
         
         itemCount = storedItems.length;
         
@@ -308,14 +334,6 @@ export const useStorageAreasWithStats = (currentHouseholdId: string | null) => {
   return {
     storageAreas,
     storageAreasWithStats,
-    fetchStorageAreas: (householdId?: string) => {
-      const targetHouseholdId = householdId || currentHouseholdId;
-      if (!targetHouseholdId) {
-        console.warn('fetchStorageAreas: No household ID available');
-        return Promise.resolve();
-      }
-      
-      return fetchStorageAreas(targetHouseholdId);
-    },
+    fetchStorageAreas: () => fetchStorageAreas(),
   };
 }; 

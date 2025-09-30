@@ -49,6 +49,10 @@ const getLocaleSpecificFormat = (formatString: string, language: string): string
     if (formatString === 'MMM dd') {
       return 'dd MMM';
     }
+    // Change 'EEEE, MMMM d' to 'EEEE d, MMMM' for French
+    if (formatString === 'EEEE, MMMM d') {
+      return 'EEEE d, MMMM';
+    }
   }
   
   return formatString;

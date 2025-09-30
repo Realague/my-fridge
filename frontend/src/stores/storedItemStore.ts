@@ -2,7 +2,8 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { useApiWithAuth } from '@/hooks/useApiWithAuth';
 import { toast } from 'sonner';
-import { StoredItem, CreateStoredItemRequest, UpdateStoredItemRequest, GetStoredItemsRequest, StoredItemsResponse } from '@/services/storedItemService';
+import { StoredItem, CreateStoredItemRequest, UpdateStoredItemRequest, GetStoredItemsRequest } from '@/services/storedItemService';
+import { useHouseholdStore } from './householdStore';
 
 interface StoredItemStore {
   // State - organized by household ID for efficient caching
@@ -11,30 +12,46 @@ interface StoredItemStore {
   error: string | null;
 
   // Actions
-  fetchStoredItems: (householdId: string, params?: GetStoredItemsRequest) => Promise<void>;
-  fetchStoredItemsByStorageArea: (householdId: string, storageAreaId: string) => Promise<void>;
-  fetchExpiringItems: (householdId: string, days?: number) => Promise<void>;
-  fetchExpiredItems: (householdId: string) => Promise<void>;
-  createStoredItem: (householdId: string, data: CreateStoredItemRequest) => Promise<StoredItem>;
-  updateStoredItem: (householdId: string, id: string, data: UpdateStoredItemRequest) => Promise<void>;
-  deleteStoredItem: (householdId: string, id: string) => Promise<void>;
+  fetchStoredItems: (params?: GetStoredItemsRequest) => Promise<void>;
+  fetchStoredItemsByStorageArea: (storageAreaId: string) => Promise<void>;
+  fetchExpiringItems: (days?: number) => Promise<void>;
+  fetchExpiredItems: () => Promise<void>;
+  createStoredItem: (data: CreateStoredItemRequest) => Promise<StoredItem>;
+  updateStoredItem: (id: string, data: UpdateStoredItemRequest) => Promise<void>;
+  deleteStoredItem: (id: string) => Promise<void>;
   
   // Internal actions
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  setStoredItemsForHousehold: (householdId: string, storedItems: StoredItem[]) => void;
-  clearStoredItemsForHousehold: (householdId: string) => void;
-  addStoredItemToHousehold: (householdId: string, storedItem: StoredItem) => void;
-  updateStoredItemInHousehold: (householdId: string, storedItem: StoredItem) => void;
-  removeStoredItemFromHousehold: (householdId: string, storedItemId: string) => void;
+  setStoredItemsForHousehold: (storedItems: StoredItem[]) => void;
+  clearStoredItemsForHousehold: () => void;
+  addStoredItemToHousehold: (storedItem: StoredItem) => void;
+  updateStoredItemInHousehold: (storedItem: StoredItem) => void;
+  removeStoredItemFromHousehold: (storedItemId: string) => void;
   
   // Computed getters
-  getStoredItemsForHousehold: (householdId: string) => StoredItem[];
-  getStoredItemById: (householdId: string, storedItemId: string) => StoredItem | null;
-  getStoredItemsByStorageArea: (householdId: string, storageAreaId: string) => StoredItem[];
-  getExpiringStoredItems: (householdId: string) => StoredItem[];
-  getExpiredStoredItems: (householdId: string) => StoredItem[];
+  getStoredItemsForHousehold: () => StoredItem[];
+  getStoredItemById: (storedItemId: string) => StoredItem | null;
+  getStoredItemsByStorageArea: (storageAreaId: string) => StoredItem[];
+  getExpiringStoredItems: () => StoredItem[];
+  getExpiredStoredItems: () => StoredItem[];
 }
+
+const getHouseholdId = (providedId?: string): string | null => {
+  if (providedId) return providedId;
+  
+  // Get from household store
+  const selectedHouseholdId = useHouseholdStore.getState().selectedHouseholdId;
+  if (selectedHouseholdId) return selectedHouseholdId;
+  
+  // Check if user has any households
+  const households = useHouseholdStore.getState().households;
+  if (households.length > 0) {
+    return households[0].id; // Use first household if none selected
+  }
+  
+  return null; // No household available
+};
 
 // Create API instance outside the store to avoid circular dependencies
 let apiInstance: ReturnType<typeof useApiWithAuth> | null = null;
@@ -63,7 +80,8 @@ export const useStoredItemStore = create<StoredItemStore>()(
       setLoading: (loading) => set({ loading }),
       setError: (error) => set({ error }),
       
-      setStoredItemsForHousehold: (householdId: string, storedItems: StoredItem[]) => {
+      setStoredItemsForHousehold: (storedItems: StoredItem[]) => {
+        const householdId = getHouseholdId();
         set(state => ({
           storedItemsByHousehold: {
             ...state.storedItemsByHousehold,
@@ -72,7 +90,8 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }));
       },
 
-      clearStoredItemsForHousehold: (householdId: string) => {
+      clearStoredItemsForHousehold: () => {
+        const householdId = getHouseholdId();
         set(state => {
           const newStoredItems = { ...state.storedItemsByHousehold };
           delete newStoredItems[householdId];
@@ -80,7 +99,8 @@ export const useStoredItemStore = create<StoredItemStore>()(
         });
       },
 
-      addStoredItemToHousehold: (householdId: string, storedItem: StoredItem) => {
+      addStoredItemToHousehold: (storedItem: StoredItem) => {
+        const householdId = getHouseholdId();
         set(state => ({
           storedItemsByHousehold: {
             ...state.storedItemsByHousehold,
@@ -89,7 +109,8 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }));
       },
 
-      updateStoredItemInHousehold: (householdId: string, updatedStoredItem: StoredItem) => {
+      updateStoredItemInHousehold: (updatedStoredItem: StoredItem) => {
+        const householdId = getHouseholdId();
         set(state => ({
           storedItemsByHousehold: {
             ...state.storedItemsByHousehold,
@@ -100,7 +121,8 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }));
       },
 
-      removeStoredItemFromHousehold: (householdId: string, storedItemId: string) => {
+      removeStoredItemFromHousehold: (storedItemId: string) => {
+        const householdId = getHouseholdId();
         set(state => ({
           storedItemsByHousehold: {
             ...state.storedItemsByHousehold,
@@ -109,7 +131,8 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }));
       },
 
-      fetchStoredItems: async (householdId: string, params?: GetStoredItemsRequest) => {
+      fetchStoredItems: async (params?: GetStoredItemsRequest) => {
+        const householdId = getHouseholdId();
         if (!householdId) {
           return;
         }
@@ -138,7 +161,7 @@ export const useStoredItemStore = create<StoredItemStore>()(
             const responseData = await response.json();
             if (responseData.success) {
               const store = get();
-              store.setStoredItemsForHousehold(householdId, responseData.data?.items || []);
+              store.setStoredItemsForHousehold(responseData.data?.items || []);
             } else {
               throw new Error(responseData.message || 'Failed to fetch stored items');
             }
@@ -160,7 +183,8 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }
       },
 
-      fetchStoredItemsByStorageArea: async (householdId: string, storageAreaId: string) => {
+      fetchStoredItemsByStorageArea: async (storageAreaId: string) => {
+        const householdId = getHouseholdId();
         if (!householdId || !storageAreaId) {
           return;
         }
@@ -179,7 +203,7 @@ export const useStoredItemStore = create<StoredItemStore>()(
             const responseData = await response.json();
             if (responseData.success) {
               const store = get();
-              store.setStoredItemsForHousehold(householdId, responseData.data || []);
+              store.setStoredItemsForHousehold(responseData.data || []);
             } else {
               throw new Error(responseData.message || 'Failed to fetch stored items by storage area');
             }
@@ -196,7 +220,8 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }
       },
 
-      fetchExpiringItems: async (householdId: string, days?: number) => {
+      fetchExpiringItems: async (days?: number) => {
+        const householdId = getHouseholdId();
         if (!householdId) {
           return;
         }
@@ -218,7 +243,7 @@ export const useStoredItemStore = create<StoredItemStore>()(
             const responseData = await response.json();
             if (responseData.success) {
               const store = get();
-              store.setStoredItemsForHousehold(householdId, responseData.data || []);
+              store.setStoredItemsForHousehold(responseData.data || []);
             } else {
               throw new Error(responseData.message || 'Failed to fetch expiring items');
             }
@@ -235,7 +260,8 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }
       },
 
-      fetchExpiredItems: async (householdId: string) => {
+      fetchExpiredItems: async () => {
+        const householdId = getHouseholdId();
         if (!householdId) {
           return;
         }
@@ -254,7 +280,7 @@ export const useStoredItemStore = create<StoredItemStore>()(
             const responseData = await response.json();
             if (responseData.success) {
               const store = get();
-              store.setStoredItemsForHousehold(householdId, responseData.data || []);
+              store.setStoredItemsForHousehold(responseData.data || []);
             } else {
               throw new Error(responseData.message || 'Failed to fetch expired items');
             }
@@ -271,7 +297,8 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }
       },
 
-      createStoredItem: async (householdId: string, data: CreateStoredItemRequest) => {
+      createStoredItem: async (data: CreateStoredItemRequest) => {
+        const householdId = getHouseholdId();
         if (!householdId) {
           throw new Error('No household ID provided');
         }
@@ -295,7 +322,7 @@ export const useStoredItemStore = create<StoredItemStore>()(
               });
               
               const store = get();
-              store.addStoredItemToHousehold(householdId, responseData.data);
+              store.addStoredItemToHousehold(responseData.data);
               return responseData.data;
             } else {
               throw new Error(responseData.message || 'Failed to create stored item');
@@ -316,7 +343,8 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }
       },
 
-      updateStoredItem: async (householdId: string, id: string, data: UpdateStoredItemRequest) => {
+      updateStoredItem: async (id: string, data: UpdateStoredItemRequest) => {
+        const householdId = getHouseholdId();
         if (!householdId) {
           throw new Error('No household ID provided');
         }
@@ -340,7 +368,7 @@ export const useStoredItemStore = create<StoredItemStore>()(
               });
               
               const store = get();
-              store.updateStoredItemInHousehold(householdId, responseData.data);
+              store.updateStoredItemInHousehold(responseData.data);
             } else {
               throw new Error(responseData.message || 'Failed to update stored item');
             }
@@ -360,7 +388,8 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }
       },
 
-      deleteStoredItem: async (householdId: string, id: string) => {
+      deleteStoredItem: async (id: string) => {
+        const householdId = getHouseholdId();
         if (!householdId) {
           throw new Error('No household ID provided');
         }
@@ -384,7 +413,7 @@ export const useStoredItemStore = create<StoredItemStore>()(
               });
               
               const store = get();
-              store.removeStoredItemFromHousehold(householdId, id);
+              store.removeStoredItemFromHousehold(id);
             } else {
               throw new Error(responseData.message || 'Failed to delete stored item');
             }
@@ -405,30 +434,35 @@ export const useStoredItemStore = create<StoredItemStore>()(
       },
 
       // Computed getters
-      getStoredItemsForHousehold: (householdId: string) => {
+      getStoredItemsForHousehold: () => {
+        const householdId = getHouseholdId();
         const state = get();
         return state.storedItemsByHousehold[householdId] || [];
       },
 
-      getStoredItemById: (householdId: string, storedItemId: string) => {
+      getStoredItemById: (storedItemId: string) => {
+        const householdId = getHouseholdId();
         const state = get();
         const storedItems = state.storedItemsByHousehold[householdId] || [];
         return storedItems.find(item => item.id === storedItemId) || null;
       },
 
-      getStoredItemsByStorageArea: (householdId: string, storageAreaId: string) => {
+      getStoredItemsByStorageArea: (storageAreaId: string) => {
+        const householdId = getHouseholdId();
         const state = get();
         const storedItems = state.storedItemsByHousehold[householdId] || [];
         return storedItems.filter(item => item.storageAreaId === storageAreaId);
       },
 
-      getExpiringStoredItems: (householdId: string) => {
+      getExpiringStoredItems: () => {
+        const householdId = getHouseholdId();
         const state = get();
         const storedItems = state.storedItemsByHousehold[householdId] || [];
         return storedItems.filter(item => item.isExpiringSoon);
       },
 
-      getExpiredStoredItems: (householdId: string) => {
+      getExpiredStoredItems: () => {
+        const householdId = getHouseholdId();
         const state = get();
         const storedItems = state.storedItemsByHousehold[householdId] || [];
         return storedItems.filter(item => item.isExpired);
@@ -443,7 +477,7 @@ export const useStoredItemStore = create<StoredItemStore>()(
 // Computed hooks
 export const useCurrentHouseholdStoredItems = (currentHouseholdId: string | null) => {
   const storedItems = useStoredItemStore(state => 
-    currentHouseholdId ? state.getStoredItemsForHousehold(currentHouseholdId) : []
+    currentHouseholdId ? state.getStoredItemsForHousehold() : []
   );
   const loading = useStoredItemStore(state => state.loading);
   const error = useStoredItemStore(state => state.error);

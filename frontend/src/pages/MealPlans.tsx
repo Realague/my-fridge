@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { format, isToday, isSameMonth, addWeeks, subWeeks, isSameWeek, startOfWeek, endOfWeek } from 'date-fns';
+import { format, isToday, addWeeks, subWeeks, startOfWeek, endOfWeek } from 'date-fns';
 import { ChevronLeft, ChevronRight, Plus, Trash2, ExternalLink, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from "@/hooks/use-toast"
 import { getWeekDays, MealPlan } from '@/utils/mealPlanHelpers';
 import { useMealPlanStore } from '@/stores/mealPlanStore';
-import { useRecipeStore } from '@/stores/recipeStore';
-import { RecipeDto } from '@/services/recipeService';
-import { RecipeSelector } from '@/components/RecipeSelector';
+import { AddMealPlanDialog } from '@/components/AddMealPlanDialog';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useDateFormat } from '@/utils/dateFormatting';
@@ -32,9 +29,6 @@ const MealPlans = () => {
   const [isAddMealDialogOpen, setIsAddMealDialogOpen] = useState(false);
   const [isViewMealPlanDialogOpen, setIsViewMealPlanDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('lunch');
-  const [selectedServings, setSelectedServings] = useState(1);
-  const [selectedRecipe, setSelectedRecipe] = useState<RecipeDto | null>(null);
   const [viewingMealPlan, setViewingMealPlan] = useState<any>(null);
   const [isGenerateShoppingListDialogOpen, setIsGenerateShoppingListDialogOpen] = useState(false);
   const [shoppingListDateRange, setShoppingListDateRange] = useState<{
@@ -44,8 +38,7 @@ const MealPlans = () => {
     from: weekDays[0],
     to: weekDays[6]
   });
-  const { mealPlans, fetchMealPlansByDateRange, createMealPlan, deleteMealPlan, generateShoppingList: generateShoppingListFromStore, loading: mealPlansLoading, savingMealPlan, deletingMealPlan } = useMealPlanStore();
-  const { recipes, fetchRecipes, loading: recipesLoading } = useRecipeStore();
+  const { mealPlans, fetchMealPlansByDateRange, deleteMealPlan, generateShoppingList: generateShoppingListFromStore, loading: mealPlansLoading, deletingMealPlan } = useMealPlanStore();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -72,18 +65,13 @@ const MealPlans = () => {
     });
   }, [currentDate]);
 
-  useEffect(() => {
-    if (selectedHouseholdId) {
-      fetchRecipes(selectedHouseholdId);
-    }
-  }, [fetchRecipes, selectedHouseholdId]);
 
   // Fetch meal plans when the current date (viewed week) changes
   useEffect(() => {
     if (selectedHouseholdId && weekDays.length > 0) {
       const startDate = format(weekDays[0], 'yyyy-MM-dd');
       const endDate = format(weekDays[6], 'yyyy-MM-dd');
-      fetchMealPlansByDateRange(selectedHouseholdId, startDate, endDate);
+      fetchMealPlansByDateRange(startDate, endDate);
     }
   }, [fetchMealPlansByDateRange, selectedHouseholdId, weekDays]);
 
@@ -117,43 +105,6 @@ const MealPlans = () => {
       toast({
         title: t('messages.error.somethingWentWrong'),
         description: t('messages.error.failedToDeleteMealPlan'),
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleSaveMeal = async () => {
-    if (!selectedDate || !selectedMealType || !selectedRecipe) {
-      toast({
-        title: t('messages.error.somethingWentWrong'),
-        description: t('messages.error.selectDateMealTypeRecipe'),
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      // Use format from date-fns to avoid timezone issues
-      const formattedDate = format(selectedDate, 'yyyy-MM-dd');
-      
-      await createMealPlan({
-        date: formattedDate,
-        mealType: selectedMealType,
-        servings: selectedServings,
-        recipeId: selectedRecipe.id,
-      });
-
-      setIsAddMealDialogOpen(false);
-      setSelectedRecipe(null);
-      toast({
-        title: t('pages.mealPlans.mealPlanAdded'),
-        description: t('pages.mealPlans.mealPlanSaved'),
-      });
-    } catch (error) {
-      console.error('Error creating meal plan:', error);
-      toast({
-        title: t('messages.error.somethingWentWrong'),
-        description: t('messages.error.failedToCreateMealPlan'),
         variant: "destructive",
       });
     }
@@ -204,7 +155,7 @@ const MealPlans = () => {
       const startDate = format(shoppingListDateRange.from, 'yyyy-MM-dd');
       const endDate = format(shoppingListDateRange.to, 'yyyy-MM-dd');
       
-      const shoppingList = await generateShoppingListFromStore(startDate, endDate, selectedHouseholdId);
+      const shoppingList = await generateShoppingListFromStore(startDate, endDate);
       
       setIsGenerateShoppingListDialogOpen(false);
       
@@ -227,32 +178,6 @@ const MealPlans = () => {
       });
     }
   };
-
-  // Convert RecipeListDto to RecipeDto format expected by RecipeSelector
-  const convertedRecipes: RecipeDto[] = recipes.map(recipe => ({
-    id: recipe.id,
-    title: recipe.title,
-    description: recipe.description || '',
-    prepTime: recipe.prepTime,
-    cookTime: recipe.cookTime,
-    totalTime: recipe.totalTime || recipe.prepTime + recipe.cookTime,
-    servings: recipe.servings,
-    difficulty: recipe.difficulty,
-    instructions: [], // RecipeListDto doesn't have instructions
-    tags: Array.isArray(recipe.tags) ? recipe.tags : [], // Ensure tags is always an array
-    image: recipe.image,
-    isFavorite: recipe.isFavorite,
-    householdId: selectedHouseholdId || '',
-    createdBy: recipe.createdBy,
-    createdAt: recipe.createdAt,
-    updatedAt: recipe.createdAt,
-    ingredients: [], // RecipeListDto doesn't have ingredients
-    creator: recipe.creator ? {
-      id: recipe.creator.id,
-      displayName: recipe.creator.displayName,
-      email: '' // RecipeListDto creator doesn't have email
-    } : undefined
-  }));
 
   // Show message if no household is selected
   if (!selectedHouseholdId) {
@@ -388,7 +313,7 @@ const MealPlans = () => {
                                     </div>
                                     <div className="flex items-center gap-2 mb-2">
                                       <Badge variant="secondary" className="text-xs">
-                                        {mealPlan.mealType}
+                                        {t(`pages.mealPlans.mealTypes.${mealPlan.mealType}`)}
                                       </Badge>
                                       <span className="text-sm text-gray-600">
                                         {mealPlan.servings} {t('pages.mealPlans.servings')}
@@ -452,7 +377,7 @@ const MealPlans = () => {
                             </div>
                             <div className="flex items-center justify-between">
                               <Badge variant="secondary" className="text-xs px-1 py-0">
-                                {mealPlan.mealType}
+                                {t(`pages.mealPlans.mealTypes.${mealPlan.mealType}`)}
                               </Badge>
                                 <span className="text-xs text-gray-600">
                                   {mealPlan.servings}
@@ -494,73 +419,12 @@ const MealPlans = () => {
         </div>
 
         {/* Add Meal Dialog */}
-        <Dialog open={isAddMealDialogOpen} onOpenChange={setIsAddMealDialogOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>{t('pages.mealPlans.addMealPlan')}</DialogTitle>
-              <DialogDescription>
-                {t('pages.mealPlans.addMealFor')} {selectedDate ? formatDate(selectedDate, 'EEEE, MMMM d') : ''}
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('pages.mealPlans.recipe')}</label>
-                <RecipeSelector
-                  onRecipeSelect={(recipe) => setSelectedRecipe(recipe)}
-                  selectedRecipe={selectedRecipe}
-                  recipes={convertedRecipes}
-                  loading={recipesLoading}
-                  placeholder={t('pages.mealPlans.searchRecipe')}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('pages.mealPlans.mealType')}</label>
-                <Select value={selectedMealType} onValueChange={(value) => setSelectedMealType(value as 'breakfast' | 'lunch' | 'dinner' | 'snack')}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('pages.mealPlans.selectMealType')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="breakfast">{t('pages.mealPlans.breakfast')}</SelectItem>
-                    <SelectItem value="lunch">{t('pages.mealPlans.lunch')}</SelectItem>
-                    <SelectItem value="dinner">{t('pages.mealPlans.dinner')}</SelectItem>
-                    <SelectItem value="snack">{t('pages.mealPlans.snack')}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('pages.recipes.servings')}</label>
-                <Select value={selectedServings.toString()} onValueChange={(value) => setSelectedServings(parseInt(value))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('pages.mealPlans.selectServings')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
-                      <SelectItem key={num} value={num.toString()}>
-                        {num} {num === 1 ? t('pages.mealPlans.serving') : t('pages.mealPlans.servings')}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAddMealDialogOpen(false)}>
-                {t('buttons.cancel')}
-              </Button>
-              <Button 
-                onClick={handleSaveMeal}
-                disabled={!selectedRecipe || !selectedMealType || savingMealPlan}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                {savingMealPlan ? t('forms.adding') : t('pages.mealPlans.addMeal')}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <AddMealPlanDialog
+          isOpen={isAddMealDialogOpen}
+          onClose={() => setIsAddMealDialogOpen(false)}
+          selectedDate={selectedDate}
+          householdId={selectedHouseholdId}
+        />
 
         {/* View Meal Plan Dialog */}
         <Dialog open={isViewMealPlanDialogOpen} onOpenChange={setIsViewMealPlanDialogOpen}>
@@ -583,7 +447,7 @@ const MealPlans = () => {
                     )}
                   </DialogTitle>
                   <DialogDescription>
-                    {formatDate(new Date(viewingMealPlan.plannedFor), 'EEEE, MMMM d')} • {viewingMealPlan.mealType}
+                    {formatDate(new Date(viewingMealPlan.plannedFor), 'EEEE, MMMM d')} • {t(`pages.mealPlans.mealTypes.${viewingMealPlan.mealType}`)}
                     {` • ${viewingMealPlan.servings} servings`}
                   </DialogDescription>
                 </DialogHeader>

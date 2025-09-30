@@ -331,10 +331,6 @@
       "recipe": "Receta",
       "selectMealType": "Seleccionar tipo de comida",
       "selectServings": "Seleccionar porciones",
-      "breakfast": "Desayuno",
-      "lunch": "Almuerzo",
-      "dinner": "Cena",
-      "snack": "Aperitivo",
       "searchRecipe": "Buscar una receta...",
       "addMealFor": "Agregar una comida para",
       "viewRecipe": "Ver Receta",
@@ -346,6 +342,12 @@
       "mealPlanDeleted": "¡Plan de comida eliminado!",
       "mealPlanRemoved": "El plan de comida ha sido removido.",
       "noMealsPlanned": "No hay comidas planificadas",
+      "mealTypes": {
+        "breakfast": "Desayuno",
+        "lunch": "Almuerzo",
+        "dinner": "Cena",
+        "snack": "Aperitivo"
+      },
       "generateShoppingListDialog": {
         "title": "Generar Lista de Compras",
         "selectDateRange": "Seleccionar rango de fechas",

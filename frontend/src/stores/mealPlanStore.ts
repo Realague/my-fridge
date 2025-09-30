@@ -12,12 +12,12 @@ interface MealPlanStore {
   loading: boolean;
   savingMealPlan: boolean;
   deletingMealPlan: boolean;
-  fetchMealPlans: (householdId?: string) => Promise<void>;
-  fetchMealPlansByDateRange: (householdId: string, startDate: string, endDate: string) => Promise<void>;
-  createMealPlan: (data: CreateMealPlanDto, householdId?: string) => Promise<void>;
-  updateMealPlan: (id: string, data: Partial<CreateMealPlanDto>, householdId?: string) => Promise<void>;
-  deleteMealPlan: (id: string, householdId?: string) => Promise<void>;
-  generateShoppingList: (startDate: string, endDate: string, householdId?: string) => Promise<any[]>;
+  fetchMealPlans: () => Promise<void>;
+  fetchMealPlansByDateRange: (startDate: string, endDate: string) => Promise<void>;
+  createMealPlan: (data: CreateMealPlanDto) => Promise<void>;
+  updateMealPlan: (id: string, data: Partial<CreateMealPlanDto>) => Promise<void>;
+  deleteMealPlan: (id: string) => Promise<void>;
+  generateShoppingList: (startDate: string, endDate: string) => Promise<any[]>;
 }
 
 // Helper function to get household ID
@@ -52,11 +52,11 @@ export const useMealPlanStore = create<MealPlanStore>((set, get) => ({
   savingMealPlan: false,
   deletingMealPlan: false,
 
-  fetchMealPlans: async (householdId?: string) => {
+  fetchMealPlans: async () => {
     set({ loading: true });
     try {
-      const houseId = getHouseholdId(householdId);
-      if (!houseId) {
+      const householdId = getHouseholdId();
+      if (!householdId) {
         set({ mealPlans: [], loading: false });
         return;
       }
@@ -71,7 +71,7 @@ export const useMealPlanStore = create<MealPlanStore>((set, get) => ({
       const startDate = startOfWeek.toISOString().split('T')[0];
       const endDate = endOfWeek.toISOString().split('T')[0];
       
-      const mealPlanDtos = await mealPlanApiService.getMealPlansByDateRange(houseId, startDate, endDate);
+      const mealPlanDtos = await mealPlanApiService.getMealPlansByDateRange(householdId, startDate, endDate);
       const mealPlans = mealPlanDtos.map(transformMealPlan);
       
       set({ mealPlans });
@@ -84,9 +84,14 @@ export const useMealPlanStore = create<MealPlanStore>((set, get) => ({
     }
   },
 
-  fetchMealPlansByDateRange: async (householdId: string, startDate: string, endDate: string) => {
+  fetchMealPlansByDateRange: async (startDate: string, endDate: string) => {
     set({ loading: true });
     try {
+      const householdId = getHouseholdId();
+      if (!householdId) {
+        throw new Error('No household selected. Please select a household first.');
+      }
+
       const mealPlanDtos = await mealPlanApiService.getMealPlansByDateRange(householdId, startDate, endDate);
       const mealPlans = mealPlanDtos.map(transformMealPlan);
       
@@ -99,10 +104,10 @@ export const useMealPlanStore = create<MealPlanStore>((set, get) => ({
     }
   },
 
-  createMealPlan: async (data: CreateMealPlanDto, householdId?: string) => {
+  createMealPlan: async (data: CreateMealPlanDto) => {
     set({ savingMealPlan: true });
     try {
-      const houseId = getHouseholdId(householdId);
+      const houseId = getHouseholdId();
       if (!houseId) {
         throw new Error('No household selected. Please select a household first.');
       }
@@ -143,10 +148,10 @@ export const useMealPlanStore = create<MealPlanStore>((set, get) => ({
     }
   },
 
-  deleteMealPlan: async (id: string, householdId?: string) => {
+  deleteMealPlan: async (id: string) => {
     set({ deletingMealPlan: true });
     try {
-      const houseId = getHouseholdId(householdId);
+      const houseId = getHouseholdId();
       if (!houseId) {
         throw new Error('No household selected. Please select a household first.');
       }
@@ -164,9 +169,9 @@ export const useMealPlanStore = create<MealPlanStore>((set, get) => ({
     }
   },
 
-  generateShoppingList: async (startDate: string, endDate: string, householdId?: string) => {
+  generateShoppingList: async (startDate: string, endDate: string) => {
     try {
-      const houseId = getHouseholdId(householdId);
+      const houseId = getHouseholdId();
       if (!houseId) {
         throw new Error('No household selected. Please select a household first.');
       }

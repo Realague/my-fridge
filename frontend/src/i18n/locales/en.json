@@ -332,10 +332,6 @@
       "recipe": "Recipe",
       "selectMealType": "Select meal type",
       "selectServings": "Select servings",
-      "breakfast": "Breakfast",
-      "lunch": "Lunch",
-      "dinner": "Dinner",
-      "snack": "Snack",
       "searchRecipe": "Search for a recipe...",
       "addMealFor": "Add a meal for",
       "viewRecipe": "View Recipe",
@@ -347,6 +343,12 @@
       "mealPlanDeleted": "Meal plan deleted!",
       "mealPlanRemoved": "The meal plan has been removed.",
       "noMealsPlanned": "No meals planned",
+      "mealTypes": {
+        "breakfast": "Breakfast",
+        "lunch": "Lunch",
+        "dinner": "Dinner",
+        "snack": "Snack"
+      },
       "generateShoppingListDialog": {
         "title": "Generate Shopping List",
         "selectDateRange": "Select date range",

@@ -8,7 +8,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, ChefHat } from 'lucide-react';
 import { AddMealPlanDialog } from '@/components/AddMealPlanDialog';
 import { useRecipeStore } from '@/stores/recipeStore';
-import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -17,9 +16,6 @@ const RecipeDetails = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
-
-  // Protected route hook handles auth and household checks
-  const { selectedHouseholdId } = useProtectedRoute();
   
   const { 
     currentRecipe: recipe, 
@@ -35,14 +31,14 @@ const RecipeDetails = () => {
   const [showMealPlanDialog, setShowMealPlanDialog] = useState(false);
 
   useEffect(() => {
-    if (selectedHouseholdId && id) {
-      fetchRecipeById(selectedHouseholdId, id);
+    if (id) {
+      fetchRecipeById(id);
     }
     
     return () => {
       clearCurrentRecipe();
     };
-  }, [selectedHouseholdId, id, fetchRecipeById, clearCurrentRecipe]);
+  }, [id, fetchRecipeById, clearCurrentRecipe]);
 
   useEffect(() => {
     if (error) {
@@ -108,10 +104,10 @@ const RecipeDetails = () => {
   };
 
   const handleDelete = async () => {
-    if (!selectedHouseholdId || !recipe?.id) return;
+    if (!recipe?.id) return;
     
     try {
-      await deleteRecipe(selectedHouseholdId, recipe.id);
+      await deleteRecipe(recipe.id);
       toast({
         title: t('pages.recipes.recipeDeleted'),
         description: t('pages.recipes.recipeRemovedFromCollection'),
@@ -127,10 +123,10 @@ const RecipeDetails = () => {
   };
 
   const handleToggleFavorite = async () => {
-    if (!selectedHouseholdId || !recipe?.id) return;
+    if (!recipe?.id) return;
     
     try {
-      await toggleFavorite(selectedHouseholdId, recipe.id);
+      await toggleFavorite(recipe.id);
       toast({
         title: t('messages.success.success'),
         description: recipe.isFavorite ? t('pages.recipes.removedFromFavorites') : t('pages.recipes.addedToFavorites'),
@@ -152,13 +148,7 @@ const RecipeDetails = () => {
       <AddMealPlanDialog
         isOpen={showMealPlanDialog}
         onClose={() => setShowMealPlanDialog(false)}
-        preselectedRecipe={{
-          id: recipe.id,
-          title: recipe.title,
-          servings: recipe.servings,
-          prepTime: recipe.prepTime,
-          cookTime: recipe.cookTime
-        }}
+        preselectedRecipe={recipe}
       />
 
       {/* Header */}

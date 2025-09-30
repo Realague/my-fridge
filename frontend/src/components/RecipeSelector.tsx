@@ -191,7 +191,7 @@ export const RecipeSelector = ({
                       <div className="font-medium text-sm truncate">{recipe.title}</div>
                       <div className="flex items-center gap-2">
                         <Badge className={getDifficultyColor(recipe.difficulty)}>
-                          {t(`pages.recipes.${recipe.difficulty.toLowerCase()}`)}
+                          {t(`pages.recipes.difficultyOptions.${recipe.difficulty.toLowerCase()}`)}
                         </Badge>
                         <span className="text-xs text-gray-500">
                           {recipe.prepTime + recipe.cookTime} min • {recipe.servings} {t('pages.recipes.servings')}

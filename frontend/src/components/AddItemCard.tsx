@@ -11,10 +11,10 @@ import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
 
 interface AddItemCardProps {
-  title?: string;
+  title: string;
   onItemAdd: (item: Item, quantity: string, unit: string) => void;
-  placeholder?: string;
-  buttonText?: string;
+  placeholder: string;
+  buttonText: string;
   disabled?: boolean;
   storageAreaName?: string;
 }
@@ -79,8 +79,8 @@ export const AddItemCard = ({
       
       // Show success toast with details
       const successMessage = storageAreaName 
-        ? `Added ${validationResult.data} ${newItemUnit} of ${selectedItem.name} to ${storageAreaName}`
-        : `Added ${validationResult.data} ${newItemUnit} of ${selectedItem.name}`;
+        ? t('pages.shopping.addedQuantityToStorageArea', { quantity: validationResult.data, unit: newItemUnit, storageAreaName: storageAreaName })
+        : t('pages.shopping.addedQuantity', { quantity: validationResult.data, unit: newItemUnit });
       toast.success(successMessage);
       
       // Reset form after successful addition
@@ -100,7 +100,7 @@ export const AddItemCard = ({
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <Plus className="h-5 w-5 text-green-600" />
-          {title || t('pages.shopping.addItem')}
+          {title}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -110,7 +110,7 @@ export const AddItemCard = ({
           </label>
           <ItemSelector
             onItemSelect={handleItemSelect}
-            placeholder={placeholder || t('forms.searchOrAddItem')}
+            placeholder={placeholder}
             selectedItem={selectedItem}
             className="w-full"
           />
@@ -156,8 +156,8 @@ export const AddItemCard = ({
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground block">
                 {storageAreaName 
-                  ? `How much ${selectedItem.name} are you adding to ${storageAreaName}?`
-                  : `How much ${selectedItem.name} are you adding?`
+                  ?  t(`storageArea.addItemTo`, { name: storageAreaName })
+                  : t(`storageArea.addItem`)
                 }
               </label>
               <div className="flex gap-2 items-end">
@@ -183,7 +183,7 @@ export const AddItemCard = ({
                   ) : (
                     <>
                       <Plus className="h-4 w-4 mr-2" />
-                      {buttonText || t('buttons.add')}
+                      {buttonText}
                     </>
                   )}
                 </Button>

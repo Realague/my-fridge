@@ -443,7 +443,7 @@ const StorageArea = () => {
                   {/* Quantity */}
                   <div>
                     <Label className="text-sm font-medium mb-2 block">
-                      How much {selectedItem.name} are you adding?
+                      {t('storageArea.addItemInformation', { item: selectedItem.name })}
                     </Label>
                     <QuantitySelector
                       item={selectedItem}

@@ -96,6 +96,10 @@
     "chooseIcon": "Elegir Icono",
     "name": "Nombre",
     "editStorageArea": "Editar Área de Almacenamiento",
+    "addedQuantity": "Agregado {{quantity}} {{unit}} de {{item}}",
+    "addedQuantityToStorageArea": "Agregado {{quantity}} {{unit}} de {{item}} al {{storageAreaName}}",
+    "addItemToInformation": "¿Cuánto {{item}} estás agregando a {{name}}?",
+    "addItemInformation": "¿Cuánto {{item}} estás agregando?",
     "types": {
       "fridge": "Refrigerador",
       "freezer": "Congelador",
@@ -689,6 +693,7 @@
     "selectLanguage": "Seleccionar Idioma",
     "description": "Comparte este mensaje con los miembros de tu hogar para invitarlos.",
     "previous": "Anterior",
-    "next": "Siguiente"
+    "next": "Siguiente",
+    "optional": "Opcional"
   }
 }

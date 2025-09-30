@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus } from 'lucide-react';
+import { Plus, X, Package } from 'lucide-react';
 import { Item } from '@/services/itemService';
 import { QuantitySelector } from './QuantitySelector';
 import { ItemSelector } from './ItemSelector';
@@ -16,6 +16,7 @@ interface AddItemCardProps {
   placeholder?: string;
   buttonText?: string;
   disabled?: boolean;
+  storageAreaName?: string;
 }
 
 export const AddItemCard = ({ 
@@ -23,7 +24,8 @@ export const AddItemCard = ({
   onItemAdd,
   placeholder,
   buttonText,
-  disabled = false
+  disabled = false,
+  storageAreaName
 }: AddItemCardProps) => {
   const { t } = useTranslation();
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
@@ -75,12 +77,16 @@ export const AddItemCard = ({
     try {
       await onItemAdd(selectedItem, validationResult.data, newItemUnit);
       
+      // Show success toast with details
+      const successMessage = storageAreaName 
+        ? `Added ${validationResult.data} ${newItemUnit} of ${selectedItem.name} to ${storageAreaName}`
+        : `Added ${validationResult.data} ${newItemUnit} of ${selectedItem.name}`;
+      toast.success(successMessage);
+      
       // Reset form after successful addition
       setSelectedItem(null);
       setNewItemQuantity('1');
       setNewItemUnit('');
-      
-      toast.success(t('messages.success.itemAdded', { item: selectedItem.name }));
     } catch (error) {
       console.error('Failed to add item:', error);
       toast.error(t('messages.error.failedToAdd'));
@@ -98,45 +104,91 @@ export const AddItemCard = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-         <ItemSelector
-          onItemSelect={handleItemSelect}
-          placeholder={placeholder || t('forms.searchOrAddItem')}
-          selectedItem={selectedItem}
-          className="w-full"
-        />
+        <div>
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">
+            {t('storageArea.selectItem')}
+          </label>
+          <ItemSelector
+            onItemSelect={handleItemSelect}
+            placeholder={placeholder || t('forms.searchOrAddItem')}
+            selectedItem={selectedItem}
+            className="w-full"
+          />
+        </div>
         
         {selectedItem && (
-          <div className="flex gap-2 items-end">
-            <div className="flex-1">
-               <div className="text-sm text-gray-600 mb-2">
-                 {t('forms.selected')}: <span className="font-medium">{selectedItem.name}</span>
-                 {selectedItem.householdId && (
-                   <Badge className="ml-2 text-xs bg-blue-100 text-blue-800">
-                     {t('forms.householdItem')}
-                   </Badge>
-                 )}
-               </div>
-              <QuantitySelector
-                item={selectedItem}
-                initialQuantity={newItemQuantity}
-                initialUnit={newItemUnit}
-                onQuantityChange={handleQuantityChange}
-              />
+          <div className="space-y-4 animate-in fade-in-50 slide-in-from-top-2 duration-300">
+            {/* Selected Item Preview */}
+            <Card className="border-2 border-primary/20 bg-primary/5">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3 flex-1">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <Package className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-semibold text-foreground">{selectedItem.name}</h3>
+                        {selectedItem.householdId && (
+                          <Badge variant="secondary" className="text-xs">
+                            {t('forms.householdItem')}
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground capitalize">
+                        {t(`items.categories.${selectedItem.category}`)}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedItem(null)}
+                    className="h-8 w-8 p-0 -mr-2"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quantity Selection */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground block">
+                {storageAreaName 
+                  ? `How much ${selectedItem.name} are you adding to ${storageAreaName}?`
+                  : `How much ${selectedItem.name} are you adding?`
+                }
+              </label>
+              <div className="flex gap-2 items-end">
+                <div className="flex-1">
+                  <QuantitySelector
+                    item={selectedItem}
+                    initialQuantity={newItemQuantity}
+                    initialUnit={newItemUnit}
+                    onQuantityChange={handleQuantityChange}
+                  />
+                </div>
+                <Button 
+                  onClick={handleAddItem} 
+                  className="px-6 min-w-[100px]"
+                  disabled={disabled || isSubmitting}
+                  size="lg"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      {t('forms.adding')}
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-4 w-4 mr-2" />
+                      {buttonText || t('buttons.add')}
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
-            <Button 
-              onClick={handleAddItem} 
-              className="px-6"
-              disabled={disabled || isSubmitting}
-            >
-               {isSubmitting ? (
-                 <>
-                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                   {t('forms.adding')}
-                 </>
-               ) : (
-                 buttonText || t('buttons.add')
-               )}
-            </Button>
           </div>
         )}
       </CardContent>

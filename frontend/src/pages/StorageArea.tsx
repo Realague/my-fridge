@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, ArrowLeft, Calendar, MapPin, AlertTriangle, Edit, Trash2, Save, X } from 'lucide-react';
+import { Plus, ArrowLeft, Calendar, MapPin, AlertTriangle, Edit, Trash2, Save, X, Package } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
 import { QuantitySelector } from '@/components/QuantitySelector';
@@ -18,6 +18,7 @@ import { Unit } from '@/types/enums';
 import { Item } from '@/services/itemService';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '@/utils/dateFormatting';
+import { toast } from 'sonner';
 
 const StorageArea = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,20 +49,20 @@ const StorageArea = () => {
   const [items, setItems] = useState<Record<string, Item>>({});
 
   // Get data from stores
-  const area = selectedHouseholdId ? getStorageAreaById(selectedHouseholdId, id || '') : null;
-  const storageItems = selectedHouseholdId ? getStoredItemsByStorageArea(selectedHouseholdId, id || '') : [];
+  const area = getStorageAreaById(id || '');
+  const storageItems = getStoredItemsByStorageArea(id || '');
 
   // Load storage areas and stored items on mount
   useEffect(() => {
     if (selectedHouseholdId) {
-      fetchStorageAreas(selectedHouseholdId);
+      fetchStorageAreas();
     }
   }, [selectedHouseholdId, fetchStorageAreas]);
 
   // Load stored items when area changes
   useEffect(() => {
     if (selectedHouseholdId && id) {
-      fetchStoredItemsByStorageArea(selectedHouseholdId, id);
+      fetchStoredItemsByStorageArea(id);
     }
   }, [selectedHouseholdId, id, fetchStoredItemsByStorageArea]);
 
@@ -123,7 +124,7 @@ const StorageArea = () => {
     if (!selectedItem || !newItemQuantity.trim() || !selectedHouseholdId) return;
     
     try {
-      await createStoredItem(selectedHouseholdId, {
+      await createStoredItem({
         itemId: selectedItem.id,
         storageAreaId: id || '',
         quantity: parseFloat(newItemQuantity),
@@ -131,6 +132,9 @@ const StorageArea = () => {
         expirationDate: expirationDate || undefined,
         location: location.trim() || undefined,
       });
+      
+      // Show success toast with specific details
+      toast.success(`Added ${newItemQuantity} ${newItemUnit} of ${selectedItem.name} to ${area?.name}`);
       
       // Reset form
       setSelectedItem(null);
@@ -141,6 +145,7 @@ const StorageArea = () => {
       setShowAddForm(false);
     } catch (error) {
       console.error('Failed to add item:', error);
+      toast.error('Failed to add item');
     }
   };
 
@@ -202,7 +207,7 @@ const StorageArea = () => {
       if (!selectedHouseholdId) return;
       
       try {
-        await updateStoredItem(selectedHouseholdId, storageItem.id, {
+        await updateStoredItem(storageItem.id, {
           quantity: parseFloat(editQuantity),
           unit: editUnit as Unit,
           location: editLocation.trim() || undefined,
@@ -226,7 +231,7 @@ const StorageArea = () => {
       if (!selectedHouseholdId) return;
       
       try {
-        await deleteStoredItem(selectedHouseholdId, storageItem.id);
+        await deleteStoredItem(storageItem.id);
       } catch (error) {
         console.error('Failed to delete item:', error);
       }
@@ -387,22 +392,59 @@ const StorageArea = () => {
         {showAddForm && (
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
             <CardHeader>
-              <CardTitle className="text-lg">{t('storageArea.addItemTo', { name: area.name })}</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Plus className="h-5 w-5 text-primary" />
+                  {t('storageArea.addItemTo', { name: area.name })}
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setShowAddForm(false);
+                    setSelectedItem(null);
+                  }}
+                  className="h-8 w-8 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label className="text-sm">{t('storageArea.selectItem')}</Label>
+                <Label className="text-sm font-medium mb-2 block">{t('storageArea.selectItem')}</Label>
                 <ItemSelector
                   onItemSelect={handleItemSelect}
                   placeholder={t('forms.searchOrAddItem')}
+                  selectedItem={selectedItem}
                   className="mt-1"
                 />
               </div>
               
               {selectedItem && (
-                <>
+                <div className="space-y-4 animate-in fade-in-50 slide-in-from-top-2 duration-300">
+                  {/* Selected Item Preview */}
+                  <Card className="border-2 border-primary/20 bg-primary/5">
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <Package className="h-5 w-5 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-foreground mb-1">{selectedItem.name}</h3>
+                          <p className="text-sm text-muted-foreground capitalize">
+                            {t(`items.categories.${selectedItem.category}`)}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Quantity */}
                   <div>
-                    <Label className="text-sm">{t('storageArea.quantity')}</Label>
+                    <Label className="text-sm font-medium mb-2 block">
+                      How much {selectedItem.name} are you adding?
+                    </Label>
                     <QuantitySelector
                       item={selectedItem}
                       initialQuantity={newItemQuantity}
@@ -412,8 +454,11 @@ const StorageArea = () => {
                     />
                   </div>
                   
+                  {/* Location */}
                   <div>
-                    <Label className="text-sm">{t('storageArea.location', { optional: t('common.optional') })}</Label>
+                    <Label className="text-sm font-medium mb-2 block">
+                      {t('storageArea.location')} <span className="text-muted-foreground">({t('common.optional')})</span>
+                    </Label>
                     <Input
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
@@ -422,8 +467,11 @@ const StorageArea = () => {
                     />
                   </div>
                   
+                  {/* Expiration Date */}
                   <div>
-                    <Label className="text-sm">{t('storageArea.expirationDate', { optional: t('common.optional') })}</Label>
+                    <Label className="text-sm font-medium mb-2 block">
+                      {t('storageArea.expirationDate')} <span className="text-muted-foreground">({t('common.optional')})</span>
+                    </Label>
                     <Input
                       type="date"
                       value={expirationDate}
@@ -432,19 +480,30 @@ const StorageArea = () => {
                     />
                   </div>
                   
-                  <div className="flex gap-2">
-                    <Button onClick={handleAddItem} className="flex-1" disabled={storedItemsLoading}>
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 pt-2">
+                    <Button 
+                      onClick={handleAddItem} 
+                      className="flex-1" 
+                      disabled={storedItemsLoading}
+                      size="lg"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
                       {t('storageArea.addTo', { name: area.name })}
                     </Button>
                     <Button 
                       variant="outline" 
-                      onClick={() => setShowAddForm(false)}
+                      onClick={() => {
+                        setShowAddForm(false);
+                        setSelectedItem(null);
+                      }}
                       className="flex-1"
+                      size="lg"
                     >
                       {t('buttons.cancel')}
                     </Button>
                   </div>
-                </>
+                </div>
               )}
             </CardContent>
           </Card>

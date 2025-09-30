@@ -37,8 +37,8 @@ const Recipes = () => {
 
   useEffect(() => {
     if (selectedHouseholdId) {
-      fetchRecipes(selectedHouseholdId);
-      fetchFavoriteRecipes(selectedHouseholdId);
+      fetchRecipes();
+      fetchFavoriteRecipes();
     }
   }, [selectedHouseholdId, fetchRecipes, fetchFavoriteRecipes]);
 
@@ -66,7 +66,7 @@ const Recipes = () => {
     if (!selectedHouseholdId) return;
     
     try {
-      await toggleFavorite(selectedHouseholdId, recipeId);
+      await toggleFavorite(recipeId);
       toast({
         title: t('messages.success.itemUpdated'),
         description: t('pages.recipes.recipeUpdated'),

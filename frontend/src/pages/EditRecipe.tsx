@@ -44,7 +44,7 @@ const EditRecipe = () => {
   // Fetch recipe on component mount
   useEffect(() => {
     if (id && selectedHouseholdId && (!recipe || recipe.id !== id)) {
-      fetchRecipeById(selectedHouseholdId, id);
+      fetchRecipeById(id);
     }
   }, [id, selectedHouseholdId, recipe, fetchRecipeById]);
 
@@ -233,7 +233,7 @@ const EditRecipe = () => {
     };
 
     try {
-      await updateRecipe(selectedHouseholdId, recipe.id, updatedRecipe);
+      await updateRecipe(recipe.id, updatedRecipe);
       
       toast({
         title: t('messages.success.recipeUpdated'),

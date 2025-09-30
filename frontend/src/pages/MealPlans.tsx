@@ -423,7 +423,6 @@ const MealPlans = () => {
           isOpen={isAddMealDialogOpen}
           onClose={() => setIsAddMealDialogOpen(false)}
           selectedDate={selectedDate}
-          householdId={selectedHouseholdId}
         />
 
         {/* View Meal Plan Dialog */}

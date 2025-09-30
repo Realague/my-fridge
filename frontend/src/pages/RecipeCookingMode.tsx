@@ -22,7 +22,7 @@ const RecipeCookingMode = () => {
   // Fetch the recipe when component mounts
   useEffect(() => {
     if (selectedHouseholdId && id && (!recipe || recipe.id !== id)) {
-      fetchRecipeById(selectedHouseholdId, id);
+      fetchRecipeById(id);
     }
   }, [selectedHouseholdId, id, recipe, fetchRecipeById]);
   

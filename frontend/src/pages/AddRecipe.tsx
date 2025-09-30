@@ -184,7 +184,7 @@ const AddRecipe = () => {
       // Clear any existing errors before creating the recipe
       clearError();
       
-      const newRecipe = await createRecipe(selectedHouseholdId, recipeData);
+      const newRecipe = await createRecipe(recipeData);
       
       toast({
         title: t('messages.success.recipeAdded'),

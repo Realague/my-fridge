@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Plus, X, Package } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Item } from '@/services/itemService';
 import { QuantitySelector } from './QuantitySelector';
 import { ItemSelector } from './ItemSelector';
+import { SelectedItemPreview } from './SelectedItemPreview';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
@@ -117,40 +117,12 @@ export const AddItemCard = ({
         </div>
         
         {selectedItem && (
-          <div className="space-y-4 animate-in fade-in-50 slide-in-from-top-2 duration-300">
+          <div className="space-y-4">
             {/* Selected Item Preview */}
-            <Card className="border-2 border-primary/20 bg-primary/5">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-3 flex-1">
-                    <div className="p-2 rounded-lg bg-primary/10">
-                      <Package className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-foreground">{selectedItem.name}</h3>
-                        {selectedItem.householdId && (
-                          <Badge variant="secondary" className="text-xs">
-                            {t('forms.householdItem')}
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground capitalize">
-                        {t(`items.categories.${selectedItem.category}`)}
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedItem(null)}
-                    className="h-8 w-8 p-0 -mr-2"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <SelectedItemPreview 
+              item={selectedItem} 
+              onClear={() => setSelectedItem(null)} 
+            />
 
             {/* Quantity Selection */}
             <div className="space-y-2">

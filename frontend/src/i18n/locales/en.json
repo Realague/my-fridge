@@ -73,7 +73,7 @@
     "startAddingItems": "Start adding items to track your inventory",
     "emptyArea": "Your {{name}} is empty",
     "addTo": "Add to {{name}}",
-    "added": "Added",
+    "added": "Added {{quantity}} {{unit}} of {{item}} to {{area}}",
     "locationPlaceholder": "e.g., Main shelf, Cupboard",
     "mainFridge": "Refrigerator",
     "mainFreezer": "Freezer",
@@ -253,7 +253,8 @@
       "failedToCreateStorageArea": "Failed to create storage area",
       "failedToUpdateStorageArea": "Failed to update storage area",
       "failedToDeleteStorageArea": "Failed to delete storage area",
-      "deleteFailed": "Delete Failed"
+      "deleteFailed": "Delete Failed",
+      "failedToAddItem": "Failed to add item"
     },
     "confirmation": {
       "deleteItem": "Are you sure you want to delete this item?",
@@ -388,6 +389,7 @@
       "titlePlaceholder": "e.g., Chicken Teriyaki",
       "descriptionPlaceholder": "Brief description of your recipe...",
       "stepInstructionsPlaceholder": "Step {{step}} instructions...",
+      "recipeNotFound": "Recipe not found",
       "difficultyOptions": {
         "easy": "Easy",
         "medium": "Medium",

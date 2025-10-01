@@ -84,7 +84,7 @@ const RecipeDetails = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Recipe not found</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('pages.recipes.recipeNotFound')}</h1>
           <Button onClick={() => navigate('/recipes')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('pages.recipes.backToRecipes')}

@@ -135,7 +135,7 @@ const StorageArea = () => {
       });
       
       // Show success toast with specific details
-      toast.success(`Added ${newItemQuantity} ${newItemUnit} of ${selectedItem.name} to ${area?.name}`);
+      toast.success(t('storageArea.added', { quantity: newItemQuantity, unit: newItemUnit, item: selectedItem.name, area: area?.name }));
       
       // Reset form
       setSelectedItem(null);
@@ -146,7 +146,7 @@ const StorageArea = () => {
       setShowAddForm(false);
     } catch (error) {
       console.error('Failed to add item:', error);
-      toast.error('Failed to add item');
+      toast.error(t('messages.error.failedToAddItem'));
     }
   };
 

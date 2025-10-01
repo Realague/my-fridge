@@ -71,7 +71,7 @@
     "startAddingItems": "Comience agregando artículos para rastrear su inventario",
     "emptyArea": "Tu {{name}} está vacía",
     "addTo": "Agregar a {{name}}",
-    "added": "Agregado",
+    "added": "Agregado {{quantity}} {{unit}} de {{item}} a {{area}}",
     "locationPlaceholder": "ej., Almacén principal, Alacena",
     "kitchenFridge": "Refrigerador de Cocina",
     "coldStorage": "Almacén de Frío",
@@ -387,6 +387,7 @@
       "titlePlaceholder": "ej., Pollo Teriyaki",
       "descriptionPlaceholder": "Breve descripción de tu receta...",
       "stepInstructionsPlaceholder": "Paso {{step}} instrucciones...",
+      "recipeNotFound": "Receta no encontrada",
       "difficultyOptions": {
         "easy": "Fácil",
         "medium": "Medio",

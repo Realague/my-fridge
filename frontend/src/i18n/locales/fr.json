@@ -71,7 +71,7 @@
     "startAddingItems": "Commencez à ajouter des articles pour suivre votre inventaire",
     "emptyArea": "Votre {{name}} est vide",
     "addTo": "Ajouter à {{name}}",
-    "added": "Ajouté",
+    "added": "Ajouté {{quantity}} {{unit}} de {{item}} à {{area}}",
     "locationPlaceholder": "ex., Frigo, Placard",
     "kitchenFridge": "Réfrigérateur de Cuisine",
     "coldStorage": "Garde-manger de Frigo",
@@ -252,7 +252,8 @@
       "failedToCreateStorageArea": "Échec de la création de zone de stockage. Veuillez réessayer.",
       "failedToUpdateStorageArea": "Échec de la mise à jour de zone de stockage. Veuillez réessayer.",
       "failedToDeleteStorageArea": "Échec de la suppression de zone de stockage. Veuillez réessayer.",
-      "deleteFailed": "Échec de la suppression de zone de stockage. Veuillez réessayer."
+      "deleteFailed": "Échec de la suppression de zone de stockage. Veuillez réessayer.",
+      "failedToAddItem": "Échec de l'ajout d'article"
     },
     "confirmation": {
       "deleteItem": "Êtes-vous sûr de vouloir supprimer cet article ?",
@@ -387,6 +388,7 @@
       "titlePlaceholder": "ex., Poulet Teriyaki",
       "descriptionPlaceholder": "Brève description de votre recette...",
       "stepInstructionsPlaceholder": "Étape {{step}} instructions...",
+      "recipeNotFound": "Recette non trouvée",
       "difficultyOptions": {
         "easy": "Facile",
         "medium": "Moyen",

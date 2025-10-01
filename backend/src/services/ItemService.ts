@@ -12,6 +12,21 @@ export class ItemService {
 
   async createItem(itemData: CreateItemDto): Promise<ApiResponse<ItemDto>> {
     try {
+      // Check for duplicate name within the household
+      if (itemData.householdId) {
+        const isDuplicate = await this.itemRepository.checkDuplicateName(
+          itemData.name, 
+          itemData.householdId
+        );
+        
+        if (isDuplicate) {
+          return {
+            success: false,
+            error: `An item with the name "${itemData.name}" already exists in this household`,
+          };
+        }
+      }
+
       const item = await this.itemRepository.create(itemData);
 
       if (!item) {
@@ -114,6 +129,22 @@ export class ItemService {
             success: false,
             error: 'Item not found in this household',
           };
+        }
+
+        // Check for duplicate name if name is being updated
+        if (updateData.name) {
+          const isDuplicate = await this.itemRepository.checkDuplicateName(
+            updateData.name, 
+            householdId, 
+            id // Exclude current item from duplicate check
+          );
+          
+          if (isDuplicate) {
+            return {
+              success: false,
+              error: `An item with the name "${updateData.name}" already exists in this household`,
+            };
+          }
         }
       }
 

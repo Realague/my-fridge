@@ -4,12 +4,14 @@ import { CreateHouseholdDto, UpdateHouseholdDto, JoinHouseholdDto, HouseholdQuer
 import { UserResponseDto } from '../types/AuthDto';
 import { ValidationError, NotFoundError, UnauthorizedError } from '../errors/CustomErrors';
 import { StorageAreaRepository } from '../repositories/StorageAreaRepository';
+import { CascadeDeletionService } from './CascadeDeletionService';
 
 export class HouseholdService {
   constructor(
     private householdRepository: HouseholdRepository,
     private userRepository: UserRepository,
-    private storageAreaRepository: StorageAreaRepository
+    private storageAreaRepository: StorageAreaRepository,
+    private cascadeDeletionService: CascadeDeletionService
   ) {}
 
   async getUserHouseholds(userId: string, query?: HouseholdQueryDto): Promise<any[]> {
@@ -124,7 +126,13 @@ export class HouseholdService {
       throw new UnauthorizedError('Access denied. Admin privileges required.');
     }
 
-    // Delete household (this should cascade delete members)
+    // Get deletion summary for logging
+    const deletionSummary = await this.cascadeDeletionService.getDeletionSummary(householdId);
+
+    // Perform cascade deletion of all related entities
+    await this.cascadeDeletionService.deleteHouseholdCascade(householdId);
+
+    // Finally, delete the household itself
     await this.householdRepository.delete(householdId);
   }
 

@@ -96,6 +96,10 @@
     "chooseIcon": "Choisir un Emoji",
     "name": "Nom",
     "editStorageArea": "Modifier la Zone de Stockage",
+    "addedQuantity": "Ajouté {{quantity}} {{unit}} de {{item}}",
+    "addedQuantityToStorageArea": "Ajouté {{quantity}} {{unit}} de {{item}} à {{storageAreaName}}",
+    "addItemToInformation": "Combien de {{item}} êtes-vous en train d'ajouter à {{name}} ?",
+    "addItemInformation": "Combien de {{item}} êtes-vous en train d'ajouter ?",
     "types": {
       "fridge": "Réfrigérateur",
       "freezer": "Congélateur",
@@ -690,6 +694,7 @@
     "selectLanguage": "Sélectionner la Langue",
     "description": "Partagez ce message avec les membres de votre foyer pour les inviter.",
     "previous": "Précédent",
-    "next": "Suivant"
+    "next": "Suivant",
+    "optional": "Facultatif"
   }
 }

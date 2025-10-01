@@ -97,6 +97,10 @@
     "addCustomStorageArea": "Add Custom Storage Area",
     "chooseIcon": "Choose Icon",
     "editStorageArea": "Edit Storage Area",
+    "addedQuantity": "Added {{quantity}} {{unit}} of {{item}}",
+    "addedQuantityToStorageArea": "Added {{quantity}} {{unit}} of {{item}} to {{storageAreaName}}",
+    "addItemToInformation": "How much {{item}} are you adding to {{name}}?",
+    "addItemInformation": "How much {{item}} are you adding?",
     "types": {
       "fridge": "Refrigerator",
       "freezer": "Freezer", 
@@ -690,6 +694,7 @@
     "selectLanguage": "Select Language",
     "description": "Share this message with your household members to invite them.",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "optional": "Optional"
   }
 }

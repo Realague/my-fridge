@@ -6,12 +6,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
-import { CustomStorageArea } from '@/types/household';
+import { StorageArea } from '@/types/household';
 import { useTranslation } from 'react-i18next';
 
 interface OnboardingStorageSelectorProps {
-  selectedAreas: CustomStorageArea[];
-  onAreasChange: (areas: CustomStorageArea[]) => void;
+  selectedAreas: StorageArea[];
+  onAreasChange: (areas: StorageArea[]) => void;
   className?: string;
 }
 
@@ -86,7 +86,7 @@ export const OnboardingStorageSelector = ({
   const handleAddArea = () => {
     if (!areaName.trim()) return;
 
-    const newArea: CustomStorageArea = {
+    const newArea: StorageArea = {
       name: areaName.trim(),
       description: areaDescription.trim() || undefined,
       emoji: selectedEmoji,

@@ -27,7 +27,7 @@ const Shopping = () => {
   const { getStorageAreasForHousehold, fetchStorageAreas } = useStorageAreaStore();
   const { createStoredItem } = useStoredItemStore();
   
-  const storageAreas = selectedHouseholdId ? getStorageAreasForHousehold(selectedHouseholdId) : [];
+  const storageAreas = selectedHouseholdId ? getStorageAreasForHousehold() : [];
   const {
     items,
     loading,
@@ -52,12 +52,12 @@ const Shopping = () => {
   useEffect(() => {
     if (selectedHouseholdId) {
       // Fetch pending items first
-      fetchShoppingItems(selectedHouseholdId, false);
+      fetchShoppingItems(false);
       setCompletedItemsLoaded(false);
       // Also fetch completed items
       fetchCompletedItems();
       // Fetch storage areas for the storage dialog
-      fetchStorageAreas(selectedHouseholdId);
+      fetchStorageAreas();
     }
   }, [selectedHouseholdId, fetchShoppingItems, fetchStorageAreas]);
 
@@ -67,7 +67,7 @@ const Shopping = () => {
     
     setLoadingCompleted(true);
     try {
-      await fetchShoppingItems(selectedHouseholdId, true);
+      await fetchShoppingItems(true);
       setCompletedItemsLoaded(true);
     } catch (error) {
       console.error('Failed to fetch completed items:', error);
@@ -82,7 +82,7 @@ const Shopping = () => {
     
     setCompletedItemsLoaded(false);
     // Fetch pending items
-    await fetchShoppingItems(selectedHouseholdId, false);
+    await fetchShoppingItems(false);
     
     // Fetch completed items
     await fetchCompletedItems();
@@ -101,7 +101,7 @@ const Shopping = () => {
       return;
     }
 
-    await createShoppingItem(selectedHouseholdId, {
+    await createShoppingItem({
       itemId: item.id,
       quantity,
       unit,
@@ -121,7 +121,7 @@ const Shopping = () => {
       setShowStorageDialog(true);
     } else {
       // Item is being unchecked - toggle via API
-      const success = await toggleShoppingItemCompleted(selectedHouseholdId, id);
+      const success = await toggleShoppingItemCompleted(id);
       
       // If the item was successfully toggled and we're showing completed items,
       // refresh to ensure we have the latest state
@@ -136,7 +136,7 @@ const Shopping = () => {
 
     try {
       // Add to storage using the new API
-      const createdStoredItem = await createStoredItem(selectedHouseholdId, {
+      const createdStoredItem = await createStoredItem({
         itemId: itemToStore.item?.id,
         storageAreaId: selectedStorageArea,
         quantity: parseFloat(itemToStore.quantity),
@@ -146,7 +146,7 @@ const Shopping = () => {
       });
 
       // Update the shopping item with the stored item ID, then mark as completed
-      const updateSuccess = await updateShoppingItem(selectedHouseholdId, itemToStore.id, {
+      const updateSuccess = await updateShoppingItem(itemToStore.id, {
         storedItemId: createdStoredItem.id,
         completed: true
       });
@@ -174,7 +174,7 @@ const Shopping = () => {
 
     try {
       // Just mark as completed without adding to storage
-      const success = await toggleShoppingItemCompleted(selectedHouseholdId, itemToStore.id);
+      const success = await toggleShoppingItemCompleted(itemToStore.id);
       
       if (success) {
         toast.success(t('messages.success.itemMarkedCompleted'));
@@ -193,7 +193,7 @@ const Shopping = () => {
 
   const deleteItemHandler = async (id: string) => {
     if (!selectedHouseholdId) return;
-    await deleteShoppingItem(selectedHouseholdId, id);
+    await deleteShoppingItem(id);
   };
 
   const startEditingItem = (id: string) => {
@@ -203,7 +203,7 @@ const Shopping = () => {
   const saveItemEdit = async (id: string, newQuantity: string, newUnit: string) => {
     if (!selectedHouseholdId) return;
     
-    const success = await updateShoppingItem(selectedHouseholdId, id, {
+    const success = await updateShoppingItem(id, {
       quantity: newQuantity,
       unit: newUnit
     });

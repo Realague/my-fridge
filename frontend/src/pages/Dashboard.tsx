@@ -66,11 +66,11 @@ const Dashboard = () => {
     if (selectedHouseholdId && !authLoading && hasHousehold) {
       fetchStorageAreas();
       // Also fetch stored items so item counts are calculated correctly
-      fetchStoredItems(selectedHouseholdId);
+      fetchStoredItems();
       // Fetch shopping items for the dashboard count
-      fetchShoppingItems(selectedHouseholdId);
+      fetchShoppingItems();
       // Fetch recipes for the dashboard count
-      fetchRecipes(selectedHouseholdId);
+      fetchRecipes();
     }
   }, [selectedHouseholdId, authLoading, hasHousehold]); // Remove function dependencies to prevent infinite loops
 

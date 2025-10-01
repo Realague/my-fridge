@@ -1,21 +1,22 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Plus } from 'lucide-react';
 import { Item } from '@/services/itemService';
 import { QuantitySelector } from './QuantitySelector';
 import { ItemSelector } from './ItemSelector';
+import { SelectedItemPreview } from './SelectedItemPreview';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
 
 interface AddItemCardProps {
-  title?: string;
+  title: string;
   onItemAdd: (item: Item, quantity: string, unit: string) => void;
-  placeholder?: string;
-  buttonText?: string;
+  placeholder: string;
+  buttonText: string;
   disabled?: boolean;
+  storageAreaName?: string;
 }
 
 export const AddItemCard = ({ 
@@ -23,7 +24,8 @@ export const AddItemCard = ({
   onItemAdd,
   placeholder,
   buttonText,
-  disabled = false
+  disabled = false,
+  storageAreaName
 }: AddItemCardProps) => {
   const { t } = useTranslation();
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
@@ -75,12 +77,16 @@ export const AddItemCard = ({
     try {
       await onItemAdd(selectedItem, validationResult.data, newItemUnit);
       
+      // Show success toast with details
+      const successMessage = storageAreaName 
+        ? t('pages.shopping.addedQuantityToStorageArea', { quantity: validationResult.data, unit: newItemUnit, storageAreaName: storageAreaName })
+        : t('pages.shopping.addedQuantity', { quantity: validationResult.data, unit: newItemUnit });
+      toast.success(successMessage);
+      
       // Reset form after successful addition
       setSelectedItem(null);
       setNewItemQuantity('1');
       setNewItemUnit('');
-      
-      toast.success(t('messages.success.itemAdded', { item: selectedItem.name }));
     } catch (error) {
       console.error('Failed to add item:', error);
       toast.error(t('messages.error.failedToAdd'));
@@ -94,49 +100,67 @@ export const AddItemCard = ({
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <Plus className="h-5 w-5 text-green-600" />
-          {title || t('pages.shopping.addItem')}
+          {title}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-         <ItemSelector
-          onItemSelect={handleItemSelect}
-          placeholder={placeholder || t('forms.searchOrAddItem')}
-          selectedItem={selectedItem}
-          className="w-full"
-        />
+        <div>
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">
+            {t('storageArea.selectItem')}
+          </label>
+          <ItemSelector
+            onItemSelect={handleItemSelect}
+            placeholder={placeholder}
+            selectedItem={selectedItem}
+            className="w-full"
+          />
+        </div>
         
         {selectedItem && (
-          <div className="flex gap-2 items-end">
-            <div className="flex-1">
-               <div className="text-sm text-gray-600 mb-2">
-                 {t('forms.selected')}: <span className="font-medium">{selectedItem.name}</span>
-                 {selectedItem.householdId && (
-                   <Badge className="ml-2 text-xs bg-blue-100 text-blue-800">
-                     {t('forms.householdItem')}
-                   </Badge>
-                 )}
-               </div>
-              <QuantitySelector
-                item={selectedItem}
-                initialQuantity={newItemQuantity}
-                initialUnit={newItemUnit}
-                onQuantityChange={handleQuantityChange}
-              />
+          <div className="space-y-4">
+            {/* Selected Item Preview */}
+            <SelectedItemPreview 
+              item={selectedItem} 
+              onClear={() => setSelectedItem(null)} 
+            />
+
+            {/* Quantity Selection */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground block">
+                {storageAreaName 
+                  ?  t(`storageArea.addItemTo`, { name: storageAreaName })
+                  : t(`storageArea.addItem`)
+                }
+              </label>
+              <div className="flex gap-2 items-end">
+                <div className="flex-1">
+                  <QuantitySelector
+                    item={selectedItem}
+                    initialQuantity={newItemQuantity}
+                    initialUnit={newItemUnit}
+                    onQuantityChange={handleQuantityChange}
+                  />
+                </div>
+                <Button 
+                  onClick={handleAddItem} 
+                  className="px-6 min-w-[100px]"
+                  disabled={disabled || isSubmitting}
+                  size="lg"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      {t('forms.adding')}
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-4 w-4 mr-2" />
+                      {buttonText}
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
-            <Button 
-              onClick={handleAddItem} 
-              className="px-6"
-              disabled={disabled || isSubmitting}
-            >
-               {isSubmitting ? (
-                 <>
-                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                   {t('forms.adding')}
-                 </>
-               ) : (
-                 buttonText || t('buttons.add')
-               )}
-            </Button>
           </div>
         )}
       </CardContent>

@@ -19,6 +19,7 @@ import { Item } from '@/services/itemService';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '@/utils/dateFormatting';
 import { toast } from 'sonner';
+import { SelectedItemPreview } from '@/components/SelectedItemPreview';
 
 const StorageArea = () => {
   const { id } = useParams<{ id: string }>();
@@ -424,21 +425,10 @@ const StorageArea = () => {
               {selectedItem && (
                 <div className="space-y-4 animate-in fade-in-50 slide-in-from-top-2 duration-300">
                   {/* Selected Item Preview */}
-                  <Card className="border-2 border-primary/20 bg-primary/5">
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-3">
-                        <div className="p-2 rounded-lg bg-primary/10">
-                          <Package className="h-5 w-5 text-primary" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-foreground mb-1">{selectedItem.name}</h3>
-                          <p className="text-sm text-muted-foreground capitalize">
-                            {t(`items.categories.${selectedItem.category}`)}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <SelectedItemPreview 
+                    item={selectedItem} 
+                    onClear={() => setSelectedItem(null)} 
+                  />
 
                   {/* Quantity */}
                   <div>

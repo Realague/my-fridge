@@ -5,8 +5,6 @@ export interface StorageArea {
   type: 'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other';
 }
 
-export type CustomStorageArea = StorageArea;
-
 export interface CreateHouseholdRequest {
   name: string;
   description?: string;

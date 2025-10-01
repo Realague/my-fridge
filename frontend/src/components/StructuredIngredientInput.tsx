@@ -94,6 +94,23 @@ export const StructuredIngredientInput = ({
     }
   };
 
+  // Get excluded items (all other ingredients that have been selected)
+  const getExcludedItems = (currentIndex: number): FullItem[] => {
+    return ingredients
+      .filter((_, index) => index !== currentIndex && _.itemId)
+      .map(ingredient => ({
+        id: ingredient.itemId,
+        name: ingredient.item?.name || '',
+        category: ingredient.item?.category || 'other',
+        defaultUnit: ingredient.item?.defaultUnit || 'piece',
+        availableUnits: ingredient.item?.availableUnits || ['piece'],
+        createdBy: null,
+        householdId: null,
+        createdAt: '',
+        updatedAt: ''
+      }));
+  };
+
   return (
     <div className={`space-y-4 ${className}`}>
       <div className="flex items-center justify-between">
@@ -132,6 +149,7 @@ export const StructuredIngredientInput = ({
                     createdAt: '',
                     updatedAt: ''
                   } : null}
+                  excludedItems={getExcludedItems(index)}
                   placeholder={t('ingredientInput.selectIngredient')}
                   className="mt-1"
                 />

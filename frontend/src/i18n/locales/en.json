@@ -138,6 +138,7 @@
     "clickToLoadHouseholdItems": "Click to load your household items...",
     "searchItemsPlaceholder": "Start typing to search items...",
     "noItemsFound": "No items found. Use the options above to add a new one.",
+    "allItemsAlreadySelected": "All available items have already been selected for this recipe.",
     "household": "Household",
     "global": "Global",
     "searching": "Searching..."
@@ -235,6 +236,7 @@
       "missingHouseholdOrUserInformation": "Missing household or user information.",
       "addAtLeastOneIngredient": "Please add at least one ingredient.",
       "addAtLeastOneInstruction": "Please add at least one instruction.",
+      "duplicateIngredients": "You cannot add the same ingredient twice. Please remove duplicate ingredients.",
       "failedToCreateRecipe": "Failed to create recipe. Please try again.",
       "recipeTitleRequired": "Recipe title is required",
       "descriptionRequired": "Description is required",

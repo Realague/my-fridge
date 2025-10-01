@@ -11,7 +11,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, Plus, X } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
-import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { UpdateRecipeDto } from '@/services/recipeService';
 import { StructuredIngredientInput, StructuredIngredient } from '@/components/StructuredIngredientInput';
 import { useToast } from '@/hooks/use-toast';
@@ -32,9 +31,6 @@ const EditRecipe = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   
-  // Protected route hook handles auth and household checks
-  const { selectedHouseholdId } = useProtectedRoute();
-  
   const { currentRecipe, fetchRecipeById, updateRecipe, loading, error, clearError } = useRecipeStore();
   const { toast } = useToast();
   const { getItemById } = useItemService();
@@ -43,10 +39,10 @@ const EditRecipe = () => {
   
   // Fetch recipe on component mount
   useEffect(() => {
-    if (id && selectedHouseholdId && (!recipe || recipe.id !== id)) {
+    if (id && (!recipe || recipe.id !== id)) {
       fetchRecipeById(id);
     }
-  }, [id, selectedHouseholdId, recipe, fetchRecipeById]);
+  }, [id, recipe, fetchRecipeById]);
 
   // Clear any existing errors when component mounts
   useEffect(() => {
@@ -185,7 +181,7 @@ const EditRecipe = () => {
   };
 
   const onSubmit = async (data: RecipeFormData) => {
-    if (!selectedHouseholdId || !recipe?.id) {
+    if (!recipe?.id) {
       toast({
         title: t('messages.error.somethingWentWrong'),
         description: t('messages.error.missingHouseholdOrRecipeInformation'),
@@ -210,6 +206,19 @@ const EditRecipe = () => {
       toast({
         title: t('messages.error.somethingWentWrong'),
         description: t('messages.error.addAtLeastOneInstruction'),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check for duplicate ingredients
+    const itemIds = validIngredients.map(ing => ing.itemId);
+    const duplicateItemIds = itemIds.filter((itemId, index) => itemIds.indexOf(itemId) !== index);
+    
+    if (duplicateItemIds.length > 0) {
+      toast({
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.duplicateIngredients'),
         variant: "destructive",
       });
       return;

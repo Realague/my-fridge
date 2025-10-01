@@ -40,7 +40,7 @@ app.use('/api/migrations', migrationRoutes);
 app.use('/api/households', householdRoutes);
 app.use('/api/households', storedItemRoutes);
 app.use('/api/items', itemRoutes);
-app.use('/api/recipes', recipeRoutes);
+app.use('/api', recipeRoutes);
 app.use('/api', mealPlanRoutes);
 
 app.get('/', (req, res) => {

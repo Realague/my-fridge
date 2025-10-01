@@ -129,7 +129,7 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
         throw new Error('No household available');
       }
 
-      const response = await apiService.get(`/api/recipes/${householdId}/recipes?${queryParams}`);
+      const response = await apiService.get(`/api/households/${householdId}/recipes?${queryParams}`);
       const responseData = await response.json();
       
       // Handle backend response structure: { success: true, data: { recipes, total, hasMore } }
@@ -163,7 +163,7 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
         throw new Error('No household available');
       }
 
-      const response = await apiService.get(`/api/recipes/${householdId}/recipes/${recipeId}`);
+      const response = await apiService.get(`/api/households/${householdId}/recipes/${recipeId}`);
       const responseData = await response.json();
       const recipe = responseData.data || responseData;
       set({
@@ -187,7 +187,7 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
         throw new Error('No household available');
       }
 
-      const response = await apiService.post(`/api/recipes/${householdId}/recipes`, recipeData);
+      const response = await apiService.post(`/api/households/${householdId}/recipes`, recipeData);
       const responseData = await response.json();
       const newRecipe = responseData.data || responseData;
       
@@ -237,7 +237,7 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
         throw new Error('No household available');
       }
 
-      const response = await apiService.put(`/api/recipes/${householdId}/recipes/${recipeId}`, updates);
+      const response = await apiService.put(`/api/households/${householdId}/recipes/${recipeId}`, updates);
       const responseData = await response.json();
       const updatedRecipe = responseData.data || responseData;
       
@@ -287,7 +287,7 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
         throw new Error('No household available');
       }
 
-      await apiService.delete(`/api/recipes/${householdId}/recipes/${recipeId}`);
+      await apiService.delete(`/api/households/${householdId}/recipes/${recipeId}`);
       
       // Remove from recipes list
       const { recipes, favoriteRecipes, currentRecipe, total } = get();
@@ -314,7 +314,7 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
         throw new Error('No household available');
       }
 
-      const response = await apiService.post(`/api/recipes/${householdId}/recipes/${recipeId}/favorite`);
+      const response = await apiService.post(`/api/households/${householdId}/recipes/${recipeId}/favorite`);
       const responseData = await response.json();
       const updatedRecipe = responseData.data || responseData;
       
@@ -364,7 +364,7 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
         throw new Error('No household available');
       }
 
-      const response = await apiService.get(`/api/recipes/${householdId}/recipes/favorites`);
+      const response = await apiService.get(`/api/households/${householdId}/recipes/favorites`);
       const responseData = await response.json();
       const favorites = responseData.data || responseData || [];
       set({
@@ -386,7 +386,7 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
 
     try {
-      const response = await apiService.get(`/api/recipes/${householdId}/recipes/tags`);
+      const response = await apiService.get(`/api/households/${householdId}/recipes/tags`);
       const responseData = await response.json();
       const tags = responseData.data || responseData || [];
       set({ tags });
@@ -404,7 +404,7 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
 
     try {
-      const response = await apiService.get(`/api/recipes/${householdId}/recipes/stats`);
+      const response = await apiService.get(`/api/households/${householdId}/recipes/stats`);
       const responseData = await response.json();
       const stats = responseData.data || responseData;
       set({ stats });
@@ -422,7 +422,7 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
 
     try {
-      const response = await apiService.get(`/api/recipes/${householdId}/recipes/ingredients/stats`);
+      const response = await apiService.get(`/api/households/${householdId}/recipes/ingredients/stats`);
       const responseData = await response.json();
       const ingredientStats = responseData.data || responseData || [];
       set({ ingredientStats });
@@ -440,7 +440,7 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
 
     try {
-      const response = await apiService.get(`/api/recipes/${householdId}/users/${userId}/recipes`);
+      const response = await apiService.get(`/api/households/${householdId}/users/${userId}/recipes`);
       const responseData = await response.json();
       return responseData.data || responseData || [];
     } catch (error) {

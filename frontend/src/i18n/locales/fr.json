@@ -137,6 +137,7 @@
     "clickToLoadHouseholdItems": "Cliquez pour charger les articles de votre foyer...",
     "searchItemsPlaceholder": "Commencez à taper pour rechercher des articles...",
     "noItemsFound": "Aucun article trouvé. Utilisez les options ci-dessus pour en ajouter un nouveau.",
+    "allItemsAlreadySelected": "Tous les articles disponibles ont déjà été sélectionnés pour cette recette.",
     "household": "Foyer",
     "global": "Global",
     "searching": "Recherche..."
@@ -234,6 +235,7 @@
       "missingHouseholdOrUserInformation": "Informations de foyer ou d'utilisateur manquantes.",
       "addAtLeastOneIngredient": "Veuillez ajouter au moins un ingrédient.",
       "addAtLeastOneInstruction": "Veuillez ajouter au moins une instruction.",
+      "duplicateIngredients": "Vous ne pouvez pas ajouter le même ingrédient deux fois. Veuillez supprimer les ingrédients en double.",
       "failedToCreateRecipe": "Échec de la création de recette. Veuillez réessayer.",
       "recipeTitleRequired": "Le titre de la recette est requis",
       "descriptionRequired": "La description est requise",

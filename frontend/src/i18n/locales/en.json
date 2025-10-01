@@ -233,6 +233,7 @@
       "requestTimeout": "Request timeout. Please try again.",
       "failedToCreateItem": "Failed to create item",
       "failedToUpdateItem": "Failed to update item",
+      "duplicateItemName": "An item with this name already exists in your household",
       "missingHouseholdOrUserInformation": "Missing household or user information.",
       "addAtLeastOneIngredient": "Please add at least one ingredient.",
       "addAtLeastOneInstruction": "Please add at least one instruction.",

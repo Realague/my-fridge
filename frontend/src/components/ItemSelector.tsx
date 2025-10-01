@@ -331,7 +331,14 @@ export const ItemSelector = ({
       setEditingItem(null);
     } catch (error) {
       console.error('Failed to update item:', error);
-      toast.error(t('messages.error.failedToUpdateItem'));
+      const errorMessage = error instanceof Error ? error.message : '';
+      
+      // Check if it's a duplicate name error
+      if (errorMessage.includes('already exists')) {
+        toast.error(t('messages.error.duplicateItemName'));
+      } else {
+        toast.error(t('messages.error.failedToUpdateItem'));
+      }
     }
   };
 
@@ -367,7 +374,14 @@ export const ItemSelector = ({
       toast.error(t('messages.error.selectHouseholdFirst'));
     } catch (error) {
       console.error('Failed to create item:', error);
-      toast.error(t('messages.error.failedToCreateItem'));
+      const errorMessage = error instanceof Error ? error.message : '';
+      
+      // Check if it's a duplicate name error
+      if (errorMessage.includes('already exists')) {
+        toast.error(t('messages.error.duplicateItemName'));
+      } else {
+        toast.error(t('messages.error.failedToCreateItem'));
+      }
     }
   };
 

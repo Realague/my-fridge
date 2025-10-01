@@ -19,13 +19,15 @@ interface ItemSelectorProps {
   placeholder?: string;
   className?: string;
   selectedItem?: Item | null;
+  excludedItems?: Item[];
 }
 
 export const ItemSelector = ({ 
   onItemSelect, 
   placeholder, 
   className,
-  selectedItem = null 
+  selectedItem = null,
+  excludedItems = []
 }: ItemSelectorProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -151,9 +153,12 @@ export const ItemSelector = ({
 
   const filteredResults = query.trim() 
     ? apiResults.filter(item => 
-        item.name.toLowerCase().includes(query.toLowerCase())
+        item.name.toLowerCase().includes(query.toLowerCase()) &&
+        !excludedItems.some(excluded => excluded.id === item.id)
       )
-    : apiResults;
+    : apiResults.filter(item => 
+        !excludedItems.some(excluded => excluded.id === item.id)
+      );
 
   const exactMatch = filteredResults.find(item => 
     item.name.toLowerCase() === query.toLowerCase()
@@ -556,6 +561,12 @@ export const ItemSelector = ({
           {filteredResults.length === 0 && query.trim() && !apiLoading && (
             <div className="p-4 text-center text-sm text-gray-500 bg-white">
               {t('itemSelector.noItemsFound')}
+            </div>
+          )}
+
+          {filteredResults.length === 0 && !query.trim() && hasLoadedHouseholdItems && excludedItems.length > 0 && (
+            <div className="p-4 text-center text-sm text-gray-500 bg-white">
+              {t('itemSelector.allItemsAlreadySelected')}
             </div>
           )}
         </div>,

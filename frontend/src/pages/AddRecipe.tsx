@@ -159,6 +159,19 @@ const AddRecipe = () => {
       return;
     }
 
+    // Check for duplicate ingredients
+    const itemIds = validIngredients.map(ing => ing.itemId);
+    const duplicateItemIds = itemIds.filter((itemId, index) => itemIds.indexOf(itemId) !== index);
+    
+    if (duplicateItemIds.length > 0) {
+      toast({
+        title: t('messages.error.somethingWentWrong'),
+        description: t('messages.error.duplicateIngredients'),
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Transform ingredients and add step mapping
     const ingredientsForApi: CreateRecipeIngredientDto[] = validIngredients.map(ingredient => ({
       itemId: ingredient.itemId,

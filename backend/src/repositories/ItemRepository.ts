@@ -158,4 +158,26 @@ export class ItemRepository {
     
     return !!item;
   }
+
+  async checkDuplicateName(name: string, householdId: string, excludeId?: string): Promise<boolean> {
+    const whereClause: any = {
+      name: {
+        [Op.iLike]: name.trim() // Case-insensitive comparison
+      },
+      householdId: householdId
+    };
+
+    // Exclude the current item when updating
+    if (excludeId) {
+      whereClause.id = {
+        [Op.ne]: excludeId
+      };
+    }
+
+    const existingItem = await Item.findOne({
+      where: whereClause
+    });
+
+    return !!existingItem;
+  }
 } 

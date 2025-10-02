@@ -232,6 +232,7 @@
       "requestTimeout": "Tiempo de espera agotado. Por favor inténtalo de nuevo.",
       "failedToCreateItem": "Error al crear artículo",
       "failedToUpdateItem": "Error al actualizar artículo",
+      "duplicateItemName": "Ya existe un artículo con este nombre en tu hogar",
       "missingHouseholdOrUserInformation": "Falta información del hogar o usuario.",
       "addAtLeastOneIngredient": "Por favor agrega al menos un ingrediente.",
       "addAtLeastOneInstruction": "Por favor agrega al menos una instrucción.",

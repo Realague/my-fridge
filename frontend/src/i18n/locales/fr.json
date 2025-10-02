@@ -232,6 +232,7 @@
       "requestTimeout": "Délai d'attente dépassé. Veuillez réessayer.",
       "failedToCreateItem": "Échec de la création d'article",
       "failedToUpdateItem": "Échec de la mise à jour d'article",
+      "duplicateItemName": "Un article avec ce nom existe déjà dans votre foyer",
       "missingHouseholdOrUserInformation": "Informations de foyer ou d'utilisateur manquantes.",
       "addAtLeastOneIngredient": "Veuillez ajouter au moins un ingrédient.",
       "addAtLeastOneInstruction": "Veuillez ajouter au moins une instruction.",

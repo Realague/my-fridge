@@ -442,12 +442,10 @@
       "privacy": "Privacidad",
       "appearance": "Apariencia",
       "profile": "Perfil",
-      "debug": "Depuración",
       "tabs": {
         "profile": "Perfil",
         "notifications": "Notificaciones",
-        "appearance": "Apariencia",
-        "debug": "Depuración"
+        "appearance": "Apariencia"
       },
       "profileSettings": {
         "title": "Configuración del Perfil",
@@ -471,16 +469,6 @@
         "darkMode": "Modo Oscuro",
         "darkModeDescription": "Habilitar un esquema de colores más oscuro.",
         "languageDescription": "Elige tu idioma preferido para la interfaz."
-      },
-      "debugSettings": {
-        "title": "Información de Depuración",
-        "description": "Herramientas de desarrollador y tokens de autenticación para pruebas de API.",
-        "googleAuthToken": "Token de Autenticación de Google",
-        "tokenDescription": "Copia este token para usar en herramientas de prueba de API como Insomnia o Postman.",
-        "authorizationHeader": "Agrégalo como:",
-        "noTokenFound": "No se encontró token",
-        "copyFailed": "Error al Copiar",
-        "copyFailedDescription": "No se pudo copiar el token al portapapeles."
       },
       "logOut": "Cerrar Sesión"
     },

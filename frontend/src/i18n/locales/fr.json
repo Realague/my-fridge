@@ -443,12 +443,10 @@
       "privacy": "Confidentialité",
       "appearance": "Apparence",
       "profile": "Profil",
-      "debug": "Débogage",
       "tabs": {
         "profile": "Profil",
         "notifications": "Notifications",
-        "appearance": "Apparence",
-        "debug": "Débogage"
+        "appearance": "Apparence"
       },
       "profileSettings": {
         "title": "Paramètres du Profil",
@@ -472,16 +470,6 @@
         "darkMode": "Mode Sombre",
         "darkModeDescription": "Activer un schéma de couleurs plus sombre.",
         "languageDescription": "Choisissez votre langue préférée pour l'interface."
-      },
-      "debugSettings": {
-        "title": "Informations de Débogage",
-        "description": "Outils de développement et jetons d'authentification pour les tests d'API.",
-        "googleAuthToken": "Jeton d'Authentification Google",
-        "tokenDescription": "Copiez ce jeton pour l'utiliser dans des outils de test d'API comme Insomnia ou Postman.",
-        "authorizationHeader": "Ajoutez-le comme :",
-        "noTokenFound": "Aucun jeton trouvé",
-        "copyFailed": "Échec de la Copie",
-        "copyFailedDescription": "Impossible de copier le jeton dans le presse-papiers."
       },
       "logOut": "Se Déconnecter"
     },

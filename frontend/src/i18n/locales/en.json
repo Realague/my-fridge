@@ -444,12 +444,10 @@
       "privacy": "Privacy",
       "appearance": "Appearance",
       "profile": "Profile",
-      "debug": "Debug",
       "tabs": {
         "profile": "Profile",
         "notifications": "Notifications", 
-        "appearance": "Appearance",
-        "debug": "Debug"
+        "appearance": "Appearance"
       },
       "profileSettings": {
         "title": "Profile Settings",
@@ -473,16 +471,6 @@
         "darkMode": "Dark Mode",
         "darkModeDescription": "Enable a darker color scheme.",
         "languageDescription": "Choose your preferred language for the interface."
-      },
-      "debugSettings": {
-        "title": "Debug Information",
-        "description": "Developer tools and authentication tokens for API testing.",
-        "googleAuthToken": "Google Auth Token",
-        "tokenDescription": "Copy this token to use in API testing tools like Insomnia or Postman.",
-        "authorizationHeader": "Add it as:",
-        "noTokenFound": "No token found",
-        "copyFailed": "Copy Failed",
-        "copyFailedDescription": "Could not copy token to clipboard."
       },
       "logOut": "Log Out"
     },

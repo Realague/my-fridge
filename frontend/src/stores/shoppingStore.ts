@@ -137,15 +137,14 @@ export const useShoppingStore = create<ShoppingStore>()(
           
           if (completed !== undefined) searchParams.append('completed', completed.toString());
 
-          householdId = getHouseholdId();
+          const householdId = getHouseholdId();
           if (!householdId) {
             throw new Error('No household available');
           }
           
           const queryString = searchParams.toString();
-          const url = `/api/households/${householdId}/shopping${queryString ? `?${queryString}` : ''}`;
           
-          const response = await apiService.get(url);
+          const response = await apiService.get(`/api/households/${householdId}/shopping${queryString ? `?${queryString}` : ''}`);
           const result = await response.json();
           
           if (result.success && result.data) {

@@ -279,7 +279,7 @@ const Shopping = () => {
   };
 
   const getItemCategory = (shoppingItem: ShoppingItem) => {
-    return shoppingItem.item?.category || 'Other';
+    return t(`items.categories.${shoppingItem.item?.category}`) || t('items.categories.other');
   };
 
   const getItemData = (shoppingItem: ShoppingItem): Item | null => {
@@ -377,7 +377,7 @@ const Shopping = () => {
               <div className="flex items-center gap-2">
                 <span>{shoppingItem.quantity} {shoppingItem.unit}</span>
                 <span>•</span>
-                <span>{t('storageArea.addedBy')}</span>
+                <span>{t('pages.shopping.addedBy')}</span>
               </div>
             )}
           </div>

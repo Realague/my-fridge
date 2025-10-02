@@ -4,15 +4,18 @@ import { Item } from '../services/itemService';
  * Get the display name for an item, using translation for seeded items
  * and the original name for user-created items
  */
-export const getItemDisplayName = (item: Item, t: (key: string, options?: any) => string): string => {
+export const getItemDisplayName = (item: Item | undefined, t: (key: string, options?: any) => string): string => {
+  if (!item) {
+    return '';
+  }
+
   // If it's a user-created item (has householdId), return the original name
-  if (item.householdId) {
+  if (item?.householdId) {
     return item.name;
   }
   
   // If it's a seeded item (householdId is null), use the name as translation key
-  const translatedName = t(`items.${item.name}`, { defaultValue: item.name });
-  return translatedName;
+  return t(`items.${item.name}`);
 };
 
 /**

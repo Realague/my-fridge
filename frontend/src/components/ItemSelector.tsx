@@ -281,7 +281,7 @@ export const ItemSelector = ({
         onItemSelect(newApiItem);
         setQuery('');
         setIsOpen(false);
-        toast.success(t('messages.success.itemAdded', { name: validationResult.data }));
+        toast.success(t('messages.success.itemAdded', { item: validationResult.data }));
         // Refresh the household items cache
         await refreshHouseholdItems();
         return;
@@ -365,7 +365,7 @@ export const ItemSelector = ({
         onItemSelect(newApiItem);
         setQuery('');
         setCreatingNewItem(false);
-        toast.success(t('messages.success.itemAdded', { name: newName }));
+        toast.success(t('messages.success.itemAdded', { item: newName }));
         // Refresh the household items cache
         await refreshHouseholdItems();
         return;
@@ -411,7 +411,7 @@ export const ItemSelector = ({
     onItemSelect(null);
   };
 
-  const displayValue = selectedItem && !query ? selectedItem.name : query;
+  const displayValue = selectedItem && !query ? getItemDisplayName(selectedItem, t) : query;
   const showClearButton = selectedItem && !query;
 
   const getCategoryColor = (category: string) => {

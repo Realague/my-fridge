@@ -279,7 +279,8 @@ export class RecipeService {
         name: ingredient.item.name,
         category: ingredient.item.category,
         defaultUnit: ingredient.item.defaultUnit,
-        availableUnits: ingredient.item.availableUnits
+        availableUnits: ingredient.item.availableUnits,
+        householdId: ingredient.item.householdId || undefined
       } : undefined
     };
   }

@@ -126,7 +126,6 @@ const Settings = () => {
              <TabsTrigger value="profile">{t('pages.settings.tabs.profile')}</TabsTrigger>
              <TabsTrigger value="notifications">{t('pages.settings.tabs.notifications')}</TabsTrigger>
              <TabsTrigger value="appearance">{t('pages.settings.tabs.appearance')}</TabsTrigger>
-             <TabsTrigger value="debug">{t('pages.settings.tabs.debug')}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="profile" className="mt-4">
@@ -237,49 +236,6 @@ const Settings = () => {
                      </span>
                   </Label>
                   <Switch id="dark-mode" />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="debug" className="mt-4">
-            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-              <CardHeader>
-                 <CardTitle>{t('pages.settings.debugSettings.title')}</CardTitle>
-                 <CardDescription>{t('pages.settings.debugSettings.description')}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-3">
-                  <Label htmlFor="google-token">{t('pages.settings.debugSettings.googleAuthToken')}</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="google-token"
-                      type={showToken ? "text" : "password"}
-                      value={googleToken}
-                      readOnly
-                      className="font-mono text-xs bg-gray-50"
-                    />
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setShowToken(!showToken)}
-                    >
-                      {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={copyTokenToClipboard}
-                      disabled={!googleToken || googleToken === 'No token found'}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                  </div>
-                   <p className="text-xs text-gray-500">
-                     {t('pages.settings.debugSettings.tokenDescription')}
-                     <br />
-                     {t('pages.settings.debugSettings.authorizationHeader')}: <code className="bg-gray-100 px-1 rounded">Authorization: Bearer &lt;token&gt;</code>
-                   </p>
                 </div>
               </CardContent>
             </Card>

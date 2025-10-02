@@ -16,6 +16,7 @@ export interface RecipeIngredientDto {
     category: string;
     defaultUnit: string;
     availableUnits: string[];
+    householdId?: string;
   };
 }
 

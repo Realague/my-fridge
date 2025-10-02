@@ -143,9 +143,8 @@ export const useShoppingStore = create<ShoppingStore>()(
           }
           
           const queryString = searchParams.toString();
-          const url = `/api/households/${householdId}/shopping${queryString ? `?${queryString}` : ''}`;
           
-          const response = await apiService.get(url);
+          const response = await apiService.get(`/api/households/${householdId}/shopping${queryString ? `?${queryString}` : ''}`);
           const result = await response.json();
           
           if (result.success && result.data) {

@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Item } from '@/services/itemService';
+import { getItemDisplayName } from '@/utils/itemUtils';
 import { Package, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -23,7 +24,7 @@ export const SelectedItemPreview = ({ item, onClear }: SelectedItemPreviewProps)
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-semibold text-foreground">{item.name}</h3>
+                <h3 className="font-semibold text-foreground">{getItemDisplayName(item, t)}</h3>
                 {item.householdId && (
                   <Badge variant="secondary" className="text-xs">
                     {t('forms.householdItem')}

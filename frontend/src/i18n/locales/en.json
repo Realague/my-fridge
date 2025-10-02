@@ -74,6 +74,7 @@
     "emptyArea": "Your {{name}} is empty",
     "addTo": "Add to {{name}}",
     "added": "Added",
+    "addedDetails": "Added {{quantity}} {{unit}} of {{item}} to {{area}}",
     "locationPlaceholder": "e.g., Main shelf, Cupboard",
     "mainFridge": "Refrigerator",
     "mainFreezer": "Freezer",
@@ -256,7 +257,8 @@
       "failedToCreateStorageArea": "Failed to create storage area",
       "failedToUpdateStorageArea": "Failed to update storage area",
       "failedToDeleteStorageArea": "Failed to delete storage area",
-      "deleteFailed": "Delete Failed"
+      "deleteFailed": "Delete Failed",
+      "failedToAddItem": "Failed to add item"
     },
     "confirmation": {
       "deleteItem": "Are you sure you want to delete this item?",
@@ -327,7 +329,8 @@
       "loading": "Loading...",
       "loadingCompletedItems": "Loading completed items...",
       "noCompletedItemsYet": "No completed items yet",
-      "completedItemsWillAppear": "Items you mark as complete will appear here"
+      "completedItemsWillAppear": "Items you mark as complete will appear here",
+      "addedQuantity": "Added {{quantity}} {{unit}} of {{item}} to shopping list"
     },
     "mealPlans": {
       "title": "Meal Plans",
@@ -391,6 +394,8 @@
       "titlePlaceholder": "e.g., Chicken Teriyaki",
       "descriptionPlaceholder": "Brief description of your recipe...",
       "stepInstructionsPlaceholder": "Step {{step}} instructions...",
+      "recipeNotFound": "Recipe not found",
+      "editRecipeTitle": "Edit Recipe",
       "difficultyOptions": {
         "easy": "Easy",
         "medium": "Medium",
@@ -439,12 +444,10 @@
       "privacy": "Privacy",
       "appearance": "Appearance",
       "profile": "Profile",
-      "debug": "Debug",
       "tabs": {
         "profile": "Profile",
         "notifications": "Notifications", 
-        "appearance": "Appearance",
-        "debug": "Debug"
+        "appearance": "Appearance"
       },
       "profileSettings": {
         "title": "Profile Settings",
@@ -468,16 +471,6 @@
         "darkMode": "Dark Mode",
         "darkModeDescription": "Enable a darker color scheme.",
         "languageDescription": "Choose your preferred language for the interface."
-      },
-      "debugSettings": {
-        "title": "Debug Information",
-        "description": "Developer tools and authentication tokens for API testing.",
-        "googleAuthToken": "Google Auth Token",
-        "tokenDescription": "Copy this token to use in API testing tools like Insomnia or Postman.",
-        "authorizationHeader": "Add it as:",
-        "noTokenFound": "No token found",
-        "copyFailed": "Copy Failed",
-        "copyFailedDescription": "Could not copy token to clipboard."
       },
       "logOut": "Log Out"
     },

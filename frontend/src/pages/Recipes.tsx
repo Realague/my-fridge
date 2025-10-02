@@ -68,7 +68,7 @@ const Recipes = () => {
     try {
       await toggleFavorite(recipeId);
       toast({
-        title: t('messages.success.itemUpdated'),
+        title: t('messages.success.recipeUpdated'),
         description: t('pages.recipes.recipeUpdated'),
       });
     } catch (error) {

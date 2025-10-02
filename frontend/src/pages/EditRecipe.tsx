@@ -16,6 +16,7 @@ import { StructuredIngredientInput, StructuredIngredient } from '@/components/St
 import { useToast } from '@/hooks/use-toast';
 import { useItemService } from '@/services/itemService';
 import { useTranslation } from 'react-i18next';
+import { getItemDisplayName } from '@/utils/itemUtils';
 
 interface RecipeFormData {
   title: string;
@@ -49,7 +50,10 @@ const EditRecipe = () => {
     clearError();
   }, [clearError]);
   
-  const [ingredients, setIngredients] = useState<StructuredIngredient[]>(recipe?.ingredients || []);
+  const [ingredients, setIngredients] = useState<StructuredIngredient[]>(recipe?.ingredients.map(ingredient => ({
+    ...ingredient,
+    item: ingredient.item as StructuredIngredient['item']
+  })) || []);
   const [instructions, setInstructions] = useState(recipe?.instructions || []);
   const [tags, setTags] = useState<string[]>(recipe?.tags || []);
   const [newTag, setNewTag] = useState('');
@@ -81,7 +85,10 @@ const EditRecipe = () => {
         servings: recipe.servings,
         difficulty: recipe.difficulty,
       });
-      setIngredients(recipe.ingredients);
+      setIngredients(recipe.ingredients.map(ingredient => ({
+        ...ingredient,
+        item: ingredient.item as StructuredIngredient['item']
+      })));
       setInstructions(recipe.instructions);
       setTags(recipe.tags);
       
@@ -274,7 +281,7 @@ const EditRecipe = () => {
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('buttons.back')}
             </Button>
-            <h1 className="text-xl font-bold text-gray-900">Edit Recipe</h1>
+            <h1 className="text-xl font-bold text-gray-900">{t('pages.recipes.editRecipeTitle')}</h1>
             <div className="w-20"></div>
           </div>
         </div>
@@ -475,7 +482,7 @@ const EditRecipe = () => {
                                   onCheckedChange={() => toggleIngredientForStep(ingredient, ingredientIndex, index)}
                                 />
                                 <span className="text-sm text-gray-600">
-                                  {ingredient.item?.name} {ingredient.quantity} {ingredient.unit}
+                                  {getItemDisplayName(ingredient?.item, t)} {ingredient.quantity} {ingredient.unit}
                                 </span>
                               </div>
                             );

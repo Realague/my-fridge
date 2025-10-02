@@ -53,6 +53,7 @@ const Shopping = () => {
     if (selectedHouseholdId) {
       // Fetch pending items first
       fetchShoppingItems(false);
+
       setCompletedItemsLoaded(false);
       // Also fetch completed items
       fetchCompletedItems();
@@ -238,7 +239,7 @@ const Shopping = () => {
 
   // Filter items by category
   const filterItemsByCategory = (itemsList: ShoppingItem[]) => {
-    if (categoryFilter === 'All') return itemsList;
+    if (categoryFilter === 'all') return itemsList;
     return itemsList.filter(item => item.item?.category === categoryFilter);
   };
 
@@ -246,6 +247,17 @@ const Shopping = () => {
   const completedItems = filterItemsByCategory(getCompletedItems());
   const totalItems = getTotalItems();
   const completedCount = getCompletedCount();
+
+  // Debug logging
+  console.log('🛒 Shopping Page Debug:', {
+    allItems: items,
+    pendingItems,
+    completedItems,
+    totalItems,
+    completedCount,
+    selectedHouseholdId,
+    loading
+  });
 
   // Get unique categories from items
   const categories = ['all', ...Array.from(new Set(items.map(item => item.item?.category).filter(Boolean)))];
@@ -267,7 +279,7 @@ const Shopping = () => {
   };
 
   const getItemCategory = (shoppingItem: ShoppingItem) => {
-    return shoppingItem.item?.category || 'Other';
+    return t(`items.categories.${shoppingItem.item?.category}`) || t('items.categories.other');
   };
 
   const getItemData = (shoppingItem: ShoppingItem): Item | null => {
@@ -365,7 +377,7 @@ const Shopping = () => {
               <div className="flex items-center gap-2">
                 <span>{shoppingItem.quantity} {shoppingItem.unit}</span>
                 <span>•</span>
-                <span>{t('storageArea.addedBy')}</span>
+                <span>{t('pages.shopping.addedBy')}</span>
               </div>
             )}
           </div>

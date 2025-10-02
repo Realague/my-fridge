@@ -4,10 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, ArrowRight, Play, Pause, RotateCcw, Clock, ChefHat, Badge } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Play, Pause, RotateCcw, Clock, ChefHat, Badge, Eye, EyeOff } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next'; 
+import { getItemDisplayName } from '@/utils/itemUtils';
+import { Item } from '@/services/itemService';
 
 const RecipeCookingMode = () => {
   const { id } = useParams<{ id: string }>();
@@ -269,7 +271,7 @@ const RecipeCookingMode = () => {
                           <div key={ingredient.id} className="flex items-center gap-2 text-sm">
                             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                             <span className="font-medium text-green-800">
-                              {ingredient.quantity} {ingredient.unit} {ingredient.item?.name}
+                              {ingredient.quantity} {ingredient.unit} {getItemDisplayName(ingredient?.item as Item, t)}
                             </span>
                             {ingredient.notes && (
                               <span className="text-green-600 italic">({ingredient.notes})</span>
@@ -283,6 +285,7 @@ const RecipeCookingMode = () => {
 
                 {/* Navigation */}
                 <div className="flex justify-between">
+                  {currentStep > 0 && (
                   <Button
                     variant="outline"
                     onClick={prevStep}
@@ -292,7 +295,9 @@ const RecipeCookingMode = () => {
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     {t('common.previous')}
                   </Button>
+                  )}
                   
+                  {currentStep < recipe.instructions.length - 1 && (
                   <Button
                     onClick={nextStep}
                     disabled={currentStep === recipe.instructions.length - 1}
@@ -301,6 +306,7 @@ const RecipeCookingMode = () => {
                     {t('common.next')}
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -317,7 +323,7 @@ const RecipeCookingMode = () => {
                     size="sm"
                     onClick={() => setShowIngredients(!showIngredients)}
                   >
-                    {showIngredients ? 'Hide' : 'Show'}
+                    {showIngredients ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                   </Button>
                 </div>
                 
@@ -339,7 +345,7 @@ const RecipeCookingMode = () => {
                           />
                           <div className={`flex-1 text-sm ${checkedIngredients[index] ? 'line-through text-gray-500' : 'text-gray-800'}`}>
                             <div className={`font-medium ${isRelevant ? 'text-green-800' : ''}`}>
-                              {ingredient.quantity} {ingredient.unit} {ingredient.item?.name}
+                              {ingredient.quantity} {ingredient.unit} {getItemDisplayName(ingredient?.item as Item, t)}
                             </div>
                             {ingredient.notes && (
                               <div className={`text-xs ${isRelevant ? 'text-green-600' : 'text-gray-600'}`}>
@@ -358,7 +364,7 @@ const RecipeCookingMode = () => {
             {/* Recipe Info */}
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg mt-4">
               <CardContent className="p-4">
-                <h3 className="font-semibold text-gray-900 mb-3">{t('pages.recipes.recipeInfo')}</h3>
+                <h3 className="font-semibold text-gray-900 mb-3">{t('pages.recipes.basicInformation')}</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('pages.recipes.prepTime')}:</span>
@@ -374,7 +380,7 @@ const RecipeCookingMode = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('pages.recipes.difficulty')}:</span>
-                    <span className="font-medium">{recipe.difficulty}</span>
+                    <span className="font-medium">{t(`pages.recipes.difficultyOptions.${recipe.difficulty.toLowerCase()}`)}</span>
                   </div>
                 </div>
               </CardContent>
@@ -390,7 +396,7 @@ const RecipeCookingMode = () => {
               <h2 className="text-2xl font-bold text-green-800 mb-2">{t('pages.recipes.congratulations')}</h2>
               <p className="text-green-700 mb-4">{t('pages.recipes.congratulationsDescription', { recipeTitle: recipe.title })}</p>
               <Button onClick={() => navigate(`/recipes/${recipe.id}`)}>
-                {t('pages.recipes.backToRecipe')}
+                {t('pages.recipes.backToRecipes')}
               </Button>
             </CardContent>
           </Card>

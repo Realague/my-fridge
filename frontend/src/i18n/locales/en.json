@@ -73,7 +73,8 @@
     "startAddingItems": "Start adding items to track your inventory",
     "emptyArea": "Your {{name}} is empty",
     "addTo": "Add to {{name}}",
-    "added": "Added {{quantity}} {{unit}} of {{item}} to {{area}}",
+    "added": "Added",
+    "addedDetails": "Added {{quantity}} {{unit}} of {{item}} to {{area}}",
     "locationPlaceholder": "e.g., Main shelf, Cupboard",
     "mainFridge": "Refrigerator",
     "mainFreezer": "Freezer",
@@ -328,7 +329,8 @@
       "loading": "Loading...",
       "loadingCompletedItems": "Loading completed items...",
       "noCompletedItemsYet": "No completed items yet",
-      "completedItemsWillAppear": "Items you mark as complete will appear here"
+      "completedItemsWillAppear": "Items you mark as complete will appear here",
+      "addedQuantity": "Added {{quantity}} {{unit}} of {{item}} to shopping list"
     },
     "mealPlans": {
       "title": "Meal Plans",
@@ -393,6 +395,7 @@
       "descriptionPlaceholder": "Brief description of your recipe...",
       "stepInstructionsPlaceholder": "Step {{step}} instructions...",
       "recipeNotFound": "Recipe not found",
+      "editRecipeTitle": "Edit Recipe",
       "difficultyOptions": {
         "easy": "Easy",
         "medium": "Medium",

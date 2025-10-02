@@ -6,28 +6,12 @@ import { Plus, Trash2 } from 'lucide-react';
 import { ItemSelector } from './ItemSelector';
 import { QuantitySelector } from './QuantitySelector';
 import { useTranslation } from 'react-i18next';
-
-// Simplified item interface that matches what we get from the API
-interface SimpleItem {
-  id: string;
-  name: string;
-  category: string;
-  defaultUnit: string;
-  availableUnits: string[];
-}
-
-// Full item interface for compatibility with ItemSelector
-interface FullItem extends SimpleItem {
-  createdBy: string | null;
-  householdId: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
+import { Item } from '@/services/itemService';
 
 export interface StructuredIngredient {
   id?: string;
   itemId: string;
-  item?: SimpleItem;
+  item?: Item;
   quantity: number;
   unit: string;
   notes?: string;
@@ -70,19 +54,11 @@ export const StructuredIngredientInput = ({
     onIngredientsChange(ingredients.filter((_, i) => i !== index));
   };
 
-  const handleItemSelect = (index: number, item: FullItem | null) => {
+  const handleItemSelect = (index: number, item: Item | null) => {
     if (item) {
-      const simpleItem: SimpleItem = {
-        id: item.id,
-        name: item.name,
-        category: item.category,
-        defaultUnit: item.defaultUnit,
-        availableUnits: item.availableUnits
-      };
-      
       updateIngredient(index, {
         itemId: item.id,
-        item: simpleItem,
+        item: item,
         unit: item.defaultUnit
       });
     } else {
@@ -95,7 +71,7 @@ export const StructuredIngredientInput = ({
   };
 
   // Get excluded items (all other ingredients that have been selected)
-  const getExcludedItems = (currentIndex: number): FullItem[] => {
+  const getExcludedItems = (currentIndex: number): Item[] => {
     return ingredients
       .filter((_, index) => index !== currentIndex && _.itemId)
       .map(ingredient => ({
@@ -145,7 +121,6 @@ export const StructuredIngredientInput = ({
                   selectedItem={ingredient.item ? {
                     ...ingredient.item,
                     createdBy: null,
-                    householdId: null,
                     createdAt: '',
                     updatedAt: ''
                   } : null}

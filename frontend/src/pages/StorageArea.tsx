@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '@/utils/dateFormatting';
 import { toast } from 'sonner';
 import { SelectedItemPreview } from '@/components/SelectedItemPreview';
+import { getItemDisplayName } from '@/utils/itemUtils';
 
 const StorageArea = () => {
   const { id } = useParams<{ id: string }>();
@@ -135,7 +136,7 @@ const StorageArea = () => {
       });
       
       // Show success toast with specific details
-      toast.success(t('storageArea.added', { quantity: newItemQuantity, unit: newItemUnit, item: selectedItem.name, area: area?.name }));
+      toast.success(t('storageArea.addedDetails', { quantity: newItemQuantity, unit: newItemUnit, item: selectedItem.name, area: area?.name }));
       
       // Reset form
       setSelectedItem(null);
@@ -244,7 +245,7 @@ const StorageArea = () => {
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2">
-                <h3 className="font-medium text-gray-900">{item.name}</h3>
+                <h3 className="font-medium text-gray-900">{getItemDisplayName(item, t)}</h3>
                 <Badge variant="outline" className="text-xs">
                   { t(`items.categories.${item.category}`) }
                 </Badge>
@@ -433,7 +434,7 @@ const StorageArea = () => {
                   {/* Quantity */}
                   <div>
                     <Label className="text-sm font-medium mb-2 block">
-                      {t('storageArea.addItemInformation', { item: selectedItem.name })}
+                      {t('storageArea.addItemInformation', { item: getItemDisplayName(selectedItem, t) })}
                     </Label>
                     <QuantitySelector
                       item={selectedItem}

@@ -10,6 +10,8 @@ import { AddMealPlanDialog } from '@/components/AddMealPlanDialog';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
+import { getItemDisplayName } from '@/utils/itemUtils';
+import { Item } from '@/services/itemService';
 
 const RecipeDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -283,7 +285,7 @@ const RecipeDetails = () => {
                     <span className="text-green-600 mt-1.5 text-xs">●</span>
                     <div className="flex-1">
                       <div className="font-medium text-gray-900">
-                        {ingredient.item?.name} {ingredient.quantity} {ingredient.unit}
+                        {getItemDisplayName(ingredient?.item as Item, t)} {ingredient.quantity} {ingredient.unit}
                       </div>
                       {ingredient.notes && (
                         <div className="text-sm text-gray-600 mt-1">{ingredient.notes}</div>

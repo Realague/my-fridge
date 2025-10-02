@@ -137,7 +137,7 @@ export const useShoppingStore = create<ShoppingStore>()(
           
           if (completed !== undefined) searchParams.append('completed', completed.toString());
 
-          const householdId = getHouseholdId();
+          householdId = getHouseholdId();
           if (!householdId) {
             throw new Error('No household available');
           }

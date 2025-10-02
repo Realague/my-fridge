@@ -79,8 +79,8 @@ export const AddItemCard = ({
       
       // Show success toast with details
       const successMessage = storageAreaName 
-        ? t('pages.shopping.addedQuantityToStorageArea', { quantity: validationResult.data, unit: newItemUnit, storageAreaName: storageAreaName })
-        : t('pages.shopping.addedQuantity', { quantity: validationResult.data, unit: newItemUnit });
+        ? t('storageArea.addedQuantityToStorageArea', { quantity: validationResult.data, unit: newItemUnit, storageAreaName: storageAreaName })
+        : t('pages.shopping.addedQuantity', { item: selectedItem.name, quantity: validationResult.data, unit: newItemUnit });
       toast.success(successMessage);
       
       // Reset form after successful addition

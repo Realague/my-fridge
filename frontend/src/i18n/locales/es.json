@@ -71,7 +71,8 @@
     "startAddingItems": "Comience agregando artículos para rastrear su inventario",
     "emptyArea": "Tu {{name}} está vacía",
     "addTo": "Agregar a {{name}}",
-    "added": "Agregado {{quantity}} {{unit}} de {{item}} a {{area}}",
+    "added": "Agregado",
+    "addedDetails": "Agregado {{quantity}} {{unit}} de {{item}} a {{area}}",
     "locationPlaceholder": "ej., Almacén principal, Alacena",
     "kitchenFridge": "Refrigerador de Cocina",
     "coldStorage": "Almacén de Frío",
@@ -326,7 +327,8 @@
       "loading": "Cargando...",
       "loadingCompletedItems": "Cargando artículos completados...",
       "noCompletedItemsYet": "Aún no hay artículos completados",
-      "completedItemsWillAppear": "Los artículos que marques como completados aparecerán aquí"
+      "completedItemsWillAppear": "Los artículos que marques como completados aparecerán aquí",
+      "addedQuantity": "Agregado {{quantity}} {{unit}} de {{item}} a la lista de compras"
     },
     "mealPlans": {
       "title": "Planes de Comida",
@@ -391,6 +393,7 @@
       "descriptionPlaceholder": "Breve descripción de tu receta...",
       "stepInstructionsPlaceholder": "Paso {{step}} instrucciones...",
       "recipeNotFound": "Receta no encontrada",
+      "editRecipeTitle": "Editar Receta",
       "difficultyOptions": {
         "easy": "Fácil",
         "medium": "Medio",

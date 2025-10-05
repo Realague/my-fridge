@@ -60,7 +60,7 @@ const RecipeCookingMode = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('common.loading')}</p>
+          <p className="text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -71,7 +71,7 @@ const RecipeCookingMode = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-4">
             {error ? 'Error loading recipe' : 'Recipe not found'}
           </h1>
           {error && <p className="text-red-600 mb-4">{error}</p>}
@@ -160,20 +160,20 @@ const RecipeCookingMode = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
+      <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Button 
               variant="ghost" 
               onClick={() => navigate(`/recipes/${recipe.id}`)}
-              className="text-gray-600"
+              className="text-muted-foreground"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('pages.recipes.exitCooking')}
             </Button>
             <div className="flex items-center gap-2">
               <ChefHat className="h-5 w-5 text-green-600" />
-              <span className="font-medium text-gray-900">{t('pages.recipes.cookingMode')}</span>
+              <span className="font-medium text-foreground">{t('pages.recipes.cookingMode')}</span>
             </div>
           </div>
         </div>
@@ -181,11 +181,11 @@ const RecipeCookingMode = () => {
 
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Recipe Title & Progress */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg mb-6">
+        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg mb-6">
           <CardContent className="p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">{recipe.title}</h1>
+            <h1 className="text-2xl font-bold text-foreground mb-4">{recipe.title}</h1>
             <div className="space-y-2">
-              <div className="flex justify-between text-sm text-gray-600">
+              <div className="flex justify-between text-sm text-muted-foreground">
                 <span>{t('pages.recipes.currentStepCount', { currentStep: currentStep + 1, instructionsLength: recipe.instructions.length })}</span>
                 <span>{Math.round(progress)}% {t('pages.recipes.complete')}</span>
               </div>
@@ -217,10 +217,10 @@ const RecipeCookingMode = () => {
         )}
 
         {/* Quick Timer Buttons */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg mb-6">
+        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg mb-6">
           <CardContent className="p-4">
             <div className="flex flex-wrap gap-2">
-              <span className="text-sm font-medium text-gray-700 mr-2">{t('pages.recipes.quickTimers')}</span>
+              <span className="text-sm font-medium text-muted-foreground mr-2">{t('pages.recipes.quickTimers')}</span>
               {[1, 5, 10, 15, 20, 30].map((mins) => (
                 <Button
                   key={mins}
@@ -239,10 +239,10 @@ const RecipeCookingMode = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Current Step */}
           <div className="lg:col-span-2">
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-gray-900">
+                  <h2 className="text-xl font-semibold text-foreground">
                     {t('pages.recipes.step', { step: currentStep + 1 })}
                   </h2>
                   <div className="flex items-center gap-2">
@@ -250,11 +250,11 @@ const RecipeCookingMode = () => {
                       checked={completedSteps[currentStep]}
                       onCheckedChange={toggleStepComplete}
                     />
-                    <span className="text-sm text-gray-600">{t('pages.recipes.complete')}</span>
+                    <span className="text-sm text-muted-foreground">{t('pages.recipes.complete')}</span>
                   </div>
                 </div>
                 
-                <p className="text-lg leading-relaxed text-gray-800 mb-6">
+                <p className="text-lg leading-relaxed text-foreground mb-6">
                   {recipe.instructions[currentStep]}
                 </p>
 
@@ -314,10 +314,10 @@ const RecipeCookingMode = () => {
 
           {/* Ingredients Sidebar */}
           <div>
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-gray-900">{t('pages.recipes.allIngredients')}</h3>
+                  <h3 className="font-semibold text-foreground">{t('pages.recipes.allIngredients')}</h3>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -343,12 +343,12 @@ const RecipeCookingMode = () => {
                             onCheckedChange={() => toggleIngredient(index)}
                             className="mt-1"
                           />
-                          <div className={`flex-1 text-sm ${checkedIngredients[index] ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+                          <div className={`flex-1 text-sm ${checkedIngredients[index] ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
                             <div className={`font-medium ${isRelevant ? 'text-green-800' : ''}`}>
                               {ingredient.quantity} {ingredient.unit} {getItemDisplayName(ingredient?.item as Item, t)}
                             </div>
                             {ingredient.notes && (
-                              <div className={`text-xs ${isRelevant ? 'text-green-600' : 'text-gray-600'}`}>
+                              <div className={`text-xs ${isRelevant ? 'text-green-600' : 'text-muted-foreground'}`}>
                                 {ingredient.notes}
                               </div>
                             )}
@@ -362,24 +362,24 @@ const RecipeCookingMode = () => {
             </Card>
 
             {/* Recipe Info */}
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg mt-4">
+            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg mt-4">
               <CardContent className="p-4">
-                <h3 className="font-semibold text-gray-900 mb-3">{t('pages.recipes.basicInformation')}</h3>
+                <h3 className="font-semibold text-foreground mb-3">{t('pages.recipes.basicInformation')}</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">{t('pages.recipes.prepTime')}:</span>
+                    <span className="text-muted-foreground">{t('pages.recipes.prepTime')}:</span>
                     <span className="font-medium">{recipe.prepTime}m</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">{t('pages.recipes.cookTime')}:</span>
+                    <span className="text-muted-foreground">{t('pages.recipes.cookTime')}:</span>
                     <span className="font-medium">{recipe.cookTime}m</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">{t('pages.recipes.servings')}:</span>
+                    <span className="text-muted-foreground">{t('pages.recipes.servings')}:</span>
                     <span className="font-medium">{recipe.servings}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">{t('pages.recipes.difficulty')}:</span>
+                    <span className="text-muted-foreground">{t('pages.recipes.difficulty')}:</span>
                     <span className="font-medium">{t(`pages.recipes.difficultyOptions.${recipe.difficulty.toLowerCase()}`)}</span>
                   </div>
                 </div>

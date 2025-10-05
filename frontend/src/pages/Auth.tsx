@@ -145,8 +145,8 @@ const Auth = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('pages.auth.loading')}</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">{t('pages.auth.loading')}</p>
         </div>
       </div>
     );
@@ -158,12 +158,12 @@ const Auth = () => {
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
-          className="mb-6 text-gray-600 hover:text-gray-900"
+          className="mb-6 text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="mr-2 h-4 w-4" /> {t('pages.auth.backToHome')}
         </Button>
 
-        <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl">
+        <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-xl">
           <CardHeader className="text-center space-y-4">
             <div className="mx-auto w-16 h-16 flex items-center justify-center">
               <img src="/favicon.ico" alt="MyFridge" className="w-16 h-16" />
@@ -183,10 +183,10 @@ const Auth = () => {
                   onClick={handleGoogleAuth}
                   disabled={authLoading || !import.meta.env.VITE_GOOGLE_CLIENT_ID}
                   variant="outline"
-                  className="w-full py-6 text-base border-gray-200 hover:bg-gray-50 disabled:opacity-50"
+                  className="w-full py-6 text-base disabled:opacity-50"
                 >
                   {authLoading ? (
-                    <div className="mr-3 h-5 w-5 animate-spin rounded-full border-b-2 border-gray-600"></div>
+                    <div className="mr-3 h-5 w-5 animate-spin rounded-full border-b-2 border-primary"></div>
                   ) : (
                     <svg className="mr-3 h-5 w-5" viewBox="0 0 24 24">
                       <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -201,7 +201,7 @@ const Auth = () => {
             </div>
 
             {!import.meta.env.VITE_GOOGLE_CLIENT_ID && (
-              <div className="text-sm text-red-600 text-center p-3 bg-red-50 rounded">
+              <div className="text-sm text-destructive text-center p-3 bg-destructive/10 rounded">
                 {t('pages.auth.googleClientIdNotConfigured')}
               </div>
             )}

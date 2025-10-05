@@ -28,7 +28,7 @@ const StorageAreaCard = ({ area, onClick }: StorageAreaCardProps) => {
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-green-100 to-orange-100 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center">
               <span className="text-2xl">{area.emoji}</span>
             </div>
             <div>

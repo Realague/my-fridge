@@ -12,16 +12,16 @@ const Demo = () => {
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
-          className="mb-6 text-gray-600 hover:text-gray-900"
+          className="mb-6 text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
         </Button>
 
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-foreground mb-4">
             MyFridge Demo
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Experience how MyFridge makes household food management effortless
           </p>
         </div>
@@ -29,7 +29,7 @@ const Demo = () => {
         {/* Demo Sections */}
         <div className="space-y-12 max-w-4xl mx-auto">
           {/* Storage Areas */}
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-xl">
             <CardHeader>
               <CardTitle className="text-2xl flex items-center gap-3">
                 <span className="text-3xl">🏠</span>
@@ -41,12 +41,12 @@ const Demo = () => {
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-3 gap-4">
-                <div className="bg-green-50 p-4 rounded-xl">
+                <div className="bg-accent p-4 rounded-xl">
                   <div className="flex items-center gap-3 mb-3">
                     <span className="text-2xl">🥬</span>
                     <div>
                       <h3 className="font-semibold">Fridge</h3>
-                      <p className="text-sm text-gray-600">12 items</p>
+                      <p className="text-sm text-muted-foreground">12 items</p>
                     </div>
                   </div>
                   <div className="space-y-2 text-sm">
@@ -65,12 +65,12 @@ const Demo = () => {
                   </div>
                 </div>
 
-                <div className="bg-blue-50 p-4 rounded-xl">
+                <div className="bg-accent p-4 rounded-xl">
                   <div className="flex items-center gap-3 mb-3">
                     <span className="text-2xl">🧊</span>
                     <div>
                       <h3 className="font-semibold">Freezer</h3>
-                      <p className="text-sm text-gray-600">8 items</p>
+                      <p className="text-sm text-muted-foreground">8 items</p>
                     </div>
                   </div>
                   <div className="space-y-2 text-sm">
@@ -89,12 +89,12 @@ const Demo = () => {
                   </div>
                 </div>
 
-                <div className="bg-orange-50 p-4 rounded-xl">
+                <div className="bg-accent p-4 rounded-xl">
                   <div className="flex items-center gap-3 mb-3">
                     <span className="text-2xl">🏺</span>
                     <div>
                       <h3 className="font-semibold">Pantry</h3>
-                      <p className="text-sm text-gray-600">25 items</p>
+                      <p className="text-sm text-muted-foreground">25 items</p>
                     </div>
                   </div>
                   <div className="space-y-2 text-sm">
@@ -117,7 +117,7 @@ const Demo = () => {
           </Card>
 
           {/* Shopping List */}
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-xl">
             <CardHeader>
               <CardTitle className="text-2xl flex items-center gap-3">
                 <span className="text-3xl">🛒</span>
@@ -128,7 +128,7 @@ const Demo = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="bg-gray-50 p-4 rounded-xl">
+              <div className="bg-muted p-4 rounded-xl">
                 <h3 className="font-semibold mb-3">This Week's Shopping List</h3>
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
@@ -143,7 +143,7 @@ const Demo = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <input type="checkbox" checked className="rounded" />
-                    <span className="line-through text-gray-500">Tomatoes</span>
+                    <span className="line-through text-muted-foreground">Tomatoes</span>
                     <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Bought</span>
                   </div>
                   <div className="flex items-center gap-3">
@@ -157,7 +157,7 @@ const Demo = () => {
           </Card>
 
           {/* Meal Planning */}
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-xl">
             <CardHeader>
               <CardTitle className="text-2xl flex items-center gap-3">
                 <span className="text-3xl">📅</span>
@@ -172,34 +172,34 @@ const Demo = () => {
                 <div>
                   <h3 className="font-semibold mb-3">This Week's Meals</h3>
                   <div className="space-y-3">
-                    <div className="bg-green-50 p-3 rounded-lg">
+                    <div className="bg-accent p-3 rounded-lg">
                       <div className="font-medium">Monday: Spaghetti Carbonara</div>
-                      <div className="text-sm text-gray-600">✅ All ingredients available</div>
+                      <div className="text-sm text-muted-foreground">✅ All ingredients available</div>
                     </div>
-                    <div className="bg-orange-50 p-3 rounded-lg">
+                    <div className="bg-accent p-3 rounded-lg">
                       <div className="font-medium">Tuesday: Chicken Stir Fry</div>
                       <div className="text-sm text-orange-700">⚠️ Need: Soy sauce, Ginger</div>
                     </div>
-                    <div className="bg-blue-50 p-3 rounded-lg">
+                    <div className="bg-accent p-3 rounded-lg">
                       <div className="font-medium">Wednesday: Veggie Burgers</div>
-                      <div className="text-sm text-gray-600">✅ All ingredients available</div>
+                      <div className="text-sm text-muted-foreground">✅ All ingredients available</div>
                     </div>
                   </div>
                 </div>
                 <div>
                   <h3 className="font-semibold mb-3">Recipe Book</h3>
                   <div className="space-y-3">
-                    <div className="bg-white p-3 rounded-lg border">
+                    <div className="bg-card p-3 rounded-lg border">
                       <div className="font-medium">Spaghetti Carbonara</div>
-                      <div className="text-sm text-gray-600">⭐ 4.8 • 30 min • Easy</div>
+                      <div className="text-sm text-muted-foreground">⭐ 4.8 • 30 min • Easy</div>
                     </div>
-                    <div className="bg-white p-3 rounded-lg border">
+                    <div className="bg-card p-3 rounded-lg border">
                       <div className="font-medium">Chicken Stir Fry</div>
-                      <div className="text-sm text-gray-600">⭐ 4.5 • 25 min • Medium</div>
+                      <div className="text-sm text-muted-foreground">⭐ 4.5 • 25 min • Medium</div>
                     </div>
-                    <div className="bg-white p-3 rounded-lg border">
+                    <div className="bg-card p-3 rounded-lg border">
                       <div className="font-medium">Veggie Burgers</div>
-                      <div className="text-sm text-gray-600">⭐ 4.7 • 20 min • Easy</div>
+                      <div className="text-sm text-muted-foreground">⭐ 4.7 • 20 min • Easy</div>
                     </div>
                   </div>
                 </div>
@@ -212,7 +212,7 @@ const Demo = () => {
           <Button
             onClick={() => navigate('/auth')}
             size="lg"
-            className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-xl"
           >
             Start Using MyFridge <ArrowRight className="ml-2 h-5 w-5" />
           </Button>

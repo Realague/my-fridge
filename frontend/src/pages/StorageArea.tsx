@@ -301,7 +301,7 @@ const StorageArea = () => {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <span className="font-medium">{storageItem.quantity} {storageItem.unit}</span>
                     {storageItem.location && (
                       <div className="flex items-center gap-1">
@@ -311,7 +311,7 @@ const StorageArea = () => {
                     )}
                   </div>
                   
-                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       <span>{t('storageArea.added')} {formatDate(new Date(storageItem.createdAt), 'MMM d')}</span>
@@ -356,7 +356,7 @@ const StorageArea = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
+      <div className="bg-card/80 backdrop-blur-sm border-b border-border/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -371,9 +371,9 @@ const StorageArea = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">{area.emoji}</span>
-                  <h1 className="text-xl font-bold text-gray-900">{area.name}</h1>
+                  <h1 className="text-xl font-bold text-foreground">{area.name}</h1>
                 </div>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   {storageItems.length} {t('storageArea.items')}
                 </p>
               </div>
@@ -392,7 +392,7 @@ const StorageArea = () => {
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Add Item Form */}
         {showAddForm && (
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg flex items-center gap-2">

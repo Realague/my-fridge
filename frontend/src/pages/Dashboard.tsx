@@ -124,7 +124,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
+      <div className="bg-card/80 backdrop-blur-sm border-b border-border/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <DropdownMenu>
@@ -132,10 +132,10 @@ const Dashboard = () => {
                 <Button variant="ghost" className="text-left h-auto p-1 -ml-2">
                   <div className="flex items-center gap-2">
                     <div>
-                       <h1 className="text-xl font-bold text-gray-900">{getCurrentHousehold()?.name || t('common.loading')}</h1>
-                       <p className="text-sm text-gray-600">{getCurrentHousehold()?.memberCount || 0} {t('pages.dashboard.members')}</p>
+                       <h1 className="text-xl font-bold text-foreground">{getCurrentHousehold()?.name || t('common.loading')}</h1>
+                       <p className="text-sm text-muted-foreground">{getCurrentHousehold()?.memberCount || 0} {t('pages.dashboard.members')}</p>
                     </div>
-                    <ChevronDown className="h-4 w-4 text-gray-500" />
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
                   </div>
                 </Button>
               </DropdownMenuTrigger>
@@ -182,16 +182,16 @@ const Dashboard = () => {
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Quick Actions */}
         <div className="grid grid-cols-3 gap-3">
-          {quickActions.map((action, index) => (
+        {quickActions.map((action, index) => (
             <Card
               key={index}
-              className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+              className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
               onClick={() => navigate(action.route)}
             >
               <CardContent className="p-4 text-center">
                 <div className="text-2xl mb-2">{action.emoji}</div>
-                <div className="font-medium text-sm text-gray-900">{action.title}</div>
-                <div className="text-xs text-gray-600">{action.description}</div>
+                <div className="font-medium text-sm text-foreground">{action.title}</div>
+                <div className="text-xs text-muted-foreground">{action.description}</div>
               </CardContent>
             </Card>
           ))}
@@ -200,7 +200,7 @@ const Dashboard = () => {
         {/* Storage Areas */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900">{t('pages.dashboard.storageAreas')}</h2>
+            <h2 className="text-xl font-bold text-foreground">{t('pages.dashboard.storageAreas')}</h2>
             <div className="flex gap-2">
               <AddStorageAreaDialog />
               <Button

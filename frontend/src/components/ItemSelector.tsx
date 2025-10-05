@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronDown, Plus, Edit, X, Loader2 } from 'lucide-react';
+import { ChevronDown, Plus, Edit, X, Loader2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { itemService, Item } from '@/services/itemService';
 import { useAuthStore } from '@/stores/authStore';
 import { useHouseholdStore } from '@/stores/householdStore';
@@ -34,13 +35,14 @@ export const ItemSelector = ({
   const [query, setQuery] = useState('');
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [creatingNewItem, setCreatingNewItem] = useState(false);
+  const [deleteItem, setDeleteItem] = useState<Item | null>(null);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const [apiResults, setApiResults] = useState<Item[]>([]);
   const [apiLoading, setApiLoading] = useState(false);
   const [hasLoadedHouseholdItems, setHasLoadedHouseholdItems] = useState(false);
 
   const { user, isAuthenticated } = useAuthStore();
-  const { selectedHouseholdId } = useHouseholdStore();
+  const { selectedHouseholdId, isCurrentUserAdmin } = useHouseholdStore();
   const userRef = useRef(user);
   const isAuthenticatedRef = useRef(isAuthenticated);
 
@@ -298,6 +300,39 @@ export const ItemSelector = ({
     setIsOpen(false);
   };
 
+  const confirmDeleteItem = (item: Item, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDeleteItem(item);
+    setIsOpen(false);
+  };
+
+  const handleDeleteItem = async (item: Item) => {
+    if (!user || !selectedHouseholdId) {
+      toast.error(t('messages.error.loginRequired'));
+      return;
+    }
+    
+    try {
+      await itemService.deleteItem(item.id, selectedHouseholdId);
+      toast.success(t('messages.success.itemDeleted', { item: getItemDisplayName(item, t) }));
+      // Refresh the household items cache
+      await refreshHouseholdItems();
+      setEditingItem(null);
+    } catch (error) {
+      console.error('Failed to delete item:', error);
+      const errorMessage = error instanceof Error ? error.message : '';
+      
+      // Check if it's a permission error
+      if (errorMessage.includes('Admin privileges required') || errorMessage.includes('Access denied')) {
+        toast.error(t('messages.error.adminRequired'));
+      } else if (errorMessage.includes('Authentication') || errorMessage.includes('401')) {
+        toast.error(t('messages.error.loginRequired'));
+      } else {
+        toast.error(t('messages.error.failedToDeleteItem'));
+      }
+    }
+  };
+
   // Refresh household items cache
   const refreshHouseholdItems = async () => {
     if (!user || !selectedHouseholdId) return;
@@ -541,16 +576,30 @@ export const ItemSelector = ({
                     </div>
                   </div>
                   {item.householdId && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => handleEditItem(item, e)}
-                      className="h-6 w-6 p-0 opacity-30 group-hover:opacity-100 hover:bg-gray-200 transition-opacity"
-                      title="Edit item"
-                    >
-                      <Edit className="h-3 w-3" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => handleEditItem(item, e)}
+                        className="h-6 w-6 p-0 opacity-30 group-hover:opacity-100 hover:bg-gray-200 transition-opacity"
+                        title="Edit item"
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                      {isCurrentUserAdmin() && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => confirmDeleteItem(item, e)}
+                          className="h-6 w-6 p-0 opacity-30 group-hover:opacity-100 hover:bg-red-200 transition-opacity"
+                          title="Delete item"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      )}
+                    </div>
                   )}
                 </div>
               ))}
@@ -592,6 +641,7 @@ export const ItemSelector = ({
           item={editingItem}
           onSave={handleSaveEdit}
           onCancel={() => setEditingItem(null)}
+          onDelete={handleDeleteItem}
         />
       )}
 
@@ -612,6 +662,34 @@ export const ItemSelector = ({
           onCancel={() => setCreatingNewItem(false)}
         />
       )}
+
+       {deleteItem && (
+         <AlertDialog open={!!deleteItem} onOpenChange={(open) => !open && setDeleteItem(null)}>
+           <AlertDialogContent>
+             <AlertDialogHeader>
+               <AlertDialogTitle>{t('itemSelector.deleteItem')}</AlertDialogTitle>
+               <AlertDialogDescription>
+                 {t('itemSelector.deleteItemConfirmation', { item: getItemDisplayName(deleteItem, t) })}
+               </AlertDialogDescription>
+             </AlertDialogHeader>
+             <AlertDialogFooter>
+               <AlertDialogCancel onClick={() => setDeleteItem(null)}>
+                 {t('buttons.cancel')}
+               </AlertDialogCancel>
+               <AlertDialogAction 
+                 onClick={() => {
+                   handleDeleteItem(deleteItem);
+                   setDeleteItem(null);
+                 }} 
+                 className="bg-red-600 hover:bg-red-700"
+               >
+                 {t('buttons.delete')}
+               </AlertDialogAction>
+             </AlertDialogFooter>
+           </AlertDialogContent>
+         </AlertDialog>
+       )}
+      
     </div>
   );
 };

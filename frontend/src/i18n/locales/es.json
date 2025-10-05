@@ -141,7 +141,9 @@
     "allItemsAlreadySelected": "Todos los artículos disponibles ya han sido seleccionados para esta receta.",
     "household": "Hogar",
     "global": "Global",
-    "searching": "Buscando..."
+    "searching": "Buscando...",
+    "deleteItem": "Eliminar artículo",
+    "deleteItemConfirmation": "¿Estás seguro de que quieres eliminar {{item}}, esta acción no puede ser deshecha."
   },
   "ingredientInput": {
     "addIngredient": "Agregar Ingrediente",

@@ -194,8 +194,25 @@ export class ItemController {
     try {
       const { id } = req.params;
       const householdId = req.query.householdId as string;
+      const user = (req as any).user;
       
-      const result = await this.itemService.deleteItem(id as string, householdId);
+      if (!user) {
+        res.status(401).json({
+          success: false,
+          error: 'User not authenticated',
+        });
+        return;
+      }
+
+      if (!householdId) {
+        res.status(400).json({
+          success: false,
+          error: 'Household ID is required',
+        });
+        return;
+      }
+      
+      const result = await this.itemService.deleteItem(id as string, householdId, user.id);
 
       if (result.success) {
         res.status(200).json(result);

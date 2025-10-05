@@ -226,7 +226,7 @@ const RecipeDetails = () => {
                 <span className="text-sm">{recipe.servings} {t('pages.recipes.servings')}</span>
               </div>
               <Badge className={getDifficultyColor(recipe.difficulty)}>
-                {recipe.difficulty}
+                {t(`pages.recipes.difficultyOptions.${recipe.difficulty.toLowerCase()}`)}
               </Badge>
             </div>
 

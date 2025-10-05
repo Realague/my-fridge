@@ -5,20 +5,28 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { X } from 'lucide-react';
-import { Item } from '@/services/itemService';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { X, Trash2 } from 'lucide-react';
+import { Item, itemService } from '@/services/itemService';
 import { getUnitsForCategory, getUnitDisplayName } from '@/utils/unitSystem';
 import { ITEM_CATEGORIES, UNITS } from '@/types/enums';
 import { useTranslation } from 'react-i18next';
+import { useHouseholdStore } from '@/stores/householdStore';
+import { useAuthStore } from '@/stores/authStore';
+import { toast } from 'sonner';
+import { getItemDisplayName } from '@/utils/itemUtils';
 
 interface ItemEditorProps {
   item: Item;
   onSave: (updatedItem: Partial<Item>) => void;
   onCancel: () => void;
+  onDelete?: (item: Item) => void;
 }
 
-export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
+export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps) => {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
+  const { selectedHouseholdId, isCurrentUserAdmin } = useHouseholdStore();
   const [name, setName] = useState(item.name);
   const [category, setCategory] = useState(item.category);
   const [defaultUnit, setDefaultUnit] = useState(item.defaultUnit);
@@ -73,6 +81,12 @@ export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
       defaultUnit,
       availableUnits,
     });
+  };
+
+  const handleDelete = async () => {
+    if (!user || !selectedHouseholdId || !item.id) return;
+    
+    onDelete?.(item);
   };
 
   return (
@@ -167,13 +181,44 @@ export const ItemEditor = ({ item, onSave, onCancel }: ItemEditorProps) => {
           </div>
         </div>
         
-        <div className="flex justify-end gap-2 pt-4 border-t">
-          <Button variant="outline" onClick={onCancel}>
-            {t('buttons.cancel')}
-          </Button>
-          <Button onClick={handleSave} disabled={!name.trim()}>
-            {item.id ? t('buttons.update') : t('buttons.create')}
-          </Button>
+        <div className="flex justify-between pt-4 border-t">
+          <div>
+            {item.id && item.householdId && isCurrentUserAdmin() && onDelete && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="sm">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    {t('buttons.delete')}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{t('itemSelector.deleteItem')}</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {t('itemSelector.deleteItemConfirmation', { item: getItemDisplayName(item, t) })}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{t('buttons.cancel')}</AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={handleDelete}
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      {t('buttons.delete')}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={onCancel}>
+              {t('buttons.cancel')}
+            </Button>
+            <Button onClick={handleSave} disabled={!name.trim()}>
+              {item.id ? t('buttons.update') : t('buttons.create')}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

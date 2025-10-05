@@ -165,8 +165,8 @@ const Auth = () => {
 
         <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl">
           <CardHeader className="text-center space-y-4">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-500 to-orange-500 rounded-2xl flex items-center justify-center">
-              <span className="text-2xl">🍃</span>
+            <div className="mx-auto w-16 h-16 flex items-center justify-center">
+              <img src="/favicon.ico" alt="MyFridge" className="w-16 h-16" />
             </div>
             <CardTitle className="text-2xl">{t('pages.auth.welcomeToMyFridge')}</CardTitle>
             <CardDescription>

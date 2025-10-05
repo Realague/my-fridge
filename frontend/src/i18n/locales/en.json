@@ -142,7 +142,9 @@
     "allItemsAlreadySelected": "All available items have already been selected for this recipe.",
     "household": "Household",
     "global": "Global",
-    "searching": "Searching..."
+    "searching": "Searching...",
+    "deleteItem": "Delete item",
+    "deleteItemConfirmation": "Are you sure you want to delete {{item}}, this action cannot be undone."
   },
   "ingredientInput": {
     "addIngredient": "Add Ingredient",

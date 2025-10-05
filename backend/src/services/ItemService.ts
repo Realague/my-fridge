@@ -2,12 +2,15 @@ import { ItemRepository } from '../repositories/ItemRepository';
 import { CreateItemDto, UpdateItemDto, GetItemsQueryDto, ItemDto } from '../types/ItemDto';
 import { ApiResponse } from '../types/ApiResponse';
 import { Item } from '../models';
+import { ItemCascadeDeletionService } from './ItemCascadeDeletionService';
 
 export class ItemService {
   private itemRepository: ItemRepository;
+  private cascadeDeletionService: ItemCascadeDeletionService;
 
   constructor() {
     this.itemRepository = new ItemRepository();
+    this.cascadeDeletionService = new ItemCascadeDeletionService();
   }
 
   async createItem(itemData: CreateItemDto): Promise<ApiResponse<ItemDto>> {
@@ -171,7 +174,7 @@ export class ItemService {
     }
   }
 
-  async deleteItem(id: string, householdId?: string): Promise<ApiResponse<void>> {
+  async deleteItem(id: string, householdId?: string, userId?: string): Promise<ApiResponse<void>> {
     try {
       // Check if item belongs to household before deleting
       if (householdId) {
@@ -182,20 +185,28 @@ export class ItemService {
             error: 'Item not found in this household',
           };
         }
+
+        // Check admin permissions for household items
+        if (userId) {
+          const { HouseholdRepository } = await import('../repositories/HouseholdRepository');
+          const householdRepository = new HouseholdRepository();
+          const isAdmin = await householdRepository.isAdmin(householdId, userId);
+          
+          if (!isAdmin) {
+            return {
+              success: false,
+              error: 'Access denied. Admin privileges required to delete items.',
+            };
+          }
+        }
       }
 
-      const deleted = await this.itemRepository.delete(id);
-      
-      if (!deleted) {
-        return {
-          success: false,
-          error: 'Item not found',
-        };
-      }
+      // Use cascade deletion to delete the item and all related entities
+      await this.cascadeDeletionService.deleteItemCascade(id);
 
       return {
         success: true,
-        message: 'Item deleted successfully',
+        message: 'Item and all related data deleted successfully',
       };
     } catch (error) {
       console.error('Error deleting item:', error);

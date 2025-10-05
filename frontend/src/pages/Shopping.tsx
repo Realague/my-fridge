@@ -248,17 +248,6 @@ const Shopping = () => {
   const totalItems = getTotalItems();
   const completedCount = getCompletedCount();
 
-  // Debug logging
-  console.log('🛒 Shopping Page Debug:', {
-    allItems: items,
-    pendingItems,
-    completedItems,
-    totalItems,
-    completedCount,
-    selectedHouseholdId,
-    loading
-  });
-
   // Get unique categories from items
   const categories = ['all', ...Array.from(new Set(items.map(item => item.item?.category).filter(Boolean)))];
 

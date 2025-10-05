@@ -418,7 +418,7 @@ const Shopping = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* Storage Dialog */}
       <Dialog open={showStorageDialog} onOpenChange={setShowStorageDialog}>
         <DialogContent className="sm:max-w-md">

@@ -62,15 +62,15 @@ const Household = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-background pb-24">
       {/* Header */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-40">
+      <div className="bg-card/90 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
               <Home className="h-5 w-5" />
             </Button>
-            <h1 className="text-xl font-bold text-gray-900">{t('pages.household.yourHouseholds')}</h1>
+            <h1 className="text-xl font-bold text-foreground">{t('pages.household.yourHouseholds')}</h1>
             <div className="w-9" /> {/* Spacer */}
           </div>
         </div>

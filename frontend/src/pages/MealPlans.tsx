@@ -182,7 +182,7 @@ const MealPlans = () => {
   // Show message if no household is selected
   if (!selectedHouseholdId) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
+      <div className="min-h-screen bg-background pb-20">
         <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
           <div className="container mx-auto px-4 py-4">
             <h1 className="text-2xl font-bold text-gray-900">{t('pages.mealPlans.title')}</h1>
@@ -203,7 +203,7 @@ const MealPlans = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">

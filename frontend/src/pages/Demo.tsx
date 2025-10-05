@@ -7,7 +7,7 @@ const Demo = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <Button
           variant="ghost"

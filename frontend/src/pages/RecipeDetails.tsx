@@ -55,7 +55,7 @@ const RecipeDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
+      <div className="min-h-screen bg-background">
         <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
@@ -84,7 +84,7 @@ const RecipeDetails = () => {
 
   if (!recipe) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('pages.recipes.recipeNotFound')}</h1>
           <Button onClick={() => navigate('/recipes')}>
@@ -145,7 +145,7 @@ const RecipeDetails = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
+    <div className="min-h-screen bg-background">
       {/* Add Meal Plan Dialog */}
       <AddMealPlanDialog
         isOpen={showMealPlanDialog}

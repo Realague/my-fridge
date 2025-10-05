@@ -13,11 +13,13 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from '@/stores/authStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from 'next-themes';
 
 const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t, i18n } = useTranslation();
+  const { theme, setTheme } = useTheme();
   
   // Protected route hook handles auth and household checks
   useProtectedRoute();
@@ -228,14 +230,18 @@ const Settings = () => {
                   <p className="text-xs text-gray-500">{t('pages.settings.appearanceSettings.languageDescription')}</p>
                 </div>
                 
-                <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50/70">
+                <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
                   <Label htmlFor="dark-mode" className="flex flex-col space-y-1 cursor-pointer flex-1">
                      <span className="font-medium">{t('pages.settings.appearanceSettings.darkMode')}</span>
-                     <span className="font-normal text-sm text-gray-500">
+                     <span className="font-normal text-sm text-muted-foreground">
                        {t('pages.settings.appearanceSettings.darkModeDescription')}
                      </span>
                   </Label>
-                  <Switch id="dark-mode" />
+                  <Switch 
+                    id="dark-mode" 
+                    checked={theme === 'dark'}
+                    onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                  />
                 </div>
               </CardContent>
             </Card>

@@ -16,16 +16,11 @@ import { CreateRecipeIngredientDto, RecipeDifficulty } from '@/services/recipeSe
 import { useToast } from '@/hooks/use-toast';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
 import { useTranslation } from 'react-i18next';
+import { Item } from '@/services/itemService';
 
 interface RecipeIngredientWithId extends CreateRecipeIngredientDto {
   id: string;
-  item?: {
-    id: string;
-    name: string;
-    category: string;
-    defaultUnit: string;
-    availableUnits: string[];
-  };
+  item?: Item;
 }
 
 interface RecipeFormData {

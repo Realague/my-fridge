@@ -79,21 +79,21 @@ const Household = () => {
       {/* Content */}
       <div className="container mx-auto px-4 py-6 space-y-6">
         
-        <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle>{t('pages.household.switchOrManage')}</CardTitle>
             <CardDescription>{t('pages.household.switchOrManageDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
                          {households.map((h) => (
-               <div key={h.id} className="flex items-center justify-between p-3 bg-gray-50/70 rounded-lg">
+               <div key={h.id} className="flex items-center justify-between p-3 bg-muted/70 rounded-lg">
                  <div className="flex-1 min-w-0">
-                   <p className="font-semibold text-gray-900">{h.name}</p>
-                   <p className="text-sm text-gray-500">{h.memberCount} {t('pages.household.members')} • {h.userRole}</p>
+                   <p className="font-semibold text-foreground">{h.name}</p>
+                   <p className="text-sm text-muted-foreground">{h.memberCount} {t('pages.household.members')} • {h.userRole}</p>
                  </div>
                  <div className="flex items-center gap-2">
                    {currentUser?.selectedHouseholdId === h.id ? (
-                      <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
+                      <Badge variant="default" className="bg-primary/10 text-primary border-primary/20">
                         <CheckCircle className="h-3 w-3 mr-1.5" />
                         {t('pages.household.active')}
                       </Badge>
@@ -107,7 +107,7 @@ const Household = () => {
                        {switchingHousehold === h.id ? t('pages.household.switching') : t('pages.household.switch')}
                      </Button>
                    )}
-                     <Button variant="ghost" size="icon" className="h-9 w-9 text-gray-500 hover:text-gray-800 hover:bg-gray-100" onClick={() => handleManage(h.id)}>
+                     <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-muted" onClick={() => handleManage(h.id)}>
                        <span className="sr-only">{t('pages.household.manage')}</span>
                        <ArrowRight className="h-4 w-4" />
                     </Button>
@@ -117,7 +117,7 @@ const Household = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle>{t('pages.household.joinOrCreate')}</CardTitle>
           </CardHeader>

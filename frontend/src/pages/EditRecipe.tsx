@@ -291,7 +291,7 @@ const EditRecipe = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Basic Info */}
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/80 backdrop-blur-sm border border-border/50 shadow-lg">
               <CardHeader>
                 <CardTitle>{t('pages.recipes.basicInformation')}</CardTitle>
                 <CardDescription>{t('pages.recipes.basicInformationDescription')}</CardDescription>
@@ -422,7 +422,7 @@ const EditRecipe = () => {
             />
 
             {/* Instructions */}
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/80 backdrop-blur-sm border border-border/50 shadow-lg">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -496,7 +496,7 @@ const EditRecipe = () => {
             </Card>
 
             {/* Tags */}
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/80 backdrop-blur-sm border border-border/50 shadow-lg">
               <CardHeader>
                 <CardTitle>{t('pages.recipes.tags')}</CardTitle>
                 <CardDescription>{t('pages.recipes.tagsDescription')}</CardDescription>

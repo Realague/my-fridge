@@ -59,7 +59,7 @@ const RecipeCookingMode = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
@@ -74,7 +74,7 @@ const RecipeCookingMode = () => {
           <h1 className="text-2xl font-bold text-foreground mb-4">
             {error ? 'Error loading recipe' : 'Recipe not found'}
           </h1>
-          {error && <p className="text-red-600 mb-4">{error}</p>}
+          {error && <p className="text-destructive mb-4">{error}</p>}
           <Button onClick={() => navigate('/recipes')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('pages.recipes.backToRecipes')}
@@ -172,7 +172,7 @@ const RecipeCookingMode = () => {
               {t('pages.recipes.exitCooking')}
             </Button>
             <div className="flex items-center gap-2">
-              <ChefHat className="h-5 w-5 text-green-600" />
+              <ChefHat className="h-5 w-5 text-primary" />
               <span className="font-medium text-foreground">{t('pages.recipes.cookingMode')}</span>
             </div>
           </div>
@@ -196,12 +196,12 @@ const RecipeCookingMode = () => {
 
         {/* Timer Controls */}
         {timer > 0 && (
-          <Card className="bg-orange-50 border-orange-200 mb-6">
+          <Card className="bg-accent/50 border-accent mb-6">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-orange-600" />
-                  <span className="text-2xl font-bold text-orange-800">{formatTime(timer)}</span>
+                  <Clock className="h-5 w-5 text-accent-foreground" />
+                  <span className="text-2xl font-bold text-accent-foreground">{formatTime(timer)}</span>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" onClick={toggleTimer}>
@@ -261,20 +261,20 @@ const RecipeCookingMode = () => {
                 {/* Ingredients needed for this step */}
                 {relevantIngredients.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-sm font-semibold text-green-700 mb-3 uppercase tracking-wide">
+                    <h3 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">
                       {t('pages.recipes.ingredientsForThisStep')}
                     </h3>
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-2">
+                    <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 space-y-2">
                       {relevantIngredients.map((ingredientIndex) => {
                         const ingredient = recipe.ingredients[ingredientIndex];
                         return (
                           <div key={ingredient.id} className="flex items-center gap-2 text-sm">
-                            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                            <span className="font-medium text-green-800">
+                            <span className="w-2 h-2 bg-primary rounded-full"></span>
+                            <span className="font-medium text-foreground">
                               {ingredient.quantity} {ingredient.unit} {getItemDisplayName(ingredient?.item as Item, t)}
                             </span>
                             {ingredient.notes && (
-                              <span className="text-green-600 italic">({ingredient.notes})</span>
+                              <span className="text-muted-foreground italic">({ingredient.notes})</span>
                             )}
                           </div>
                         );
@@ -335,7 +335,7 @@ const RecipeCookingMode = () => {
                         <div 
                           key={ingredient.id} 
                           className={`flex items-start gap-2 p-2 rounded ${
-                            isRelevant ? 'bg-green-50 border border-green-200' : ''
+                            isRelevant ? 'bg-primary/10 border border-primary/20' : ''
                           }`}
                         >
                           <Checkbox
@@ -344,11 +344,11 @@ const RecipeCookingMode = () => {
                             className="mt-1"
                           />
                           <div className={`flex-1 text-sm ${checkedIngredients[index] ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
-                            <div className={`font-medium ${isRelevant ? 'text-green-800' : ''}`}>
+                            <div className={`font-medium ${isRelevant ? 'text-primary' : ''}`}>
                               {ingredient.quantity} {ingredient.unit} {getItemDisplayName(ingredient?.item as Item, t)}
                             </div>
                             {ingredient.notes && (
-                              <div className={`text-xs ${isRelevant ? 'text-green-600' : 'text-muted-foreground'}`}>
+                              <div className={`text-xs ${isRelevant ? 'text-primary' : 'text-muted-foreground'}`}>
                                 {ingredient.notes}
                               </div>
                             )}
@@ -390,11 +390,11 @@ const RecipeCookingMode = () => {
 
         {/* Completion Message */}
         {currentStep === recipe.instructions.length - 1 && completedSteps[currentStep] && (
-          <Card className="bg-green-50 border-green-200 mt-6">
+          <Card className="bg-primary/10 border-primary/20 mt-6">
             <CardContent className="p-6 text-center">
-              <ChefHat className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-green-800 mb-2">{t('pages.recipes.congratulations')}</h2>
-              <p className="text-green-700 mb-4">{t('pages.recipes.congratulationsDescription', { recipeTitle: recipe.title })}</p>
+              <ChefHat className="h-12 w-12 text-primary mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-foreground mb-2">{t('pages.recipes.congratulations')}</h2>
+              <p className="text-muted-foreground mb-4">{t('pages.recipes.congratulationsDescription', { recipeTitle: recipe.title })}</p>
               <Button onClick={() => navigate(`/recipes/${recipe.id}`)}>
                 {t('pages.recipes.backToRecipes')}
               </Button>

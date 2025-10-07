@@ -312,6 +312,7 @@ export const OnboardingStorageSelector = ({
                 {t('buttons.cancel')}
               </Button>
               <Button
+                variant="green"
                 onClick={handleAddArea}
                 disabled={!areaName.trim()}
                 className="flex-1"

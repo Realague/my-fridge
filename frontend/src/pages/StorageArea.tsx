@@ -514,13 +514,13 @@ const StorageArea = () => {
               <StorageItemCard key={storageItem.id} storageItem={storageItem} />
             ))
           ) : (
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-white/10 backdrop-blur-sm border-0 shadow-lg">
               <CardContent className="p-8 text-center">
                 <div className="text-4xl mb-4">{area.emoji}</div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-lg font-medium text-white mb-2">
                   {t('storageArea.emptyArea', { name: area.name })}
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-white mb-4">
                   {t('storageArea.startAddingItems')}
                 </p>
                 <Button onClick={() => setShowAddForm(true)} variant="green">

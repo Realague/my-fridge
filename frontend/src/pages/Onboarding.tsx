@@ -136,8 +136,9 @@ const Onboarding = () => {
 
             <CardContent className="space-y-4">
               <Button
+                variant="green"
                 onClick={() => setStep(2)}
-                className="w-full h-16 bg-primary hover:bg-primary/90 text-primary-foreground text-left justify-start px-6"
+                className="w-full h-16 text-left justify-start px-6"
               >
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-background/20 rounded-lg flex items-center justify-center mr-4">
@@ -203,6 +204,7 @@ const Onboarding = () => {
                   {t('buttons.back')}
                 </Button>
                 <Button
+                  variant="green"
                   onClick={() => setStep(3)}
                   disabled={!householdName.trim()}
                   className="flex-1"
@@ -242,6 +244,7 @@ const Onboarding = () => {
                   {t('buttons.back')}
                 </Button>
                 <Button
+                  variant="green"
                   onClick={handleCreateHousehold}
                   className="flex-1"
                 >
@@ -287,6 +290,7 @@ const Onboarding = () => {
                   {t('buttons.back')}
                 </Button>
                 <Button
+                  variant="green"
                   onClick={handleJoinHousehold}
                   disabled={joinCode.length !== 8}
                   className="flex-1"

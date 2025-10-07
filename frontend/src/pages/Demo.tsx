@@ -212,7 +212,7 @@ const Demo = () => {
           <Button
             onClick={() => navigate('/auth')}
             size="lg"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-xl"
+            className="bg-primary/10 text-primary hover:bg-primary/15 px-8 py-3 rounded-xl"
           >
             Start Using MyFridge <ArrowRight className="ml-2 h-5 w-5" />
           </Button>

@@ -161,7 +161,7 @@ export const RecipeSelector = ({
       {isOpen && createPortal(
         <div
           ref={dropdownRef}
-          className="fixed z-[99999] bg-white border border-gray-200 rounded-md shadow-lg max-h-64 overflow-y-auto"
+          className="fixed z-[100] bg-card border border-border rounded-md shadow-lg max-h-64 overflow-y-auto"
           style={{
             top: dropdownPosition.top,
             left: dropdownPosition.left,
@@ -171,7 +171,7 @@ export const RecipeSelector = ({
           }}
         >
           {loading && (
-            <div className="flex items-center justify-center p-4 text-sm text-gray-500 bg-white">
+            <div className="flex items-center justify-center p-4 text-sm text-gray-500 bg-primary/10">
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
               {t('recipeSelector.loadingRecipes')}
             </div>
@@ -184,7 +184,7 @@ export const RecipeSelector = ({
                   key={recipe.id}
                   type="button"
                   onClick={() => handleRecipeSelect(recipe)}
-                  className="group flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer rounded transition-colors w-full text-left"
+                  className="group flex items-center justify-between p-2 hover:bg-primary/5 cursor-pointer rounded transition-colors w-full text-left"
                 >
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <div className="flex-1 min-w-0">

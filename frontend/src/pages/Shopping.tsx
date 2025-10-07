@@ -331,11 +331,12 @@ const Shopping = () => {
             {isEditing && (
               <div className="flex gap-1 flex-shrink-0 md:hidden">
                 <Button
+                  variant="outline"
                   size="sm"
                   onClick={handleSave}
                   className="h-8 px-2"
                 >
-                  <Save className="h-3 w-3" />
+                  <Save className="h-3 w-3"/>
                 </Button>
                 <Button
                   variant="outline"
@@ -376,6 +377,7 @@ const Shopping = () => {
           {isEditing && (
             <div className="hidden md:flex gap-1">
               <Button
+                variant="outline"
                 size="sm"
                 onClick={handleSave}
                 className="h-8 px-2"
@@ -397,7 +399,7 @@ const Shopping = () => {
               variant="ghost"
               size="sm"
               onClick={() => startEditingItem(shoppingItem.id)}
-              className="h-8 w-8 p-0 opacity-70 hover:opacity-100 transition-opacity"
+              className="h-8 w-8 p-0 opacity-70 hover:opacity-100 transition-opacity hover:bg-primary/10"
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -407,7 +409,7 @@ const Shopping = () => {
               variant="ghost"
               size="sm"
               onClick={() => deleteItemHandler(shoppingItem.id)}
-              className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+              className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 hover:bg-primary/10"
             >
               <Trash2 className="h-4 w-4" />
             </Button>

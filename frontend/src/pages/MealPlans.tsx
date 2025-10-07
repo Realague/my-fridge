@@ -211,7 +211,7 @@ const MealPlans = () => {
             <h1 className={`font-bold text-foreground ${isMobile ? 'text-xl text-center' : 'text-2xl'}`}>{t('pages.mealPlans.title')}</h1>
             <Button
               onClick={() => generateShoppingList()}
-              className={`bg-green-600 hover:bg-green-700 touch-friendly ${isMobile ? 'w-full' : ''}`}
+              className={`bg-green-600 hover:bg-green-700 touch-friendly text-white ${isMobile ? 'w-full' : ''}`}
             >
               <ShoppingCart className="h-5 w-5 mr-2" />
               {t('pages.mealPlans.generateShoppingList')}
@@ -371,8 +371,8 @@ const MealPlans = () => {
                           className="cursor-pointer hover:shadow-md transition-shadow border-0 bg-gradient-to-r from-green-50 to-orange-50 group relative"
                           onClick={() => handleViewMealPlan(mealPlan)}
                         >
-                          <CardContent className="p-2">
-                            <div className="text-xs font-medium text-foreground truncate mb-1">
+                          <CardContent className="p-2 bg-primary/10">
+                            <div className="text-xs font-medium text-foreground truncate mb-1 ">
                               {mealPlan.recipe?.title || 'Recipe not found'}
                             </div>
                             <div className="flex items-center justify-between">

@@ -144,13 +144,13 @@ const Dashboard = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup value={selectedHouseholdId || ''} onValueChange={handleSwitchHousehold}>
                   {households.map((h) => (
-                    <DropdownMenuRadioItem key={h.id} value={h.id}>
+                    <DropdownMenuRadioItem key={h.id} value={h.id} className="hover:bg-primary/10">
                       {h.name}
                     </DropdownMenuRadioItem>
                   ))}
                 </DropdownMenuRadioGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/household')}>
+                <DropdownMenuItem onClick={() => navigate('/household')} className="hover:bg-primary/10">
                   <Users className="mr-2 h-4 w-4" />
                   <span>{t('pages.dashboard.manageHouseholds')}</span>
                 </DropdownMenuItem>
@@ -206,7 +206,7 @@ const Dashboard = () => {
               <Button
                 variant="outline"
                 size="sm"
-                className="border-green-600 text-green-600 hover:bg-green-50"
+                className="border-green-600 text-green-600 hover:bg-primary/10"
                 onClick={() => navigate(`/household/${getCurrentHousehold()?.id}`)}
               >
                 <List className="h-4 w-4 mr-2" />

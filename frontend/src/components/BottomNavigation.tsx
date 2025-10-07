@@ -33,7 +33,7 @@ const BottomNavigation = ({ currentPage }: BottomNavigationProps) => {
                 className={cn(
                   "flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-all duration-200",
                   isActive
-                    ? "text-green-600 bg-green-50"
+                    ? "text-green-600 bg-green-50 bg-primary/10"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )}
               >

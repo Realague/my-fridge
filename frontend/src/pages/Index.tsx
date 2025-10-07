@@ -57,7 +57,7 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-xl"
+              className="bg-primary/10 text-primary hover:bg-primary/15 px-8 py-3 rounded-xl"
               onClick={() => navigate('/auth')}
             >
               {t('pages.index.getStarted')} <ArrowRight className="ml-2 h-5 w-5" />
@@ -65,7 +65,7 @@ const Index = () => {
             <Button 
               variant="outline" 
               size="lg"
-              className="border-primary text-primary hover:bg-primary/10 px-8 py-3 rounded-xl"
+              className="border-primary/10 text-primary hover:bg-primary/10 px-8 py-3 rounded-xl"
               onClick={() => navigate('/demo')}
             >
               {t('pages.index.seeDemo')}

@@ -582,7 +582,7 @@ export const ItemSelector = ({
                         variant="ghost"
                         size="sm"
                         onClick={(e) => handleEditItem(item, e)}
-                        className="h-6 w-6 p-0 opacity-30 group-hover:opacity-100 hover:bg-muted transition-opacity"
+                        className="h-6 w-6 p-0 hover:bg-muted transition-opacity"
                         title="Edit item"
                       >
                         <Edit className="h-3 w-3" />
@@ -593,7 +593,7 @@ export const ItemSelector = ({
                           variant="ghost"
                           size="sm"
                           onClick={(e) => confirmDeleteItem(item, e)}
-                          className="h-6 w-6 p-0 opacity-30 group-hover:opacity-100 hover:bg-destructive/10 transition-opacity"
+                          className="h-6 w-6 p-0 hover:bg-destructive/10 transition-opacity text-destructive/100"
                           title="Delete item"
                         >
                           <Trash2 className="h-3 w-3" />

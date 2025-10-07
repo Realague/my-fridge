@@ -192,7 +192,7 @@ const MealPlans = () => {
           <div className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-lg border-0 p-8 text-center">
             <h2 className="text-xl font-semibold text-foreground mb-4">{t('pages.auth.noHouseholdSelected')}</h2>
             <p className="text-muted-foreground mb-6">{t('pages.auth.selectHouseholdFirst')} meal plans.</p>
-            <Button onClick={() => window.location.href = '/household'} className="bg-green-600 hover:bg-green-700">
+            <Button onClick={() => window.location.href = '/household'} className="bg-primary hover:bg-primary/90 text-primary-foreground">
               {t('pages.auth.goToHouseholdSettings')}
             </Button>
           </div>
@@ -211,7 +211,7 @@ const MealPlans = () => {
             <h1 className={`font-bold text-foreground ${isMobile ? 'text-xl text-center' : 'text-2xl'}`}>{t('pages.mealPlans.title')}</h1>
             <Button
               onClick={() => generateShoppingList()}
-              className={`bg-green-600 hover:bg-green-700 touch-friendly text-white ${isMobile ? 'w-full' : ''}`}
+              className={`bg-primary hover:bg-primary/90 text-primary-foreground touch-friendly ${isMobile ? 'w-full' : ''}`}
             >
               <ShoppingCart className="h-5 w-5 mr-2" />
               {t('pages.mealPlans.generateShoppingList')}
@@ -266,7 +266,7 @@ const MealPlans = () => {
                     className={`
                       border border-border 
                       ${new Date() > new Date(day) && !isToday(day) ? 'opacity-50 bg-muted' : 'bg-card'}
-                      ${isToday(day) ? 'ring-2 ring-green-500 bg-green-50/50' : ''}
+                      ${isToday(day) ? 'ring-2 ring-primary bg-primary/5' : ''}
                     `}
                   >
                     <CardContent className="p-4">
@@ -285,7 +285,7 @@ const MealPlans = () => {
                           size="sm"
                           disabled={new Date() > new Date(day) && !isToday(day)}
                           onClick={() => handleAddMeal(day)}
-                          className="touch-friendly bg-green-50 hover:bg-green-100 border-green-200"
+                          className="touch-friendly bg-primary/10 hover:bg-primary/20 border-primary/20"
                         >
                           <Plus className="h-4 w-4 mr-2" />
                           {t('pages.mealPlans.addMeal')}
@@ -302,7 +302,7 @@ const MealPlans = () => {
                           getMealPlansForDay(day).map((mealPlan) => (
                             <Card
                               key={mealPlan.id}
-                              className="cursor-pointer hover:shadow-md transition-all border-0 bg-gradient-to-r from-green-50 to-orange-50 group"
+                              className="cursor-pointer hover:shadow-md transition-all border-0 bg-primary/5 group"
                               onClick={() => handleViewMealPlan(mealPlan)}
                             >
                               <CardContent className="p-4">
@@ -329,7 +329,7 @@ const MealPlans = () => {
                                     variant="ghost"
                                     size="sm"
                                     onClick={(e) => handleQuickDeleteMealPlan(e, mealPlan.id)}
-                                    className="h-8 w-8 p-0 opacity-60 group-hover:opacity-100 transition-opacity bg-red-50 hover:bg-red-100 text-red-600 touch-friendly"
+                                    className="h-8 w-8 p-0 opacity-60 group-hover:opacity-100 transition-opacity bg-destructive/10 hover:bg-destructive/20 text-destructive touch-friendly"
                                     disabled={deletingMealPlan}
                                   >
                                     <Trash2 className="h-4 w-4" />
@@ -356,7 +356,7 @@ const MealPlans = () => {
                       className={`
                         min-h-[120px] p-2 border border-border rounded-lg
                         ${new Date() > new Date(day) && !isToday(day) ? 'opacity-50 bg-muted' : 'bg-card'}
-                        ${isToday(day) ? 'ring-2 ring-green-500' : ''}
+                        ${isToday(day) ? 'ring-2 ring-primary' : ''}
                       `}
                     >
                     <div className="text-sm font-medium text-foreground mb-2">
@@ -368,7 +368,7 @@ const MealPlans = () => {
                       {getMealPlansForDay(day).map((mealPlan) => (
                         <Card
                           key={mealPlan.id}
-                          className="cursor-pointer hover:shadow-md transition-shadow border-0 bg-gradient-to-r from-green-50 to-orange-50 group relative"
+                          className="cursor-pointer hover:shadow-md transition-shadow border-0 bg-primary/5 group relative"
                           onClick={() => handleViewMealPlan(mealPlan)}
                         >
                           <CardContent className="p-2 bg-primary/10">
@@ -390,7 +390,7 @@ const MealPlans = () => {
                             variant="ghost"
                             size="sm"
                             onClick={(e) => handleQuickDeleteMealPlan(e, mealPlan.id)}
-                            className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-red-50 hover:bg-red-100 text-red-600"
+                            className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive/10 hover:bg-destructive/20 text-destructive"
                             disabled={deletingMealPlan}
                           >
                             <Trash2 className="h-3 w-3" />
@@ -405,7 +405,7 @@ const MealPlans = () => {
                       size="sm"
                       disabled={new Date() > new Date(day) && !isToday(day)}
                       onClick={() => handleAddMeal(day)}
-                      className="w-full mt-2 text-xs text-muted-foreground hover:text-green-600 hover:bg-green-50"
+                      className="w-full mt-2 text-xs text-muted-foreground hover:text-primary hover:bg-primary/10"
                     >
                       <Plus className="h-3 w-3 mr-1" />
                       {t('pages.mealPlans.addMeal')}
@@ -435,7 +435,7 @@ const MealPlans = () => {
                     {viewingMealPlan.recipe ? (
                       <Button
                         variant="link"
-                        className="p-0 h-auto text-left text-lg font-semibold text-foreground hover:text-green-600"
+                        className="p-0 h-auto text-left text-lg font-semibold text-foreground hover:text-primary"
                         onClick={() => handleViewRecipe(viewingMealPlan.recipe.id)}
                       >
                         {viewingMealPlan.recipe.title}
@@ -544,7 +544,7 @@ const MealPlans = () => {
               <Button 
                 onClick={handleGenerateShoppingList}
                 disabled={!shoppingListDateRange.from || !shoppingListDateRange.to}
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 {t('pages.mealPlans.generateShoppingList')}
               </Button>

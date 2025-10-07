@@ -146,14 +146,15 @@ const HouseholdDetails = () => {
 
       {/* Content */}
       <div className="container mx-auto px-4 py-6 space-y-6 pb-24">
-        <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/90 backdrop-blur-sm border border-border/50 shadow-lg">
           <CardHeader>
             <CardTitle>{householdDetails?.name}</CardTitle>
             <CardDescription>{members.length} {t('pages.household.members')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <Button 
-              className="w-full touch-friendly bg-primary text-primary-foreground hover:bg-primary/90"
+              variant="green"
+              className="w-full touch-friendly"
               onClick={handleInviteMember}
             >
               <UserPlus className="h-4 w-4 mr-2" />
@@ -188,7 +189,7 @@ const HouseholdDetails = () => {
         {/* Storage Management Section - Always visible for admins */}
         {isAdmin && <StorageAreaManager />}
 
-        <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/90 backdrop-blur-sm border border-border/50 shadow-lg">
           <CardHeader>
             <CardTitle>{t('pages.household.manageMembers')}</CardTitle>
           </CardHeader>
@@ -197,7 +198,7 @@ const HouseholdDetails = () => {
               <div key={member.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-xl border border-border">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <Avatar className="h-12 w-12 flex-shrink-0">
-                    <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                    <AvatarFallback className="bg-accent text-accent-foreground font-semibold">
                       {(member.firstName?.charAt(0) || '') + (member.lastName?.charAt(0) || '')}
                     </AvatarFallback>
                   </Avatar>

@@ -147,7 +147,7 @@ export const AddMealPlanDialog = ({
         <div className="space-y-4">
         {/* Show preselected recipe if it exists or show recipe selector */}
           {preselectedRecipe ? (
-            <div className="bg-muted p-3 rounded-lg">
+            <div className="bg-gray-50 p-3 rounded-lg bg-primary/10">
               <div className="font-medium">{preselectedRecipe.title}</div>
               <div className="text-sm text-muted-foreground">
                 {t('addMealPlan.defaultServings', { servings: preselectedRecipe.servings })} • {(preselectedRecipe.prepTime || 0) + (preselectedRecipe.cookTime || 0)} min
@@ -218,7 +218,7 @@ export const AddMealPlanDialog = ({
           <Button 
             onClick={handleSaveMeal}
             disabled={!selectedRecipe || !selectedMealType || savingMealPlan}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            className="bg-green-600 hover:bg-green-700 text-white"
           >
             {savingMealPlan ? t('forms.adding') : t('pages.mealPlans.addMeal')}
           </Button>

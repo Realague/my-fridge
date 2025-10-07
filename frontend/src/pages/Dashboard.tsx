@@ -204,9 +204,8 @@ const Dashboard = () => {
             <div className="flex gap-2">
               <AddStorageAreaDialog />
               <Button
-                variant="outline"
+                variant="green"
                 size="sm"
-                className="border-green-600 text-green-600 hover:bg-primary/10"
                 onClick={() => navigate(`/household/${getCurrentHousehold()?.id}`)}
               >
                 <List className="h-4 w-4 mr-2" />

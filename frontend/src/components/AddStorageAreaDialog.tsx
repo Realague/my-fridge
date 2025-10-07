@@ -84,9 +84,8 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
       <DialogTrigger asChild>
         {trigger || (
           <Button
-            variant="outline"
+            variant="green"
             size="sm"
-            className="border-green-600 text-green-600 hover:bg-primary/10"
           >
             <Plus className="h-4 w-4 mr-2" />
             {t('storageArea.addArea')}
@@ -157,8 +156,8 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
             </Button>
             <Button
               type="submit"
+              variant="green"
               disabled={!name.trim() || !type || loading}
-              className="bg-green-600 hover:bg-green-700"
             >
               {loading ? t('storageArea.creating') : t('storageArea.createArea')}
             </Button>

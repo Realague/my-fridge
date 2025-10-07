@@ -210,8 +210,9 @@ const MealPlans = () => {
           <div className={`flex items-center ${isMobile ? 'flex-col gap-3' : 'justify-between'}`}>
             <h1 className={`font-bold text-foreground ${isMobile ? 'text-xl text-center' : 'text-2xl'}`}>{t('pages.mealPlans.title')}</h1>
             <Button
+              variant="green"
               onClick={() => generateShoppingList()}
-              className={`bg-primary hover:bg-primary/90 text-primary-foreground touch-friendly ${isMobile ? 'w-full' : ''}`}
+              className={`touch-friendly ${isMobile ? 'w-full' : ''}`}
             >
               <ShoppingCart className="h-5 w-5 mr-2" />
               {t('pages.mealPlans.generateShoppingList')}

@@ -380,7 +380,8 @@ const StorageArea = () => {
             </div>
             <Button
               onClick={() => setShowAddForm(!showAddForm)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 touch-friendly"
+              variant="green"
             >
               <Plus className="h-4 w-4" />
               {t('storageArea.addItem')}
@@ -522,7 +523,7 @@ const StorageArea = () => {
                 <p className="text-gray-600 mb-4">
                   {t('storageArea.startAddingItems')}
                 </p>
-                <Button onClick={() => setShowAddForm(true)}>
+                <Button onClick={() => setShowAddForm(true)} variant="green">
                   <Plus className="h-4 w-4 mr-2" />
                   {t('storageArea.addFirstItem')}
                 </Button>

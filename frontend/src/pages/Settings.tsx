@@ -162,6 +162,7 @@ const Settings = () => {
                 </div>
                 <Button 
                   className="w-full sm:w-auto" 
+                  variant="green"
                   onClick={handleSaveChanges}
                   disabled={isUpdating}
                 >

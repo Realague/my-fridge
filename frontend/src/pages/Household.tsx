@@ -122,7 +122,7 @@ const Household = () => {
             <CardTitle>{t('pages.household.joinOrCreate')}</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 h-auto py-3" onClick={handleCreateNew}>
+            <Button size="lg" variant="green" className="h-auto py-3" onClick={handleCreateNew}>
               <Plus className="h-4 w-4 mr-2" />
               {t('pages.household.createNew')}
             </Button>

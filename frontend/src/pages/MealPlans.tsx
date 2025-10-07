@@ -543,12 +543,12 @@ const MealPlans = () => {
                 {t('buttons.cancel')}
               </Button>
               <Button 
+                variant="green"
                 onClick={handleGenerateShoppingList}
                 disabled={!shoppingListDateRange.from || !shoppingListDateRange.to}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 {t('pages.mealPlans.generateShoppingList')}
-              </Button>
+              </Button> 
             </DialogFooter>
           </DialogContent>
         </Dialog>

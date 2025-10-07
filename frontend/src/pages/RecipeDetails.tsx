@@ -318,14 +318,14 @@ const RecipeDetails = () => {
         </Card>
 
         {/* Delete Button */}
-        <Card className="bg-red-50 border-red-200">
+        <Card className="bg-primary/10 border-red-600">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-medium text-red-900">{t('pages.recipes.deleteRecipe')}</h3>
-                <p className="text-sm text-red-700">{t('pages.recipes.deleteWarning')}</p>
+                <h3 className="font-medium">{t('pages.recipes.deleteRecipe')}</h3>
+                <p className="text-sm">{t('pages.recipes.deleteWarning')}</p>
               </div>
-              <Button variant="destructive" onClick={handleDelete}>
+              <Button variant="delete" onClick={handleDelete}>
                 {t('pages.recipes.deleteRecipe')}
               </Button>
             </div>

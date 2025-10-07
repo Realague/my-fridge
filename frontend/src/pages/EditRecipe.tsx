@@ -429,7 +429,7 @@ const EditRecipe = () => {
                     <CardTitle>{t('pages.recipes.instructions')}</CardTitle>
                     <CardDescription>{t('pages.recipes.instructionsDescription')}</CardDescription>
                   </div>
-                  <Button type="button" onClick={addInstruction} size="sm">
+                  <Button variant="outline" type="button" onClick={addInstruction} size="sm">
                     <Plus className="h-4 w-4 mr-1" />
                     {t('buttons.add')}
                   </Button>
@@ -510,7 +510,7 @@ const EditRecipe = () => {
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                     className="flex-1"
                   />
-                  <Button type="button" onClick={addTag}>{t('pages.recipes.addTag')}</Button>
+                  <Button variant="outline" type="button" onClick={addTag}>{t('pages.recipes.addTag')}</Button>
                 </div>
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
@@ -541,7 +541,7 @@ const EditRecipe = () => {
               >
                 {t('buttons.cancel')}
               </Button>
-              <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90">
+              <Button variant="green" type="submit" className="flex-1">
                 {t('pages.recipes.saveRecipe')}
               </Button>
             </div>

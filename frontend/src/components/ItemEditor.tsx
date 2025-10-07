@@ -186,7 +186,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
             {item.id && item.householdId && isCurrentUserAdmin() && onDelete && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" size="sm">
+                  <Button variant="delete" size="sm">
                     <Trash2 className="h-4 w-4 mr-2" />
                     {t('buttons.delete')}
                   </Button>
@@ -215,7 +215,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
             <Button variant="outline" onClick={onCancel}>
               {t('buttons.cancel')}
             </Button>
-            <Button className="bg-primary/10 hover:bg-primary/15 text-primary" onClick={handleSave} disabled={!name.trim()}>
+            <Button variant="green" onClick={handleSave} disabled={!name.trim()}>
               {item.id ? t('buttons.update') : t('buttons.create')}
             </Button>
           </div>

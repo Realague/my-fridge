@@ -86,14 +86,14 @@ const Household = () => {
           </CardHeader>
           <CardContent className="space-y-3">
                          {households.map((h) => (
-               <div key={h.id} className="flex items-center justify-between p-3 bg-muted/70 rounded-lg">
+               <div key={h.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-border/50">
                  <div className="flex-1 min-w-0">
                    <p className="font-semibold text-foreground">{h.name}</p>
                    <p className="text-sm text-muted-foreground">{h.memberCount} {t('pages.household.members')} • {h.userRole}</p>
                  </div>
                  <div className="flex items-center gap-2">
-                   {currentUser?.selectedHouseholdId === h.id ? (
-                      <Badge variant="default" className="bg-primary/10 text-primary border-primary/20">
+                    {currentUser?.selectedHouseholdId === h.id ? (
+                      <Badge variant="default" className="bg-primary text-primary-foreground">
                         <CheckCircle className="h-3 w-3 mr-1.5" />
                         {t('pages.household.active')}
                       </Badge>
@@ -122,7 +122,7 @@ const Household = () => {
             <CardTitle>{t('pages.household.joinOrCreate')}</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Button size="lg" className="bg-primary/10 text-primary hover:bg-primary/15 h-auto py-3" onClick={handleCreateNew}>
+            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 h-auto py-3" onClick={handleCreateNew}>
               <Plus className="h-4 w-4 mr-2" />
               {t('pages.household.createNew')}
             </Button>

@@ -4,6 +4,7 @@ import { devtools } from 'zustand/middleware';
 import { useStoredItemStore } from './storedItemStore';
 import { createStorageAreaApiService, StorageArea, CreateStorageAreaData, UpdateStorageAreaData } from '@/services/storageAreaService';
 import { useHouseholdStore } from './householdStore';
+import { StorageAreaType } from '@/types/enums';
 
 // Import StorageArea from service
 // export interface StorageArea - moved to service
@@ -12,7 +13,7 @@ export interface StorageAreaWithStats {
   id: string;
   name: string;
   emoji: string;
-  type: 'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other';
+  type: StorageAreaType;
   itemCount: number;
   lowStockCount: number;
 }

@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
-import { getItemDisplayName } from '@/utils/itemUtils';
+import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
 
 interface ItemSelectorProps {
   onItemSelect: (item: Item | null) => void;
@@ -449,26 +449,6 @@ export const ItemSelector = ({
   const displayValue = selectedItem && !query ? getItemDisplayName(selectedItem, t) : query;
   const showClearButton = selectedItem && !query;
 
-  const getCategoryColor = (category: string) => {
-    const colors: { [key: string]: string } = {
-      'vegetables': 'bg-primary/10 text-primary',
-      'fruits': 'bg-accent text-accent-foreground',
-      'meat': 'bg-destructive/10 text-destructive',
-      'dairy': 'bg-primary/20 text-primary',
-      'grains': 'bg-accent text-accent-foreground',
-      'spices': 'bg-primary/15 text-primary',
-      'beverages': 'bg-accent text-accent-foreground',
-      'snacks': 'bg-accent text-accent-foreground',
-      'condiments': 'bg-primary/10 text-primary',
-      'frozen': 'bg-primary/20 text-primary',
-      'canned': 'bg-muted text-muted-foreground',
-      'bakery': 'bg-accent text-accent-foreground',
-      'household': 'bg-accent text-accent-foreground',
-      'personal': 'bg-accent text-accent-foreground',
-      'other': 'bg-muted text-muted-foreground'
-    };
-    return colors[category.toLowerCase()] || colors['other'];
-  };
 
   return (
     <div ref={containerRef} className={cn("relative", className)}>
@@ -582,7 +562,7 @@ export const ItemSelector = ({
                         variant="ghost"
                         size="sm"
                         onClick={(e) => handleEditItem(item, e)}
-                        className="h-6 w-6 p-0 hover:bg-muted transition-opacity"
+                        className="h-6 w-6 p-0 hover:bg-primary/10 transition-opacity"
                         title="Edit item"
                       >
                         <Edit className="h-3 w-3" />
@@ -590,10 +570,10 @@ export const ItemSelector = ({
                       {isCurrentUserAdmin() && (
                         <Button
                           type="button"
-                          variant="ghost"
+                          variant="deleteTrash"
                           size="sm"
                           onClick={(e) => confirmDeleteItem(item, e)}
-                          className="h-6 w-6 p-0 hover:bg-destructive/10 transition-opacity text-destructive/100"
+                          className="h-6 w-6 p-0"
                           title="Delete item"
                         >
                           <Trash2 className="h-3 w-3" />
@@ -681,7 +661,7 @@ export const ItemSelector = ({
                     handleDeleteItem(deleteItem);
                     setDeleteItem(null);
                   }} 
-                  className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                  className="text-foreground bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                 >
                   {t('buttons.delete')}
                 </AlertDialogAction>

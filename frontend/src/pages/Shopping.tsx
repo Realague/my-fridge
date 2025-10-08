@@ -17,7 +17,7 @@ import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { getItemDisplayName } from '@/utils/itemUtils';
+import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
 
 const Shopping = () => {
   const { t } = useTranslation();
@@ -251,17 +251,6 @@ const Shopping = () => {
   // Get unique categories from items
   const categories = ['all', ...Array.from(new Set(items.map(item => item.item?.category).filter(Boolean)))];
 
-  const getCategoryColor = (category: string) => {
-    const colors: { [key: string]: string } = {
-      'vegetables': 'bg-green-100 text-green-800',
-      'fruits': 'bg-orange-100 text-orange-800',
-      'meat': 'bg-red-100 text-red-800',
-      'dairy': 'bg-blue-100 text-blue-800',
-      'grains': 'bg-yellow-100 text-yellow-800',
-      'other': 'bg-gray-100 text-gray-700'
-    };
-    return colors[category?.toLowerCase()] || colors['other'];
-  };
 
   const getItemName = (shoppingItem: ShoppingItem) => {
     return shoppingItem.item ? getItemDisplayName(shoppingItem.item, t) : 'Unknown Item';
@@ -312,7 +301,7 @@ const Shopping = () => {
           className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
             isCompleted 
               ? 'bg-green-500' 
-              : 'border-2 border-border hover:border-green-500'
+              : 'border-2 border-border hover:border-green-500 bg-primary/10'
           }`}
         >
           {isCompleted && <Check className="h-4 w-4 text-white" />}
@@ -324,7 +313,7 @@ const Shopping = () => {
               <span className={`font-medium ${isCompleted ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
                 {getItemName(shoppingItem)}
               </span>
-              <Badge className={getCategoryColor(getItemCategory(shoppingItem))}>
+              <Badge className={getCategoryColor(shoppingItem.item?.category)}>
                 {getItemCategory(shoppingItem)}
               </Badge>
             </div>
@@ -485,19 +474,20 @@ const Shopping = () => {
               </div>
               
               <div className="flex gap-2 pt-2">
-                <Button 
-                  onClick={handleAddToStorage} 
-                  disabled={!selectedStorageArea}
-                  className="flex-1"
-                >
-                  {t('pages.shopping.addToStorage')}
-                </Button>
-                <Button 
+              <Button 
                   variant="outline" 
                   onClick={handleSkipStorage}
                   className="flex-1"
                 >
                   {t('pages.shopping.skipStorage')}
+                </Button>
+                <Button
+                  variant="green"
+                  onClick={handleAddToStorage} 
+                  disabled={!selectedStorageArea}
+                  className="flex-1"
+                >
+                  {t('pages.shopping.addToStorage')}
                 </Button>
               </div>
             </div>

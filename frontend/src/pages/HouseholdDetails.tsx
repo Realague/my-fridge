@@ -163,7 +163,7 @@ const HouseholdDetails = () => {
             
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="outline" className="w-full touch-friendly text-destructive border-destructive/20 hover:bg-destructive/10">
+                <Button variant="delete" className="w-full touch-friendly">
                   <LogOut className="h-4 w-4 mr-2" />
                   { members.length <= 1 && isAdmin ? t('buttons.removeHousehold') : t('pages.household.leaveHousehold')}
                 </Button>
@@ -177,7 +177,7 @@ const HouseholdDetails = () => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>{t('buttons.cancel')}</AlertDialogCancel>
-                  <AlertDialogAction onClick={ members.length <= 1 && isAdmin ? handleRemoveHousehold : handleLeaveHousehold} className="bg-destructive hover:bg-destructive/90">
+                  <AlertDialogAction onClick={ members.length <= 1 && isAdmin ? handleRemoveHousehold : handleLeaveHousehold} className="text-foreground bg-destructive hover:bg-destructive/90">
                     {  members.length <= 1 && isAdmin ? t('buttons.removeHousehold') : t('buttons.leaveHousehold')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -195,7 +195,7 @@ const HouseholdDetails = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             {members.map((member) => (
-              <div key={member.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-xl border border-border">
+              <div key={member.id} className="flex items-center justify-between p-4 bg-primary/10 rounded-xl border border-border">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <Avatar className="h-12 w-12 flex-shrink-0">
                     <AvatarFallback className="bg-accent text-accent-foreground font-semibold">
@@ -205,7 +205,7 @@ const HouseholdDetails = () => {
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-foreground">
                       {`${member.firstName || ''} ${member.lastName || ''}`.trim()}
-                      {member.id === currentUser?.id && <span className="text-sm text-muted-foreground ml-2">({t('pages.household.you')})</span>}
+                      {member.id === currentUser?.id && <span className="text-sm text-muted-foreground ml-2">{t('pages.household.you')}</span>}
                     </p>
                     <p className="text-sm text-muted-foreground truncate">{member.email || ''}</p>
                   </div>
@@ -213,6 +213,7 @@ const HouseholdDetails = () => {
                 <div className="flex items-center gap-3 flex-shrink-0">
                   <Badge 
                     variant={member.HouseholdMember.role === 'admin' ? 'default' : 'secondary'}
+                    className="bg-card text-foreground"
                   >
                     {member.HouseholdMember.role}
                   </Badge>

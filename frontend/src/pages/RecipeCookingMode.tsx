@@ -395,7 +395,7 @@ const RecipeCookingMode = () => {
               <ChefHat className="h-12 w-12 text-primary mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-foreground mb-2">{t('pages.recipes.congratulations')}</h2>
               <p className="text-muted-foreground mb-4">{t('pages.recipes.congratulationsDescription', { recipeTitle: recipe.title })}</p>
-              <Button onClick={() => navigate(`/recipes/${recipe.id}`)}>
+              <Button variant="green" onClick={() => navigate(`/recipes/${recipe.id}`)}>
                 {t('pages.recipes.backToRecipes')}
               </Button>
             </CardContent>

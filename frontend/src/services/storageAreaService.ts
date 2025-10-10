@@ -1,10 +1,11 @@
 import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
+import { StorageAreaType } from '@/types/enums';
 
 export interface StorageArea {
   id: string;
   name: string;
   emoji: string;
-  type: 'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other';
+  type: StorageAreaType;
   householdId: string;
   createdAt: string;
   updatedAt: string;
@@ -13,13 +14,13 @@ export interface StorageArea {
 export interface CreateStorageAreaData {
   name: string;
   emoji?: string;
-  type?: 'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other';
+  type?: StorageAreaType;
 }
 
 export interface UpdateStorageAreaData {
   name?: string;
   emoji?: string;
-  type?: 'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other';
+  type?: StorageAreaType;
 }
 
 interface ApiResponse<T = any> {

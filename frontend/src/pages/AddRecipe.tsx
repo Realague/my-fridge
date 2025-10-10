@@ -16,16 +16,11 @@ import { CreateRecipeIngredientDto, RecipeDifficulty } from '@/services/recipeSe
 import { useToast } from '@/hooks/use-toast';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
 import { useTranslation } from 'react-i18next';
+import { Item } from '@/services/itemService';
 
 interface RecipeIngredientWithId extends CreateRecipeIngredientDto {
   id: string;
-  item?: {
-    id: string;
-    name: string;
-    category: string;
-    defaultUnit: string;
-    availableUnits: string[];
-  };
+  item?: Item;
 }
 
 interface RecipeFormData {
@@ -218,20 +213,20 @@ const AddRecipe = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
+      <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Button 
               variant="ghost" 
               onClick={() => navigate('/recipes')}
-              className="text-gray-600"
+              className="text-muted-foreground"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('pages.recipes.backToRecipes')}
             </Button>
-            <h1 className="text-xl font-bold text-gray-900">{t('pages.recipes.addNewRecipe')}</h1>
+            <h1 className="text-xl font-bold text-foreground">{t('pages.recipes.addNewRecipe')}</h1>
             <div className="w-20"></div>
           </div>
         </div>
@@ -241,7 +236,7 @@ const AddRecipe = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Basic Info */}
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
                 <CardTitle>{t('pages.recipes.basicInformation')}</CardTitle>
                 <CardDescription>{t('pages.recipes.basicInformationDescription')}</CardDescription>
@@ -378,7 +373,7 @@ const AddRecipe = () => {
             />
 
             {/* Instructions */}
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -395,7 +390,7 @@ const AddRecipe = () => {
                 {instructions.map((instruction, index) => (
                   <div key={index} className="space-y-3">
                     <div className="flex gap-2">
-                      <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium mt-2">
+                      <div className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium mt-2">
                         {index + 1}
                       </div>
                       <Textarea
@@ -419,8 +414,8 @@ const AddRecipe = () => {
                     
                     {/* Ingredient mapping for this step */}
                     {ingredients.length > 0 && instruction.trim() && (
-                      <div className="ml-8 p-3 bg-gray-50 rounded-lg">
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">
+                      <div className="ml-8 p-3 bg-muted rounded-lg">
+                        <h4 className="text-sm font-medium text-foreground mb-2">
                           {t('pages.recipes.ingredientsUsedInThisStep')}
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -434,7 +429,7 @@ const AddRecipe = () => {
                                   checked={isLinked}
                                   onCheckedChange={() => toggleIngredientForStep(ingredient.id, index)}
                                 />
-                                <span className="text-sm text-gray-600">
+                                <span className="text-sm text-muted-foreground">
                                   {ingredient.quantity} {ingredient.unit} {ingredient.item?.name}
                                 </span>
                               </div>
@@ -449,7 +444,7 @@ const AddRecipe = () => {
             </Card>
 
             {/* Tags */}
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
                 <CardTitle>{t('pages.recipes.tags')}</CardTitle>
                 <CardDescription>{t('pages.recipes.tagsDescription')}</CardDescription>
@@ -468,12 +463,12 @@ const AddRecipe = () => {
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {tags.map((tag, index) => (
-                      <div key={index} className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm flex items-center gap-1">
+                      <div key={index} className="bg-accent text-accent-foreground px-2 py-1 rounded-full text-sm flex items-center gap-1">
                         {tag}
                         <button
                           type="button"
                           onClick={() => removeTag(tag)}
-                          className="text-green-600 hover:text-green-800"
+                          className="text-accent-foreground hover:text-accent-foreground/80"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -496,7 +491,7 @@ const AddRecipe = () => {
               </Button>
               <Button 
                 type="submit" 
-                className="flex-1 bg-green-600 hover:bg-green-700"
+                className="flex-1 bg-primary hover:bg-primary/90"
                 disabled={loading}
               >
                 {loading ? t('pages.recipes.saving') : t('pages.recipes.saveRecipe')}

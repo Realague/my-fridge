@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { ThemeProvider } from "next-themes";
 import "./i18n/config"; // Initialize i18n
 
 
@@ -43,40 +44,41 @@ function App() {
 
     return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <NotificationProvider>
-          <RecipeProvider>
-            <BrowserRouter>
-              <MealPlanProvider>
-                <StoreProvider>
-                  <Toaster />
-                  <Sonner />
-                  <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/onboarding" element={<Onboarding />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/shopping" element={<Shopping />} />
-                  <Route path="/storage/:id" element={<StorageArea />} />
-
-                  <Route path="/recipes" element={<Recipes />} />
-                  <Route path="/recipes/:id" element={<RecipeDetails />} />
-                  <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />
-                  <Route path="/add-recipe" element={<AddRecipe />} />
-                  <Route path="/recipes/:id/edit" element={<EditRecipe />} />
-                  <Route path="/meal-plans" element={<MealPlans />} />
-                  <Route path="/household" element={<Household />} />
-                  <Route path="/household/:id" element={<HouseholdDetails />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/demo" element={<Demo />} />
-                  <Route path="*" element={<NotFound />} />
-                                      </Routes>
-                </StoreProvider>
-              </MealPlanProvider>
-            </BrowserRouter>
-          </RecipeProvider>
-        </NotificationProvider>
-      </TooltipProvider>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <TooltipProvider>
+          <NotificationProvider>
+            <RecipeProvider>
+              <BrowserRouter>
+                <MealPlanProvider>
+                  <StoreProvider>
+                    <Toaster />
+                    <Sonner /> 
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/auth" element={<Auth />} />
+                      <Route path="/onboarding" element={<Onboarding />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/shopping" element={<Shopping />} />
+                      <Route path="/storage/:id" element={<StorageArea />} />
+                      <Route path="/recipes" element={<Recipes />} />
+                      <Route path="/recipes/:id" element={<RecipeDetails />} />
+                      <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />
+                      <Route path="/add-recipe" element={<AddRecipe />} />
+                      <Route path="/recipes/:id/edit" element={<EditRecipe />} />
+                      <Route path="/meal-plans" element={<MealPlans />} />
+                      <Route path="/household" element={<Household />} />
+                      <Route path="/household/:id" element={<HouseholdDetails />} />
+                      <Route path="/settings" element={<Settings />} />
+                      <Route path="/demo" element={<Demo />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </StoreProvider>
+                </MealPlanProvider>
+              </BrowserRouter>
+            </RecipeProvider>
+          </NotificationProvider>
+        </TooltipProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

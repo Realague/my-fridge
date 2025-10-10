@@ -10,6 +10,7 @@ import { useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { StorageAreaType } from '@/types/enums';
 
 interface AddStorageAreaDialogProps {
   trigger?: React.ReactNode;
@@ -26,11 +27,11 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
   const { createStorageArea, loading } = useCurrentHouseholdStorageAreas(user?.selectedHouseholdId);
 
   const storageAreaTypes = [
-    { value: 'fridge', label: t('storageArea.types.fridge'), emoji: '🥬' },
-    { value: 'freezer', label: t('storageArea.types.freezer'), emoji: '🧊' },
-    { value: 'pantry', label: t('storageArea.types.pantry'), emoji: '🏺' },
-    { value: 'kitchen_cupboard', label: t('storageArea.types.kitchenCupboard'), emoji: '🗄️' },
-    { value: 'other', label: t('storageArea.types.other'), emoji: '📦' },
+    { value: StorageAreaType.FRIDGE, label: t('storageArea.types.fridge'), emoji: '🥬' },
+    { value: StorageAreaType.FREEZER, label: t('storageArea.types.freezer'), emoji: '🧊' },
+    { value: StorageAreaType.PANTRY, label: t('storageArea.types.pantry'), emoji: '🏺' },
+    { value: StorageAreaType.KITCHEN_CUPBOARD, label: t('storageArea.types.kitchenCupboard'), emoji: '🗄️' },
+    { value: StorageAreaType.OTHER, label: t('storageArea.types.other'), emoji: '📦' },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,7 +44,7 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
     try {
       await createStorageArea({
         name: name.trim(),
-        type: type as 'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other',
+        type: type as StorageAreaType,
         emoji: emoji || storageAreaTypes.find(t => t.value === type)?.emoji || '📦',
       });
       
@@ -84,9 +85,8 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
       <DialogTrigger asChild>
         {trigger || (
           <Button
-            variant="outline"
+            variant="green"
             size="sm"
-            className="border-green-600 text-green-600 hover:bg-green-50"
           >
             <Plus className="h-4 w-4 mr-2" />
             {t('storageArea.addArea')}
@@ -157,8 +157,8 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
             </Button>
             <Button
               type="submit"
+              variant="green"
               disabled={!name.trim() || !type || loading}
-              className="bg-green-600 hover:bg-green-700"
             >
               {loading ? t('storageArea.creating') : t('storageArea.createArea')}
             </Button>

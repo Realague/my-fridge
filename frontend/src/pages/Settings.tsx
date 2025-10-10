@@ -13,11 +13,13 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from '@/stores/authStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from 'next-themes';
 
 const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t, i18n } = useTranslation();
+  const { theme, setTheme } = useTheme();
   
   // Protected route hook handles auth and household checks
   useProtectedRoute();
@@ -105,15 +107,15 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-40">
+      <div className="bg-card/90 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-xl font-bold text-gray-900">{t('pages.settings.title')}</h1>
+            <h1 className="text-xl font-bold text-foreground">{t('pages.settings.title')}</h1>
             <div className="w-9" /> {/* Spacer */}
           </div>
         </div>
@@ -122,14 +124,14 @@ const Settings = () => {
       {/* Content */}
       <div className="container mx-auto px-4 py-6 space-y-6">
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-gray-100 rounded-lg p-1 h-auto">
+          <TabsList className="grid w-full grid-cols-4 bg-muted rounded-lg p-1 h-auto">
              <TabsTrigger value="profile">{t('pages.settings.tabs.profile')}</TabsTrigger>
              <TabsTrigger value="notifications">{t('pages.settings.tabs.notifications')}</TabsTrigger>
              <TabsTrigger value="appearance">{t('pages.settings.tabs.appearance')}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="profile" className="mt-4">
-            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
                  <CardTitle>{t('pages.settings.profileSettings.title')}</CardTitle>
                  <CardDescription>{t('pages.settings.profileSettings.description')}</CardDescription>
@@ -155,11 +157,12 @@ const Settings = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">{t('forms.email')}</Label>
-                  <Input id="email" type="email" defaultValue={user?.email} readOnly className="bg-gray-100" />
-                  <p className="text-xs text-gray-500">{t('pages.settings.profileSettings.emailCannotBeChanged')}</p>
+                  <Input id="email" type="email" defaultValue={user?.email} readOnly className="bg-muted" />
+                  <p className="text-xs text-muted-foreground">{t('pages.settings.profileSettings.emailCannotBeChanged')}</p>
                 </div>
                 <Button 
                   className="w-full sm:w-auto" 
+                  variant="green"
                   onClick={handleSaveChanges}
                   disabled={isUpdating}
                 >
@@ -170,25 +173,25 @@ const Settings = () => {
           </TabsContent>
           
           <TabsContent value="notifications" className="mt-4">
-            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
                  <CardTitle>{t('pages.settings.notificationSettings.title')}</CardTitle>
                  <CardDescription>{t('pages.settings.notificationSettings.description')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50/70">
+                <div className="flex items-center justify-between p-4 rounded-lg bg-muted/70">
                   <Label htmlFor="push-notifications" className="flex flex-col space-y-1 cursor-pointer flex-1">
                      <span className="font-medium">{t('pages.settings.notificationSettings.pushNotifications')}</span>
-                     <span className="font-normal text-sm text-gray-500">
+                     <span className="font-normal text-sm text-muted-foreground">
                        {t('pages.settings.notificationSettings.pushDescription')}
                      </span>
                   </Label>
                   <Switch id="push-notifications" defaultChecked />
                 </div>
-                <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50/70">
+                <div className="flex items-center justify-between p-4 rounded-lg bg-muted/70">
                   <Label htmlFor="low-stock-alerts" className="flex flex-col space-y-1 cursor-pointer flex-1">
                      <span className="font-medium">{t('pages.settings.notificationSettings.lowStockAlerts')}</span>
-                     <span className="font-normal text-sm text-gray-500">
+                     <span className="font-normal text-sm text-muted-foreground">
                        {t('pages.settings.notificationSettings.lowStockDescription')}
                      </span>
                   </Label>
@@ -199,7 +202,7 @@ const Settings = () => {
           </TabsContent>
 
           <TabsContent value="appearance" className="mt-4">
-            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
                 <CardTitle>{t('pages.settings.appearance')}</CardTitle>
                 <CardDescription>{t('pages.settings.appearanceSettings.description')}</CardDescription>
@@ -225,24 +228,28 @@ const Settings = () => {
                       ))}
                     </SelectContent>
                   </Select>
-                  <p className="text-xs text-gray-500">{t('pages.settings.appearanceSettings.languageDescription')}</p>
+                  <p className="text-xs text-muted-foreground">{t('pages.settings.appearanceSettings.languageDescription')}</p>
                 </div>
                 
-                <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50/70">
+                <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
                   <Label htmlFor="dark-mode" className="flex flex-col space-y-1 cursor-pointer flex-1">
                      <span className="font-medium">{t('pages.settings.appearanceSettings.darkMode')}</span>
-                     <span className="font-normal text-sm text-gray-500">
+                     <span className="font-normal text-sm text-muted-foreground">
                        {t('pages.settings.appearanceSettings.darkModeDescription')}
                      </span>
                   </Label>
-                  <Switch id="dark-mode" />
+                  <Switch 
+                    id="dark-mode" 
+                    checked={theme === 'dark'}
+                    onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                  />
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
 
-        <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
           <CardContent className="p-4">
             <Button variant="destructive" className="w-full" onClick={handleSignOut}>
               <LogOut className="h-4 w-4 mr-2" />

@@ -17,7 +17,7 @@ import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { getItemDisplayName } from '@/utils/itemUtils';
+import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
 
 const Shopping = () => {
   const { t } = useTranslation();
@@ -251,17 +251,6 @@ const Shopping = () => {
   // Get unique categories from items
   const categories = ['all', ...Array.from(new Set(items.map(item => item.item?.category).filter(Boolean)))];
 
-  const getCategoryColor = (category: string) => {
-    const colors: { [key: string]: string } = {
-      'vegetables': 'bg-green-100 text-green-800',
-      'fruits': 'bg-orange-100 text-orange-800',
-      'meat': 'bg-red-100 text-red-800',
-      'dairy': 'bg-blue-100 text-blue-800',
-      'grains': 'bg-yellow-100 text-yellow-800',
-      'other': 'bg-gray-100 text-gray-700'
-    };
-    return colors[category?.toLowerCase()] || colors['other'];
-  };
 
   const getItemName = (shoppingItem: ShoppingItem) => {
     return shoppingItem.item ? getItemDisplayName(shoppingItem.item, t) : 'Unknown Item';
@@ -301,18 +290,18 @@ const Shopping = () => {
         onDragStart={(e) => handleDragStart(e, shoppingItem.id)}
         onDragOver={handleDragOver}
         onDrop={(e) => handleDrop(e, shoppingItem.id)}
-        className={`flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors cursor-move ${
-          isCompleted ? 'bg-green-50 opacity-75' : 'bg-gray-50'
+        className={`flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors cursor-move ${
+          isCompleted ? 'bg-accent opacity-75' : 'bg-muted'
         } ${draggedItem === shoppingItem.id ? 'opacity-50' : ''}`}
       >
-        <GripVertical className="h-4 w-4 text-gray-400 cursor-grab flex-shrink-0" />
+        <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab flex-shrink-0" />
         
         <button
           onClick={() => toggleItemComplete(shoppingItem.id)}
           className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
             isCompleted 
               ? 'bg-green-500' 
-              : 'border-2 border-gray-300 hover:border-green-500'
+              : 'border-2 border-border hover:border-green-500 bg-primary/10'
           }`}
         >
           {isCompleted && <Check className="h-4 w-4 text-white" />}
@@ -321,21 +310,22 @@ const Shopping = () => {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 justify-between">
             <div className="flex items-center gap-2 flex-1 min-w-0">
-              <span className={`font-medium ${isCompleted ? 'text-gray-700 line-through' : 'text-gray-900'}`}>
+              <span className={`font-medium ${isCompleted ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
                 {getItemName(shoppingItem)}
               </span>
-              <Badge className={getCategoryColor(getItemCategory(shoppingItem))}>
+              <Badge className={getCategoryColor(shoppingItem.item?.category)}>
                 {getItemCategory(shoppingItem)}
               </Badge>
             </div>
             {isEditing && (
               <div className="flex gap-1 flex-shrink-0 md:hidden">
                 <Button
+                  variant="outline"
                   size="sm"
                   onClick={handleSave}
                   className="h-8 px-2"
                 >
-                  <Save className="h-3 w-3" />
+                  <Save className="h-3 w-3"/>
                 </Button>
                 <Button
                   variant="outline"
@@ -348,7 +338,7 @@ const Shopping = () => {
               </div>
             )}
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-muted-foreground">
             {isEditing ? (
               <div className="mt-1">
                 <QuantitySelector
@@ -376,6 +366,7 @@ const Shopping = () => {
           {isEditing && (
             <div className="hidden md:flex gap-1">
               <Button
+                variant="outline"
                 size="sm"
                 onClick={handleSave}
                 className="h-8 px-2"
@@ -397,7 +388,7 @@ const Shopping = () => {
               variant="ghost"
               size="sm"
               onClick={() => startEditingItem(shoppingItem.id)}
-              className="h-8 w-8 p-0 opacity-70 hover:opacity-100 transition-opacity"
+              className="h-8 w-8 p-0 opacity-70 hover:opacity-100 transition-opacity hover:bg-primary/10"
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -407,7 +398,7 @@ const Shopping = () => {
               variant="ghost"
               size="sm"
               onClick={() => deleteItemHandler(shoppingItem.id)}
-              className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+              className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 hover:bg-primary/10"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -418,7 +409,7 @@ const Shopping = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* Storage Dialog */}
       <Dialog open={showStorageDialog} onOpenChange={setShowStorageDialog}>
         <DialogContent className="sm:max-w-md">
@@ -431,14 +422,14 @@ const Shopping = () => {
           
           {itemToStore && (
             <div className="space-y-4">
-              <div className="bg-gray-50 p-3 rounded-lg">
+              <div className="bg-muted p-3 rounded-lg">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-medium">{getItemName(itemToStore)}</span>
                   <Badge className={getCategoryColor(getItemCategory(itemToStore))}>
                     {getItemCategory(itemToStore)}
                   </Badge>
                 </div>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   {itemToStore.quantity} {itemToStore.unit}
                 </p>
               </div>
@@ -483,19 +474,20 @@ const Shopping = () => {
               </div>
               
               <div className="flex gap-2 pt-2">
-                <Button 
-                  onClick={handleAddToStorage} 
-                  disabled={!selectedStorageArea}
-                  className="flex-1"
-                >
-                  {t('pages.shopping.addToStorage')}
-                </Button>
-                <Button 
+              <Button 
                   variant="outline" 
                   onClick={handleSkipStorage}
                   className="flex-1"
                 >
                   {t('pages.shopping.skipStorage')}
+                </Button>
+                <Button
+                  variant="green"
+                  onClick={handleAddToStorage} 
+                  disabled={!selectedStorageArea}
+                  className="flex-1"
+                >
+                  {t('pages.shopping.addToStorage')}
                 </Button>
               </div>
             </div>
@@ -504,13 +496,13 @@ const Shopping = () => {
       </Dialog>
 
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
+      <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-gray-900">{t('pages.shopping.title')}</h1>
+              <h1 className="text-xl font-bold text-foreground">{t('pages.shopping.title')}</h1>
               <div className="flex items-center gap-2 mt-1">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   {t('pages.shopping.itemsCompleted', { completed: completedCount, total: totalItems })}
                 </p>
                 <div className="flex items-center gap-1">
@@ -523,7 +515,7 @@ const Shopping = () => {
               <div className="text-2xl font-bold text-green-600">
                 {Math.round((completedCount / totalItems) * 100) || 0}%
               </div>
-              <div className="text-xs text-gray-600">{t('pages.shopping.complete')}</div>
+              <div className="text-xs text-muted-foreground">{t('pages.shopping.complete')}</div>
             </div>
           </div>
         </div>
@@ -539,18 +531,18 @@ const Shopping = () => {
         />
 
         {loading && (
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
             <CardContent className="p-8 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">{t('pages.shopping.loadingShoppingList')}</p>
+              <p className="text-muted-foreground">{t('pages.shopping.loadingShoppingList')}</p>
             </CardContent>
           </Card>
         )}
 
         {!loading && !selectedHouseholdId && (
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
             <CardContent className="p-8 text-center">
-              <p className="text-gray-600">{t('pages.shopping.selectHouseholdToView')}</p>
+              <p className="text-muted-foreground">{t('pages.shopping.selectHouseholdToView')}</p>
             </CardContent>
           </Card>
         )}
@@ -558,10 +550,10 @@ const Shopping = () => {
         {!loading && selectedHouseholdId && (
         <>
         {/* Category Filter */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <Filter className="h-5 w-5 text-gray-600" />
+              <Filter className="h-5 w-5 text-muted-foreground" />
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder={t('pages.shopping.filterByCategory')} />
@@ -579,7 +571,7 @@ const Shopping = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => setCategoryFilter('all')}
-                  className="text-gray-500"
+                  className="text-muted-foreground"
                 >
                   {t('pages.shopping.clearFilter')}
                 </Button>
@@ -589,12 +581,12 @@ const Shopping = () => {
         </Card>
 
         {/* Pending Items */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="text-lg">
               {t('pages.shopping.toBuy')} ({pendingItems.length})
               {categoryFilter !== 'all' && (
-                <span className="text-sm font-normal text-gray-600 ml-2">
+                <span className="text-sm font-normal text-muted-foreground ml-2">
                   • {t(`storageArea.types.${categoryFilter}`)}
                 </span>
               )}
@@ -607,7 +599,7 @@ const Shopping = () => {
               ))}
               
               {pendingItems.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   <div className="text-4xl mb-2">
                     {categoryFilter === 'all' ? '🎉' : '📋'}
                   </div>
@@ -630,26 +622,26 @@ const Shopping = () => {
         </Card>
 
         {/* Completed Items */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="text-lg">
               {t('pages.shopping.completed')} ({completedItems.length})
               {categoryFilter !== 'all' && (
-                <span className="text-sm font-normal text-gray-600 ml-2">
+                <span className="text-sm font-normal text-muted-foreground ml-2">
                   • {categoryFilter}
                 </span>
               )}
               {loadingCompleted && (
                 <div className="inline-flex items-center gap-2 ml-2">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
-                  <span className="text-sm text-gray-500">{t('pages.shopping.loading')}</span>
+                  <span className="text-sm text-muted-foreground">{t('pages.shopping.loading')}</span>
                 </div>
               )}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {loadingCompleted && completedItems.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
                 <p>{t('pages.shopping.loadingCompletedItems')}</p>
               </div>
@@ -663,7 +655,7 @@ const Shopping = () => {
                   />
                 ))}
                 {completedItems.length === 0 && completedItemsLoaded && (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="text-center py-8 text-muted-foreground">
                     <div className="text-4xl mb-2">✅</div>
                     <p>{t('pages.shopping.noCompletedItemsYet')}</p>
                     <p className="text-sm">{t('pages.shopping.completedItemsWillAppear')}</p>

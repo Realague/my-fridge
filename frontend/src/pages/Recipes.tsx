@@ -92,19 +92,20 @@ const Recipes = () => {
   // Note: Household checks are handled by useProtectedRoute hook
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
+      <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-gray-900">{t('pages.recipes.title')}</h1>
-              <p className="text-sm text-gray-600">
+              <h1 className="text-xl font-bold text-foreground">{t('pages.recipes.title')}</h1>
+              <p className="text-sm text-muted-foreground">
                 {loading ? t('common.loading') : t('pages.recipes.recipeSaved', { count: total || 0 })}
               </p>
             </div>
             <Button
-              className="bg-green-600 hover:bg-green-700"
+              variant="green"
+              className="touch-friendly"
               onClick={() => navigate('/add-recipe')}
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -117,18 +118,18 @@ const Recipes = () => {
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             placeholder={t('pages.recipes.search')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-white/80 backdrop-blur-sm border-0 shadow-lg"
+            className="pl-10 bg-card/80 backdrop-blur-sm border-0 shadow-lg"
           />
         </div>
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 bg-white/80 backdrop-blur-sm">
+          <TabsList className="grid w-full grid-cols-2 bg-card/80 backdrop-blur-sm">
             <TabsTrigger value="all">{t('pages.recipes.allRecipes')}</TabsTrigger>
             <TabsTrigger value="favorites">{t('pages.recipes.favorites')}</TabsTrigger>
           </TabsList>
@@ -178,8 +179,8 @@ const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGri
   if (!recipes || recipes.length === 0) {
     return (
       <div className="text-center py-12">
-        <ChefHat className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <p className="text-gray-600">{t('pages.recipes.noRecipes')}</p>
+        <ChefHat className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+        <p className="text-muted-foreground">{t('pages.recipes.noRecipes')}</p>
       </div>
     );
   }
@@ -189,7 +190,7 @@ const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGri
       {recipes.map((recipe) => (
         <Card
           key={recipe.id}
-          className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+          className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
           onClick={() => navigate(`/recipes/${recipe.id}`)}
         >
           <CardHeader className="pb-3">
@@ -210,14 +211,14 @@ const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGri
                 className="ml-2"
               >
                 <Heart 
-                  className={`h-4 w-4 ${recipe.isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} 
+                  className={`h-4 w-4 ${recipe.isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
                 />
               </Button>
             </div>
           </CardHeader>
 
           <CardContent className="pt-0">
-            <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
               <div className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
                 <span>{(recipe.prepTime || 0) + (recipe.cookTime || 0)}m</span>
@@ -251,7 +252,7 @@ const RecipeGridSkeleton = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {Array.from({ length: 6 }).map((_, index) => (
-        <Card key={index} className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card key={index} className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">
               <div className="flex-1 space-y-2">

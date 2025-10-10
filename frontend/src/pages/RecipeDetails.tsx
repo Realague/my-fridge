@@ -55,14 +55,14 @@ const RecipeDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
-        <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
+      <div className="min-h-screen bg-background">
+        <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <Button 
                 variant="ghost" 
                 onClick={() => navigate('/recipes')}
-                className="text-gray-600"
+                className="text-muted-foreground"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {t('buttons.back')}
@@ -84,9 +84,9 @@ const RecipeDetails = () => {
 
   if (!recipe) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('pages.recipes.recipeNotFound')}</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-4">{t('pages.recipes.recipeNotFound')}</h1>
           <Button onClick={() => navigate('/recipes')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('pages.recipes.backToRecipes')}
@@ -145,7 +145,7 @@ const RecipeDetails = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
+    <div className="min-h-screen bg-background">
       {/* Add Meal Plan Dialog */}
       <AddMealPlanDialog
         isOpen={showMealPlanDialog}
@@ -154,13 +154,13 @@ const RecipeDetails = () => {
       />
 
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
+      <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Button 
               variant="ghost" 
               onClick={() => navigate('/recipes')}
-              className="text-gray-600"
+              className="text-muted-foreground"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('buttons.back')}
@@ -172,7 +172,7 @@ const RecipeDetails = () => {
                 onClick={handleToggleFavorite}
               >
                 <Heart 
-                  className={`h-4 w-4 ${recipe.isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} 
+                  className={`h-4 w-4 ${recipe.isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
                 />
               </Button>
               <Dialog>
@@ -200,7 +200,7 @@ const RecipeDetails = () => {
 
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Recipe Header */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div className="flex-1">
@@ -210,18 +210,18 @@ const RecipeDetails = () => {
                 </CardDescription>
               </div>
               {recipe.image && (
-                <div className="w-full md:w-48 h-32 bg-gray-200 rounded-lg"></div>
+                <div className="w-full md:w-48 h-32 bg-muted rounded-lg"></div>
               )}
             </div>
             
             <div className="flex flex-wrap items-center gap-4 pt-4">
-              <div className="flex items-center gap-1 text-gray-600">
+              <div className="flex items-center gap-1 text-muted-foreground">
                 <Clock className="h-4 w-4" />
                 <span className="text-sm">
                   {recipe.totalTime} {t('pages.recipes.minTotal')}
                 </span>
               </div>
-              <div className="flex items-center gap-1 text-gray-600">
+              <div className="flex items-center gap-1 text-muted-foreground">
                 <Users className="h-4 w-4" />
                 <span className="text-sm">{recipe.servings} {t('pages.recipes.servings')}</span>
               </div>
@@ -258,22 +258,22 @@ const RecipeDetails = () => {
 
         {/* Times */}
         <div className="grid grid-cols-2 gap-4">
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-green-600">{recipe.prepTime}m</div>
-              <div className="text-sm text-gray-600">{t('pages.recipes.prepTime')}</div>
+              <div className="text-sm text-muted-foreground">{t('pages.recipes.prepTime')}</div>
             </CardContent>
           </Card>
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-orange-600">{recipe.cookTime}m</div>
-              <div className="text-sm text-gray-600">{t('pages.recipes.cookTime')}</div>
+              <div className="text-sm text-muted-foreground">{t('pages.recipes.cookTime')}</div>
             </CardContent>
           </Card>
         </div>
 
         {/* Ingredients */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="text-lg">{t('pages.recipes.ingredients')}</CardTitle>
           </CardHeader>
@@ -281,14 +281,14 @@ const RecipeDetails = () => {
             <ul className="space-y-3">
               {recipe.ingredients.map((ingredient, index) => {
                 return (
-                  <li key={ingredient.id} className="flex items-start gap-3 p-2 bg-gray-50 rounded-lg">
+                  <li key={ingredient.id} className="flex items-start gap-3 p-2 bg-muted rounded-lg">
                     <span className="text-green-600 mt-1.5 text-xs">●</span>
                     <div className="flex-1">
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-foreground">
                         {getItemDisplayName(ingredient?.item as Item, t)} {ingredient.quantity} {ingredient.unit}
                       </div>
                       {ingredient.notes && (
-                        <div className="text-sm text-gray-600 mt-1">{ingredient.notes}</div>
+                        <div className="text-sm text-muted-foreground mt-1">{ingredient.notes}</div>
                       )}
                     </div>
                   </li>
@@ -299,7 +299,7 @@ const RecipeDetails = () => {
         </Card>
 
         {/* Instructions */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="text-lg">Instructions</CardTitle>
           </CardHeader>
@@ -310,7 +310,7 @@ const RecipeDetails = () => {
                   <span className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
                     {index + 1}
                   </span>
-                  <span className="text-gray-700 pt-0.5">{instruction}</span>
+                  <span className="text-foreground pt-0.5">{instruction}</span>
                 </li>
               ))}
             </ol>
@@ -318,14 +318,14 @@ const RecipeDetails = () => {
         </Card>
 
         {/* Delete Button */}
-        <Card className="bg-red-50 border-red-200">
+        <Card className="bg-primary/10 border-red-600">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-medium text-red-900">{t('pages.recipes.deleteRecipe')}</h3>
-                <p className="text-sm text-red-700">{t('pages.recipes.deleteWarning')}</p>
+                <h3 className="font-medium">{t('pages.recipes.deleteRecipe')}</h3>
+                <p className="text-sm">{t('pages.recipes.deleteWarning')}</p>
               </div>
-              <Button variant="destructive" onClick={handleDelete}>
+              <Button variant="delete" onClick={handleDelete}>
                 {t('pages.recipes.deleteRecipe')}
               </Button>
             </div>
@@ -340,7 +340,7 @@ const RecipeDetailsSkeleton = () => {
   return (
     <div className="space-y-6">
       {/* Recipe Header */}
-      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div className="flex-1 space-y-2">
@@ -372,13 +372,13 @@ const RecipeDetailsSkeleton = () => {
 
       {/* Times */}
       <div className="grid grid-cols-2 gap-4">
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardContent className="p-4 text-center space-y-2">
             <Skeleton className="h-8 w-12 mx-auto" />
             <Skeleton className="h-4 w-16 mx-auto" />
           </CardContent>
         </Card>
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardContent className="p-4 text-center space-y-2">
             <Skeleton className="h-8 w-12 mx-auto" />
             <Skeleton className="h-4 w-16 mx-auto" />
@@ -387,15 +387,15 @@ const RecipeDetailsSkeleton = () => {
       </div>
 
       {/* Ingredients */}
-      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
           <Skeleton className="h-6 w-24" />
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {Array.from({ length: 5 }).map((_, index) => (
-              <div key={index} className="flex items-start gap-3 p-2 bg-gray-50 rounded-lg">
-                <div className="w-1 h-1 bg-gray-400 rounded-full mt-2" />
+              <div key={index} className="flex items-start gap-3 p-2 bg-muted rounded-lg">
+                <div className="w-1 h-1 bg-muted-foreground rounded-full mt-2" />
                 <div className="flex-1 space-y-1">
                   <Skeleton className="h-4 w-32" />
                   <Skeleton className="h-3 w-20" />
@@ -407,7 +407,7 @@ const RecipeDetailsSkeleton = () => {
       </Card>
 
       {/* Instructions */}
-      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
           <Skeleton className="h-6 w-28" />
         </CardHeader>

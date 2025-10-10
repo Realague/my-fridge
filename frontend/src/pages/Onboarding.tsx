@@ -35,10 +35,10 @@ const Onboarding = () => {
   // Show loading spinner while auth is loading
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">{t('common.loading')}</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -120,12 +120,12 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-lg">
         {step === 1 && (
-          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl">
+          <Card className="bg-card backdrop-blur-sm border border-border/50 shadow-xl">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-500 to-orange-500 rounded-2xl flex items-center justify-center">
+              <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
                 <span className="text-2xl">🏠</span>
               </div>
               <CardTitle className="text-2xl">{t('pages.household.setupHousehold')}</CardTitle>
@@ -136,11 +136,12 @@ const Onboarding = () => {
 
             <CardContent className="space-y-4">
               <Button
+                variant="green"
                 onClick={() => setStep(2)}
-                className="w-full h-16 bg-green-600 hover:bg-green-700 text-left justify-start px-6"
+                className="w-full h-16 text-left justify-start px-6"
               >
                 <div className="flex items-center">
-                  <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mr-4">
+                  <div className="w-10 h-10 bg-background/20 rounded-lg flex items-center justify-center mr-4">
                     <Plus className="h-5 w-5" />
                   </div>
                   <div>
@@ -153,11 +154,11 @@ const Onboarding = () => {
               <Button
                 onClick={() => setStep(4)}
                 variant="outline"
-                className="w-full h-16 border-green-600 text-green-600 hover:bg-green-50 text-left justify-start px-6"
+                className="w-full h-16 text-left justify-start px-6"
               >
                 <div className="flex items-center">
-                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4">
-                    <Users className="h-5 w-5 text-green-600" />
+                  <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center mr-4">
+                    <Users className="h-5 w-5" />
                   </div>
                   <div>
                     <div className="font-semibold">{t('pages.household.joinExistingHousehold')}</div>
@@ -170,10 +171,10 @@ const Onboarding = () => {
         )}
 
         {step === 2 && (
-          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl">
+          <Card className="bg-card backdrop-blur-sm border border-border/50 shadow-xl">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-500 to-orange-500 rounded-2xl flex items-center justify-center">
-                <Plus className="h-8 w-8 text-white" />
+              <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
+                <Plus className="h-8 w-8 text-primary-foreground" />
               </div>
               <CardTitle className="text-2xl">{t('pages.household.createYourHousehold')}</CardTitle>
               <CardDescription>
@@ -203,9 +204,10 @@ const Onboarding = () => {
                   {t('buttons.back')}
                 </Button>
                 <Button
+                  variant="green"
                   onClick={() => setStep(3)}
                   disabled={!householdName.trim()}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  className="flex-1"
                 >
                   {t('buttons.next')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -215,9 +217,9 @@ const Onboarding = () => {
         )}
 
         {step === 3 && (
-          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl">
+          <Card className="bg-card backdrop-blur-sm border border-border/50 shadow-xl">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-500 to-orange-500 rounded-2xl flex items-center justify-center">
+              <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
                 <span className="text-2xl">🏺</span>
               </div>
               <CardTitle className="text-2xl">{t('pages.household.setupStorageAreas')}</CardTitle>
@@ -242,8 +244,9 @@ const Onboarding = () => {
                   {t('buttons.back')}
                 </Button>
                 <Button
+                  variant="green"
                   onClick={handleCreateHousehold}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  className="flex-1"
                 >
                   {t('buttons.create')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -253,10 +256,10 @@ const Onboarding = () => {
         )}
 
         {step === 4 && (
-          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl">
+          <Card className="bg-card backdrop-blur-sm border border-border/50 shadow-xl">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center">
-                <Users className="h-8 w-8 text-white" />
+              <div className="mx-auto w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center">
+                <Users className="h-8 w-8 text-secondary-foreground" />
               </div>
               <CardTitle className="text-2xl">{t('pages.household.joinHousehold')}</CardTitle>
               <CardDescription>
@@ -287,9 +290,10 @@ const Onboarding = () => {
                   {t('buttons.back')}
                 </Button>
                 <Button
+                  variant="green"
                   onClick={handleJoinHousehold}
                   disabled={joinCode.length !== 8}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700"
+                  className="flex-1"
                 >
                   {t('buttons.join')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>

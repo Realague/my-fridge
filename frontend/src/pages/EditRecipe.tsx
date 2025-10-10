@@ -107,10 +107,10 @@ const EditRecipe = () => {
   // Show loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('pages.recipes.loading')}</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">{t('pages.recipes.loading')}</p>
         </div>
       </div>
     );
@@ -119,12 +119,12 @@ const EditRecipe = () => {
   // Show error or not found state
   if (!recipe || error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-4">
             {error ? 'Error loading recipe' : 'Recipe not found'}
           </h1>
-          {error && <p className="text-red-600 mb-4">{error}</p>}
+          {error && <p className="text-destructive mb-4">{error}</p>}
           <Button onClick={() => navigate('/recipes')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('pages.recipes.backToRecipes')}
@@ -268,20 +268,20 @@ const EditRecipe = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
+      <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Button 
               variant="ghost" 
               onClick={() => navigate(`/recipes/${recipe.id}`)}
-              className="text-gray-600"
+              className="text-muted-foreground"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('buttons.back')}
             </Button>
-            <h1 className="text-xl font-bold text-gray-900">{t('pages.recipes.editRecipeTitle')}</h1>
+            <h1 className="text-xl font-bold text-foreground">{t('pages.recipes.editRecipeTitle')}</h1>
             <div className="w-20"></div>
           </div>
         </div>
@@ -291,7 +291,7 @@ const EditRecipe = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Basic Info */}
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/80 backdrop-blur-sm border border-border/50 shadow-lg">
               <CardHeader>
                 <CardTitle>{t('pages.recipes.basicInformation')}</CardTitle>
                 <CardDescription>{t('pages.recipes.basicInformationDescription')}</CardDescription>
@@ -422,14 +422,14 @@ const EditRecipe = () => {
             />
 
             {/* Instructions */}
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/80 backdrop-blur-sm border border-border/50 shadow-lg">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle>{t('pages.recipes.instructions')}</CardTitle>
                     <CardDescription>{t('pages.recipes.instructionsDescription')}</CardDescription>
                   </div>
-                  <Button type="button" onClick={addInstruction} size="sm">
+                  <Button variant="outline" type="button" onClick={addInstruction} size="sm">
                     <Plus className="h-4 w-4 mr-1" />
                     {t('buttons.add')}
                   </Button>
@@ -439,7 +439,7 @@ const EditRecipe = () => {
                 {instructions.map((instruction, index) => (
                   <div key={index} className="space-y-3">
                     <div className="flex gap-2">
-                      <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium mt-2">
+                      <div className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium mt-2">
                         {index + 1}
                       </div>
                       <Textarea
@@ -463,8 +463,8 @@ const EditRecipe = () => {
                     
                     {/* Ingredient mapping for this step */}
                     {ingredients.length > 0 && instruction.trim() && (
-                      <div className="ml-8 p-3 bg-gray-50 rounded-lg">
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">
+                      <div className="ml-8 p-3 bg-muted rounded-lg">
+                        <h4 className="text-sm font-medium text-foreground mb-2">
                           {t('pages.recipes.ingredientsUsedInThisStep')}
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -481,7 +481,7 @@ const EditRecipe = () => {
                                   checked={isLinked}
                                   onCheckedChange={() => toggleIngredientForStep(ingredient, ingredientIndex, index)}
                                 />
-                                <span className="text-sm text-gray-600">
+                                <span className="text-sm text-muted-foreground">
                                   {getItemDisplayName(ingredient?.item, t)} {ingredient.quantity} {ingredient.unit}
                                 </span>
                               </div>
@@ -496,7 +496,7 @@ const EditRecipe = () => {
             </Card>
 
             {/* Tags */}
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/80 backdrop-blur-sm border border-border/50 shadow-lg">
               <CardHeader>
                 <CardTitle>{t('pages.recipes.tags')}</CardTitle>
                 <CardDescription>{t('pages.recipes.tagsDescription')}</CardDescription>
@@ -510,17 +510,17 @@ const EditRecipe = () => {
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                     className="flex-1"
                   />
-                  <Button type="button" onClick={addTag}>{t('pages.recipes.addTag')}</Button>
+                  <Button variant="outline" type="button" onClick={addTag}>{t('pages.recipes.addTag')}</Button>
                 </div>
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {tags.map((tag, index) => (
-                      <div key={index} className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm flex items-center gap-1">
+                      <div key={index} className="bg-accent text-accent-foreground px-2 py-1 rounded-full text-sm flex items-center gap-1">
                         {tag}
                         <button
                           type="button"
                           onClick={() => removeTag(tag)}
-                          className="text-green-600 hover:text-green-800"
+                          className="text-accent-foreground hover:text-accent-foreground/80"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -541,7 +541,7 @@ const EditRecipe = () => {
               >
                 {t('buttons.cancel')}
               </Button>
-              <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
+              <Button variant="green" type="submit" className="flex-1">
                 {t('pages.recipes.saveRecipe')}
               </Button>
             </div>

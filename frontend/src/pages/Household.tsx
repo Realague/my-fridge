@@ -62,15 +62,15 @@ const Household = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-background pb-24">
       {/* Header */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-40">
+      <div className="bg-card/90 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
               <Home className="h-5 w-5" />
             </Button>
-            <h1 className="text-xl font-bold text-gray-900">{t('pages.household.yourHouseholds')}</h1>
+            <h1 className="text-xl font-bold text-foreground">{t('pages.household.yourHouseholds')}</h1>
             <div className="w-9" /> {/* Spacer */}
           </div>
         </div>
@@ -79,21 +79,21 @@ const Household = () => {
       {/* Content */}
       <div className="container mx-auto px-4 py-6 space-y-6">
         
-        <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle>{t('pages.household.switchOrManage')}</CardTitle>
             <CardDescription>{t('pages.household.switchOrManageDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
                          {households.map((h) => (
-               <div key={h.id} className="flex items-center justify-between p-3 bg-gray-50/70 rounded-lg">
+               <div key={h.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-border/50">
                  <div className="flex-1 min-w-0">
-                   <p className="font-semibold text-gray-900">{h.name}</p>
-                   <p className="text-sm text-gray-500">{h.memberCount} {t('pages.household.members')} • {h.userRole}</p>
+                   <p className="font-semibold text-foreground">{h.name}</p>
+                   <p className="text-sm text-muted-foreground">{h.memberCount} {t('pages.household.members')} • {h.userRole}</p>
                  </div>
                  <div className="flex items-center gap-2">
-                   {currentUser?.selectedHouseholdId === h.id ? (
-                      <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
+                    {currentUser?.selectedHouseholdId === h.id ? (
+                      <Badge variant="default" className="bg-primary text-primary-foreground">
                         <CheckCircle className="h-3 w-3 mr-1.5" />
                         {t('pages.household.active')}
                       </Badge>
@@ -107,7 +107,7 @@ const Household = () => {
                        {switchingHousehold === h.id ? t('pages.household.switching') : t('pages.household.switch')}
                      </Button>
                    )}
-                     <Button variant="ghost" size="icon" className="h-9 w-9 text-gray-500 hover:text-gray-800 hover:bg-gray-100" onClick={() => handleManage(h.id)}>
+                     <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-muted" onClick={() => handleManage(h.id)}>
                        <span className="sr-only">{t('pages.household.manage')}</span>
                        <ArrowRight className="h-4 w-4" />
                     </Button>
@@ -117,12 +117,12 @@ const Household = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle>{t('pages.household.joinOrCreate')}</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Button size="lg" className="h-auto py-3" onClick={handleCreateNew}>
+            <Button size="lg" variant="green" className="h-auto py-3" onClick={handleCreateNew}>
               <Plus className="h-4 w-4 mr-2" />
               {t('pages.household.createNew')}
             </Button>

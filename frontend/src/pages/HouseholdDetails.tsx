@@ -66,10 +66,10 @@ const HouseholdDetails = () => {
 
   if (!householdDetails) {
     return (
-      <div className="min-h-screen bg-gray-50 pb-24 flex items-center justify-center">
+      <div className="min-h-screen bg-background pb-24 flex items-center justify-center">
         <div className="text-center">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('pages.household.householdNotFound')}</h3>
-          <p className="text-gray-600 mb-4">{t('pages.household.householdNotFoundDescription')}</p>
+          <h3 className="text-lg font-semibold text-foreground mb-2">{t('pages.household.householdNotFound')}</h3>
+          <p className="text-muted-foreground mb-4">{t('pages.household.householdNotFoundDescription')}</p>
           <Button onClick={() => navigate('/household')}>
             {t('pages.household.backToHouseholds')}
           </Button>
@@ -128,15 +128,15 @@ const HouseholdDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-40">
+      <div className="bg-card/90 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Button variant="ghost" size="icon" onClick={() => navigate('/household')}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">{t('pages.household.manageHousehold')}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t('pages.household.manageHousehold')}</h1>
             <Button variant="ghost" size="icon">
               <UserPlus className="h-5 w-5" />
             </Button>
@@ -146,14 +146,15 @@ const HouseholdDetails = () => {
 
       {/* Content */}
       <div className="container mx-auto px-4 py-6 space-y-6 pb-24">
-        <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/90 backdrop-blur-sm border border-border/50 shadow-lg">
           <CardHeader>
             <CardTitle>{householdDetails?.name}</CardTitle>
             <CardDescription>{members.length} {t('pages.household.members')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <Button 
-              className="w-full touch-friendly bg-gray-900 text-white hover:bg-gray-800"
+              variant="green"
+              className="w-full touch-friendly"
               onClick={handleInviteMember}
             >
               <UserPlus className="h-4 w-4 mr-2" />
@@ -162,7 +163,7 @@ const HouseholdDetails = () => {
             
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="outline" className="w-full touch-friendly text-red-600 border-red-200 hover:bg-red-50">
+                <Button variant="delete" className="w-full touch-friendly">
                   <LogOut className="h-4 w-4 mr-2" />
                   { members.length <= 1 && isAdmin ? t('buttons.removeHousehold') : t('pages.household.leaveHousehold')}
                 </Button>
@@ -176,7 +177,7 @@ const HouseholdDetails = () => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>{t('buttons.cancel')}</AlertDialogCancel>
-                  <AlertDialogAction onClick={ members.length <= 1 && isAdmin ? handleRemoveHousehold : handleLeaveHousehold} className="bg-red-600 hover:bg-red-700">
+                  <AlertDialogAction onClick={ members.length <= 1 && isAdmin ? handleRemoveHousehold : handleLeaveHousehold} className="text-foreground bg-destructive hover:bg-destructive/90">
                     {  members.length <= 1 && isAdmin ? t('buttons.removeHousehold') : t('buttons.leaveHousehold')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -188,31 +189,31 @@ const HouseholdDetails = () => {
         {/* Storage Management Section - Always visible for admins */}
         {isAdmin && <StorageAreaManager />}
 
-        <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/90 backdrop-blur-sm border border-border/50 shadow-lg">
           <CardHeader>
             <CardTitle>{t('pages.household.manageMembers')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {members.map((member) => (
-              <div key={member.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border">
+              <div key={member.id} className="flex items-center justify-between p-4 bg-primary/10 rounded-xl border border-border">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <Avatar className="h-12 w-12 flex-shrink-0">
-                    <AvatarFallback className="bg-green-100 text-green-700 font-semibold">
+                    <AvatarFallback className="bg-accent text-accent-foreground font-semibold">
                       {(member.firstName?.charAt(0) || '') + (member.lastName?.charAt(0) || '')}
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold text-foreground">
                       {`${member.firstName || ''} ${member.lastName || ''}`.trim()}
-                      {member.id === currentUser?.id && <span className="text-sm text-gray-500 ml-2">({t('pages.household.you')})</span>}
+                      {member.id === currentUser?.id && <span className="text-sm text-muted-foreground ml-2">{t('pages.household.you')}</span>}
                     </p>
-                    <p className="text-sm text-gray-500 truncate">{member.email || ''}</p>
+                    <p className="text-sm text-muted-foreground truncate">{member.email || ''}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0">
                   <Badge 
                     variant={member.HouseholdMember.role === 'admin' ? 'default' : 'secondary'}
-                    className={member.HouseholdMember.role === 'admin' ? 'bg-gray-900 text-white hover:bg-gray-800' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}
+                    className="bg-card text-foreground"
                   >
                     {member.HouseholdMember.role}
                   </Badge>
@@ -220,7 +221,7 @@ const HouseholdDetails = () => {
                     <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                     onClick={() => handleRemoveMember(member.id, `${member.firstName || ''} ${member.lastName || ''}`.trim())}
                   >
                      <Trash2 className="h-4 w-4" />

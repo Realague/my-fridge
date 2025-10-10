@@ -100,7 +100,7 @@ const StorageArea = () => {
 
   if (!area) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">🤔</div>
           <p className="text-lg text-gray-600">{t('storageAreaNotFound')}</p>
@@ -240,13 +240,13 @@ const StorageArea = () => {
     };
 
     return (
-      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="bg-card backdrop-blur-sm border-0 shadow-lg">
         <CardContent className="p-4">
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2">
-                <h3 className="font-medium text-gray-900">{getItemDisplayName(item, t)}</h3>
-                <Badge variant="outline" className="text-xs">
+                <h3 className="font-medium text-foreground">{getItemDisplayName(item, t)}</h3>
+                <Badge variant="outline" className="text-xs text-foreground">
                   { t(`items.categories.${item.category}`) }
                 </Badge>
                 {getExpirationBadge(storageItem.expirationDate)}
@@ -289,20 +289,20 @@ const StorageArea = () => {
                   </div>
                   
                   <div className="flex gap-2">
-                    <Button size="sm" onClick={handleSave}>
-                      <Save className="h-3 w-3 mr-1" />
-                      {t('buttons.save')}
-                    </Button>
                     <Button variant="outline" size="sm" onClick={handleCancel}>
                       <X className="h-3 w-3 mr-1" />
                       {t('buttons.cancel')}
+                    </Button>
+                    <Button variant="green" size="sm" onClick={handleSave}>
+                      <Save className="h-3 w-3 mr-1" />
+                      {t('buttons.save')}
                     </Button>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <span className="font-medium">{storageItem.quantity} {storageItem.unit}</span>
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <span className="font-medium text-foreground">{storageItem.quantity} {storageItem.unit}</span>
                     {storageItem.location && (
                       <div className="flex items-center gap-1">
                         <MapPin className="h-3 w-3" />
@@ -311,7 +311,7 @@ const StorageArea = () => {
                     )}
                   </div>
                   
-                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       <span>{t('storageArea.added')} {formatDate(new Date(storageItem.createdAt), 'MMM d')}</span>
@@ -354,9 +354,9 @@ const StorageArea = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
+      <div className="bg-card/80 backdrop-blur-sm border-b border-border/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -371,16 +371,17 @@ const StorageArea = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">{area.emoji}</span>
-                  <h1 className="text-xl font-bold text-gray-900">{area.name}</h1>
+                  <h1 className="text-xl font-bold text-foreground">{area.name}</h1>
                 </div>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   {storageItems.length} {t('storageArea.items')}
                 </p>
               </div>
             </div>
             <Button
               onClick={() => setShowAddForm(!showAddForm)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 touch-friendly"
+              variant="green"
             >
               <Plus className="h-4 w-4" />
               {t('storageArea.addItem')}
@@ -392,7 +393,7 @@ const StorageArea = () => {
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Add Item Form */}
         {showAddForm && (
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -474,15 +475,6 @@ const StorageArea = () => {
                   {/* Action Buttons */}
                   <div className="flex gap-2 pt-2">
                     <Button 
-                      onClick={handleAddItem} 
-                      className="flex-1" 
-                      disabled={storedItemsLoading}
-                      size="lg"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      {t('storageArea.addTo', { name: area.name })}
-                    </Button>
-                    <Button 
                       variant="outline" 
                       onClick={() => {
                         setShowAddForm(false);
@@ -492,6 +484,16 @@ const StorageArea = () => {
                       size="lg"
                     >
                       {t('buttons.cancel')}
+                    </Button>
+                    <Button 
+                      variant="green"
+                      onClick={handleAddItem} 
+                      className="flex-1" 
+                      disabled={storedItemsLoading}
+                      size="lg"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      {t('storageArea.addTo', { name: area.name })}
                     </Button>
                   </div>
                 </div>
@@ -503,7 +505,7 @@ const StorageArea = () => {
         {/* Storage Items */}
         <div className="space-y-4">
           {storedItemsLoading ? (
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card backdrop-blur-sm border-0 shadow-lg">
               <CardContent className="p-8 text-center">
                 <div className="text-lg text-gray-600">{t('common.loading')}</div>
               </CardContent>
@@ -513,16 +515,16 @@ const StorageArea = () => {
               <StorageItemCard key={storageItem.id} storageItem={storageItem} />
             ))
           ) : (
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
               <CardContent className="p-8 text-center">
                 <div className="text-4xl mb-4">{area.emoji}</div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-lg font-medium text-white mb-2">
                   {t('storageArea.emptyArea', { name: area.name })}
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-white mb-4">
                   {t('storageArea.startAddingItems')}
                 </p>
-                <Button onClick={() => setShowAddForm(true)}>
+                <Button onClick={() => setShowAddForm(true)} variant="green">
                   <Plus className="h-4 w-4 mr-2" />
                   {t('storageArea.addFirstItem')}
                 </Button>

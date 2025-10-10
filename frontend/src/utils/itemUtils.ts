@@ -31,3 +31,27 @@ export const isSeededItem = (item: Item): boolean => {
 export const isUserCreatedItem = (item: Item): boolean => {
   return item.householdId !== null;
 };
+
+/**
+ * Get the color classes for a category
+ */
+export const getCategoryColor = (category: string): string => {
+  const colors: { [key: string]: string } = {
+    'vegetables': 'bg-green-100 text-green-800',
+    'fruits': 'bg-orange-100 text-orange-800',
+    'meat': 'bg-red-100 text-red-800',
+    'dairy': 'bg-blue-100 text-blue-800',
+    'grains': 'bg-yellow-100 text-yellow-800',
+    'spices': 'bg-purple-100 text-purple-800',
+    'beverages': 'bg-cyan-100 text-cyan-800',
+    'snacks': 'bg-pink-100 text-pink-800',
+    'condiments': 'bg-indigo-100 text-indigo-800',
+    'frozen': 'bg-blue-200 text-blue-900',
+    'canned': 'bg-gray-100 text-gray-800',
+    'bakery': 'bg-orange-200 text-orange-900',
+    'household': 'bg-teal-100 text-teal-800',
+    'personal': 'bg-pink-200 text-pink-900',
+    'other': 'bg-gray-100 text-gray-700'
+  };
+  return colors[category?.toLowerCase()] || colors['other'];
+};

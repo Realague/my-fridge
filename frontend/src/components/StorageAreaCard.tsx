@@ -22,19 +22,19 @@ const StorageAreaCard = ({ area, onClick }: StorageAreaCardProps) => {
 
   return (
     <Card
-      className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-102 cursor-pointer"
+      className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-102 cursor-pointer"
       onClick={onClick}
     >
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-green-100 to-orange-100 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center">
               <span className="text-2xl">{area.emoji}</span>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">{area.name}</h3>
-              <p className="text-sm text-gray-500">{t(`storageArea.types.${area.type}`)}</p>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-semibold text-foreground">{area.name}</h3>
+              <p className="text-sm text-muted-foreground">{t(`storageArea.types.${area.type}`)}</p>
+              <p className="text-sm text-muted-foreground">
                 {area.itemCount} {area.itemCount === 1 ? t('storageArea.item') : t('storageArea.items')}
               </p>
             </div>
@@ -45,7 +45,7 @@ const StorageAreaCard = ({ area, onClick }: StorageAreaCardProps) => {
                 {area.lowStockCount} {t('storageArea.low')}
               </Badge>
             )}
-            <ArrowRight className="h-5 w-5 text-gray-400" />
+            <ArrowRight className="h-5 w-5 text-muted-foreground" />
           </div>
         </div>
       </CardContent>

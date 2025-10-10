@@ -182,17 +182,17 @@ const MealPlans = () => {
   // Show message if no household is selected
   if (!selectedHouseholdId) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
-        <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
+      <div className="min-h-screen bg-background pb-20">
+        <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
           <div className="container mx-auto px-4 py-4">
-            <h1 className="text-2xl font-bold text-gray-900">{t('pages.mealPlans.title')}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t('pages.mealPlans.title')}</h1>
           </div>
         </div>
         <div className="container mx-auto px-4 py-6">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-0 p-8 text-center">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('pages.auth.noHouseholdSelected')}</h2>
-            <p className="text-gray-600 mb-6">{t('pages.auth.selectHouseholdFirst')} meal plans.</p>
-            <Button onClick={() => window.location.href = '/household'} className="bg-green-600 hover:bg-green-700">
+          <div className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-lg border-0 p-8 text-center">
+            <h2 className="text-xl font-semibold text-foreground mb-4">{t('pages.auth.noHouseholdSelected')}</h2>
+            <p className="text-muted-foreground mb-6">{t('pages.auth.selectHouseholdFirst')} meal plans.</p>
+            <Button onClick={() => window.location.href = '/household'} className="bg-primary hover:bg-primary/90 text-primary-foreground">
               {t('pages.auth.goToHouseholdSettings')}
             </Button>
           </div>
@@ -203,15 +203,16 @@ const MealPlans = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
+      <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className={`flex items-center ${isMobile ? 'flex-col gap-3' : 'justify-between'}`}>
-            <h1 className={`font-bold text-gray-900 ${isMobile ? 'text-xl text-center' : 'text-2xl'}`}>{t('pages.mealPlans.title')}</h1>
+            <h1 className={`font-bold text-foreground ${isMobile ? 'text-xl text-center' : 'text-2xl'}`}>{t('pages.mealPlans.title')}</h1>
             <Button
+              variant="green"
               onClick={() => generateShoppingList()}
-              className={`bg-green-600 hover:bg-green-700 touch-friendly ${isMobile ? 'w-full' : ''}`}
+              className={`touch-friendly ${isMobile ? 'w-full' : ''}`}
             >
               <ShoppingCart className="h-5 w-5 mr-2" />
               {t('pages.mealPlans.generateShoppingList')}
@@ -222,10 +223,10 @@ const MealPlans = () => {
 
       <div className="container mx-auto px-4 py-6">
         {/* Calendar Header */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-0 mb-6">
+        <div className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-lg border-0 mb-6">
           <div className={`${isMobile ? 'p-4' : 'p-6'}`}>
             <div className={`flex items-center ${isMobile ? 'flex-col gap-4' : 'justify-between'} mb-4`}>
-              <h2 className={`font-semibold text-gray-900 ${isMobile ? 'text-lg text-center' : 'text-xl'}`}>
+              <h2 className={`font-semibold text-foreground ${isMobile ? 'text-lg text-center' : 'text-xl'}`}>
                 {getWeekLabel()}
               </h2>
               <div className="flex gap-2">
@@ -233,7 +234,7 @@ const MealPlans = () => {
                   variant="outline"
                   size={isMobile ? "default" : "sm"}
                   onClick={() => setCurrentDate(subWeeks(currentDate, 1))}
-                  className={`text-gray-600 touch-friendly ${isMobile ? 'h-12 w-12' : ''}`}
+                  className={`text-muted-foreground touch-friendly ${isMobile ? 'h-12 w-12' : ''}`}
                 >
                   <ChevronLeft className={isMobile ? "h-5 w-5" : "h-4 w-4"} />
                 </Button>
@@ -241,7 +242,7 @@ const MealPlans = () => {
                   variant="outline"
                   size={isMobile ? "default" : "sm"}
                   onClick={() => setCurrentDate(new Date())}
-                  className={`text-gray-600 touch-friendly ${isMobile ? 'px-6' : 'px-4'} whitespace-nowrap text-xs`}
+                  className={`text-muted-foreground touch-friendly ${isMobile ? 'px-6' : 'px-4'} whitespace-nowrap text-xs`}
                 >
                   {t('pages.mealPlans.currentWeek')}
                 </Button>
@@ -249,7 +250,7 @@ const MealPlans = () => {
                   variant="outline"
                   size={isMobile ? "default" : "sm"}
                   onClick={() => setCurrentDate(addWeeks(currentDate, 1))}
-                  className={`text-gray-600 touch-friendly ${isMobile ? 'h-12 w-12' : ''}`}
+                  className={`text-muted-foreground touch-friendly ${isMobile ? 'h-12 w-12' : ''}`}
                 >
                   <ChevronRight className={isMobile ? "h-5 w-5" : "h-4 w-4"} />
                 </Button>
@@ -264,19 +265,19 @@ const MealPlans = () => {
                   <Card
                     key={day.toISOString()}
                     className={`
-                      border border-gray-200 
-                      ${new Date() > new Date(day) && !isToday(day) ? 'opacity-50 bg-gray-50' : 'bg-white'}
-                      ${isToday(day) ? 'ring-2 ring-green-500 bg-green-50/50' : ''}
+                      border border-border 
+                      ${new Date() > new Date(day) && !isToday(day) ? 'opacity-50 bg-muted' : 'bg-card'}
+                      ${isToday(day) ? 'ring-2 ring-primary bg-primary/5' : ''}
                     `}
                   >
                     <CardContent className="p-4">
                       {/* Day Header */}
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <div className="text-2xl font-bold text-gray-900">
+                          <div className="text-2xl font-bold text-foreground">
                             {format(day, 'd')}
                           </div>
-                          <div className="text-sm font-medium text-gray-600">
+                          <div className="text-sm font-medium text-muted-foreground">
                             {formatDate(day, 'EEEE').toLowerCase()}
                           </div>
                         </div>
@@ -285,7 +286,7 @@ const MealPlans = () => {
                           size="sm"
                           disabled={new Date() > new Date(day) && !isToday(day)}
                           onClick={() => handleAddMeal(day)}
-                          className="touch-friendly bg-green-50 hover:bg-green-100 border-green-200"
+                          className="touch-friendly bg-primary/10 hover:bg-primary/20 border-primary/20"
                         >
                           <Plus className="h-4 w-4 mr-2" />
                           {t('pages.mealPlans.addMeal')}
@@ -295,32 +296,32 @@ const MealPlans = () => {
                       {/* Meal Plans for this day */}
                       <div className="space-y-3">
                         {getMealPlansForDay(day).length === 0 ? (
-                          <div className="text-sm text-gray-400 italic py-2">
+                          <div className="text-sm text-muted-foreground italic py-2">
                             {t('pages.mealPlans.noMealsPlanned')}
                           </div>
                         ) : (
                           getMealPlansForDay(day).map((mealPlan) => (
                             <Card
                               key={mealPlan.id}
-                              className="cursor-pointer hover:shadow-md transition-all border-0 bg-gradient-to-r from-green-50 to-orange-50 group"
+                              className="cursor-pointer hover:shadow-md transition-all border-0 bg-primary/5 group"
                               onClick={() => handleViewMealPlan(mealPlan)}
                             >
                               <CardContent className="p-4">
                                 <div className="flex items-start justify-between">
                                   <div className="flex-1 min-w-0">
-                                    <div className="font-medium text-gray-900 truncate mb-1">
+                                    <div className="font-medium text-foreground truncate mb-1">
                                       {mealPlan.recipe?.title || 'Recipe not found'}
                                     </div>
                                     <div className="flex items-center gap-2 mb-2">
                                       <Badge variant="secondary" className="text-xs">
                                         {t(`pages.mealPlans.mealTypes.${mealPlan.mealType}`)}
                                       </Badge>
-                                      <span className="text-sm text-gray-600">
+                                      <span className="text-sm text-muted-foreground">
                                         {mealPlan.servings} {t('pages.mealPlans.servings')}
                                       </span>
                                     </div>
                                     {mealPlan.recipe && (
-                                      <div className="text-xs text-gray-500">
+                                      <div className="text-xs text-muted-foreground">
                                         {mealPlan.recipe.prepTime + mealPlan.recipe.cookTime} min • {mealPlan.recipe.difficulty}
                                       </div>
                                     )}
@@ -329,7 +330,7 @@ const MealPlans = () => {
                                     variant="ghost"
                                     size="sm"
                                     onClick={(e) => handleQuickDeleteMealPlan(e, mealPlan.id)}
-                                    className="h-8 w-8 p-0 opacity-60 group-hover:opacity-100 transition-opacity bg-red-50 hover:bg-red-100 text-red-600 touch-friendly"
+                                    className="h-8 w-8 p-0 opacity-60 group-hover:opacity-100 transition-opacity bg-destructive/10 hover:bg-destructive/20 text-destructive touch-friendly"
                                     disabled={deletingMealPlan}
                                   >
                                     <Trash2 className="h-4 w-4" />
@@ -349,17 +350,17 @@ const MealPlans = () => {
               <div className="grid grid-cols-7 gap-2">
                 {weekDays.map((day) => (
                   <div key={day.toISOString()}>
-                    <div className="text-center text-sm font-medium text-gray-500 p-2">
+                    <div className="text-center text-sm font-medium text-muted-foreground p-2">
                       {formatDate(day, 'EEEE')}
                     </div>
                     <div
                       className={`
-                        min-h-[120px] p-2 border border-gray-200 rounded-lg
-                        ${new Date() > new Date(day) && !isToday(day) ? 'opacity-50 bg-gray-50' : 'bg-white'}
-                        ${isToday(day) ? 'ring-2 ring-green-500' : ''}
+                        min-h-[120px] p-2 border border-border rounded-lg
+                        ${new Date() > new Date(day) && !isToday(day) ? 'opacity-50 bg-muted' : 'bg-card'}
+                        ${isToday(day) ? 'ring-2 ring-primary' : ''}
                       `}
                     >
-                    <div className="text-sm font-medium text-gray-900 mb-2">
+                    <div className="text-sm font-medium text-foreground mb-2">
                       {format(day, 'd')}
                     </div>
                     
@@ -368,18 +369,18 @@ const MealPlans = () => {
                       {getMealPlansForDay(day).map((mealPlan) => (
                         <Card
                           key={mealPlan.id}
-                          className="cursor-pointer hover:shadow-md transition-shadow border-0 bg-gradient-to-r from-green-50 to-orange-50 group relative"
+                          className="cursor-pointer hover:shadow-md transition-shadow border-0 bg-primary/5 group relative"
                           onClick={() => handleViewMealPlan(mealPlan)}
                         >
-                          <CardContent className="p-2">
-                            <div className="text-xs font-medium text-gray-900 truncate mb-1">
+                          <CardContent className="p-2 bg-primary/10">
+                            <div className="text-xs font-medium text-foreground truncate mb-1 ">
                               {mealPlan.recipe?.title || 'Recipe not found'}
                             </div>
                             <div className="flex items-center justify-between">
                               <Badge variant="secondary" className="text-xs px-1 py-0">
                                 {t(`pages.mealPlans.mealTypes.${mealPlan.mealType}`)}
                               </Badge>
-                                <span className="text-xs text-gray-600">
+                                <span className="text-xs text-muted-foreground">
                                   {mealPlan.servings}
                                 </span>
                             </div>
@@ -390,7 +391,7 @@ const MealPlans = () => {
                             variant="ghost"
                             size="sm"
                             onClick={(e) => handleQuickDeleteMealPlan(e, mealPlan.id)}
-                            className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-red-50 hover:bg-red-100 text-red-600"
+                            className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive/10 hover:bg-destructive/20 text-destructive"
                             disabled={deletingMealPlan}
                           >
                             <Trash2 className="h-3 w-3" />
@@ -405,7 +406,7 @@ const MealPlans = () => {
                       size="sm"
                       disabled={new Date() > new Date(day) && !isToday(day)}
                       onClick={() => handleAddMeal(day)}
-                      className="w-full mt-2 text-xs text-gray-500 hover:text-green-600 hover:bg-green-50"
+                      className="w-full mt-2 text-xs text-muted-foreground hover:text-primary hover:bg-primary/10"
                     >
                       <Plus className="h-3 w-3 mr-1" />
                       {t('pages.mealPlans.addMeal')}
@@ -435,7 +436,7 @@ const MealPlans = () => {
                     {viewingMealPlan.recipe ? (
                       <Button
                         variant="link"
-                        className="p-0 h-auto text-left text-lg font-semibold text-gray-900 hover:text-green-600"
+                        className="p-0 h-auto text-left text-lg font-semibold text-foreground hover:text-primary"
                         onClick={() => handleViewRecipe(viewingMealPlan.recipe.id)}
                       >
                         {viewingMealPlan.recipe.title}
@@ -455,7 +456,7 @@ const MealPlans = () => {
                   {viewingMealPlan.recipe?.description && (
                     <div>
                       <h4 className="font-medium mb-2">{t('pages.recipes.description')}</h4>
-                      <p className="text-sm text-gray-600">{viewingMealPlan.recipe.description}</p>
+                      <p className="text-sm text-muted-foreground">{viewingMealPlan.recipe.description}</p>
                     </div>
                   )}
                   
@@ -522,7 +523,7 @@ const MealPlans = () => {
                 <label className="block text-sm font-medium mb-2">
                   {t('pages.mealPlans.generateShoppingListDialog.selectDateRange')}
                   {shoppingListDateRange.from && shoppingListDateRange.to && (
-                    <span className="text-sm text-gray-600 ml-2">
+                    <span className="text-sm text-muted-foreground ml-2">
                       ({formatDate(shoppingListDateRange.from, 'MMM d')} - {formatDate(shoppingListDateRange.to, 'MMM d')})
                     </span>
                   )}
@@ -542,12 +543,12 @@ const MealPlans = () => {
                 {t('buttons.cancel')}
               </Button>
               <Button 
+                variant="green"
                 onClick={handleGenerateShoppingList}
                 disabled={!shoppingListDateRange.from || !shoppingListDateRange.to}
-                className="bg-green-600 hover:bg-green-700"
               >
                 {t('pages.mealPlans.generateShoppingList')}
-              </Button>
+              </Button> 
             </DialogFooter>
           </DialogContent>
         </Dialog>

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { StorageArea } from '@/types/household';
 import { useTranslation } from 'react-i18next';
+import { StorageAreaType } from '@/types/enums';
 
 interface OnboardingStorageSelectorProps {
   selectedAreas: StorageArea[];
@@ -16,7 +17,7 @@ interface OnboardingStorageSelectorProps {
 }
 
 interface StorageTypeOption {
-  id: 'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other';
+  id: StorageAreaType;
   name: string;
   emoji: string;
   description: string;
@@ -33,35 +34,35 @@ export const OnboardingStorageSelector = ({
   const { t } = useTranslation();
   const [isAddingArea, setIsAddingArea] = useState(false);
   const [editingArea, setEditingArea] = useState<number | null>(null);
-  const [selectedType, setSelectedType] = useState<'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other'>('fridge');
+  const [selectedType, setSelectedType] = useState<StorageAreaType>(StorageAreaType.FRIDGE);
   const [areaName, setAreaName] = useState('');
   const [areaDescription, setAreaDescription] = useState('');
   const [selectedEmoji, setSelectedEmoji] = useState('🥬');
 
   const storageTypeOptions: StorageTypeOption[] = [
     { 
-      id: 'fridge', 
+      id: StorageAreaType.FRIDGE, 
       name: t('storageArea.types.fridge'),
       emoji: '🥬', 
       description: t('storageArea.mainFridgeDescription'),
       suggestedNames: [t('storageArea.mainFridge'), t('storageArea.kitchenFridge'), t('storageArea.coldStorage')]
     },
     { 
-      id: 'freezer', 
+      id: StorageAreaType.FREEZER, 
       name: t('storageArea.types.freezer'), 
       emoji: '🧊', 
       description: t('storageArea.mainFreezerDescription'),
       suggestedNames: [t('storageArea.mainFreezer'), t('storageArea.chestFreezer'), t('storageArea.iceBox')]
     },
     { 
-      id: 'pantry', 
+      id: StorageAreaType.PANTRY, 
       name: t('storageArea.types.pantry'), 
       emoji: '🏺', 
       description: t('storageArea.mainPantryDescription'),
       suggestedNames: [t('storageArea.mainPantry'), t('storageArea.walkInPantry'), t('storageArea.foodCloset')]
     },
     {
-      id: 'kitchen_cupboard', 
+      id: StorageAreaType.KITCHEN_CUPBOARD, 
       name: t('storageArea.types.kitchen_cupboard'), 
       emoji: '🗄️', 
       description: t('storageArea.mainKitchenCupboardDescription'),
@@ -80,7 +81,7 @@ export const OnboardingStorageSelector = ({
     setAreaName('');
     setAreaDescription('');
     setSelectedEmoji('🥬');
-    setSelectedType('fridge');
+    setSelectedType(StorageAreaType.FRIDGE);
   };
 
   const handleAddArea = () => {
@@ -150,7 +151,7 @@ export const OnboardingStorageSelector = ({
               key={typeOption.id}
               onClick={() => handleQuickAdd(typeOption)}
               variant="outline"
-              className="h-20 p-4 flex flex-col items-center justify-center gap-1 hover:bg-green-50 border-green-200"
+              className="h-20 p-4 flex flex-col items-center justify-center gap-1"
             >
               <div className="text-2xl">{typeOption.emoji}</div>
               <div className="text-xs font-medium text-center">{typeOption.name}</div>
@@ -170,13 +171,13 @@ export const OnboardingStorageSelector = ({
           <Label className="text-sm font-medium">Selected Storage Areas ({selectedAreas.length})</Label>
           <div className="space-y-2 max-h-64 overflow-y-auto">
             {selectedAreas.map((area, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-border">
                 <div className="flex items-center gap-3">
                   <div className="text-lg">{area.emoji}</div>
                   <div>
                     <div className="font-medium text-sm">{area.name}</div>
                     {area.description && (
-                      <div className="text-xs text-gray-600">{area.description}</div>
+                      <div className="text-xs text-muted-foreground">{area.description}</div>
                     )}
                   </div>
                 </div>
@@ -193,7 +194,7 @@ export const OnboardingStorageSelector = ({
                     size="sm"
                     variant="ghost"
                     onClick={() => handleRemoveArea(index)}
-                    className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+                    className="h-8 w-8 p-0 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -312,9 +313,10 @@ export const OnboardingStorageSelector = ({
                 {t('buttons.cancel')}
               </Button>
               <Button
+                variant="green"
                 onClick={handleAddArea}
                 disabled={!areaName.trim()}
-                className="flex-1 bg-green-600 hover:bg-green-700"
+                className="flex-1"
               >
                 {editingArea !== null ? t('buttons.update') : t('buttons.add')}
               </Button>

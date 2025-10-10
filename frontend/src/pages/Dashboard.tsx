@@ -78,7 +78,7 @@ const Dashboard = () => {
   // This prevents rendering before redirect to onboarding
   if (authLoading || !hasHousehold) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-600">{t('common.loading')}</p>
@@ -122,9 +122,9 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-orange-50 to-green-100 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-40">
+      <div className="bg-card/80 backdrop-blur-sm border-b border-border/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <DropdownMenu>
@@ -132,10 +132,10 @@ const Dashboard = () => {
                 <Button variant="ghost" className="text-left h-auto p-1 -ml-2">
                   <div className="flex items-center gap-2">
                     <div>
-                       <h1 className="text-xl font-bold text-gray-900">{getCurrentHousehold()?.name || t('common.loading')}</h1>
-                       <p className="text-sm text-gray-600">{getCurrentHousehold()?.memberCount || 0} {t('pages.dashboard.members')}</p>
+                       <h1 className="text-xl font-bold text-foreground">{getCurrentHousehold()?.name || t('common.loading')}</h1>
+                       <p className="text-sm text-muted-foreground">{getCurrentHousehold()?.memberCount || 0} {t('pages.dashboard.members')}</p>
                     </div>
-                    <ChevronDown className="h-4 w-4 text-gray-500" />
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
                   </div>
                 </Button>
               </DropdownMenuTrigger>
@@ -144,13 +144,13 @@ const Dashboard = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup value={selectedHouseholdId || ''} onValueChange={handleSwitchHousehold}>
                   {households.map((h) => (
-                    <DropdownMenuRadioItem key={h.id} value={h.id}>
+                    <DropdownMenuRadioItem key={h.id} value={h.id} className="hover:bg-primary/10">
                       {h.name}
                     </DropdownMenuRadioItem>
                   ))}
                 </DropdownMenuRadioGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/household')}>
+                <DropdownMenuItem onClick={() => navigate('/household')} className="hover:bg-primary/10">
                   <Users className="mr-2 h-4 w-4" />
                   <span>{t('pages.dashboard.manageHouseholds')}</span>
                 </DropdownMenuItem>
@@ -182,16 +182,16 @@ const Dashboard = () => {
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Quick Actions */}
         <div className="grid grid-cols-3 gap-3">
-          {quickActions.map((action, index) => (
+        {quickActions.map((action, index) => (
             <Card
               key={index}
-              className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+              className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
               onClick={() => navigate(action.route)}
             >
               <CardContent className="p-4 text-center">
                 <div className="text-2xl mb-2">{action.emoji}</div>
-                <div className="font-medium text-sm text-gray-900">{action.title}</div>
-                <div className="text-xs text-gray-600">{action.description}</div>
+                <div className="font-medium text-sm text-foreground">{action.title}</div>
+                <div className="text-xs text-muted-foreground">{action.description}</div>
               </CardContent>
             </Card>
           ))}
@@ -200,13 +200,12 @@ const Dashboard = () => {
         {/* Storage Areas */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900">{t('pages.dashboard.storageAreas')}</h2>
+            <h2 className="text-xl font-bold text-foreground">{t('pages.dashboard.storageAreas')}</h2>
             <div className="flex gap-2">
               <AddStorageAreaDialog />
               <Button
-                variant="outline"
+                variant="green"
                 size="sm"
-                className="border-green-600 text-green-600 hover:bg-green-50"
                 onClick={() => navigate(`/household/${getCurrentHousehold()?.id}`)}
               >
                 <List className="h-4 w-4 mr-2" />
@@ -240,38 +239,38 @@ const Dashboard = () => {
         </div>
 
         {/* Recent Activity */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
              <CardTitle className="text-lg">{t('pages.dashboard.recentActivity')}</CardTitle>
              <CardDescription>{t('pages.dashboard.recentActivityDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+              <div className="flex items-center gap-3 p-3 bg-accent rounded-lg">
+                <div className="w-8 h-8 bg-accent/50 rounded-full flex items-center justify-center">
                   <span className="text-sm">🥛</span>
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium">Sarah added milk to the fridge</p>
-                  <p className="text-xs text-gray-600">2 hours ago</p>
+                  <p className="text-xs text-muted-foreground">2 hours ago</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg">
-                <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+              <div className="flex items-center gap-3 p-3 bg-accent rounded-lg">
+                <div className="w-8 h-8 bg-accent/50 rounded-full flex items-center justify-center">
                   <span className="text-sm">🍞</span>
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium">Low stock: Bread</p>
-                  <p className="text-xs text-gray-600">4 hours ago</p>
+                  <p className="text-xs text-muted-foreground">4 hours ago</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="flex items-center gap-3 p-3 bg-accent rounded-lg">
+                <div className="w-8 h-8 bg-accent/50 rounded-full flex items-center justify-center">
                   <span className="text-sm">📝</span>
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium">John completed shopping list</p>
-                  <p className="text-xs text-gray-600">Yesterday</p>
+                  <p className="text-xs text-muted-foreground">Yesterday</p>
                 </div>
               </div>
             </div>

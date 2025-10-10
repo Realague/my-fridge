@@ -104,7 +104,7 @@ export const StructuredIngredientInput = ({
       </div>
 
       {ingredients.length === 0 && (
-        <div className="text-center py-8 text-gray-500 border-2 border-dashed border-gray-200 rounded-lg">
+        <div className="text-center py-8 text-muted-foreground border-2 border-dashed border-border rounded-lg">
           <p>{t('ingredientInput.noIngredients')}</p>
           <p className="text-sm mt-1">{t('ingredientInput.clickToAdd')}</p>
         </div>
@@ -112,7 +112,7 @@ export const StructuredIngredientInput = ({
 
       <div className="space-y-3 ">
         {ingredients.map((ingredient, index) => (
-          <div key={ingredient.id || `new-${index}`} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg bg-white">
+          <div key={ingredient.id || `new-${index}`} className="flex items-center gap-3 p-3 border border-border rounded-lg bg-card">
             <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
                 <Label className="text-sm">{t('ingredientInput.item')}</Label>
@@ -183,7 +183,7 @@ export const StructuredIngredientInput = ({
               variant="ghost"
               size="sm"
               onClick={() => removeIngredient(index)}
-              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+              className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
             >
               <Trash2 className="h-4 w-4" />
             </Button>

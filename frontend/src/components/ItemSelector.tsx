@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
-import { getItemDisplayName } from '@/utils/itemUtils';
+import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
 
 interface ItemSelectorProps {
   onItemSelect: (item: Item | null) => void;
@@ -449,26 +449,6 @@ export const ItemSelector = ({
   const displayValue = selectedItem && !query ? getItemDisplayName(selectedItem, t) : query;
   const showClearButton = selectedItem && !query;
 
-  const getCategoryColor = (category: string) => {
-    const colors: { [key: string]: string } = {
-      'vegetables': 'bg-green-100 text-green-800',
-      'fruits': 'bg-orange-100 text-orange-800',
-      'meat': 'bg-red-100 text-red-800',
-      'dairy': 'bg-blue-100 text-blue-800',
-      'grains': 'bg-yellow-100 text-yellow-800',
-      'spices': 'bg-purple-100 text-purple-800',
-      'beverages': 'bg-cyan-100 text-cyan-800',
-      'snacks': 'bg-pink-100 text-pink-800',
-      'condiments': 'bg-indigo-100 text-indigo-800',
-      'frozen': 'bg-blue-200 text-blue-900',
-      'canned': 'bg-gray-100 text-gray-800',
-      'bakery': 'bg-orange-200 text-orange-900',
-      'household': 'bg-teal-100 text-teal-800',
-      'personal': 'bg-pink-200 text-pink-900',
-      'other': 'bg-gray-100 text-gray-700'
-    };
-    return colors[category.toLowerCase()] || colors['other'];
-  };
 
   return (
     <div ref={containerRef} className={cn("relative", className)}>
@@ -484,24 +464,24 @@ export const ItemSelector = ({
         />
         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
           {showClearButton && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={handleClearSelection}
-              className="h-6 w-6 p-0 hover:bg-gray-100"
-            >
-              <X className="h-3 w-3" />
-            </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleClearSelection}
+            className="h-6 w-6 p-0 hover:bg-muted"
+          >
+            <X className="h-3 w-3" />
+          </Button>
           )}
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={handleInputFocus}
-            className="h-6 w-6 p-0 hover:bg-gray-100"
+            className="h-6 w-6 p-0 hover:bg-muted"
           >
-            <ChevronDown className="h-4 w-4 text-gray-400" />
+            <ChevronDown className="h-4 w-4 text-muted-foreground" />
           </Button>
         </div>
       </div>
@@ -509,7 +489,7 @@ export const ItemSelector = ({
       {isOpen && createPortal(
         <div
           ref={dropdownRef}
-          className="fixed z-50 bg-white border border-gray-200 rounded-md shadow-lg max-h-64 overflow-y-auto"
+          className="fixed z-50 bg-card border border-border rounded-md shadow-lg max-h-64 overflow-y-auto"
           style={{
             top: dropdownPosition.top,
             left: dropdownPosition.left,
@@ -519,36 +499,36 @@ export const ItemSelector = ({
         >
 
           {apiLoading && (
-            <div className="flex items-center justify-center p-4 text-sm text-gray-500 bg-white">
+            <div className="flex items-center justify-center p-4 text-sm text-muted-foreground bg-card">
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
               {t('itemSelector.searching')}
             </div>
           )}
 
           {!apiLoading && query.trim() && !exactMatch && (
-            <div className="border-b border-gray-100 bg-gray-50">
+            <div className="border-b border-border bg-muted/50">
               <Button
                 type="button"
                 variant="ghost"
                 onClick={handleQuickCreate}
-                className="w-full justify-start p-3 h-auto text-left hover:bg-gray-100"
+                className="w-full justify-start p-3 h-auto text-left hover:bg-muted"
               >
-                <Plus className="h-4 w-4 mr-2 text-green-600" />
+                <Plus className="h-4 w-4 mr-2 text-primary" />
                 <div>
                   <div className="font-medium">{t('itemSelector.add', { query })}</div>
-                  <div className="text-xs text-gray-500">{t('itemSelector.quickAddWithDefaultSettings')}</div>
+                  <div className="text-xs text-muted-foreground">{t('itemSelector.quickAddWithDefaultSettings')}</div>
                 </div>
               </Button>
               <Button
                 type="button"
                 variant="ghost"
                 onClick={handleCreateNew}
-                className="w-full justify-start p-3 h-auto text-left hover:bg-gray-100 border-t border-gray-200"
+                className="w-full justify-start p-3 h-auto text-left hover:bg-muted border-t border-border"
               >
-                <Edit className="h-4 w-4 mr-2 text-blue-600" />
+                <Edit className="h-4 w-4 mr-2 text-primary" />
                 <div>
                   <div className="font-medium">{t('itemSelector.createWithDetails', { query })}</div>
-                  <div className="text-xs text-gray-500">{t('itemSelector.setCategoryUnitsAndOtherOptions')}</div>
+                  <div className="text-xs text-muted-foreground">{t('itemSelector.setCategoryUnitsAndOtherOptions')}</div>
                 </div>
               </Button>
             </div>
@@ -560,7 +540,7 @@ export const ItemSelector = ({
                 <div
                   key={`${item.id}-${index}`}
                   onClick={() => handleItemSelect(item)}
-                  className="group flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer rounded transition-colors"
+                  className="group flex items-center justify-between p-2 hover:bg-muted cursor-pointer rounded transition-colors"
                 >
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <div className="flex-1 min-w-0">
@@ -569,7 +549,7 @@ export const ItemSelector = ({
                         <Badge className={getCategoryColor(item.category)}>
                           {t(`items.categories.${item.category}`) }
                         </Badge>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-muted-foreground">
                           {item.householdId ? t('itemSelector.household') : t('itemSelector.global')}
                         </span>
                       </div>
@@ -582,7 +562,7 @@ export const ItemSelector = ({
                         variant="ghost"
                         size="sm"
                         onClick={(e) => handleEditItem(item, e)}
-                        className="h-6 w-6 p-0 opacity-30 group-hover:opacity-100 hover:bg-gray-200 transition-opacity"
+                        className="h-6 w-6 p-0 hover:bg-primary/10 transition-opacity"
                         title="Edit item"
                       >
                         <Edit className="h-3 w-3" />
@@ -590,10 +570,10 @@ export const ItemSelector = ({
                       {isCurrentUserAdmin() && (
                         <Button
                           type="button"
-                          variant="ghost"
+                          variant="deleteTrash"
                           size="sm"
                           onClick={(e) => confirmDeleteItem(item, e)}
-                          className="h-6 w-6 p-0 opacity-30 group-hover:opacity-100 hover:bg-red-200 transition-opacity"
+                          className="h-6 w-6 p-0"
                           title="Delete item"
                         >
                           <Trash2 className="h-3 w-3" />
@@ -608,7 +588,7 @@ export const ItemSelector = ({
 
           {filteredResults.length === 0 && !query.trim() && !hasLoadedHouseholdItems && (
             <div 
-              className="p-4 text-center text-sm text-gray-500 bg-white cursor-pointer hover:bg-gray-50"
+              className="p-4 text-center text-sm text-muted-foreground bg-card cursor-pointer hover:bg-muted/50"
               onClick={() => loadHouseholdItemsOnDemand()}
             >
               {t('itemSelector.clickToLoadHouseholdItems')}
@@ -616,19 +596,19 @@ export const ItemSelector = ({
           )}
           
           {filteredResults.length === 0 && !query.trim() && hasLoadedHouseholdItems && (
-            <div className="p-4 text-center text-sm text-gray-500 bg-white">
+            <div className="p-4 text-center text-sm text-muted-foreground bg-card">
               {t('itemSelector.searchItemsPlaceholder')}
             </div>
           )}
 
           {filteredResults.length === 0 && query.trim() && !apiLoading && (
-            <div className="p-4 text-center text-sm text-gray-500 bg-white">
+            <div className="p-4 text-center text-sm text-muted-foreground bg-card">
               {t('itemSelector.noItemsFound')}
             </div>
           )}
 
           {filteredResults.length === 0 && !query.trim() && hasLoadedHouseholdItems && excludedItems.length > 0 && (
-            <div className="p-4 text-center text-sm text-gray-500 bg-white">
+            <div className="p-4 text-center text-sm text-muted-foreground bg-card">
               {t('itemSelector.allItemsAlreadySelected')}
             </div>
           )}
@@ -676,15 +656,15 @@ export const ItemSelector = ({
                <AlertDialogCancel onClick={() => setDeleteItem(null)}>
                  {t('buttons.cancel')}
                </AlertDialogCancel>
-               <AlertDialogAction 
-                 onClick={() => {
-                   handleDeleteItem(deleteItem);
-                   setDeleteItem(null);
-                 }} 
-                 className="bg-red-600 hover:bg-red-700"
-               >
-                 {t('buttons.delete')}
-               </AlertDialogAction>
+                <AlertDialogAction 
+                  onClick={() => {
+                    handleDeleteItem(deleteItem);
+                    setDeleteItem(null);
+                  }} 
+                  className="text-foreground bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                >
+                  {t('buttons.delete')}
+                </AlertDialogAction>
              </AlertDialogFooter>
            </AlertDialogContent>
          </AlertDialog>

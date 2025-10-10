@@ -272,23 +272,12 @@ export const useStorageAreasWithStats = (currentHouseholdId: string | null) => {
   const storageAreasByHousehold = useStorageAreaStore(state => state.storageAreasByHousehold);
   const fetchStorageAreas = useStorageAreaStore(state => state.fetchStorageAreas);
   
-  // Subscribe to stored items changes to refresh stats
-  const [, forceUpdate] = React.useReducer(x => x + 1, 0);
+  // Subscribe to stored items changes to get proper reactivity
+  const storedItemsByHousehold = useStoredItemStore(state => state.storedItemsByHousehold);
   
-  React.useEffect(() => {
-    if (!currentHouseholdId) return;
-    
-    // Subscribe to stored items store changes
-    const unsubscribe = useStoredItemStore.subscribe(() => {
-      // Force a re-render when stored items change
-      forceUpdate();
-    });
-    
-    return unsubscribe;
-  }, [currentHouseholdId]);
-
   // Compute values from stable references to avoid infinite loops
   const storageAreas = currentHouseholdId ? (storageAreasByHousehold[currentHouseholdId] || []) : [];
+  const storedItems = currentHouseholdId ? (storedItemsByHousehold[currentHouseholdId] || []) : [];
   
   // Memoize the stats computation to prevent infinite re-renders
   const storageAreasWithStats = useMemo(() => {
@@ -302,15 +291,14 @@ export const useStorageAreasWithStats = (currentHouseholdId: string | null) => {
       let lowStockCount = 0;
       
       try {
-        // Get stored items for this storage area
-        const storedItemsStore = useStoredItemStore.getState();
-        const storedItems = storedItemsStore.getStoredItemsByStorageArea(area.id);
+        // Get stored items for this storage area from the reactive state
+        const areaStoredItems = storedItems.filter(item => item.storageAreaId === area.id);
         
-        itemCount = storedItems.length;
+        itemCount = areaStoredItems.length;
         
         // Calculate low stock count (items expiring within 3 days or already expired)
         const now = new Date();
-        lowStockCount = storedItems.filter(item => {
+        lowStockCount = areaStoredItems.filter(item => {
           if (!item.expirationDate) return false;
           const expirationDate = new Date(item.expirationDate);
           const diffDays = Math.ceil((expirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
@@ -330,7 +318,7 @@ export const useStorageAreasWithStats = (currentHouseholdId: string | null) => {
         lowStockCount,
       };
     });
-  }, [storageAreas, currentHouseholdId]);
+  }, [storageAreas, storedItems, currentHouseholdId]);
 
   return {
     storageAreas,

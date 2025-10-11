@@ -154,10 +154,15 @@ export const ItemSelector = ({
   }, [query]); // Only query dependency to prevent any re-renders
 
   const filteredResults = query.trim() 
-    ? apiResults.filter(item => 
-        item.name.toLowerCase().includes(query.toLowerCase()) &&
-        !excludedItems.some(excluded => excluded.id === item.id)
-      )
+    ? apiResults.filter(item => {
+        const translatedName = getItemDisplayName(item, t).toLowerCase();
+        const originalName = item.name.toLowerCase();
+        const searchQuery = query.toLowerCase();
+        return (
+          translatedName.includes(searchQuery) || 
+          originalName.includes(searchQuery)
+        ) && !excludedItems.some(excluded => excluded.id === item.id);
+      })
     : apiResults.filter(item => 
         !excludedItems.some(excluded => excluded.id === item.id)
       );

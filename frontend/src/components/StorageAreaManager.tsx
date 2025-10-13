@@ -146,7 +146,7 @@ const StorageAreaManager = () => {
                     <AlertDialogCancel>{t('buttons.cancel')}</AlertDialogCancel>
                     <AlertDialogAction 
                       onClick={() => handleDeleteArea(area)}
-                      className="text-foreground bg-red-600 hover:bg-red-700 "
+                      className="text-foreground bg-red-600 hover:bg-red-700"
                     >
                       {t('buttons.delete')}
                     </AlertDialogAction>

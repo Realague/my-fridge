@@ -32,6 +32,7 @@ export interface UpdateItemRequest {
 
 export interface SearchItemsRequest {
   search: string;
+  language?: string;
   limit?: number;
   offset?: number;
 }
@@ -82,6 +83,7 @@ const searchItems = async (params: SearchItemsRequest): Promise<SearchItemsRespo
   const searchParams = new URLSearchParams();
   
   searchParams.append('search', params.search);
+  if (params.language) searchParams.append('language', params.language);
   if (params.limit) searchParams.append('limit', params.limit.toString());
   if (params.offset) searchParams.append('offset', params.offset.toString());
 

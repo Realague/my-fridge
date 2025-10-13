@@ -30,7 +30,7 @@ export const ItemSelector = ({
   selectedItem = null,
   excludedItems = []
 }: ItemSelectorProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [editingItem, setEditingItem] = useState<Item | null>(null);
@@ -97,7 +97,7 @@ export const ItemSelector = ({
     householdItemsRef.current = [];
   }, [selectedHouseholdId]);
 
-  // Debounced search effect with proper cleanup
+  // Debounced search effect - loads ALL items and filters on frontend for translation support
   useEffect(() => {
     // Clear existing timeout
     if (searchTimeoutRef.current) {
@@ -106,7 +106,7 @@ export const ItemSelector = ({
     }
 
     if (query.trim()) {
-      // Only search if query is different from last search
+      // Load all items when user searches (filter happens on frontend using translations)
       if (query !== lastSearchQueryRef.current) {
         const timeout = setTimeout(async () => {
           if (!userRef.current || !isAuthenticatedRef.current || !query.trim()) {
@@ -116,15 +116,17 @@ export const ItemSelector = ({
           setApiLoading(true);
           
           try {
+            // Use backend translation search for better performance
             const response = await itemService.searchItems({
-              search: query,
-              limit: 10,
+              search: query, // Search with the actual query
+              language: i18n.language, // Pass current language for backend translation search
+              limit: 20,
             });
             
             setApiResults(response.items);
             lastSearchQueryRef.current = query;
           } catch (error) {
-            console.error('Failed to search API items:', error);
+            console.error('Failed to load items:', error);
             // Check if it's an auth error
             if (error instanceof Error && error.message.includes('Authentication')) {
               toast.error(t('messages.error.loginRequired'));
@@ -153,14 +155,9 @@ export const ItemSelector = ({
     };
   }, [query]); // Only query dependency to prevent any re-renders
 
-  const filteredResults = query.trim() 
-    ? apiResults.filter(item => 
-        item.name.toLowerCase().includes(query.toLowerCase()) &&
-        !excludedItems.some(excluded => excluded.id === item.id)
-      )
-    : apiResults.filter(item => 
-        !excludedItems.some(excluded => excluded.id === item.id)
-      );
+  const filteredResults = apiResults.filter(item => 
+    !excludedItems.some(excluded => excluded.id === item.id)
+  );
 
   const exactMatch = filteredResults.find(item => 
     item.name.toLowerCase() === query.toLowerCase()

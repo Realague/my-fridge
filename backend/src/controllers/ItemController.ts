@@ -78,6 +78,7 @@ export class ItemController {
       const query: GetItemsQueryDto = {
         search: req.query.search as string,
         householdId: req.query.householdId as string,
+        language: req.query.language as string,
         limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
         offset: req.query.offset ? parseInt(req.query.offset as string) : undefined,
       };
@@ -112,6 +113,7 @@ export class ItemController {
       const query: GetItemsQueryDto = {
         search: req.query.search as string,
         householdId: user.selectedHouseholdId,
+        language: req.query.language as string,
         limit: req.query.limit ? parseInt(req.query.limit as string) : 10,
         offset: req.query.offset ? parseInt(req.query.offset as string) : 0,
       };

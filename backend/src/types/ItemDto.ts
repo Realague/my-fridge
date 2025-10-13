@@ -43,6 +43,7 @@ export interface ItemDto {
 export interface GetItemsQueryDto {
   search?: string;
   householdId?: string;
+  language?: string;
   limit?: number;
   offset?: number;
 }

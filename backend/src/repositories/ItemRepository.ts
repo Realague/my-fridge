@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 import { Item, User, Household } from '../models';
 import { CreateItemDto, UpdateItemDto, GetItemsQueryDto } from '../types/ItemDto';
-import { ItemCategory } from '../types/enums';
+import { getReverseTranslationMap } from '../i18n/itemTranslations';
 
 export class ItemRepository {
   async create(itemData: CreateItemDto): Promise<Item | null> {
@@ -33,6 +33,7 @@ export class ItemRepository {
     const {
       search,
       householdId,
+      language,
       limit = 50,
       offset = 0,
     } = query;
@@ -60,11 +61,36 @@ export class ItemRepository {
       };
     }
 
-    // Search functionality
+    // Search functionality with translation support
     if (search) {
-      whereClause.name = {
-        [Op.iLike]: `%${search}%`
-      };
+      const searchConditions: any[] = [
+        { name: { [Op.iLike]: `%${search}%` } }
+      ];
+
+      // If language is provided, also search by translated names
+      if (language) {
+        const reverseTranslationMap = getReverseTranslationMap(language);
+        const searchTerm = search.toLowerCase();
+        
+        // Find matching nameKeys for the search term
+        const matchingNameKeys: string[] = [];
+        for (const [translatedName, nameKey] of Object.entries(reverseTranslationMap)) {
+          if (translatedName.includes(searchTerm)) {
+            matchingNameKeys.push(nameKey);
+          }
+        }
+
+        // Add conditions for matching nameKeys
+        if (matchingNameKeys.length > 0) {
+          searchConditions.push({
+            nameKey: {
+              [Op.in]: matchingNameKeys
+            }
+          });
+        }
+      }
+
+      whereClause[Op.or] = searchConditions;
     }
 
     const { rows: items, count: total } = await Item.findAndCountAll({

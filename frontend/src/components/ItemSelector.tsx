@@ -30,7 +30,7 @@ export const ItemSelector = ({
   selectedItem = null,
   excludedItems = []
 }: ItemSelectorProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [editingItem, setEditingItem] = useState<Item | null>(null);
@@ -116,10 +116,11 @@ export const ItemSelector = ({
           setApiLoading(true);
           
           try {
-            // Load all items without search query - frontend will filter using translations
+            // Use backend translation search for better performance
             const response = await itemService.searchItems({
-              search: '', // Empty search to get all items
-              limit: 200, // Higher limit to get more items for frontend filtering
+              search: query, // Search with the actual query
+              language: i18n.language, // Pass current language for backend translation search
+              limit: 20,
             });
             
             setApiResults(response.items);
@@ -154,19 +155,9 @@ export const ItemSelector = ({
     };
   }, [query]); // Only query dependency to prevent any re-renders
 
-  const filteredResults = query.trim() 
-    ? apiResults.filter(item => {
-        const translatedName = getItemDisplayName(item, t).toLowerCase();
-        const originalName = item.name.toLowerCase();
-        const searchQuery = query.toLowerCase();
-        return (
-          translatedName.includes(searchQuery) || 
-          originalName.includes(searchQuery)
-        ) && !excludedItems.some(excluded => excluded.id === item.id);
-      })
-    : apiResults.filter(item => 
-        !excludedItems.some(excluded => excluded.id === item.id)
-      );
+  const filteredResults = apiResults.filter(item => 
+    !excludedItems.some(excluded => excluded.id === item.id)
+  );
 
   const exactMatch = filteredResults.find(item => 
     item.name.toLowerCase() === query.toLowerCase()

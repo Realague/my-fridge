@@ -180,10 +180,9 @@ export const StructuredIngredientInput = ({
             
             <Button
               type="button"
-              variant="ghost"
+              variant="deleteTrash"
               size="sm"
               onClick={() => removeIngredient(index)}
-              className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
             >
               <Trash2 className="h-4 w-4" />
             </Button>

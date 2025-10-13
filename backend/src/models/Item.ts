@@ -8,7 +8,6 @@ import { Household } from './Household';
 interface ItemAttributes {
   id: string;
   name: string;
-  nameKey: string | null;
   category: ItemCategory;
   defaultUnit: Unit;
   availableUnits: Unit[];
@@ -24,7 +23,6 @@ interface ItemCreationAttributes extends Optional<ItemAttributes, 'id' | 'defaul
 export class Item extends Model<ItemAttributes, ItemCreationAttributes> implements ItemAttributes {
   public id!: string;
   public name!: string;
-  public nameKey!: string | null;
   public category!: ItemCategory;
   public defaultUnit!: Unit;
   public availableUnits!: Unit[];
@@ -51,11 +49,6 @@ Item.init(
       validate: {
         len: [1, 100],
       },
-    },
-    nameKey: {
-      type: DataTypes.STRING(100),
-      allowNull: true,
-      comment: 'Translation key for seeded items (e.g., "tomato" for items.tomato)',
     },
     category: {
       type: DataTypes.ENUM(...ITEM_CATEGORIES),

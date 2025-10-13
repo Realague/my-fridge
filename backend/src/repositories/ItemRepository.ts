@@ -80,10 +80,10 @@ export class ItemRepository {
           }
         }
 
-        // Add conditions for matching nameKeys
+        // Add conditions for matching names (since nameKey === name for seeded items)
         if (matchingNameKeys.length > 0) {
           searchConditions.push({
-            nameKey: {
+            name: {
               [Op.in]: matchingNameKeys
             }
           });

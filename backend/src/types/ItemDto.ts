@@ -2,7 +2,6 @@ import { ItemCategory, Unit } from './enums';
 
 export interface CreateItemDto {
   name: string;
-  nameKey?: string | null;
   category: ItemCategory;
   defaultUnit?: Unit;
   availableUnits?: Unit[];
@@ -21,7 +20,6 @@ export interface UpdateItemDto {
 export interface ItemDto {
   id: string;
   name: string;
-  nameKey?: string | null;
   category: ItemCategory;
   defaultUnit: Unit;
   availableUnits: Unit[];

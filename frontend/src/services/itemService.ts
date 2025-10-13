@@ -3,7 +3,6 @@ import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 export interface Item {
   id: string;
   name: string;
-  nameKey?: string | null;
   category: string;
   defaultUnit: string;
   availableUnits: string[];

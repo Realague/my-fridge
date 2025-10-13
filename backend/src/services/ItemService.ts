@@ -234,7 +234,6 @@ export class ItemService {
     return {
       id: item.id,
       name: item.name,
-      nameKey: item.nameKey,
       category: item.category,
       defaultUnit: item.defaultUnit,
       availableUnits: availableUnits,

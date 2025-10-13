@@ -38,11 +38,6 @@ module.exports = {
         allowNull: false,
         defaultValue: JSON.stringify(['piece'])
       },
-      nameKey: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        comment: 'Translation key for seeded items (e.g., "tomato" for items.tomato)',
-      },
       householdId: {
         type: DataTypes.UUID,
         allowNull: true,
@@ -77,7 +72,6 @@ module.exports = {
     await queryInterface.addIndex('items', ['createdBy']);
     await queryInterface.addIndex('items', ['householdId']);
     await queryInterface.addIndex('items', ['householdId', 'category']);
-    await queryInterface.addIndex('items', ['nameKey']);
   },
 
   async down (queryInterface, Sequelize) {

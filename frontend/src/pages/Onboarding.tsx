@@ -19,6 +19,7 @@ const Onboarding = () => {
   const { isAuthenticated, isLoading } = useAuthStore();
   const createHousehold = useHouseholdStore(state => state.createHousehold);
   const joinHousehold = useHouseholdStore(state => state.joinHousehold);
+  const { selectedHouseholdId } = useHouseholdStore();
   
   const [step, setStep] = useState(1);
   const [householdName, setHouseholdName] = useState('');
@@ -166,6 +167,10 @@ const Onboarding = () => {
                   </div>
                 </div>
               </Button>
+
+              {selectedHouseholdId && <Button className="w-full" variant="outline" onClick={() => navigate('/dashboard')}>
+                {t('buttons.cancel')}
+              </Button>}
             </CardContent>
           </Card>
         )}

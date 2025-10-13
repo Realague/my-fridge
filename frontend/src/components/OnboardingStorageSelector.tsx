@@ -235,7 +235,7 @@ export const OnboardingStorageSelector = ({
                 {storageTypeOptions.map((type) => (
                   <Button
                     key={type.id}
-                    variant={selectedType === type.id ? "default" : "outline"}
+                    variant={selectedType === type.id ? "green" : "outline"}
                     size="sm"
                     onClick={() => {
                       setSelectedType(type.id);
@@ -288,7 +288,7 @@ export const OnboardingStorageSelector = ({
                 {emojiOptions.map((emoji) => (
                   <Button
                     key={emoji}
-                    variant={selectedEmoji === emoji ? "default" : "outline"}
+                    variant={selectedEmoji === emoji ? "green" : "outline"}
                     size="sm"
                     onClick={() => setSelectedEmoji(emoji)}
                     className="h-12 text-xl"

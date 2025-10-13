@@ -418,7 +418,21 @@ const EditRecipe = () => {
             {/* Structured Ingredients */}
             <StructuredIngredientInput
               ingredients={ingredients}
-              onIngredientsChange={setIngredients}
+              onIngredientsChange={(updatedIngredients) => {
+                setIngredients(updatedIngredients);
+                
+                // Clean up ingredient-step mappings for deleted ingredients
+                const currentIngredientKeys = updatedIngredients.map((ingredient, index) => 
+                  getIngredientKey(ingredient, index)
+                );
+                const updatedMap = { ...ingredientStepMap };
+                Object.keys(updatedMap).forEach(ingredientKey => {
+                  if (!currentIngredientKeys.includes(ingredientKey)) {
+                    delete updatedMap[ingredientKey];
+                  }
+                });
+                setIngredientStepMap(updatedMap);
+              }}
             />
 
             {/* Instructions */}

@@ -369,6 +369,16 @@ const AddRecipe = () => {
                   id: ingredient.id || `temp-${Date.now()}-${Math.random()}`
                 } as RecipeIngredientWithId));
                 setIngredients(ingredientsWithId);
+                
+                // Clean up ingredient-step mappings for deleted ingredients
+                const currentIngredientIds = ingredientsWithId.map(ing => ing.id);
+                const updatedMap = { ...ingredientStepMap };
+                Object.keys(updatedMap).forEach(ingredientId => {
+                  if (!currentIngredientIds.includes(ingredientId)) {
+                    delete updatedMap[ingredientId];
+                  }
+                });
+                setIngredientStepMap(updatedMap);
               }}
             />
 
@@ -380,7 +390,7 @@ const AddRecipe = () => {
                     <CardTitle>{t('pages.recipes.instructions')}</CardTitle>
                     <CardDescription>{t('pages.recipes.instructionsDescription')}</CardDescription>
                   </div>
-                  <Button type="button" onClick={addInstruction} size="sm">
+                  <Button variant="outline" type="button" onClick={addInstruction} size="sm">
                     <Plus className="h-4 w-4 mr-1" />
                     {t('buttons.add')}
                   </Button>
@@ -390,7 +400,7 @@ const AddRecipe = () => {
                 {instructions.map((instruction, index) => (
                   <div key={index} className="space-y-3">
                     <div className="flex gap-2">
-                      <div className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium mt-2">
+                      <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-foreground rounded-full flex items-center justify-center text-sm font-medium mt-2">
                         {index + 1}
                       </div>
                       <Textarea
@@ -458,7 +468,7 @@ const AddRecipe = () => {
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                     className="flex-1"
                   />
-                  <Button type="button" onClick={addTag}>{t('pages.recipes.addTag')}</Button>
+                  <Button variant="outline" type="button" onClick={addTag}>{t('pages.recipes.addTag')}</Button>
                 </div>
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
@@ -491,7 +501,8 @@ const AddRecipe = () => {
               </Button>
               <Button 
                 type="submit" 
-                className="flex-1 bg-primary hover:bg-primary/90"
+                variant="green"
+                className="flex-1"
                 disabled={loading}
               >
                 {loading ? t('pages.recipes.saving') : t('pages.recipes.saveRecipe')}

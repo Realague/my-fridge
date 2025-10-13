@@ -97,7 +97,7 @@ export const ItemSelector = ({
     householdItemsRef.current = [];
   }, [selectedHouseholdId]);
 
-  // Debounced search effect with proper cleanup
+  // Debounced search effect - loads ALL items and filters on frontend for translation support
   useEffect(() => {
     // Clear existing timeout
     if (searchTimeoutRef.current) {
@@ -106,7 +106,7 @@ export const ItemSelector = ({
     }
 
     if (query.trim()) {
-      // Only search if query is different from last search
+      // Load all items when user searches (filter happens on frontend using translations)
       if (query !== lastSearchQueryRef.current) {
         const timeout = setTimeout(async () => {
           if (!userRef.current || !isAuthenticatedRef.current || !query.trim()) {
@@ -116,15 +116,16 @@ export const ItemSelector = ({
           setApiLoading(true);
           
           try {
+            // Load all items without search query - frontend will filter using translations
             const response = await itemService.searchItems({
-              search: query,
-              limit: 10,
+              search: '', // Empty search to get all items
+              limit: 200, // Higher limit to get more items for frontend filtering
             });
             
             setApiResults(response.items);
             lastSearchQueryRef.current = query;
           } catch (error) {
-            console.error('Failed to search API items:', error);
+            console.error('Failed to load items:', error);
             // Check if it's an auth error
             if (error instanceof Error && error.message.includes('Authentication')) {
               toast.error(t('messages.error.loginRequired'));

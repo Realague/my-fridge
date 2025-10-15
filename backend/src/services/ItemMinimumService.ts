@@ -112,7 +112,6 @@ export class ItemMinimumService {
       } : undefined,
       creator: itemMinimum.creator ? {
         id: itemMinimum.creator.id,
-        displayName: itemMinimum.creator.displayName,
         email: itemMinimum.creator.email,
       } : undefined,
       household: itemMinimum.household ? {

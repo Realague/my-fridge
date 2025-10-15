@@ -26,7 +26,6 @@ export interface ItemMinimumDto {
   item?: ItemDto;
   creator?: {
     id: string;
-    displayName: string;
     email: string;
   };
   household?: {

@@ -5,14 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, ArrowLeft, Calendar, MapPin, AlertTriangle, Edit, Trash2, Save, X, Package, TrendingDown } from 'lucide-react';
+import { Plus, ArrowLeft, Calendar, MapPin, AlertTriangle, Edit, Trash2, Save, X } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
 import { QuantitySelector } from '@/components/QuantitySelector';
-import { ItemMinimumDialog } from '@/components/ItemMinimumDialog';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
-import { useItemMinimumStore } from '@/stores/itemMinimumStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { itemService } from '@/services/itemService';
 import { format } from 'date-fns';
@@ -51,10 +49,6 @@ const StorageArea = () => {
   const [location, setLocation] = useState('');
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [items, setItems] = useState<Record<string, Item>>({});
-  const [showMinimumDialog, setShowMinimumDialog] = useState(false);
-  const [minimumItemId, setMinimumItemId] = useState<string | null>(null);
-  
-  const { hasMinimumForItem, getMinimumForItem, fetchItemMinimums } = useItemMinimumStore();
 
   // Get data from stores
   const area = getStorageAreaById(id || '');
@@ -71,9 +65,8 @@ const StorageArea = () => {
   useEffect(() => {
     if (selectedHouseholdId && id) {
       fetchStoredItemsByStorageArea(id);
-      fetchItemMinimums();
     }
-  }, [selectedHouseholdId, id, fetchStoredItemsByStorageArea, fetchItemMinimums]);
+  }, [selectedHouseholdId, id, fetchStoredItemsByStorageArea]);
 
   // Load item details for stored items
   useEffect(() => {
@@ -192,11 +185,6 @@ const StorageArea = () => {
     return badges[status];
   };
 
-  const handleSetMinimum = (itemId: string) => {
-    setMinimumItemId(itemId);
-    setShowMinimumDialog(true);
-  };
-
   const StorageItemCard = ({ storageItem }: { storageItem: typeof storageItems[0] }) => {
     const item = items[storageItem.itemId];
     const isEditing = editingItem === storageItem.id;
@@ -206,9 +194,6 @@ const StorageArea = () => {
     const [editExpiration, setEditExpiration] = useState(
       storageItem.expirationDate ? format(new Date(storageItem.expirationDate), 'yyyy-MM-dd') : ''
     );
-
-    const itemHasMinimum = hasMinimumForItem(storageItem.itemId);
-    const itemMinimum = getMinimumForItem(storageItem.itemId);
 
     if (!item) {
       return (
@@ -265,12 +250,6 @@ const StorageArea = () => {
                   { t(`items.categories.${item.category}`) }
                 </Badge>
                 {getExpirationBadge(storageItem.expirationDate)}
-                {itemHasMinimum && (
-                  <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                    <TrendingDown className="h-3 w-3 mr-1" />
-                    {t('itemMinimum.hasMinimum')}
-                  </Badge>
-                )}
               </div>
               
               {isEditing ? (
@@ -350,15 +329,6 @@ const StorageArea = () => {
             
             {!isEditing && (
               <div className="flex items-center gap-2 ml-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleSetMinimum(storageItem.itemId)}
-                  className="h-8 w-8 p-0"
-                  title={t('itemMinimum.setMinimum')}
-                >
-                  <TrendingDown className="h-4 w-4" />
-                </Button>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -563,16 +533,6 @@ const StorageArea = () => {
           )}
         </div>
       </div>
-
-      {/* Item Minimum Dialog */}
-      <ItemMinimumDialog
-        open={showMinimumDialog}
-        onOpenChange={(open) => {
-          setShowMinimumDialog(open);
-          if (!open) setMinimumItemId(null);
-        }}
-        itemId={minimumItemId || undefined}
-      />
 
       <BottomNavigation currentPage="home" />
     </div>

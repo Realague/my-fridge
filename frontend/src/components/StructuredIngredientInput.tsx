@@ -125,6 +125,7 @@ export const StructuredIngredientInput = ({
                     updatedAt: ''
                   } : null}
                   excludedItems={getExcludedItems(index)}
+                  excludeCleaningProducts={true}
                   placeholder={t('ingredientInput.selectIngredient')}
                   className="mt-1"
                 />

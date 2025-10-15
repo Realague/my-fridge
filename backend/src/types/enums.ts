@@ -21,6 +21,9 @@ export enum ItemCategory {
   CONDIMENTS = 'condiments',
   FROZEN = 'frozen',
   CANNED = 'canned',
+  MEAL = 'meal',
+  PREPARATION = 'preparation',
+  CLEANING_PRODUCTS = 'cleaning_products',
   OTHER = 'other'
 }
 
@@ -30,8 +33,6 @@ export enum Unit {
   // Weight
   GRAM = 'g',
   KILOGRAM = 'kg',
-  POUND = 'lb',
-  OUNCE = 'oz',
   
   // Volume
   MILLILITER = 'ml',
@@ -39,8 +40,6 @@ export enum Unit {
   CUP = 'cup',
   TABLESPOON = 'tbsp',
   TEASPOON = 'tsp',
-  FLUID_OUNCE = 'fl_oz',
-  GALLON = 'gallon',
   
   // Pieces
   PIECE = 'piece',

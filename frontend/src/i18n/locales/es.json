@@ -570,13 +570,11 @@
     "cups": "tazas",
     "tbsp": "cucharada",
     "tsp": "cucharadita",
-    "oz": "oz",
-    "lb": "lb",
-    "floz": "floz",
-    "gal": "gallon",
     "pack": "pack",
     "bunch": "bunch",
-    "dozen": "dozen"
+    "serving": "serving",
+    "dozen": "dozen",
+    "other": "other"
   },
   "items": {
     "categories": {
@@ -589,6 +587,12 @@
       "spices": "Especias",
       "beverages": "Bebidas",
       "snacks": "Aperitivos",
+      "condiments": "Condimentos",
+      "frozen": "Congelado",
+      "canned": "Enlatado",
+      "preparation": "Preparación",
+      "meal": "Comida",
+      "cleaning_products": "Productos de limpieza",
       "other": "Otro"
     },
     "tomato": "Tomate",

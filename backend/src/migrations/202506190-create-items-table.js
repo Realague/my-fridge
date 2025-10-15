@@ -24,12 +24,12 @@ module.exports = {
         }
       },
       category: {
-        type: DataTypes.ENUM('vegetables', 'fruits', 'meat', 'dairy', 'grains', 'spices', 'beverages', 'snacks', 'condiments', 'frozen', 'canned', 'other'),
+        type: DataTypes.ENUM('vegetables', 'fruits', 'meat', 'dairy', 'grains', 'spices', 'beverages', 'snacks', 'condiments', 'frozen', 'canned', 'meal', 'preparation', 'cleaning_products', 'other'),
         allowNull: false,
         defaultValue: 'other'
       },
       defaultUnit: {
-        type: DataTypes.ENUM('g', 'kg', 'lb', 'oz', 'ml', 'l', 'cup', 'tbsp', 'tsp', 'fl_oz', 'gallon', 'piece', 'pack', 'bunch', 'dozen', 'other'),
+        type: DataTypes.ENUM('g', 'kg', 'ml', 'l', 'cup', 'tbsp', 'tsp', 'piece', 'pack', 'bunch', 'dozen', 'serving', 'other'),
         allowNull: false,
         defaultValue: 'piece'
       },

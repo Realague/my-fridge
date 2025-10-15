@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
+import { ItemCategory } from '@/types/enums';
 
 interface ItemSelectorProps {
   onItemSelect: (item: Item | null) => void;
@@ -21,6 +22,7 @@ interface ItemSelectorProps {
   className?: string;
   selectedItem?: Item | null;
   excludedItems?: Item[];
+  excludeCleaningProducts?: boolean;
 }
 
 export const ItemSelector = ({ 
@@ -28,7 +30,8 @@ export const ItemSelector = ({
   placeholder, 
   className,
   selectedItem = null,
-  excludedItems = []
+  excludedItems = [],
+  excludeCleaningProducts = false
 }: ItemSelectorProps) => {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -155,9 +158,19 @@ export const ItemSelector = ({
     };
   }, [query]); // Only query dependency to prevent any re-renders
 
-  const filteredResults = apiResults.filter(item => 
-    !excludedItems.some(excluded => excluded.id === item.id)
-  );
+  const filteredResults = apiResults.filter(item => {
+    // Exclude items that are in the excludedItems list
+    if (excludedItems.some(excluded => excluded.id === item.id)) {
+      return false;
+    }
+    
+    // Exclude cleaning products if the prop is set to true
+    if (excludeCleaningProducts && item.category === ItemCategory.CLEANING_PRODUCTS) {
+      return false;
+    }
+    
+    return true;
+  });
 
   const exactMatch = filteredResults.find(item => 
     item.name.toLowerCase() === query.toLowerCase()

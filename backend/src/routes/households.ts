@@ -9,6 +9,7 @@ import { authenticateGoogleToken } from '../middleware/auth';
 import { validateRequest } from '../middleware/validation';
 import storageAreaRoutes from './storageAreas';
 import shoppingRoutes from './shopping';
+import itemMinimumRoutes from './itemMinimums';
 
 // Validation schemas for the middleware
 const CreateHouseholdSchema = { name: 'CreateHouseholdDto' };
@@ -70,4 +71,7 @@ router.use('/:householdId/storage-areas', storageAreaRoutes);
 // Nested routes for shopping lists
 router.use('/:householdId/shopping', shoppingRoutes);
 
-export default router; 
+// Nested routes for item minimums
+router.use('/:householdId/item-minimums', itemMinimumRoutes);
+
+export default router;

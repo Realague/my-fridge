@@ -7,6 +7,7 @@ import StorageAreaCard from '@/components/StorageAreaCard';
 import BottomNavigation from '@/components/BottomNavigation';
 import NotificationDrawer from '@/components/NotificationDrawer';
 import AddStorageAreaDialog from '@/components/AddStorageAreaDialog';
+import { LowStockCard } from '@/components/LowStockCard';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -196,6 +197,9 @@ const Dashboard = () => {
             </Card>
           ))}
         </div>
+
+        {/* Low Stock Alert */}
+        <LowStockCard />
 
         {/* Storage Areas */}
         <div className="space-y-4">

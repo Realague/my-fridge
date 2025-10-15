@@ -711,6 +711,27 @@
     "chocolate": "Chocolate",
     "cookies": "Cookies"
   },
+  "itemMinimum": {
+    "title": "Item Minimums",
+    "description": "Manage minimum stock levels for items",
+    "setMinimum": "Set Minimum",
+    "editMinimum": "Edit Minimum",
+    "selectItem": "Select Item",
+    "minimumQuantity": "Minimum Quantity",
+    "currentStock": "Current Stock",
+    "minimum": "Minimum",
+    "quantityNeeded": "Need {{quantity}} {{unit}} more",
+    "lowStock": "Low Stock",
+    "inStock": "In Stock",
+    "hasMinimum": "Has Minimum",
+    "noMinimumsYet": "No minimums set yet",
+    "setMinimumsDescription": "Set minimum stock levels to get notified when items run low",
+    "setFirstMinimum": "Set First Minimum",
+    "deleteMinimum": "Delete Minimum",
+    "deleteConfirmation": "Are you sure you want to delete this minimum? This action cannot be undone.",
+    "manageMinimums": "Manage Item Minimums",
+    "settingsDescription": "Set and manage minimum stock levels for your items"
+  },
   "common": {
     "returnToHome": "Return to Home",
     "loading": "Loading...",

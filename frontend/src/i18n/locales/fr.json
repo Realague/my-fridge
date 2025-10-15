@@ -291,7 +291,10 @@
       "today": "Aujourd'hui",
       "itemsPending": "{{count}} articles en attente",
       "planThisWeek": "Planifiez cette semaine",
-      "savedRecipes": "{{count}} recettes sauvegardées"
+      "savedRecipes": "{{count}} recettes sauvegardées",
+      "lowStockItems": "Articles en Stock Faible",
+      "itemsNeedRestock": "{{count}} articles nécessitent un réapprovisionnement",
+      "viewAll": "Voir Tout"
     },
     "shopping": {
       "title": "Liste de Courses",
@@ -686,6 +689,27 @@
     "chips": "Chips",
     "chocolate": "Chocolat",
     "cookies": "Biscuits"
+  },
+  "itemMinimum": {
+    "title": "Minimums d'Articles",
+    "description": "Gérer les niveaux de stock minimum pour les articles",
+    "setMinimum": "Définir le Minimum",
+    "editMinimum": "Modifier le Minimum",
+    "selectItem": "Sélectionner un Article",
+    "minimumQuantity": "Quantité Minimale",
+    "currentStock": "Stock Actuel",
+    "minimum": "Minimum",
+    "quantityNeeded": "Besoin de {{quantity}} {{unit}} de plus",
+    "lowStock": "Stock Faible",
+    "inStock": "En Stock",
+    "hasMinimum": "A un Minimum",
+    "noMinimumsYet": "Aucun minimum défini pour le moment",
+    "setMinimumsDescription": "Définissez des niveaux de stock minimum pour être notifié lorsque les articles sont épuisés",
+    "setFirstMinimum": "Définir le Premier Minimum",
+    "deleteMinimum": "Supprimer le Minimum",
+    "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer ce minimum ? Cette action ne peut pas être annulée.",
+    "manageMinimums": "Gérer les Minimums d'Articles",
+    "settingsDescription": "Définir et gérer les niveaux de stock minimum pour vos articles"
   },
   "common": {
     "returnToHome": "Retour à l'Accueil",

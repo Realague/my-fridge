@@ -290,7 +290,10 @@
       "today": "Hoy",
       "itemsPending": "{{count}} artículos pendientes",
       "planThisWeek": "Planifica esta semana",
-      "savedRecipes": "{{count}} recetas guardadas"
+      "savedRecipes": "{{count}} recetas guardadas",
+      "lowStockItems": "Artículos con Stock Bajo",
+      "itemsNeedRestock": "{{count}} artículos necesitan reabastecimiento",
+      "viewAll": "Ver Todo"
     },
     "shopping": {
       "title": "Lista de Compras",
@@ -685,6 +688,27 @@
     "chips": "Papas Fritas",
     "chocolate": "Chocolate",
     "cookies": "Galletas"
+  },
+  "itemMinimum": {
+    "title": "Mínimos de Artículos",
+    "description": "Administrar niveles mínimos de stock para artículos",
+    "setMinimum": "Establecer Mínimo",
+    "editMinimum": "Editar Mínimo",
+    "selectItem": "Seleccionar Artículo",
+    "minimumQuantity": "Cantidad Mínima",
+    "currentStock": "Stock Actual",
+    "minimum": "Mínimo",
+    "quantityNeeded": "Necesita {{quantity}} {{unit}} más",
+    "lowStock": "Stock Bajo",
+    "inStock": "En Stock",
+    "hasMinimum": "Tiene Mínimo",
+    "noMinimumsYet": "No se han establecido mínimos aún",
+    "setMinimumsDescription": "Establece niveles mínimos de stock para recibir notificaciones cuando los artículos se agoten",
+    "setFirstMinimum": "Establecer Primer Mínimo",
+    "deleteMinimum": "Eliminar Mínimo",
+    "deleteConfirmation": "¿Estás seguro de que quieres eliminar este mínimo? Esta acción no se puede deshacer.",
+    "manageMinimums": "Administrar Mínimos de Artículos",
+    "settingsDescription": "Establecer y administrar niveles mínimos de stock para tus artículos"
   },
   "common": {
     "returnToHome": "Volver al Inicio",

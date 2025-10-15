@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, LogOut, Copy, Eye, EyeOff, Globe } from 'lucide-react';
+import { ArrowLeft, LogOut, Copy, Eye, EyeOff, Globe, TrendingDown, ChevronRight } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -248,6 +248,27 @@ const Settings = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Item Minimums Section */}
+        <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingDown className="h-5 w-5" />
+              {t('itemMinimum.title')}
+            </CardTitle>
+            <CardDescription>{t('itemMinimum.settingsDescription')}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              onClick={() => navigate('/item-minimums')}
+            >
+              {t('itemMinimum.manageMinimums')}
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </CardContent>
+        </Card>
 
         <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
           <CardContent className="p-4">

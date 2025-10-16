@@ -156,12 +156,7 @@
     "notesPlaceholder": "ex., coupé en dés, haché finement..."
   },
   "addMealPlan": {
-    "addToMealPlan": "Ajouter au Plan de Repas",
-    "addRecipeToMealPlan": "Ajouter une Recette au Plan de Repas",
-    "defaultServings": "Par défaut : {{servings}} portions",
-    "date": "Date",
-    "numberOfServings": "Nombre de portions",
-    "addedDescription": "{{recipeName}} a été ajouté à votre {{mealType}} le {{date}} pour {{servings}} portion(s)."
+    "date": "Date"
   },
   "notifications": {
     "title": "Notifications",
@@ -172,8 +167,7 @@
   },
   "recipeSelector": {
     "loadingRecipes": "Chargement des recettes...",
-    "startTyping": "Commencez à taper pour rechercher des recettes...",
-    "noRecipesFound": "Aucune recette trouvée correspondant à \"{{query}}\"."
+    "startTyping": "Commencez à taper pour rechercher des recettes..."
   },
   "messages": {
     "success": {
@@ -523,8 +517,6 @@
         "member": "Membre"
       }
     },
-    "onboarding": {
-    },
     "index": {
       "title": "MyFridge",
       "subtitle": "Gérez l'inventaire alimentaire de votre foyer, collaborez sur les achats et planifiez les repas ensemble. Réduisez le gaspillage, gagnez du temps et n'oubliez plus jamais ce qui se trouve dans votre frigo.",
@@ -694,7 +686,7 @@
   },
   "itemMinimum": {
     "title": "Minimums d'Articles",
-    "manageMinimums": "Gérer les Minimums",
+    "manageMinimums": "Gérer les Minimums d'Articles",
     "description": "Gérer les niveaux de stock minimum pour les articles",
     "setMinimum": "Définir le Minimum",
     "editMinimum": "Modifier le Minimum",
@@ -711,7 +703,6 @@
     "setFirstMinimum": "Définir le Premier Minimum",
     "deleteMinimum": "Supprimer le Minimum",
     "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer ce minimum ? Cette action ne peut pas être annulée.",
-    "manageMinimums": "Gérer les Minimums d'Articles",
     "settingsDescription": "Définir et gérer les niveaux de stock minimum pour vos articles"
   },
   "common": {

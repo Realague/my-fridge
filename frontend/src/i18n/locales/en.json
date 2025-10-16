@@ -1,4 +1,3 @@
-
 {
   "navigation": {
     "home": "Home",
@@ -104,7 +103,7 @@
     "addItemInformation": "How much {{item}} are you adding?",
     "types": {
       "fridge": "Refrigerator",
-      "freezer": "Freezer", 
+      "freezer": "Freezer",
       "pantry": "Pantry",
       "kitchen_cupboard": "Kitchen Cupboard",
       "other": "Other"
@@ -157,12 +156,7 @@
     "notesPlaceholder": "e.g., diced, chopped fine..."
   },
   "addMealPlan": {
-    "addToMealPlan": "Add to Meal Plan",
-    "addRecipeToMealPlan": "Add Recipe to Meal Plan",
-    "defaultServings": "Default: {{servings}} servings",
-    "date": "Date",
-    "numberOfServings": "Number of servings",
-    "addedDescription": "{{recipeName}} has been added to your {{mealType}} on {{date}} for {{servings}} serving(s)."
+    "date": "Date"
   },
   "notifications": {
     "title": "Notifications",
@@ -173,8 +167,7 @@
   },
   "recipeSelector": {
     "loadingRecipes": "Loading recipes...",
-    "startTyping": "Start typing to search recipes...",
-    "noRecipesFound": "No recipes found matching \"{{query}}\"."
+    "startTyping": "Start typing to search recipes..."
   },
   "messages": {
     "success": {
@@ -197,36 +190,36 @@
       "recipeUpdatedSuccessfully": "Your recipe has been successfully updated.",
       "success": "Success",
       "storageAreaCreated": "Storage area created!",
-    "storageAreaUpdated": "Storage area updated!",
-    "storageAreaDeleted": "Storage area deleted!",
-    "storageAreaCreatedDescription": "{{name}} has been created successfully.",
-    "storageAreaUpdatedDescription": "{{name}} has been updated successfully.",
-    "storageAreaDeletedDescription": "{{name}} has been deleted successfully.",
-    "householdCreated": "Household Created!",
-    "householdCreatedDescription": "{{name}} has been created successfully with {{count}} storage areas.",
-    "householdJoined": "Household Joined!",
-    "householdJoinedDescription": "You have successfully joined the household."
-  },
-  "itemMinimum": {
-    "title": "Item Minimums",
-    "description": "Set minimum stock levels for items",
-    "setMinimum": "Set Minimum",
-    "editMinimum": "Edit Minimum",
-    "removeMinimum": "Remove Minimum",
-    "minimumQuantity": "Minimum Quantity",
-    "currentStock": "Current Stock",
-    "lowStock": "Low Stock",
-    "belowMinimum": "Below Minimum",
-    "quantityNeeded": "Need {{quantity}} {{unit}} more",
-    "noMinimums": "No minimums set",
-    "noMinimumsDescription": "Set minimum stock levels to get alerts when items run low",
-    "minimumSet": "Minimum Set",
-    "minimumSetDescription": "You'll be notified when this item runs low",
-    "addLowStockToShopping": "Add Low Stock to Shopping",
-    "confirmRemove": "Are you sure you want to remove this minimum?",
-    "minimumFor": "Minimum for {{item}}",
-    "manageMinimums": "Manage Minimums"
-  },
+      "storageAreaUpdated": "Storage area updated!",
+      "storageAreaDeleted": "Storage area deleted!",
+      "storageAreaCreatedDescription": "{{name}} has been created successfully.",
+      "storageAreaUpdatedDescription": "{{name}} has been updated successfully.",
+      "storageAreaDeletedDescription": "{{name}} has been deleted successfully.",
+      "householdCreated": "Household Created!",
+      "householdCreatedDescription": "{{name}} has been created successfully with {{count}} storage areas.",
+      "householdJoined": "Household Joined!",
+      "householdJoinedDescription": "You have successfully joined the household."
+    },
+    "itemMinimum": {
+      "title": "Item Minimums",
+      "description": "Set minimum stock levels for items",
+      "setMinimum": "Set Minimum",
+      "editMinimum": "Edit Minimum",
+      "removeMinimum": "Remove Minimum",
+      "minimumQuantity": "Minimum Quantity",
+      "currentStock": "Current Stock",
+      "lowStock": "Low Stock",
+      "belowMinimum": "Below Minimum",
+      "quantityNeeded": "Need {{quantity}} {{unit}} more",
+      "noMinimums": "No minimums set",
+      "noMinimumsDescription": "Set minimum stock levels to get alerts when items run low",
+      "minimumSet": "Minimum Set",
+      "minimumSetDescription": "You'll be notified when this item runs low",
+      "addLowStockToShopping": "Add Low Stock to Shopping",
+      "confirmRemove": "Are you sure you want to remove this minimum?",
+      "minimumFor": "Minimum for {{item}}",
+      "manageMinimums": "Manage Minimums"
+    },
     "error": {
       "somethingWentWrong": "Something went wrong",
       "failedToLoad": "Failed to load data, please try again.",
@@ -474,7 +467,7 @@
       "profile": "Profile",
       "tabs": {
         "profile": "Profile",
-        "notifications": "Notifications", 
+        "notifications": "Notifications",
         "appearance": "Appearance"
       },
       "profileSettings": {
@@ -544,8 +537,6 @@
         "admin": "Admin",
         "member": "Member"
       }
-    },
-    "onboarding": {
     },
     "index": {
       "title": "MyFridge",

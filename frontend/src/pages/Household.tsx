@@ -86,7 +86,7 @@ const Household = () => {
           </CardHeader>
           <CardContent className="space-y-3">
                          {households.map((h) => (
-               <div key={h.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-border/50">
+               <div key={h.id} className="flex items-center bg-accent justify-between p-3 rounded-lg border border-border/50">
                  <div className="flex-1 min-w-0">
                    <p className="font-semibold text-foreground">{h.name}</p>
                    <p className="text-sm text-muted-foreground">{h.memberCount} {t('pages.household.members')} • {h.userRole}</p>

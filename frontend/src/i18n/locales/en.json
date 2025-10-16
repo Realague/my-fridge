@@ -167,7 +167,8 @@
   },
   "recipeSelector": {
     "loadingRecipes": "Loading recipes...",
-    "startTyping": "Start typing to search recipes..."
+    "startTyping": "Start typing to search recipes...",
+    "noRecipesFound": "No recipes found matching \"{{query}}\"."
   },
   "messages": {
     "success": {

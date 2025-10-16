@@ -320,10 +320,6 @@ export const useItemMinimumStore = create<ItemMinimumStore>()(
             const responseData = await response.json();
             
             if (responseData.success) {
-              toast.success("Minimum Removed!", {
-                description: `Minimum has been removed.`,
-              });
-              
               const store = get();
               store.removeItemMinimumFromHousehold(id);
             } else {
@@ -336,9 +332,6 @@ export const useItemMinimumStore = create<ItemMinimumStore>()(
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to delete item minimum';
           set({ error: message });
-          toast.error("Delete Failed", {
-            description: message,
-          });
           throw error;
         } finally {
           set({ loading: false });

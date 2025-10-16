@@ -12,6 +12,7 @@ import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { toast } from '@/hooks/use-toast';
 
 const ItemMinimums = () => {
   const { t } = useTranslation();
@@ -62,8 +63,17 @@ const ItemMinimums = () => {
     try {
       await deleteItemMinimum(minimumId);
       setDeleteConfirmId(null);
+      toast({
+        title: t('messages.success.deleteSuccess'),
+        description: t('messages.success.deleteSuccessDescription'),
+        variant: 'default',
+      });
     } catch (error) {
       console.error('Failed to delete minimum:', error);
+      toast({
+        title: t('messages.error.deleteFailed'),
+        variant: 'destructive',
+      });
     }
   };
 

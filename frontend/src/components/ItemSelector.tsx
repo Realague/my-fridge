@@ -499,7 +499,7 @@ export const ItemSelector = ({
       {isOpen && createPortal(
         <div
           ref={dropdownRef}
-          className="fixed z-50 bg-card border border-border rounded-md shadow-lg max-h-64 overflow-y-auto"
+          className="fixed z-[100] bg-card border border-border rounded-md shadow-lg max-h-64 overflow-y-auto pointer-events-auto"
           style={{
             top: dropdownPosition.top,
             left: dropdownPosition.left,

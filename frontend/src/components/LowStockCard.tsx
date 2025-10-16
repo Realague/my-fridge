@@ -16,9 +16,6 @@ export const LowStockCard = () => {
   const { createShoppingItem } = useShoppingStore();
   const lowStockItems = getLowStockItemsForHousehold();
 
-  useEffect(() => {
-    fetchLowStockItems();
-  }, []);
 
   const handleAddToShopping = async (itemId: string, quantity: number, unit: string) => {
     try {

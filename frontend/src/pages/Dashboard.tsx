@@ -43,7 +43,7 @@ const Dashboard = () => {
   const { getPendingItems, fetchShoppingItems } = useShoppingStore();
   const { fetchStoredItems } = useStoredItemStore();
   const { recipes, fetchRecipes } = useRecipeStore();
-  const { getItemMinimumsForHousehold } = useItemMinimumStore();
+  const { getItemMinimumsForHousehold, fetchLowStockItems } = useItemMinimumStore();
   
   // Household store - only re-renders when these specific values change
   const households = useHouseholdStore(state => state.households);
@@ -74,6 +74,8 @@ const Dashboard = () => {
       fetchShoppingItems();
       // Fetch recipes for the dashboard count
       fetchRecipes();
+      // Fetch low stock items for the LowStockCard
+      fetchLowStockItems();
     }
   }, [selectedHouseholdId, authLoading, hasHousehold]); // Remove function dependencies to prevent infinite loops
 

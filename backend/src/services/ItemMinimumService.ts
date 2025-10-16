@@ -15,7 +15,7 @@ export class ItemMinimumService {
 
   async createItemMinimum(data: CreateItemMinimumDto): Promise<ItemMinimumDto> {
     // Check for duplicate
-    const exists = await this.itemMinimumRepository.checkDuplicate(data.itemId, data.householdId);
+    const exists = await this.itemMinimumRepository.checkDuplicate(data.itemId, data.householdId, data.minimumUnit);
     if (exists) {
       throw new BadRequestError('A minimum for this item already exists in this household');
     }
@@ -49,7 +49,12 @@ export class ItemMinimumService {
   }
 
   async updateItemMinimum(id: string, householdId: string, data: UpdateItemMinimumDto): Promise<ItemMinimumDto | null> {
-    const itemMinimum = await this.itemMinimumRepository.update(id, householdId, data);
+    const existing = await this.itemMinimumRepository.checkDuplicate(id, householdId, data.minimumUnit as string);
+    if (existing) {
+      throw new BadRequestError('A minimum for this item already exists in this household with this unit');
+    }
+
+    const itemMinimum = await this.itemMinimumRepository.update(id, householdId, data as UpdateItemMinimumDto);
     return itemMinimum ? this.mapToDto(itemMinimum) : null;
   }
 

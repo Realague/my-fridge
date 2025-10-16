@@ -33,7 +33,7 @@ interface StoredItemStore {
   getStoredItemsForHousehold: () => StoredItem[];
   getStoredItemById: (storedItemId: string) => StoredItem | null;
   getStoredItemsByStorageArea: (storageAreaId: string) => StoredItem[];
-  getStoredItemsByItem: (itemId: string) => StoredItem[];
+  getStoredItemsByItemAndUnit: (itemId: string, unit: string) => StoredItem[];
   getExpiringStoredItems: () => StoredItem[];
   getExpiredStoredItems: () => StoredItem[];
 }
@@ -455,11 +455,11 @@ export const useStoredItemStore = create<StoredItemStore>()(
         return storedItems.filter(item => item.storageAreaId === storageAreaId);
       },
 
-      getStoredItemsByItem: (itemId: string) => {
+      getStoredItemsByItemAndUnit: (itemId: string, unit: string) => {
         const householdId = getHouseholdId();
         const state = get();
         const storedItems = state.storedItemsByHousehold[householdId] || [];
-        return storedItems.filter(item => item.itemId === itemId);
+        return storedItems.filter(item => item.itemId === itemId && item.unit === unit);
       },
 
       getExpiringStoredItems: () => {

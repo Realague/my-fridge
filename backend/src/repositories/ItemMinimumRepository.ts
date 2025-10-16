@@ -23,14 +23,14 @@ export class ItemMinimumRepository {
           model: Item,
           as: 'item',
           include: [
-            { model: User, as: 'creator', attributes: ['id', 'displayName', 'email'] },
+            { model: User, as: 'creator', attributes: ['id', 'email'] },
             { model: Household, as: 'household', attributes: ['id', 'name'] },
           ],
         },
         {
           model: User,
           as: 'creator',
-          attributes: ['id', 'displayName', 'email'],
+          attributes: ['id', 'email'],
         },
         {
           model: Household,
@@ -57,14 +57,14 @@ export class ItemMinimumRepository {
           model: Item,
           as: 'item',
           include: [
-            { model: User, as: 'creator', attributes: ['id', 'displayName', 'email'] },
+            { model: User, as: 'creator', attributes: ['id', 'email'] },
             { model: Household, as: 'household', attributes: ['id', 'name'] },
           ],
         },
         {
           model: User,
           as: 'creator',
-          attributes: ['id', 'displayName', 'email'],
+          attributes: ['id', 'email'],
         },
       ],
       limit: query.limit,
@@ -89,7 +89,7 @@ export class ItemMinimumRepository {
         {
           model: User,
           as: 'creator',
-          attributes: ['id', 'displayName', 'email'],
+          attributes: ['id', 'email'],
         },
       ],
       order: [['createdAt', 'DESC']],
@@ -107,7 +107,7 @@ export class ItemMinimumRepository {
         {
           model: User,
           as: 'creator',
-          attributes: ['id', 'displayName', 'email'],
+          attributes: ['id', 'email'],
         },
       ],
     });
@@ -133,8 +133,8 @@ export class ItemMinimumRepository {
     return deleted > 0;
   }
 
-  async checkDuplicate(itemId: string, householdId: string, excludeId?: string): Promise<boolean> {
-    const where: any = { itemId, householdId };
+  async checkDuplicate(itemId: string, householdId: string, unit: string, excludeId?: string): Promise<boolean> {
+    const where: any = { itemId, householdId, minimumUnit: unit };
     
     if (excludeId) {
       where.id = { [require('sequelize').Op.ne]: excludeId };

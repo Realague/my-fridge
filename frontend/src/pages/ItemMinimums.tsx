@@ -24,7 +24,7 @@ const ItemMinimums = () => {
     deleteItemMinimum,
     loading 
   } = useItemMinimumStore();
-  const { getStoredItemsByItem } = useStoredItemStore();
+  const { getStoredItemsByItemAndUnit } = useStoredItemStore();
   
   const [showDialog, setShowDialog] = useState(false);
   const [editingMinimumId, setEditingMinimumId] = useState<string | null>(null);
@@ -39,9 +39,13 @@ const ItemMinimums = () => {
   }, [selectedHouseholdId, fetchItemMinimums]);
 
   const calculateCurrentStock = (itemId: string, unit: string) => {
-    const storedItems = getStoredItemsByItem(itemId);
-    // Sum up all quantities (assuming same unit for simplicity)
-    return storedItems.reduce((total, item) => total + item.quantity, 0);
+    const storedItems = getStoredItemsByItemAndUnit(itemId, unit);
+    return storedItems.reduce((total, item) => {
+      if (item.unit === unit) {
+        return total + item.quantity;
+      }
+      return total;
+    }, 0);
   };
 
   const isLowStock = (itemId: string, minimumQty: number, unit: string) => {
@@ -192,10 +196,10 @@ const ItemMinimums = () => {
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
-                          variant="ghost"
+                          variant="deleteTrash"
                           size="sm"
                           onClick={() => setDeleteConfirmId(minimum.id)}
-                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          className="h-8 w-8 p-0"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

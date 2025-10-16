@@ -24,7 +24,7 @@ interface ItemMinimumDialogProps {
 export const ItemMinimumDialog = ({ open, onOpenChange, itemId, existingMinimumId }: ItemMinimumDialogProps) => {
   const { t } = useTranslation();
   const { createItemMinimum, updateItemMinimum, getItemMinimumById } = useItemMinimumStore();
-  const { getStoredItemsByItem } = useStoredItemStore();
+  const { getStoredItemsByItemAndUnit } = useStoredItemStore();
   
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [quantity, setQuantity] = useState('1');
@@ -62,11 +62,12 @@ export const ItemMinimumDialog = ({ open, onOpenChange, itemId, existingMinimumI
   const handleQuantityChange = (newQuantity: string, newUnit: string) => {
     setQuantity(newQuantity);
     setUnit(newUnit as Unit);
+    calculateCurrentStock();
   };
 
   const calculateCurrentStock = () => {
     if (!selectedItem) return 0;
-    const storedItems = getStoredItemsByItem(selectedItem.id);
+    const storedItems = getStoredItemsByItemAndUnit(selectedItem.id, unit);
     // Sum up all quantities (assuming same unit for simplicity)
     return storedItems.reduce((total, item) => total + item.quantity, 0);
   };

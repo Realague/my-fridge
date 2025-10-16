@@ -224,7 +224,8 @@
     "minimumSetDescription": "You'll be notified when this item runs low",
     "addLowStockToShopping": "Add Low Stock to Shopping",
     "confirmRemove": "Are you sure you want to remove this minimum?",
-    "minimumFor": "Minimum for {{item}}"
+    "minimumFor": "Minimum for {{item}}",
+    "manageMinimums": "Manage Minimums"
   },
     "error": {
       "somethingWentWrong": "Something went wrong",
@@ -315,7 +316,9 @@
       "lowStockItems": "Low Stock Items",
       "itemsNeedRestock": "{{count}} items need restocking",
       "noLowStockItems": "All items are well stocked",
-      "viewAll": "View All"
+      "viewAll": "View All",
+      "itemMinimums": "Item Minimums",
+      "itemsTracked": "{{count}} items tracked"
     },
     "shopping": {
       "title": "Shopping List",

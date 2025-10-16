@@ -24,6 +24,7 @@ import { useStorageAreasWithStats } from '@/stores/storageAreaStore';
 import { useShoppingStore } from '@/stores/shoppingStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useRecipeStore } from '@/stores/recipeStore';
+import { useItemMinimumStore } from '@/stores/itemMinimumStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next';
 
@@ -42,6 +43,7 @@ const Dashboard = () => {
   const { getPendingItems, fetchShoppingItems } = useShoppingStore();
   const { fetchStoredItems } = useStoredItemStore();
   const { recipes, fetchRecipes } = useRecipeStore();
+  const { getItemMinimumsForHousehold } = useItemMinimumStore();
   
   // Household store - only re-renders when these specific values change
   const households = useHouseholdStore(state => state.households);
@@ -116,10 +118,13 @@ const Dashboard = () => {
   }, []);
   */
 
+  const itemMinimums = getItemMinimumsForHousehold();
+  
   const quickActions = [
     { title: t('pages.shopping.title'), description: t('pages.dashboard.itemsPending', { count: getPendingItems().length }), emoji: '🛒', route: '/shopping' },
     { title: t('pages.mealPlans.title'), description: t('pages.dashboard.planThisWeek'), emoji: '📅', route: '/meal-plans' },
     { title: t('pages.recipes.title'), description: t('pages.dashboard.savedRecipes', { count: (recipes || []).length }), emoji: '📖', route: '/recipes' },
+    { title: t('pages.dashboard.itemMinimums'), description: t('pages.dashboard.itemsTracked', { count: itemMinimums.length }), emoji: '📊', route: '/item-minimums' },
   ];
 
   return (
@@ -182,7 +187,7 @@ const Dashboard = () => {
 
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Quick Actions */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {quickActions.map((action, index) => (
             <Card
               key={index}

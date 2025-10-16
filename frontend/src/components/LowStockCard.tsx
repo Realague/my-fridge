@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, Plus } from 'lucide-react';
+import { AlertCircle, Plus, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useItemMinimumStore } from '@/stores/itemMinimumStore';
@@ -49,6 +49,15 @@ export const LowStockCard = () => {
               {t('pages.dashboard.itemsNeedRestock', { count: lowStockItems.length })}
             </CardDescription>
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/item-minimums')}
+            className="border-orange-300 text-orange-700 hover:bg-orange-100 dark:border-orange-700 dark:text-orange-300 dark:hover:bg-orange-900/20"
+          >
+            <Settings className="h-4 w-4 mr-2" />
+            {t('itemMinimum.manageMinimums')}
+          </Button>
         </div>
       </CardHeader>
       <CardContent>

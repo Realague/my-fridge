@@ -294,7 +294,9 @@
       "savedRecipes": "{{count}} recettes sauvegardées",
       "lowStockItems": "Articles en Stock Faible",
       "itemsNeedRestock": "{{count}} articles nécessitent un réapprovisionnement",
-      "viewAll": "Voir Tout"
+      "viewAll": "Voir Tout",
+      "itemMinimums": "Minimums d'Articles",
+      "itemsTracked": "{{count}} articles suivis"
     },
     "shopping": {
       "title": "Liste de Courses",
@@ -692,6 +694,7 @@
   },
   "itemMinimum": {
     "title": "Minimums d'Articles",
+    "manageMinimums": "Gérer les Minimums",
     "description": "Gérer les niveaux de stock minimum pour les articles",
     "setMinimum": "Définir le Minimum",
     "editMinimum": "Modifier le Minimum",

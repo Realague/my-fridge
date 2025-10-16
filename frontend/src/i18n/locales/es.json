@@ -293,7 +293,9 @@
       "savedRecipes": "{{count}} recetas guardadas",
       "lowStockItems": "Artículos con Stock Bajo",
       "itemsNeedRestock": "{{count}} artículos necesitan reabastecimiento",
-      "viewAll": "Ver Todo"
+      "viewAll": "Ver Todo",
+      "itemMinimums": "Mínimos de Artículos",
+      "itemsTracked": "{{count}} artículos rastreados"
     },
     "shopping": {
       "title": "Lista de Compras",
@@ -691,6 +693,7 @@
   },
   "itemMinimum": {
     "title": "Mínimos de Artículos",
+    "manageMinimums": "Gestionar Mínimos",
     "description": "Administrar niveles mínimos de stock para artículos",
     "setMinimum": "Establecer Mínimo",
     "editMinimum": "Editar Mínimo",

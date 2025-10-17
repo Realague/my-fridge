@@ -56,6 +56,8 @@ export class StoredItemService {
   }
 
   private mapToDto(storedItem: StoredItem): StoredItemDto {
+    const effectiveExpirationDate = storedItem.getEffectiveExpirationDate();
+    
     const dto: StoredItemDto = {
       id: storedItem.id,
       itemId: storedItem.itemId,
@@ -64,6 +66,8 @@ export class StoredItemService {
       unit: storedItem.unit,
       expirationDate: storedItem.expirationDate ? new Date(storedItem.expirationDate).toISOString().split('T')[0] : null,
       location: storedItem.location,
+      isOpened: storedItem.isOpened,
+      openedDate: storedItem.openedDate ? new Date(storedItem.openedDate).toISOString().split('T')[0] : null,
       householdId: storedItem.householdId,
       createdBy: storedItem.createdBy,
       createdAt: storedItem.createdAt.toISOString(),
@@ -71,6 +75,7 @@ export class StoredItemService {
       isExpired: storedItem.isExpired(),
       isExpiringSoon: storedItem.isExpiringSoon(),
       daysUntilExpiration: storedItem.getDaysUntilExpiration(),
+      effectiveExpirationDate: effectiveExpirationDate ? effectiveExpirationDate.toISOString().split('T')[0] : null,
     };
 
     // Add related data if loaded
@@ -81,6 +86,7 @@ export class StoredItemService {
         category: storedItem.item.category,
         defaultUnit: storedItem.item.defaultUnit,
         availableUnits: storedItem.item.availableUnits,
+        daysAfterOpening: storedItem.item.daysAfterOpening || undefined,
         createdBy: storedItem.item.createdBy,
         householdId: storedItem.item.householdId,
         createdAt: storedItem.item.createdAt.toISOString(),

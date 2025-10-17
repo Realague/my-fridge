@@ -127,7 +127,24 @@
     "itemNamePlaceholder": "Item name",
     "defaultUnit": "Default unit",
     "availableUnits": "Available units",
-    "addUnit": "Add unit"
+    "addUnit": "Add unit",
+    "daysAfterOpening": "Conservation after opening",
+    "daysAfterOpeningPlaceholder": "Number of days",
+    "daysAfterOpeningHint": "How many days can this item be consumed after opening? (e.g., 3 days for milk, 7 days for jam)"
+  },
+  "storedItems": {
+    "isOpened": "Opened",
+    "isClosed": "Sealed",
+    "openedOn": "Opened on",
+    "consumeBy": "Consume by",
+    "daysAfterOpening": "Days after opening",
+    "markAsOpened": "Mark as opened",
+    "markAsClosed": "Mark as sealed",
+    "openedItems": "Opened items",
+    "opened": "OPENED",
+    "openedStatus": "Opened/Sealed",
+    "openedDate": "Opening date",
+    "consumeWithinDays": "To be consumed within {{days}} days after opening"
   },
   "itemSelector": {
     "searchOrAddItemPlaceholder": "Search or add item...",

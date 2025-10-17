@@ -237,6 +237,7 @@ export class ItemService {
       category: item.category,
       defaultUnit: item.defaultUnit,
       availableUnits: availableUnits,
+      daysAfterOpening: item.daysAfterOpening || undefined,
       createdBy: item.createdBy,
       householdId: item.householdId,
       createdAt: item.createdAt.toISOString(),

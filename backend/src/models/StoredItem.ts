@@ -14,6 +14,8 @@ interface StoredItemAttributes {
   unit: Unit;
   expirationDate: Date | null;
   location: string | null;
+  isOpened: boolean;
+  openedDate: Date | null;
   householdId: string;
   createdBy: string;
   createdAt?: Date;
@@ -21,7 +23,7 @@ interface StoredItemAttributes {
 }
 
 // Some attributes are optional in `StoredItem.build()` and `StoredItem.create()`
-interface StoredItemCreationAttributes extends Optional<StoredItemAttributes, 'id' | 'quantity' | 'unit' | 'expirationDate' | 'location' | 'createdAt' | 'updatedAt'> {}
+interface StoredItemCreationAttributes extends Optional<StoredItemAttributes, 'id' | 'quantity' | 'unit' | 'expirationDate' | 'location' | 'isOpened' | 'openedDate' | 'createdAt' | 'updatedAt'> {}
 
 export class StoredItem extends Model<StoredItemAttributes, StoredItemCreationAttributes> implements StoredItemAttributes {
   public id!: string;
@@ -31,6 +33,8 @@ export class StoredItem extends Model<StoredItemAttributes, StoredItemCreationAt
   public unit!: Unit;
   public expirationDate!: Date | null;
   public location!: string | null;
+  public isOpened!: boolean;
+  public openedDate!: Date | null;
   public householdId!: string;
   public readonly createdBy!: string;
   public readonly createdAt!: Date;
@@ -41,26 +45,42 @@ export class StoredItem extends Model<StoredItemAttributes, StoredItemCreationAt
   public readonly item?: Item;
   public readonly creator?: User;
 
+  // Helper method to get effective expiration date
+  public getEffectiveExpirationDate(): Date | null {
+    // If item is opened and has daysAfterOpening set
+    if (this.isOpened && this.openedDate && this.item?.daysAfterOpening) {
+      const openedDate = new Date(this.openedDate);
+      const effectiveDate = new Date(openedDate);
+      effectiveDate.setDate(effectiveDate.getDate() + this.item.daysAfterOpening);
+      return effectiveDate;
+    }
+    
+    // Otherwise, use the standard expiration date
+    return this.expirationDate;
+  }
+
   // Helper method to check if item is expired
   public isExpired(): boolean {
-    if (!this.expirationDate) return false;
-    return new Date() > this.expirationDate;
+    const effectiveDate = this.getEffectiveExpirationDate();
+    if (!effectiveDate) return false;
+    return new Date() > effectiveDate;
   }
 
   // Helper method to check if item is expiring soon (within 3 days)
   public isExpiringSoon(): boolean {
-    if (!this.expirationDate) return false;
+    const effectiveDate = this.getEffectiveExpirationDate();
+    if (!effectiveDate) return false;
     const threeDaysFromNow = new Date();
     threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
-    return this.expirationDate <= threeDaysFromNow && !this.isExpired();
+    return effectiveDate <= threeDaysFromNow && !this.isExpired();
   }
 
   // Helper method to get days until expiration
   public getDaysUntilExpiration(): number | null {
-    if (!this.expirationDate) return null;
+    const effectiveDate = this.getEffectiveExpirationDate();
+    if (!effectiveDate) return null;
     const today = new Date();
-    const expiration = new Date(this.expirationDate);
-    const diffTime = expiration.getTime() - today.getTime();
+    const diffTime = effectiveDate.getTime() - today.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   }
 }
@@ -111,6 +131,15 @@ StoredItem.init(
       validate: {
         len: [0, 500],
       },
+    },
+    isOpened: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    openedDate: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
     },
     householdId: {
       type: DataTypes.UUID,

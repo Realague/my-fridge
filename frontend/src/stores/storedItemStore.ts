@@ -19,6 +19,7 @@ interface StoredItemStore {
   createStoredItem: (data: CreateStoredItemRequest) => Promise<StoredItem>;
   updateStoredItem: (id: string, data: UpdateStoredItemRequest) => Promise<void>;
   deleteStoredItem: (id: string) => Promise<void>;
+  markAsOpened: (id: string, openedDate?: string) => Promise<void>;
   
   // Internal actions
   setLoading: (loading: boolean) => void;
@@ -431,6 +432,24 @@ export const useStoredItemStore = create<StoredItemStore>()(
           throw error;
         } finally {
           set({ loading: false });
+        }
+      },
+
+      markAsOpened: async (id: string, openedDate?: string) => {
+        const store = get();
+        const today = openedDate || new Date().toISOString().split('T')[0];
+        
+        try {
+          await store.updateStoredItem(id, {
+            isOpened: true,
+            openedDate: today,
+          });
+          
+          toast.success("Item Marked as Opened", {
+            description: `The item is now tracked with its opened date.`,
+          });
+        } catch (error) {
+          throw error;
         }
       },
 

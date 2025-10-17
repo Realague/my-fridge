@@ -127,7 +127,24 @@
     "itemNamePlaceholder": "Nom de l'article",
     "defaultUnit": "Unité par défaut",
     "availableUnits": "Unités disponibles",
-    "addUnit": "Ajouter une unité"
+    "addUnit": "Ajouter une unité",
+    "daysAfterOpening": "Conservation après ouverture",
+    "daysAfterOpeningPlaceholder": "Nombre de jours",
+    "daysAfterOpeningHint": "Combien de jours cet article peut-il être consommé après ouverture ? (ex: 3 jours pour le lait, 7 jours pour la confiture)"
+  },
+  "storedItems": {
+    "isOpened": "Ouvert",
+    "isClosed": "Fermé",
+    "openedOn": "Ouvert le",
+    "consumeBy": "À consommer avant le",
+    "daysAfterOpening": "Jours après ouverture",
+    "markAsOpened": "Marquer comme ouvert",
+    "markAsClosed": "Marquer comme fermé",
+    "openedItems": "Articles ouverts",
+    "opened": "OUVERT",
+    "openedStatus": "Ouvert/Fermé",
+    "openedDate": "Date d'ouverture",
+    "consumeWithinDays": "À consommer dans les {{days}} jours après ouverture"
   },
   "itemSelector": {
     "searchOrAddItemPlaceholder": "Rechercher ou ajouter un article...",

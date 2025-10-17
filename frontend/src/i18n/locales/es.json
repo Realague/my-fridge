@@ -127,7 +127,24 @@
     "itemNamePlaceholder": "Nombre del artículo",
     "defaultUnit": "Unidad predeterminada",
     "availableUnits": "Unidades disponibles",
-    "addUnit": "Agregar unidad"
+    "addUnit": "Agregar unidad",
+    "daysAfterOpening": "Conservación después de abrir",
+    "daysAfterOpeningPlaceholder": "Número de días",
+    "daysAfterOpeningHint": "¿Cuántos días se puede consumir este artículo después de abrirlo? (ej: 3 días para la leche, 7 días para la mermelada)"
+  },
+  "storedItems": {
+    "isOpened": "Abierto",
+    "isClosed": "Cerrado",
+    "openedOn": "Abierto el",
+    "consumeBy": "Consumir antes del",
+    "daysAfterOpening": "Días después de abrir",
+    "markAsOpened": "Marcar como abierto",
+    "markAsClosed": "Marcar como cerrado",
+    "openedItems": "Artículos abiertos",
+    "opened": "ABIERTO",
+    "openedStatus": "Abierto/Cerrado",
+    "openedDate": "Fecha de apertura",
+    "consumeWithinDays": "Consumir dentro de {{days}} días después de abrir"
   },
   "itemSelector": {
     "searchOrAddItemPlaceholder": "Buscar o agregar artículo...",

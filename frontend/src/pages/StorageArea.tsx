@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, ArrowLeft, Calendar, MapPin, AlertTriangle, Edit, Trash2, Save, X } from 'lucide-react';
+import { Plus, ArrowLeft, Calendar, MapPin, AlertTriangle, Edit, Trash2, Save, X, PackageOpen } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
 import { QuantitySelector } from '@/components/QuantitySelector';
@@ -21,6 +21,7 @@ import { useDateFormat } from '@/utils/dateFormatting';
 import { toast } from 'sonner';
 import { SelectedItemPreview } from '@/components/SelectedItemPreview';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { OpenedStatusToggle } from '@/components/OpenedStatusToggle';
 
 const StorageArea = () => {
   const { id } = useParams<{ id: string }>();
@@ -47,6 +48,8 @@ const StorageArea = () => {
   const [newItemUnit, setNewItemUnit] = useState('');
   const [expirationDate, setExpirationDate] = useState('');
   const [location, setLocation] = useState('');
+  const [isOpened, setIsOpened] = useState(false);
+  const [openedDate, setOpenedDate] = useState('');
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [items, setItems] = useState<Record<string, Item>>({});
 
@@ -133,6 +136,8 @@ const StorageArea = () => {
         unit: newItemUnit as Unit,
         expirationDate: expirationDate || undefined,
         location: location.trim() || undefined,
+        isOpened: isOpened,
+        openedDate: isOpened && openedDate ? openedDate : undefined,
       });
       
       // Show success toast with specific details
@@ -144,6 +149,8 @@ const StorageArea = () => {
       setNewItemUnit('');
       setExpirationDate('');
       setLocation('');
+      setIsOpened(false);
+      setOpenedDate('');
       setShowAddForm(false);
     } catch (error) {
       console.error('Failed to add item:', error);
@@ -194,6 +201,10 @@ const StorageArea = () => {
     const [editExpiration, setEditExpiration] = useState(
       storageItem.expirationDate ? format(new Date(storageItem.expirationDate), 'yyyy-MM-dd') : ''
     );
+    const [editIsOpened, setEditIsOpened] = useState(storageItem.isOpened);
+    const [editOpenedDate, setEditOpenedDate] = useState(
+      storageItem.openedDate ? format(new Date(storageItem.openedDate), 'yyyy-MM-dd') : ''
+    );
 
     if (!item) {
       return (
@@ -214,6 +225,8 @@ const StorageArea = () => {
           unit: editUnit as Unit,
           location: editLocation.trim() || undefined,
           expirationDate: editExpiration || undefined,
+          isOpened: editIsOpened,
+          openedDate: editIsOpened && editOpenedDate ? editOpenedDate : undefined,
         });
         setEditingItem(null);
       } catch (error) {
@@ -226,6 +239,8 @@ const StorageArea = () => {
       setEditUnit(storageItem.unit);
       setEditLocation(storageItem.location || '');
       setEditExpiration(storageItem.expirationDate ? format(new Date(storageItem.expirationDate), 'yyyy-MM-dd') : '');
+      setEditIsOpened(storageItem.isOpened);
+      setEditOpenedDate(storageItem.openedDate ? format(new Date(storageItem.openedDate), 'yyyy-MM-dd') : '');
       setEditingItem(null);
     };
 
@@ -249,7 +264,13 @@ const StorageArea = () => {
                 <Badge variant="outline" className="text-xs text-foreground">
                   { t(`items.categories.${item.category}`) }
                 </Badge>
-                {getExpirationBadge(storageItem.expirationDate)}
+                {storageItem.isOpened && (
+                  <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400">
+                    <PackageOpen className="h-3 w-3 mr-1" />
+                    {t('storedItems.opened')}
+                  </Badge>
+                )}
+                {getExpirationBadge(storageItem.effectiveExpirationDate || storageItem.expirationDate)}
               </div>
               
               {isEditing ? (
@@ -288,6 +309,22 @@ const StorageArea = () => {
                     />
                   </div>
                   
+                  {item.daysAfterOpening && (
+                    <OpenedStatusToggle
+                      isOpened={editIsOpened}
+                      openedDate={editOpenedDate}
+                      daysAfterOpening={item.daysAfterOpening}
+                      effectiveExpirationDate={editIsOpened && editOpenedDate ? 
+                        new Date(new Date(editOpenedDate).getTime() + item.daysAfterOpening * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
+                        : undefined
+                      }
+                      onToggle={(opened, date) => {
+                        setEditIsOpened(opened);
+                        setEditOpenedDate(date || '');
+                      }}
+                    />
+                  )}
+                  
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={handleCancel}>
                       <X className="h-3 w-3 mr-1" />
@@ -316,10 +353,16 @@ const StorageArea = () => {
                       <Calendar className="h-3 w-3" />
                       <span>{t('storageArea.added')} {formatDate(new Date(storageItem.createdAt), 'MMM d')}</span>
                     </div>
-                    {storageItem.expirationDate && (
+                    {(storageItem.effectiveExpirationDate || storageItem.expirationDate) && (
                       <div className="flex items-center gap-1">
                         <AlertTriangle className="h-3 w-3" />
-                        <span>{t('storageArea.expiresIn', { days: getDaysUntilExpiration(storageItem.expirationDate) })}</span>
+                        <span>{t('storageArea.expiresIn', { days: getDaysUntilExpiration(storageItem.effectiveExpirationDate || storageItem.expirationDate) })}</span>
+                      </div>
+                    )}
+                    {storageItem.isOpened && storageItem.openedDate && (
+                      <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
+                        <PackageOpen className="h-3 w-3" />
+                        <span>{t('storedItems.openedOn')} {formatDate(new Date(storageItem.openedDate), 'MMM d')}</span>
                       </div>
                     )}
                   </div>

@@ -30,6 +30,9 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
   const [name, setName] = useState(item.name);
   const [category, setCategory] = useState(item.category);
   const [defaultUnit, setDefaultUnit] = useState(item.defaultUnit);
+  const [daysAfterOpening, setDaysAfterOpening] = useState<string>(
+    item.daysAfterOpening?.toString() || ''
+  );
   
   // Ensure availableUnits is always an array (handle cases where it might be a string from DB)
   const initialAvailableUnits = React.useMemo(() => {
@@ -75,12 +78,19 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
   };
 
   const handleSave = () => {
-    onSave({
+    const updates: Partial<Item> = {
       name: name.trim(),
       category,
       defaultUnit,
       availableUnits,
-    });
+    };
+    
+    // Only include daysAfterOpening if it's a valid positive number
+    if (daysAfterOpening && parseInt(daysAfterOpening) > 0) {
+      updates.daysAfterOpening = parseInt(daysAfterOpening);
+    }
+    
+    onSave(updates);
   };
 
   const handleDelete = async () => {
@@ -178,6 +188,24 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          
+          <div>
+            <Label htmlFor="days-after-opening">
+              {t('itemEditor.daysAfterOpening')} <span className="text-muted-foreground text-xs">({t('common.optional')})</span>
+            </Label>
+            <Input
+              id="days-after-opening"
+              type="number"
+              min="1"
+              value={daysAfterOpening}
+              onChange={(e) => setDaysAfterOpening(e.target.value)}
+              placeholder={t('itemEditor.daysAfterOpeningPlaceholder')}
+              className="mt-1"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              {t('itemEditor.daysAfterOpeningHint')}
+            </p>
           </div>
         </div>
         

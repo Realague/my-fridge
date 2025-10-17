@@ -11,6 +11,7 @@ interface ItemAttributes {
   category: ItemCategory;
   defaultUnit: Unit;
   availableUnits: Unit[];
+  daysAfterOpening: number | null;
   householdId: string | null;
   createdBy: string | null;
   createdAt?: Date;
@@ -26,6 +27,7 @@ export class Item extends Model<ItemAttributes, ItemCreationAttributes> implemen
   public category!: ItemCategory;
   public defaultUnit!: Unit;
   public availableUnits!: Unit[];
+  public daysAfterOpening!: number | null;
   public createdBy!: string | null;
   public householdId!: string | null;
   public readonly createdAt!: Date;
@@ -78,6 +80,13 @@ Item.init(
             }
           }
         },
+      },
+    },
+    daysAfterOpening: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      validate: {
+        min: 1,
       },
     },
     householdId: {

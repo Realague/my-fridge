@@ -64,14 +64,13 @@ const ItemMinimums = () => {
       await deleteItemMinimum(minimumId);
       setDeleteConfirmId(null);
       toast({
-        title: t('messages.success.deleteSuccess'),
-        description: t('messages.success.deleteSuccessDescription'),
+        title: t('itemMinimum.minimumDeleted'),
         variant: 'default',
       });
     } catch (error) {
       console.error('Failed to delete minimum:', error);
       toast({
-        title: t('messages.error.deleteFailed'),
+        title: t('itemMinimum.minimumDeletedFailed'),
         variant: 'destructive',
       });
     }
@@ -185,6 +184,14 @@ const ItemMinimums = () => {
                             </span>{' '}
                             {minimum.minimumQuantity} {minimum.minimumUnit}
                           </div>
+                          {minimum.shoppingQuantity && (
+                            <div>
+                              <span className="font-medium text-foreground">
+                                {t('itemMinimum.shoppingQuantity')}:
+                              </span>{' '}
+                              {minimum.shoppingQuantity} {minimum.minimumUnit}
+                            </div>
+                          )}
                           {lowStock && (
                             <div className="text-orange-600 dark:text-orange-400">
                               {t('itemMinimum.quantityNeeded', {

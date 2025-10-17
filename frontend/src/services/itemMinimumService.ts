@@ -7,6 +7,7 @@ export interface ItemMinimum {
   householdId: string;
   minimumQuantity: number;
   minimumUnit: Unit;
+  shoppingQuantity: number;
   createdBy: string;
   createdAt: string;
   updatedAt: string;
@@ -36,11 +37,13 @@ export interface CreateItemMinimumRequest {
   itemId: string;
   minimumQuantity: number;
   minimumUnit: Unit;
+  shoppingQuantity: number;
 }
 
 export interface UpdateItemMinimumRequest {
   minimumQuantity?: number;
   minimumUnit?: Unit;
+  shoppingQuantity?: number;
 }
 
 export interface LowStockItem {

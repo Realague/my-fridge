@@ -6,12 +6,14 @@ export interface CreateItemMinimumDto {
   householdId: string;
   minimumQuantity: number;
   minimumUnit: Unit;
+  shoppingQuantity: number;
   createdBy: string;
 }
 
 export interface UpdateItemMinimumDto {
   minimumQuantity?: number;
   minimumUnit?: Unit;
+  shoppingQuantity?: number;
 }
 
 export interface ItemMinimumDto {
@@ -20,6 +22,7 @@ export interface ItemMinimumDto {
   householdId: string;
   minimumQuantity: number;
   minimumUnit: Unit;
+  shoppingQuantity: number;
   createdBy: string;
   createdAt: string;
   updatedAt: string;

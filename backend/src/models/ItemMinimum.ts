@@ -11,6 +11,7 @@ interface ItemMinimumAttributes {
   householdId: string;
   minimumQuantity: number;
   minimumUnit: Unit;
+  shoppingQuantity: number;
   createdBy: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -24,6 +25,7 @@ export class ItemMinimum extends Model<ItemMinimumAttributes, ItemMinimumCreatio
   public householdId!: string;
   public minimumQuantity!: number;
   public minimumUnit!: Unit;
+  public shoppingQuantity!: number;
   public createdBy!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -68,6 +70,13 @@ ItemMinimum.init(
       type: DataTypes.ENUM(...UNITS),
       allowNull: false,
       defaultValue: Unit.PIECE,
+    },
+    shoppingQuantity: {
+      type: DataTypes.DECIMAL(10, 3),
+      allowNull: false,
+      validate: {
+        min: 0,
+      },
     },
     createdBy: {
       type: DataTypes.UUID,

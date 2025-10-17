@@ -29,6 +29,7 @@ export const ItemMinimumDialog = ({ open, onOpenChange, itemId, existingMinimumI
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [quantity, setQuantity] = useState('1');
   const [unit, setUnit] = useState<Unit>(Unit.PIECE);
+  const [shoppingQuantity, setShoppingQuantity] = useState('1');
   const [loading, setLoading] = useState(false);
 
   // Load existing minimum if editing
@@ -39,6 +40,7 @@ export const ItemMinimumDialog = ({ open, onOpenChange, itemId, existingMinimumI
         setSelectedItem(existing.item as Item);
         setQuantity(existing.minimumQuantity.toString());
         setUnit(existing.minimumUnit);
+        setShoppingQuantity(existing.shoppingQuantity.toString());
       }
     }
   }, [open, existingMinimumId, getItemMinimumById]);
@@ -49,6 +51,7 @@ export const ItemMinimumDialog = ({ open, onOpenChange, itemId, existingMinimumI
       setSelectedItem(null);
       setQuantity('1');
       setUnit(Unit.PIECE);
+      setShoppingQuantity('1');
     }
   }, [open]);
 
@@ -65,6 +68,10 @@ export const ItemMinimumDialog = ({ open, onOpenChange, itemId, existingMinimumI
     calculateCurrentStock();
   };
 
+  const handleShoppingQuantityChange = (newQuantity: string) => {
+    setShoppingQuantity(newQuantity);
+  };
+
   const calculateCurrentStock = () => {
     if (!selectedItem) return 0;
     const storedItems = getStoredItemsByItemAndUnit(selectedItem.id, unit);
@@ -73,13 +80,20 @@ export const ItemMinimumDialog = ({ open, onOpenChange, itemId, existingMinimumI
   };
 
   const handleSave = async () => {
-    if (!selectedItem || !quantity.trim()) {
+    if (!selectedItem || !quantity.trim() || !shoppingQuantity.trim()) {
       toast.error(t('messages.error.selectItemFirst'));
       return;
     }
 
     const numQuantity = parseFloat(quantity);
+    const numShoppingQuantity = parseFloat(shoppingQuantity);
+    
     if (isNaN(numQuantity) || numQuantity <= 0) {
+      toast.error(t('messages.error.invalidQuantity'));
+      return;
+    }
+
+    if (isNaN(numShoppingQuantity) || numShoppingQuantity <= 0) {
       toast.error(t('messages.error.invalidQuantity'));
       return;
     }
@@ -90,6 +104,7 @@ export const ItemMinimumDialog = ({ open, onOpenChange, itemId, existingMinimumI
         await updateItemMinimum(existingMinimumId, {
           minimumQuantity: numQuantity,
           minimumUnit: unit,
+          shoppingQuantity: numShoppingQuantity,
         });
         toast.success(t('itemMinimum.minimumUpdated'));
       } else {
@@ -97,6 +112,7 @@ export const ItemMinimumDialog = ({ open, onOpenChange, itemId, existingMinimumI
           itemId: selectedItem.id,
           minimumQuantity: numQuantity,
           minimumUnit: unit,
+          shoppingQuantity: numShoppingQuantity,
         });
         toast.success(t('itemMinimum.minimumSet'));
       }
@@ -157,6 +173,24 @@ export const ItemMinimumDialog = ({ open, onOpenChange, itemId, existingMinimumI
                 initialQuantity={quantity}
                 initialUnit={unit}
                 onQuantityChange={handleQuantityChange}
+              />
+            </div>
+          )}
+
+          {/* Shopping Quantity Input */}
+          {selectedItem && (
+            <div>
+              <Label className="text-sm font-medium mb-2 block">
+                {t('itemMinimum.shoppingQuantity')} ({unit})
+              </Label>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={shoppingQuantity}
+                onChange={(e) => handleShoppingQuantityChange(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter quantity"
               />
             </div>
           )}

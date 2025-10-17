@@ -11,6 +11,7 @@ export class ItemMinimumRepository {
       householdId: data.householdId,
       minimumQuantity: data.minimumQuantity,
       minimumUnit: data.minimumUnit,
+      shoppingQuantity: data.shoppingQuantity,
       createdBy: data.createdBy,
     });
   }

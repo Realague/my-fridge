@@ -101,6 +101,7 @@ export class ItemMinimumService {
       householdId: itemMinimum.householdId,
       minimumQuantity: parseFloat(itemMinimum.minimumQuantity.toString()),
       minimumUnit: itemMinimum.minimumUnit,
+      shoppingQuantity: parseFloat(itemMinimum.shoppingQuantity.toString()),
       createdBy: itemMinimum.createdBy,
       createdAt: itemMinimum.createdAt.toISOString(),
       updatedAt: itemMinimum.updatedAt.toISOString(),

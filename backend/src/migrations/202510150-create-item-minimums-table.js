@@ -66,6 +66,14 @@ module.exports = {
         allowNull: false,
         type: DataTypes.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
+      shoppingQuantity: {
+        type: DataTypes.DECIMAL(10, 3),
+        allowNull: false,
+        defaultValue: 1,
+        validate: {
+          min: 0
+        }
       }
     });
 

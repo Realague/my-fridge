@@ -33,8 +33,12 @@ module.exports = {
         onDelete: 'CASCADE'
       },
       quantity: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.DECIMAL(10, 3),
+        allowNull: false,
+        defaultValue: 1.0,
+        validate: {
+          min: 0.001
+        }
       },
       unit: {
         type: DataTypes.STRING,

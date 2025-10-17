@@ -44,8 +44,26 @@ export class ShoppingItemService {
         };
       }
 
-      const shoppingItem = await this.shoppingItemRepository.create(data);
-      
+      // Check for duplicate item with same unit in the household
+      const existingShoppingItem = await this.shoppingItemRepository.getDuplicateShoppingItem(
+        data.itemId,
+        data.householdId,
+        data.unit
+      );
+
+      if (existingShoppingItem) {
+        data.quantity += existingShoppingItem.quantity;
+      }
+
+      const shoppingItem = existingShoppingItem ? await this.shoppingItemRepository.update(existingShoppingItem.id, data) : await this.shoppingItemRepository.create(data);
+
+      if (!shoppingItem) {
+        return {
+          success: false,
+          error: 'Failed to create or update shopping item',
+        };
+      }
+
       // Create the response directly from the data we already have
       const shoppingItemDto: ShoppingItemDto = {
         id: shoppingItem.id,
@@ -130,7 +148,37 @@ export class ShoppingItemService {
 
   async updateShoppingItem(id: string, data: UpdateShoppingItemDto): Promise<ApiResponse<ShoppingItemDto>> {
     try {
-      const updatedShoppingItem = await this.shoppingItemRepository.update(id, data);
+      // Get the existing shopping item to check for duplicates
+      const existingItem = await this.shoppingItemRepository.findById(id);
+      if (!existingItem) {
+        return {
+          success: false,
+          error: 'Shopping item not found',
+        };
+      }
+
+      // Check for duplicates if itemId, householdId, or unit are being updated
+      const itemId = existingItem.item?.id;
+      const householdId = existingItem.householdId;
+      const unit = data.unit || existingItem.unit;
+
+      var updatedShoppingItem: ShoppingItem | null = null;
+      if (itemId && data.unit && data.unit !== existingItem.unit) {
+        const duplicateShoppingItem = await this.shoppingItemRepository.getDuplicateShoppingItem(
+          itemId,
+          householdId,
+          unit,
+          id // Exclude current item from duplicate check
+        );
+        
+        if (duplicateShoppingItem) {
+          await this.deleteShoppingItem(duplicateShoppingItem.id);
+          data.quantity = (data.quantity || 0) + duplicateShoppingItem.quantity;
+          updatedShoppingItem = await this.shoppingItemRepository.update(duplicateShoppingItem.id, data);
+        }
+      }
+
+      updatedShoppingItem = await this.shoppingItemRepository.update(id, data);
 
       if (!updatedShoppingItem) {
         return {
@@ -152,9 +200,9 @@ export class ShoppingItemService {
     }
   }
 
-  async deleteShoppingItem(id: string, householdId?: string): Promise<ApiResponse<void>> {
+  async deleteShoppingItem(id: string): Promise<ApiResponse<void>> {
     try {
-      const deleted = await this.shoppingItemRepository.delete(id, householdId);
+      const deleted = await this.shoppingItemRepository.delete(id);
 
       if (!deleted) {
         return {

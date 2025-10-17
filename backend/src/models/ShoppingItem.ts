@@ -59,6 +59,10 @@ ShoppingItem.init(
     quantity: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
+      get() {
+        const value = this.getDataValue('quantity');
+        return value ? Number(value) : 0;
+      },
     },
     unit: {
       type: DataTypes.STRING,

@@ -703,7 +703,10 @@
     "setFirstMinimum": "Establecer Primer Mínimo",
     "deleteMinimum": "Eliminar Mínimo",
     "deleteConfirmation": "¿Estás seguro de que quieres eliminar este mínimo? Esta acción no se puede deshacer.",
-    "settingsDescription": "Establecer y administrar niveles mínimos de stock para tus artículos"
+    "settingsDescription": "Establecer y administrar niveles mínimos de stock para tus artículos",
+    "minimumUpdated": "Mínimo actualizado exitosamente",
+    "minimumSet": "Mínimo establecido exitosamente",
+    "minimumSetFailed": "Error al establecer el mínimo"
   },
   "common": {
     "returnToHome": "Volver al Inicio",

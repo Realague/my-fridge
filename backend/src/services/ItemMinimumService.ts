@@ -2,7 +2,7 @@ import { ItemMinimumRepository } from '../repositories/ItemMinimumRepository';
 import { StoredItemRepository } from '../repositories/StoredItemRepository';
 import { ItemMinimum } from '../models/ItemMinimum';
 import { CreateItemMinimumDto, UpdateItemMinimumDto, ItemMinimumDto, GetItemMinimumsQueryDto, LowStockItemDto } from '../types/ItemMinimumDto';
-import { BadRequestError, NotFoundError } from '../errors/CustomErrors';
+import { BadRequestError } from '../errors/CustomErrors';
 
 export class ItemMinimumService {
   private itemMinimumRepository: ItemMinimumRepository;

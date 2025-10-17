@@ -91,15 +91,18 @@ export const ItemMinimumDialog = ({ open, onOpenChange, itemId, existingMinimumI
           minimumQuantity: numQuantity,
           minimumUnit: unit,
         });
+        toast.success(t('itemMinimum.minimumUpdated'));
       } else {
         await createItemMinimum({
           itemId: selectedItem.id,
           minimumQuantity: numQuantity,
           minimumUnit: unit,
         });
+        toast.success(t('itemMinimum.minimumSet'));
       }
       onOpenChange(false);
     } catch (error) {
+      toast.error(t('itemMinimum.minimumSetFailed'));
       console.error('Failed to save minimum:', error);
     } finally {
       setLoading(false);

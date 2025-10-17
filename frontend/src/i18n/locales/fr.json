@@ -704,7 +704,10 @@
     "setFirstMinimum": "Définir le Premier Minimum",
     "deleteMinimum": "Supprimer le Minimum",
     "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer ce minimum ? Cette action ne peut pas être annulée.",
-    "settingsDescription": "Définir et gérer les niveaux de stock minimum pour vos articles"
+    "settingsDescription": "Définir et gérer les niveaux de stock minimum pour vos articles",
+    "minimumUpdated": "Minimum mis à jour avec succès",
+    "minimumSet": "Minimum défini avec succès",
+    "minimumSetFailed": "Erreur lors de la définition du minimum"
   },
   "common": {
     "returnToHome": "Retour à l'Accueil",

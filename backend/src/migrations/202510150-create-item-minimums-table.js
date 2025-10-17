@@ -69,11 +69,11 @@ module.exports = {
       }
     });
 
-    // Add unique constraint: one minimum per item per household
+    // Add unique constraint: one minimum per item per household per unit
     await queryInterface.addConstraint('item_minimums', {
-      fields: ['itemId', 'householdId'],
+      fields: ['itemId', 'householdId', 'minimumUnit'],
       type: 'unique',
-      name: 'unique_item_household_minimum'
+      name: 'unique_item_household_minimum_unit'
     });
 
     // Add indexes for better query performance

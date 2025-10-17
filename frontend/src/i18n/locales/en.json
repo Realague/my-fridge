@@ -725,7 +725,10 @@
     "deleteMinimum": "Delete Minimum",
     "deleteConfirmation": "Are you sure you want to delete this minimum? This action cannot be undone.",
     "manageMinimums": "Manage Item Minimums",
-    "settingsDescription": "Set and manage minimum stock levels for your items"
+    "settingsDescription": "Set and manage minimum stock levels for your items",
+    "minimumUpdated": "Minimum updated successfully",
+    "minimumSet": "Minimum set successfully",
+    "minimumSetFailed": "Failed to set minimum"
   },
   "common": {
     "returnToHome": "Return to Home",

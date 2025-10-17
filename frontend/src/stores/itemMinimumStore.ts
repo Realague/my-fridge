@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { useApiWithAuth } from '@/hooks/useApiWithAuth';
-import { toast } from 'sonner';
 import { ItemMinimum, CreateItemMinimumRequest, UpdateItemMinimumRequest, LowStockItem } from '@/services/itemMinimumService';
 import { useHouseholdStore } from './householdStore';
 
@@ -229,10 +228,6 @@ export const useItemMinimumStore = create<ItemMinimumStore>()(
             const responseData = await response.json();
             
             if (responseData.success) {
-              toast.success("Minimum Set!", {
-                description: `Minimum quantity has been set successfully.`,
-              });
-              
               const store = get();
               store.addItemMinimumToHousehold(responseData.data);
               return responseData.data;
@@ -246,9 +241,6 @@ export const useItemMinimumStore = create<ItemMinimumStore>()(
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to create item minimum';
           set({ error: message });
-          toast.error("Failed to Set Minimum", {
-            description: message,
-          });
           throw error;
         } finally {
           set({ loading: false });
@@ -275,10 +267,6 @@ export const useItemMinimumStore = create<ItemMinimumStore>()(
             const responseData = await response.json();
             
             if (responseData.success) {
-              toast.success("Minimum Updated!", {
-                description: `Minimum quantity has been updated successfully.`,
-              });
-              
               const store = get();
               store.updateItemMinimumInHousehold(responseData.data);
             } else {
@@ -291,9 +279,6 @@ export const useItemMinimumStore = create<ItemMinimumStore>()(
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to update item minimum';
           set({ error: message });
-          toast.error("Update Failed", {
-            description: message,
-          });
           throw error;
         } finally {
           set({ loading: false });

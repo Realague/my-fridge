@@ -92,11 +92,8 @@ export class ShoppingItemRepository {
     return await this.findById(id);
   }
 
-  async delete(id: string, householdId?: string): Promise<boolean> {
+  async delete(id: string): Promise<boolean> {
     const whereClause: any = { id };
-    if (householdId) {
-      whereClause.householdId = householdId;
-    }
 
     const deletedRowsCount = await ShoppingItem.destroy({
       where: whereClause,
@@ -176,5 +173,25 @@ export class ShoppingItemRepository {
       console.error('Error reordering shopping items:', error);
       return false;
     }
+  }
+
+  async getDuplicateShoppingItem(itemId: string, householdId: string, unit: string, excludeId?: string): Promise<ShoppingItem | null> {
+    const whereClause: any = {
+      itemId,
+      householdId,
+      unit,
+    };
+
+    if (excludeId) {
+      whereClause.id = {
+        [Op.ne]: excludeId
+      };
+    }
+
+    const existingItem = await ShoppingItem.findOne({
+      where: whereClause
+    });
+
+    return existingItem || null;
   }
 } 

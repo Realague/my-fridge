@@ -8,7 +8,7 @@ interface ShoppingItemAttributes {
   id: string;
   itemId: string;
   householdId: string;
-  quantity: string;
+  quantity: number;
   unit: string;
   completed: boolean;
   priority: number;
@@ -24,7 +24,7 @@ class ShoppingItem extends Model<ShoppingItemAttributes, ShoppingItemCreationAtt
   public id!: string;
   public itemId!: string;
   public householdId!: string;
-  public quantity!: string;
+  public quantity!: number;
   public unit!: string;
   public completed!: boolean;
   public priority!: number;
@@ -57,7 +57,7 @@ ShoppingItem.init(
       field: 'household_id',
     },
     quantity: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
     unit: {

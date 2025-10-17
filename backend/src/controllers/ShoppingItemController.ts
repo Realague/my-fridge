@@ -34,6 +34,7 @@ export class ShoppingItemController {
 
       const createData: CreateShoppingItemDto = {
         ...req.body,
+        quantity: Number(req.body.quantity),
         householdId,
         createdBy: user.id,
       };
@@ -112,7 +113,10 @@ export class ShoppingItemController {
   async updateShoppingItem(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const updateData: UpdateShoppingItemDto = req.body;
+      const updateData: UpdateShoppingItemDto = {
+        ...req.body,
+        quantity: req.body.quantity !== undefined ? Number(req.body.quantity) : undefined,
+      };
 
       const result = await this.shoppingItemService.updateShoppingItem(id as string, updateData);
 

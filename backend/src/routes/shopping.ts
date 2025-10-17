@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { ShoppingItemController } from '../controllers/ShoppingItemController';
 import { authenticateGoogleToken } from '../middleware/auth';
-import { validateRequest } from '../middleware/validation';
 
 const router = Router({ mergeParams: true }); // mergeParams to access householdId from parent route
 const shoppingItemController = new ShoppingItemController();

@@ -212,13 +212,13 @@ export class MealPlanService {
         const shoppingItemData: CreateShoppingItemDto = {
           itemId,
           householdId,
-          quantity: data.totalQuantity.toString(),
+          quantity: data.totalQuantity,
           unit: data.unit,
           createdBy,
           priority: 0
         };
 
-        const shoppingItem = await this.shoppingItemRepository.create(shoppingItemData);
+        await this.shoppingItemRepository.create(shoppingItemData);
         
         createdShoppingItems.push({
           itemId,

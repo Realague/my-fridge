@@ -27,11 +27,11 @@ module.exports = {
         allowNull: false,
         defaultValue: '📦'
       },
-              type: {
-          type: DataTypes.ENUM('fridge', 'freezer', 'pantry', 'kitchen_cupboard', 'other'),
-          allowNull: false,
-          defaultValue: 'other'
-        },
+      type: {
+        type: DataTypes.ENUM('fridge', 'freezer', 'pantry', 'kitchen_cupboard', 'other'),
+        allowNull: false,
+        defaultValue: 'other'
+      },
       householdId: {
         type: DataTypes.UUID,
         allowNull: false,

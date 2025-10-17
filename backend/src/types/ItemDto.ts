@@ -49,14 +49,14 @@ export interface GetItemsQueryDto {
 export interface CreateShoppingItemDto {
   itemId: string;
   householdId: string;
-  quantity: string;
+  quantity: number;
   unit: string;
   createdBy: string;
   priority?: number;
 }
 
 export interface UpdateShoppingItemDto {
-  quantity?: string;
+  quantity?: number;
   unit?: string;
   completed?: boolean;
   priority?: number;
@@ -67,7 +67,7 @@ export interface ShoppingItemDto {
   id: string;
   item: ItemDto | null;
   householdId: string;
-  quantity: string;
+  quantity: number;
   unit: string;
   completed: boolean;
   priority: number;

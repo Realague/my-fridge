@@ -1,16 +1,18 @@
 'use strict';
 
+const { DataTypes } = require('sequelize');
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.addColumn('stored_items', 'isOpened', {
-      type: Sequelize.BOOLEAN,
+      type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
       comment: 'Whether the item has been opened'
     });
 
     await queryInterface.addColumn('stored_items', 'openedDate', {
-      type: Sequelize.DATEONLY,
+      type: DataTypes.DATEONLY,
       allowNull: true,
       comment: 'Date when the item was opened'
     });

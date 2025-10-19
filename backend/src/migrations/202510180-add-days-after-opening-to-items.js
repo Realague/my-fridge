@@ -1,9 +1,11 @@
 'use strict';
 
+const { DataTypes } = require('sequelize');
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.addColumn('items', 'daysAfterOpening', {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: true,
       comment: 'Number of days the item can be consumed after opening'
     });

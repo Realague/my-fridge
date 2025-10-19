@@ -10,6 +10,7 @@ export class StoredItemRepository {
     const createData = {
       ...data,
       expirationDate: data.expirationDate ? new Date(data.expirationDate) : null,
+      openedDate: data.openedDate ? new Date(data.openedDate) : null,
     };
     return await StoredItem.create(createData);
   }
@@ -168,6 +169,9 @@ export class StoredItemRepository {
       ...data,
       expirationDate: data.expirationDate !== undefined 
         ? (data.expirationDate ? new Date(data.expirationDate) : null)
+        : undefined,
+      openedDate: data.openedDate !== undefined 
+        ? (data.openedDate ? new Date(data.openedDate) : null)
         : undefined,
     };
 

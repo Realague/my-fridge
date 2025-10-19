@@ -56,7 +56,7 @@ export class StoredItem extends Model<StoredItemAttributes, StoredItemCreationAt
     }
     
     // Otherwise, use the standard expiration date
-    return this.expirationDate;
+    return this.expirationDate ? new Date(this.expirationDate) : null;
   }
 
   // Helper method to check if item is expired

@@ -383,13 +383,13 @@ const StorageArea = () => {
                   <Edit className="h-4 w-4" />
                 </Button>
                 <Button
-                  variant="ghost"
+                  variant="deleteTrash"
                   size="sm"
                   onClick={handleDelete}
-                  className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                  className="h-8 w-8 p-0"
                 >
                   <Trash2 className="h-4 w-4" />
-                </Button>
+                </Button> 
               </div>
             )}
           </div>

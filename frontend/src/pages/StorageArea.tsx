@@ -116,8 +116,7 @@ const StorageArea = () => {
   }
 
   const handleItemSelect = (item: Item) => {
-    console.log('Selected item:', item);
-    console.log('Days after opening:', item.daysAfterOpening);
+    console.log('Selected item full data:', JSON.stringify(item, null, 2));
     setSelectedItem(item);
     setNewItemUnit(item.defaultUnit);
   };

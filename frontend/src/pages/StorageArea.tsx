@@ -116,6 +116,8 @@ const StorageArea = () => {
   }
 
   const handleItemSelect = (item: Item) => {
+    console.log('Selected item:', item);
+    console.log('Days after opening:', item.daysAfterOpening);
     setSelectedItem(item);
     setNewItemUnit(item.defaultUnit);
   };

@@ -515,6 +515,23 @@ const StorageArea = () => {
                     />
                   </div>
                   
+                  {/* Opened Status Toggle */}
+                  {selectedItem.daysAfterOpening && (
+                    <OpenedStatusToggle
+                      isOpened={isOpened}
+                      openedDate={openedDate}
+                      daysAfterOpening={selectedItem.daysAfterOpening}
+                      effectiveExpirationDate={isOpened && openedDate ? 
+                        new Date(new Date(openedDate).getTime() + selectedItem.daysAfterOpening * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
+                        : undefined
+                      }
+                      onToggle={(opened, date) => {
+                        setIsOpened(opened);
+                        setOpenedDate(date || '');
+                      }}
+                    />
+                  )}
+                  
                   {/* Action Buttons */}
                   <div className="flex gap-2 pt-2">
                     <Button 

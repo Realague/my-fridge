@@ -116,7 +116,6 @@ const StorageArea = () => {
   }
 
   const handleItemSelect = (item: Item) => {
-    console.log('Selected item full data:', JSON.stringify(item, null, 2));
     setSelectedItem(item);
     setNewItemUnit(item.defaultUnit);
   };
@@ -388,7 +387,7 @@ const StorageArea = () => {
                   className="h-8 w-8 p-0"
                 >
                   <Trash2 className="h-4 w-4" />
-                </Button> 
+                </Button>
               </div>
             )}
           </div>

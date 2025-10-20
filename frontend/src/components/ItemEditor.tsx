@@ -82,7 +82,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
       name: name.trim(),
       category,
       defaultUnit,
-      availableUnits,
+      availableUnits
     };
     
     // Only include daysAfterOpening if it's a valid positive number

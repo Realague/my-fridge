@@ -19,7 +19,7 @@ interface ItemAttributes {
 }
 
 // Some attributes are optional in `Item.build()` and `Item.create()`
-interface ItemCreationAttributes extends Optional<ItemAttributes, 'id' | 'defaultUnit' | 'availableUnits' | 'createdAt' | 'updatedAt'> {}
+interface ItemCreationAttributes extends Optional<ItemAttributes, 'id' | 'defaultUnit' | 'availableUnits' | 'daysAfterOpening' | 'createdAt' | 'updatedAt'> {}
 
 export class Item extends Model<ItemAttributes, ItemCreationAttributes> implements ItemAttributes {
   public id!: string;

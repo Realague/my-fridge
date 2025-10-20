@@ -368,6 +368,7 @@ export const ItemSelector = ({
           category: updates.category,
           defaultUnit: updates.defaultUnit,
           availableUnits: updates.availableUnits,
+          daysAfterOpening: updates.daysAfterOpening,
         }, selectedHouseholdId);
         toast.success(t('messages.success.itemUpdated'));
         // Refresh the household items cache
@@ -405,6 +406,7 @@ export const ItemSelector = ({
           defaultUnit: newItemData.defaultUnit,
           availableUnits: newItemData.availableUnits,
           householdId: selectedHouseholdId,
+          daysAfterOpening: newItemData.daysAfterOpening,
         });
         
         onItemSelect(newApiItem);

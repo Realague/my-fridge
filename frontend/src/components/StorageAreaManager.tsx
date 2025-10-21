@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Plus, Edit3, Trash2 } from 'lucide-react';
+import { Plus, Edit3, Trash2, Edit } from 'lucide-react';
 import { useStorageAreasWithStats, useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
@@ -118,19 +118,19 @@ const StorageAreaManager = () => {
             </div>
             <div className="flex items-center gap-2">
               <Button 
-                variant="ghost" 
+                variant="editIconButton" 
                 size="icon" 
                 onClick={() => handleEditArea(area)}
-                className="h-8 w-8 text-gray-400 hover:text-blue-500 hover:bg-blue-50"
+                className="h-8 w-8 p-0"
               >
-                <Edit3 className="h-4 w-4" />
+                <Edit className="h-4 w-4" />
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button 
-                    variant="destructive" 
+                    variant="deleteTrash" 
                     size="icon"
-                    className="h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                    className="h-8 w-8 p-0"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

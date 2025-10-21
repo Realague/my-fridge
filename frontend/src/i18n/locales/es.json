@@ -160,7 +160,15 @@
     "global": "Global",
     "searching": "Buscando...",
     "deleteItem": "Eliminar artículo",
-    "deleteItemConfirmation": "¿Estás seguro de que quieres eliminar {{item}}, esta acción no puede ser deshecha."
+    "deleteItemConfirmation": "¿Estás seguro de que quieres eliminar {{item}}, esta acción no puede ser deshecha.",
+    "storedItems_one": "{{count}} artículo almacenado",
+    "storedItems_other": "{{count}} artículos almacenados",
+    "itemMinimums_one": "{{count}} ajuste de stock mínimo",
+    "itemMinimums_other": "{{count}} ajustes de stock mínimo",
+    "shoppingItems_one": "{{count}} artículo de lista de compras",
+    "shoppingItems_other": "{{count}} artículos de lista de compras",
+    "noReferencesFound": "No se encontraron artículos almacenados, ajustes de stock mínimo o artículos de lista de compras.",
+    "deletionImpactSummary": "Esto también eliminará: {{impacts}}."
   },
   "ingredientInput": {
     "addIngredient": "Agregar ingrediente",
@@ -216,7 +224,8 @@
       "householdCreated": "¡Hogar creado!",
       "householdCreatedDescription": "{{name}} ha sido creado exitosamente con {{count}} áreas de almacenamiento.",
       "householdJoined": "¡Hogar unido!",
-      "householdJoinedDescription": "Te has unido al hogar exitosamente."
+      "householdJoinedDescription": "Te has unido al hogar exitosamente.",
+      "itemDeletedDescription": "{{item}} ha sido eliminado de todas las áreas de almacenamiento, listas de compras y planes de comida."
     },
     "error": {
       "somethingWentWrong": "Algo salió mal",

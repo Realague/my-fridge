@@ -62,6 +62,9 @@ interface ShoppingStore {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   
+  // Item deletion cleanup
+  removeShoppingItemsByItemId: (itemId: string) => void;
+  
   // Computed getters
   getPendingItems: () => ShoppingItem[];
   getCompletedItems: () => ShoppingItem[];
@@ -407,6 +410,12 @@ export const useShoppingStore = create<ShoppingStore>()(
       getCompletedCount: () => {
         const items = get().items;
         return items.filter(item => item.completed).length;
+      },
+
+      removeShoppingItemsByItemId: (itemId: string) => {
+        set(state => ({
+          items: state.items.filter(item => item.item?.id !== itemId)
+        }));
       },
     }),
     {

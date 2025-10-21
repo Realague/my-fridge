@@ -37,7 +37,7 @@ const StorageArea = () => {
     updateStoredItem, 
     deleteStoredItem,
     fetchStoredItemsByStorageArea,
-    loading: storedItemsLoading 
+    loading: storedItemsLoading
   } = useStoredItemStore();
   const { selectedHouseholdId } = useProtectedRoute();
   

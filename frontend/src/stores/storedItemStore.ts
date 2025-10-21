@@ -30,6 +30,9 @@ interface StoredItemStore {
   updateStoredItemInHousehold: (storedItem: StoredItem) => void;
   removeStoredItemFromHousehold: (storedItemId: string) => void;
   
+  // Item deletion cleanup
+  removeStoredItemsByItemId: (itemId: string) => void;
+  
   // Computed getters
   getStoredItemsForHousehold: () => StoredItem[];
   getStoredItemById: (storedItemId: string) => StoredItem | null;
@@ -129,6 +132,18 @@ export const useStoredItemStore = create<StoredItemStore>()(
           storedItemsByHousehold: {
             ...state.storedItemsByHousehold,
             [householdId]: (state.storedItemsByHousehold[householdId] || []).filter(item => item.id !== storedItemId)
+          }
+        }));
+      },
+
+      removeStoredItemsByItemId: (itemId: string) => {
+        const householdId = getHouseholdId();
+        if (!householdId) return;
+        
+        set(state => ({
+          storedItemsByHousehold: {
+            ...state.storedItemsByHousehold,
+            [householdId]: (state.storedItemsByHousehold[householdId] || []).filter(item => item.itemId !== itemId)
           }
         }));
       },

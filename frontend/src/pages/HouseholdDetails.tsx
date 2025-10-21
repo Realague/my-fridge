@@ -220,7 +220,7 @@ const HouseholdDetails = () => {
                   {isAdmin && member.id !== currentUser?.id && (
                     <Button 
                     variant="deleteTrash" 
-                    size="icon" 
+                    size="icon"
                     className="h-8 w-8"
                     onClick={() => handleRemoveMember(member.id, `${member.firstName || ''} ${member.lastName || ''}`.trim())}
                   >

@@ -160,7 +160,15 @@
     "global": "Global",
     "searching": "Searching...",
     "deleteItem": "Delete item",
-    "deleteItemConfirmation": "Are you sure you want to delete {{item}}, this action cannot be undone."
+    "deleteItemConfirmation": "Are you sure you want to delete {{item}}, this action cannot be undone.",
+    "storedItems_one": "{{count}} stored item",
+    "storedItems_other": "{{count}} stored items",
+    "itemMinimums_one": "{{count}} minimum stock setting",
+    "itemMinimums_other": "{{count}} minimum stock settings",
+    "shoppingItems_one": "{{count}} shopping list item",
+    "shoppingItems_other": "{{count}} shopping list items",
+    "noReferencesFound": "No stored items, minimums, or shopping list entries will be affected.",
+    "deletionImpactSummary": "This will also remove: {{impacts}}."
   },
   "ingredientInput": {
     "addIngredient": "Add ingredient",
@@ -192,6 +200,7 @@
       "itemAdded": "Added {{item}} to the list.",
       "itemUpdated": "Item updated successfully",
       "itemDeleted": "Item deleted successfully",
+      "itemDeletedDescription": "{{item}} has been removed from all storage areas, shopping lists, and meal plans.",
       "memberRemoved": "Member removed successfully",
       "inviteCopied": "Invite copied!",
       "settingsSaved": "Settings saved successfully",

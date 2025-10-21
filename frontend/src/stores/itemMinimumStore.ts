@@ -27,6 +27,9 @@ interface ItemMinimumStore {
   updateItemMinimumInHousehold: (itemMinimum: ItemMinimum) => void;
   removeItemMinimumFromHousehold: (itemMinimumId: string) => void;
   
+  // Item deletion cleanup
+  removeItemMinimumsByItemId: (itemId: string) => void;
+  
   // Computed getters
   getItemMinimumsForHousehold: () => ItemMinimum[];
   getLowStockItemsForHousehold: () => LowStockItem[];
@@ -130,6 +133,18 @@ export const useItemMinimumStore = create<ItemMinimumStore>()(
           itemMinimumsByHousehold: {
             ...state.itemMinimumsByHousehold,
             [householdId]: (state.itemMinimumsByHousehold[householdId] || []).filter(item => item.id !== itemMinimumId)
+          }
+        }));
+      },
+
+      removeItemMinimumsByItemId: (itemId: string) => {
+        const householdId = getHouseholdId();
+        if (!householdId) return;
+        
+        set(state => ({
+          itemMinimumsByHousehold: {
+            ...state.itemMinimumsByHousehold,
+            [householdId]: (state.itemMinimumsByHousehold[householdId] || []).filter(item => item.itemId !== itemId)
           }
         }));
       },

@@ -48,7 +48,8 @@ export class ShoppingItemService {
       const existingShoppingItem = await this.shoppingItemRepository.getDuplicateShoppingItem(
         data.itemId,
         data.householdId,
-        data.unit
+        data.unit,
+        false
       );
 
       if (existingShoppingItem) {
@@ -168,6 +169,7 @@ export class ShoppingItemService {
           itemId,
           householdId,
           unit,
+          false,
           id // Exclude current item from duplicate check
         );
         
@@ -237,10 +239,21 @@ export class ShoppingItemService {
       const wasCompleted = shoppingItem.completed;
       const willBeCompleted = !wasCompleted;
 
-      const updatedShoppingItem = await this.shoppingItemRepository.update(
-        id,
-        { completed: willBeCompleted },
+      const duplicateShoppingItem = await this.shoppingItemRepository.getDuplicateShoppingItem(
+        shoppingItem.itemId,
+        shoppingItem.householdId,
+        shoppingItem.unit,
+        willBeCompleted,
+        id
       );
+
+      let updatedShoppingItem: ShoppingItem | null = null;
+      if (duplicateShoppingItem) {
+        await this.deleteShoppingItem(duplicateShoppingItem.id);
+        updatedShoppingItem = await this.shoppingItemRepository.update(id, {quantity: duplicateShoppingItem.quantity + shoppingItem.quantity, completed: willBeCompleted });
+      } else {
+        updatedShoppingItem = await this.shoppingItemRepository.update(id, { completed: willBeCompleted });
+      }
 
       if (!updatedShoppingItem) {
         return {

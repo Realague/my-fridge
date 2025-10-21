@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { itemService, Item } from '@/services/itemService';
+import { ItemDeletionService } from '@/services/itemDeletionService';
 import { useAuthStore } from '@/stores/authStore';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { ItemEditor } from '@/components/ItemEditor';
@@ -39,6 +40,7 @@ export const ItemSelector = ({
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [creatingNewItem, setCreatingNewItem] = useState(false);
   const [deleteItem, setDeleteItem] = useState<Item | null>(null);
+  const [deletionImpact, setDeletionImpact] = useState<string>('');
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const [apiResults, setApiResults] = useState<Item[]>([]);
   const [apiLoading, setApiLoading] = useState(false);
@@ -313,6 +315,15 @@ export const ItemSelector = ({
   const confirmDeleteItem = (item: Item, e: React.MouseEvent) => {
     e.stopPropagation();
     setDeleteItem(item);
+    // Get the impact summary for this item with translations
+    const impact = ItemDeletionService.getDeletionImpactSummary(item.id, {
+      storedItems: (count: number) => t('itemSelector.storedItems', { count }),
+      itemMinimums: (count: number) => t('itemSelector.itemMinimums', { count }),
+      shoppingItems: (count: number) => t('itemSelector.shoppingItems', { count }),
+      noReferencesFound: t('itemSelector.noReferencesFound'),
+      deletionImpactSummary: (impacts: string) => t('itemSelector.deletionImpactSummary', { impacts })
+    });
+    setDeletionImpact(impact);
     setIsOpen(false);
   };
 
@@ -323,8 +334,15 @@ export const ItemSelector = ({
     }
     
     try {
-      await itemService.deleteItem(item.id, selectedHouseholdId);
-      toast.success(t('messages.success.itemDeleted', { item: getItemDisplayName(item, t) }));
+      // Use the centralized deletion service with translated messages
+      await ItemDeletionService.deleteItem(
+        item.id, 
+        selectedHouseholdId, 
+        getItemDisplayName(item, t),
+        t('messages.success.itemDeleted'),
+        t('messages.success.itemDeletedDescription', { item: getItemDisplayName(item, t) })
+      );
+      
       // Refresh the household items cache
       await refreshHouseholdItems();
       setEditingItem(null);
@@ -571,11 +589,10 @@ export const ItemSelector = ({
                     <div className="flex items-center gap-1">
                       <Button
                         type="button"
-                        variant="ghost"
+                        variant="editIconButton"
                         size="sm"
                         onClick={(e) => handleEditItem(item, e)}
-                        className="h-6 w-6 p-0 hover:bg-primary/10 transition-opacity"
-                        title="Edit item"
+                        className="h-6 w-6 p-0"
                       >
                         <Edit className="h-3 w-3" />
                       </Button>
@@ -586,7 +603,6 @@ export const ItemSelector = ({
                           size="sm"
                           onClick={(e) => confirmDeleteItem(item, e)}
                           className="h-6 w-6 p-0"
-                          title="Delete item"
                         >
                           <Trash2 className="h-3 w-3" />
                         </Button>
@@ -656,22 +672,33 @@ export const ItemSelector = ({
       )}
 
        {deleteItem && (
-         <AlertDialog open={!!deleteItem} onOpenChange={(open) => !open && setDeleteItem(null)}>
+         <AlertDialog open={!!deleteItem} onOpenChange={(open) => {
+           if (!open) {
+             setDeleteItem(null);
+             setDeletionImpact('');
+           }
+         }}>
            <AlertDialogContent>
              <AlertDialogHeader>
                <AlertDialogTitle>{t('itemSelector.deleteItem')}</AlertDialogTitle>
-               <AlertDialogDescription>
-                 {t('itemSelector.deleteItemConfirmation', { item: getItemDisplayName(deleteItem, t) })}
-               </AlertDialogDescription>
+             <AlertDialogDescription>
+               {t('itemSelector.deleteItemConfirmation', { item: getItemDisplayName(deleteItem, t) })}
+               <br /><br />
+               <span className="text-sm text-muted-foreground">{deletionImpact}</span>
+             </AlertDialogDescription>
              </AlertDialogHeader>
              <AlertDialogFooter>
-               <AlertDialogCancel onClick={() => setDeleteItem(null)}>
+               <AlertDialogCancel onClick={() => {
+                 setDeleteItem(null);
+                 setDeletionImpact('');
+               }}>
                  {t('buttons.cancel')}
                </AlertDialogCancel>
                 <AlertDialogAction 
                   onClick={() => {
                     handleDeleteItem(deleteItem);
                     setDeleteItem(null);
+                    setDeletionImpact('');
                   }} 
                   className="text-foreground bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                 >

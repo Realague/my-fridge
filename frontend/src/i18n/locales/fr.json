@@ -160,7 +160,15 @@
     "global": "Global",
     "searching": "Recherche...",
     "deleteItem": "Supprimer l'article",
-    "deleteItemConfirmation": "Êtes-vous sûr de vouloir supprimer {{item}}, cette action ne peut pas être annulée."
+    "deleteItemConfirmation": "Êtes-vous sûr de vouloir supprimer {{item}}, cette action ne peut pas être annulée.",
+    "storedItems_one": "{{count}} article stocké",
+    "storedItems_other": "{{count}} articles stockés",
+    "itemMinimums_one": "{{count}} ajustement de stock minimum",
+    "itemMinimums_other": "{{count}} ajustements de stock minimum",
+    "shoppingItems_one": "{{count}} article de liste de courses",
+    "shoppingItems_other": "{{count}} articles de liste de courses",
+    "noReferencesFound": "Aucun article stocké, ajustement de stock minimum ou article de liste de courses n'est affecté.",
+    "deletionImpactSummary": "Cela supprimera également: {{impacts}}."
   },
   "ingredientInput": {
     "addIngredient": "Ajouter un ingrédient",
@@ -216,7 +224,8 @@
       "householdCreated": "Foyer créé !",
       "householdCreatedDescription": "{{name}} a été créé avec succès avec {{count}} zones de stockage.",
       "householdJoined": "Foyer rejoint !",
-      "householdJoinedDescription": "Vous avez rejoint le foyer avec succès."
+      "householdJoinedDescription": "Vous avez rejoint le foyer avec succès.",
+      "itemDeletedDescription": "{{item}} à été supprimé de toutes les zones de stockage, listes de courses et plans de repas."
     },
     "error": {
       "somethingWentWrong": "Quelque chose s'est mal passé",

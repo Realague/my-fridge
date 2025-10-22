@@ -225,16 +225,18 @@ export class StoredItemRepository {
 
     // If all items are weight or volume, normalize and sum
     if (unitTypes.size === 1) {
-      const [type, items] = Array.from(unitTypes.entries())[0];
-      
-      if (type === UnitType.WEIGHT || type === UnitType.VOLUME) {
-        // Normalize all to base unit and sum
-        return items.reduce((total, item) => {
+      const entry = Array.from(unitTypes.entries())[0];
+      if (entry) {
+        const [type, items] = entry;
+        if (type === UnitType.WEIGHT || type === UnitType.VOLUME) {
+          // Normalize all to base unit and sum
+          return items.reduce((total: number, item: { quantity: number; unit: string; }) => {
           const normalized = normalizeToBaseUnit(item.quantity, item.unit);
           return total + normalized.quantity;
         }, 0);
       }
     }
+  }
 
     // Cannot aggregate - return sum (for COUNT types) or 0
     if (unitTypes.size === 1 && unitTypes.has(UnitType.COUNT)) {

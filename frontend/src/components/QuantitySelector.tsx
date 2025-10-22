@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Item } from '@/services/itemService';
-import { getUnitDisplayName } from '@/utils/unitSystem';
+import { getUnitDisplayName, getUnitsForCategory } from '@/utils/unitSystem';
 
 interface QuantitySelectorProps {
   item: Item;
@@ -23,9 +23,6 @@ export const QuantitySelector = ({
 }: QuantitySelectorProps) => {
   const [quantity, setQuantity] = useState(initialQuantity);
   const [unit, setUnit] = useState(initialUnit);
-
-  // Get units based on context (storage or recipe)
-  const { getUnitsForCategory } = require('@/utils/unitSystem');
 
   // Ensure availableUnits is always an array and filtered by context
   const availableUnits = React.useMemo(() => {

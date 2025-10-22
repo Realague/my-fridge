@@ -17,6 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
 import { useTranslation } from 'react-i18next';
 import { Item } from '@/services/itemService';
+import { getItemDisplayName } from '@/utils/itemUtils';
 
 interface RecipeIngredientWithId extends CreateRecipeIngredientDto {
   id: string;
@@ -440,7 +441,7 @@ const AddRecipe = () => {
                                   onCheckedChange={() => toggleIngredientForStep(ingredient.id, index)}
                                 />
                                 <span className="text-sm text-muted-foreground">
-                                  {ingredient.quantity} {ingredient.unit} {ingredient.item?.name}
+                                  {ingredient.quantity} {ingredient.unit} {getItemDisplayName(ingredient.item, t)}
                                 </span>
                               </div>
                             );

@@ -142,6 +142,7 @@ export const AddItemCard = ({
                   />
                 </div>
                 <Button 
+                  variant="green"
                   onClick={handleAddItem} 
                   className="px-6 min-w-[100px]"
                   disabled={disabled || isSubmitting}

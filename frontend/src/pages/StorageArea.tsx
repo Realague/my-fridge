@@ -31,7 +31,7 @@ const StorageArea = () => {
   
   // Store hooks
   const { getStorageAreaById, fetchStorageAreas } = useStorageAreaStore();
-  const { 
+  const {
     getStoredItemsByStorageArea, 
     createStoredItem, 
     updateStoredItem, 

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
+import { fr } from "date-fns/locale";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
@@ -16,6 +17,13 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
+      locale={fr}
+      formatters={{
+        formatCaption: (date, options) => {
+          const monthName = date.toLocaleDateString('fr-FR', { month: 'long' });
+          return monthName.charAt(0).toUpperCase() + monthName.slice(1);
+        }
+      }}
       className={cn("p-3", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",

@@ -126,7 +126,7 @@ const Onboarding = () => {
         {step === 1 && (
           <Card className="bg-card backdrop-blur-sm border border-border/50 shadow-xl">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
+              <div className="mx-auto w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center">
                 <span className="text-2xl">🏠</span>
               </div>
               <CardTitle className="text-2xl">{t('pages.household.setupHousehold')}</CardTitle>
@@ -178,7 +178,7 @@ const Onboarding = () => {
         {step === 2 && (
           <Card className="bg-card backdrop-blur-sm border border-border/50 shadow-xl">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
+              <div className="mx-auto w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center">
                 <Plus className="h-8 w-8 text-primary-foreground" />
               </div>
               <CardTitle className="text-2xl">{t('pages.household.createYourHousehold')}</CardTitle>
@@ -224,7 +224,7 @@ const Onboarding = () => {
         {step === 3 && (
           <Card className="bg-card backdrop-blur-sm border border-border/50 shadow-xl">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
+              <div className="mx-auto w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center">
                 <span className="text-2xl">🏺</span>
               </div>
               <CardTitle className="text-2xl">{t('pages.household.setupStorageAreas')}</CardTitle>

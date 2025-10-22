@@ -38,6 +38,7 @@ interface StoredItemStore {
   getStoredItemById: (storedItemId: string) => StoredItem | null;
   getStoredItemsByStorageArea: (storageAreaId: string) => StoredItem[];
   getStoredItemsByItemAndUnit: (itemId: string, unit: string) => StoredItem[];
+  getTotalQuantityForItem: (itemId: string) => any;
   getExpiringStoredItems: () => StoredItem[];
   getExpiredStoredItems: () => StoredItem[];
 }
@@ -494,6 +495,25 @@ export const useStoredItemStore = create<StoredItemStore>()(
         const state = get();
         const storedItems = state.storedItemsByHousehold[householdId] || [];
         return storedItems.filter(item => item.itemId === itemId && item.unit === unit);
+      },
+
+      // Get aggregated quantity for an item across all storage areas
+      getTotalQuantityForItem: (itemId: string) => {
+        const storedItems = get().getStoredItemsForHousehold();
+        const itemStoredItems = storedItems.filter(item => item.itemId === itemId);
+        
+        if (itemStoredItems.length === 0) return null;
+
+        // Use unit conversion to aggregate
+        const { aggregateQuantities } = require('@/utils/unitConversion');
+        
+        return aggregateQuantities(
+          itemStoredItems.map(item => ({
+            quantity: item.quantity,
+            unit: item.unit,
+            storageAreaName: item.storageArea?.name
+          }))
+        );
       },
 
       getExpiringStoredItems: () => {

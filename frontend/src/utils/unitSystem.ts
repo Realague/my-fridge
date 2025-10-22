@@ -6,11 +6,32 @@ export interface UnitCategory {
   availableUnits: string[];
 }
 
+// Storage units (excluding cooking measurements)
+export const STORAGE_UNITS = [
+  Unit.GRAM,
+  Unit.KILOGRAM,
+  Unit.MILLILITER,
+  Unit.LITER,
+  Unit.PIECE,
+  Unit.PACK,
+  Unit.BUNCH,
+  Unit.DOZEN,
+  Unit.SERVING,
+];
+
+// Recipe units (includes all units including cooking measurements)
+export const RECIPE_UNITS = [
+  ...STORAGE_UNITS,
+  Unit.CUP,
+  Unit.TABLESPOON,
+  Unit.TEASPOON,
+];
+
 export const UNIT_CATEGORIES: Record<string, UnitCategory> = {
   [ItemCategory.DAIRY]: {
     name: 'Dairy',
     defaultUnit: Unit.PIECE,
-    availableUnits: [Unit.GRAM, Unit.KILOGRAM, Unit.PIECE, Unit.LITER, Unit.MILLILITER, Unit.CUP, Unit.PACK]
+    availableUnits: [Unit.GRAM, Unit.KILOGRAM, Unit.PIECE, Unit.LITER, Unit.MILLILITER, Unit.PACK]
   },
   [ItemCategory.VEGETABLES]: {
     name: 'Vegetables',
@@ -30,12 +51,12 @@ export const UNIT_CATEGORIES: Record<string, UnitCategory> = {
   [ItemCategory.GRAINS]: {
     name: 'Grains',
     defaultUnit: Unit.KILOGRAM,
-    availableUnits: [Unit.KILOGRAM, Unit.GRAM, Unit.CUP, Unit.PACK]
+    availableUnits: [Unit.KILOGRAM, Unit.GRAM, Unit.PACK]
   },
   [ItemCategory.BEVERAGES]: {
     name: 'Beverages',
     defaultUnit: Unit.LITER,
-    availableUnits: [Unit.LITER, Unit.MILLILITER, Unit.CUP, Unit.PACK]
+    availableUnits: [Unit.LITER, Unit.MILLILITER, Unit.PACK]
   },
   [ItemCategory.CANNED]: {
     name: 'Canned',
@@ -55,12 +76,12 @@ export const UNIT_CATEGORIES: Record<string, UnitCategory> = {
   [ItemCategory.CONDIMENTS]: {
     name: 'Condiments',
     defaultUnit: Unit.PACK,
-    availableUnits: [Unit.PACK, Unit.PIECE, Unit.MILLILITER, Unit.TABLESPOON, Unit.TEASPOON]
+    availableUnits: [Unit.PACK, Unit.PIECE, Unit.MILLILITER]
   },
   [ItemCategory.SPICES]: {
     name: 'Spices',
     defaultUnit: Unit.GRAM,
-    availableUnits: [Unit.GRAM, Unit.TEASPOON, Unit.TABLESPOON, Unit.PACK]
+    availableUnits: [Unit.GRAM, Unit.PACK]
   },
   [ItemCategory.MEAL]: {
     name: 'Meal',
@@ -84,8 +105,20 @@ export const UNIT_CATEGORIES: Record<string, UnitCategory> = {
   }
 };
 
-export const getUnitsForCategory = (category: string): UnitCategory => {
-  return UNIT_CATEGORIES[category] || UNIT_CATEGORIES[ItemCategory.OTHER];
+// Get units for a category with optional context (storage vs recipe)
+export const getUnitsForCategory = (category: string, context: 'storage' | 'recipe' = 'storage'): UnitCategory => {
+  const categoryUnits = UNIT_CATEGORIES[category] || UNIT_CATEGORIES[ItemCategory.OTHER];
+  
+  // For storage context, filter out cooking measurements
+  if (context === 'storage') {
+    return {
+      ...categoryUnits,
+      availableUnits: categoryUnits.availableUnits.filter(unit => STORAGE_UNITS.includes(unit as Unit))
+    };
+  }
+  
+  // For recipe context, include all units
+  return categoryUnits;
 };
 
 export const getAllCategories = (): string[] => {

@@ -237,14 +237,43 @@ const Shopping = () => {
     setDraggedItem(null);
   };
 
+  // Group and aggregate items by itemId
+  const aggregateShoppingItems = (itemsList: ShoppingItem[]) => {
+    const grouped = new Map<string, ShoppingItem[]>();
+    itemsList.forEach(item => {
+      const key = item.item?.id || 'unknown';
+      if (!grouped.has(key)) {
+        grouped.set(key, []);
+      }
+      grouped.get(key)!.push(item);
+    });
+
+    // For items with same itemId and unit, show aggregated view
+    return Array.from(grouped.values()).flatMap(group => {
+      if (group.length === 1) return group;
+      
+      // Check if all have same unit
+      const firstUnit = group[0].unit;
+      if (group.every(item => item.unit === firstUnit)) {
+        // Aggregate - show total quantity
+        const totalQty = group.reduce((sum, item) => sum + parseFloat(item.quantity), 0);
+        return [{
+          ...group[0],
+          quantity: totalQty.toString(),
+        }];
+      }
+      return group;
+    });
+  };
+
   // Filter items by category
   const filterItemsByCategory = (itemsList: ShoppingItem[]) => {
     if (categoryFilter === 'all') return itemsList;
     return itemsList.filter(item => item.item?.category === categoryFilter);
   };
 
-  const pendingItems = filterItemsByCategory(getPendingItems());
-  const completedItems = filterItemsByCategory(getCompletedItems());
+  const pendingItems = filterItemsByCategory(aggregateShoppingItems(getPendingItems()));
+  const completedItems = filterItemsByCategory(aggregateShoppingItems(getCompletedItems()));
   const totalItems = getTotalItems();
   const completedCount = getCompletedCount();
 

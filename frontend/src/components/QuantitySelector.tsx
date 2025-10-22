@@ -10,6 +10,7 @@ interface QuantitySelectorProps {
   initialUnit: string;
   onQuantityChange: (quantity: string, unit: string) => void;
   className?: string;
+  context?: 'storage' | 'recipe';
 }
 
 export const QuantitySelector = ({
@@ -17,28 +18,40 @@ export const QuantitySelector = ({
   initialQuantity,
   initialUnit,
   onQuantityChange,
-  className = ''
+  className = '',
+  context = 'storage'
 }: QuantitySelectorProps) => {
   const [quantity, setQuantity] = useState(initialQuantity);
   const [unit, setUnit] = useState(initialUnit);
 
-  // Ensure availableUnits is always an array (handle cases where it might be a string from DB)
+  // Get units based on context (storage or recipe)
+  const { getUnitsForCategory } = require('@/utils/unitSystem');
+
+  // Ensure availableUnits is always an array and filtered by context
   const availableUnits = React.useMemo(() => {
+    const categoryUnits = getUnitsForCategory(item.category, context);
+    
     if (Array.isArray(item.availableUnits)) {
-      return item.availableUnits;
+      // Filter item's available units by context-appropriate units
+      return item.availableUnits.filter(unit => 
+        categoryUnits.availableUnits.includes(unit)
+      );
     }
     // If it's a string (JSON), try to parse it
     if (typeof item.availableUnits === 'string') {
       try {
         const parsed = JSON.parse(item.availableUnits);
-        return Array.isArray(parsed) ? parsed : [item.defaultUnit];
+        const parsedArray = Array.isArray(parsed) ? parsed : [item.defaultUnit];
+        return parsedArray.filter(unit => 
+          categoryUnits.availableUnits.includes(unit)
+        );
       } catch {
         return [item.defaultUnit];
       }
     }
-    // Fallback to default unit
-    return [item.defaultUnit];
-  }, [item.availableUnits, item.defaultUnit]);
+    // Fallback to category units
+    return categoryUnits.availableUnits;
+  }, [item.availableUnits, item.defaultUnit, item.category, context]);
 
   const handleQuantityChange = (value: string) => {
     setQuantity(value);

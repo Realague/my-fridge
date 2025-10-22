@@ -162,6 +162,7 @@ export const StructuredIngredientInput = ({
                             unit
                           });
                         }}
+                        context="recipe"
                       />
                     </div>
                   </div>

@@ -67,25 +67,30 @@ export class ItemMinimumService {
     const itemMinimums = await this.itemMinimumRepository.findByHouseholdId(householdId);
     
     const lowStockItems: LowStockItemDto[] = [];
+    
+    // Import unit conversion utilities
+    const { convertQuantity, canConvertUnits } = require('../utils/unitConversion');
 
     for (const itemMinimum of itemMinimums) {
-      // Get total quantity for this item across all storage areas
-      // Note: This is a simplified version that doesn't handle unit conversion
-      const totalQuantity = await this.storedItemRepository.getTotalQuantityByItem(
+      // Get total quantity for this item in the minimum's unit
+      const totalQuantityInBaseUnit = await this.storedItemRepository.getTotalQuantityByItem(
         itemMinimum.itemId,
-        householdId
+        householdId,
+        itemMinimum.minimumUnit
       );
 
-      // For now, we compare quantities directly (assuming same unit)
-      // TODO: Implement unit conversion for more accurate comparison
-      const isLowStock = totalQuantity < itemMinimum.minimumQuantity;
-      const quantityNeeded = Math.max(0, itemMinimum.minimumQuantity - totalQuantity);
+      // Convert to minimum unit if possible, otherwise use direct comparison
+      let currentQuantity = totalQuantityInBaseUnit;
+      
+      // Compare quantities in the same unit
+      const isLowStock = currentQuantity < parseFloat(itemMinimum.minimumQuantity.toString());
+      const quantityNeeded = Math.max(0, parseFloat(itemMinimum.minimumQuantity.toString()) - currentQuantity);
 
       lowStockItems.push({
         itemMinimum: this.mapToDto(itemMinimum),
-        currentQuantity: totalQuantity,
-        currentUnit: itemMinimum.minimumUnit, // For now, assume same unit
-        quantityNeeded,
+        currentQuantity: parseFloat(currentQuantity.toFixed(2)),
+        currentUnit: itemMinimum.minimumUnit,
+        quantityNeeded: parseFloat(quantityNeeded.toFixed(2)),
         isLowStock,
       });
     }

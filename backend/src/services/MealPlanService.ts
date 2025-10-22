@@ -169,11 +169,16 @@ export class MealPlanService {
 
     const mealPlans = await this.mealPlanRepository.findByDateRange(householdId, startDate, endDate, true);
     
-    // Group ingredients by item ID and calculate total quantities
+    // Import unit conversion utilities
+    const { convertQuantity, canConvertUnits, normalizeToBaseUnit, getBestDisplayUnit } = require('../utils/unitConversion');
+    const StoredItemRepository = require('../repositories/StoredItemRepository').StoredItemRepository;
+    const storedItemRepository = new StoredItemRepository();
+    
+    // Group ingredients by item ID and calculate total quantities with unit conversion
     const ingredientTotals = new Map<string, {
       itemName: string;
-      totalQuantity: number;
-      unit: string;
+      totalQuantityInBaseUnit: number;
+      baseUnit: string;
       recipes: string[];
     }>();
 
@@ -185,9 +190,15 @@ export class MealPlanService {
         const key = ingredient.itemId;
         const neededQuantity = Number(ingredient.quantity / recipe.servings * mealPlan.servings);
         
-        if (ingredientTotals.has(key) && ingredientTotals.get(key)!.unit === ingredient.unit) {
+        // Normalize to base unit for aggregation
+        const normalized = normalizeToBaseUnit(neededQuantity, ingredient.unit);
+        
+        if (ingredientTotals.has(key)) {
           const existing = ingredientTotals.get(key)!;
-          existing.totalQuantity += neededQuantity;
+          // Only aggregate if same base unit (weight with weight, volume with volume)
+          if (existing.baseUnit === normalized.unit) {
+            existing.totalQuantityInBaseUnit += normalized.quantity;
+          }
           if (!existing.recipes.includes(recipe.title)) {
             existing.recipes.push(recipe.title);
           }
@@ -196,8 +207,8 @@ export class MealPlanService {
           if (item) {
             ingredientTotals.set(key, {
               itemName: item.name,
-              totalQuantity: neededQuantity,
-              unit: ingredient.unit,
+              totalQuantityInBaseUnit: normalized.quantity,
+              baseUnit: normalized.unit,
               recipes: [recipe.title]
             });
           }
@@ -205,14 +216,46 @@ export class MealPlanService {
       }
     }
 
-    // Create shopping items in the database
-    const createdShoppingItems: ShoppingListItemDto[] = [];
+    // Check current stock and calculate what's actually needed
+    const neededItems = new Map<string, {
+      itemName: string;
+      quantityNeeded: number;
+      unit: string;
+      recipes: string[];
+    }>();
+
     for (const [itemId, data] of ingredientTotals) {
+      // Get current stock in the same base unit
+      const currentStock = await storedItemRepository.getTotalQuantityByItem(
+        itemId,
+        householdId,
+        data.baseUnit
+      );
+
+      // Calculate shortage
+      const shortage = data.totalQuantityInBaseUnit - currentStock;
+      
+      if (shortage > 0) {
+        // Convert to best display unit (kg instead of 1000g, etc.)
+        const display = getBestDisplayUnit(shortage, data.baseUnit);
+        
+        neededItems.set(itemId, {
+          itemName: data.itemName,
+          quantityNeeded: display.quantity,
+          unit: display.unit,
+          recipes: data.recipes
+        });
+      }
+    }
+
+    // Create shopping items in the database (only for items that are needed)
+    const createdShoppingItems: ShoppingListItemDto[] = [];
+    for (const [itemId, data] of neededItems) {
       try {
         const shoppingItemData: CreateShoppingItemDto = {
           itemId,
           householdId,
-          quantity: data.totalQuantity,
+          quantity: data.quantityNeeded,
           unit: data.unit,
           createdBy,
           priority: 0
@@ -223,7 +266,7 @@ export class MealPlanService {
         createdShoppingItems.push({
           itemId,
           itemName: data.itemName,
-          totalQuantity: data.totalQuantity,
+          totalQuantity: data.quantityNeeded,
           unit: data.unit,
           recipes: data.recipes
         });

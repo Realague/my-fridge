@@ -42,15 +42,21 @@ export function convertQuantity(quantity: number, fromUnit: string, toUnit: stri
   const unitType = getUnitType(fromUnit);
   
   if (unitType === UnitType.WEIGHT) {
-    const baseQuantity = quantity * WEIGHT_CONVERSIONS[fromUnit];
-    return baseQuantity / WEIGHT_CONVERSIONS[toUnit];
+    const fromConversion = WEIGHT_CONVERSIONS[fromUnit];
+    const toConversion = WEIGHT_CONVERSIONS[toUnit];
+    if (fromConversion === undefined || toConversion === undefined) return null;
+    const baseQuantity = quantity * fromConversion;
+    return baseQuantity / toConversion;
   }
-  
+
   if (unitType === UnitType.VOLUME) {
-    const baseQuantity = quantity * VOLUME_CONVERSIONS[fromUnit];
-    return baseQuantity / VOLUME_CONVERSIONS[toUnit];
+    const fromConversion = VOLUME_CONVERSIONS[fromUnit];
+    const toConversion = VOLUME_CONVERSIONS[toUnit];
+    if (fromConversion === undefined || toConversion === undefined) return null;
+    const baseQuantity = quantity * fromConversion;
+    return baseQuantity / toConversion;
   }
-  
+
   return null;
 }
 
@@ -65,7 +71,7 @@ export interface NormalizedQuantity {
 export function normalizeToBaseUnit(quantity: number, unit: string): NormalizedQuantity {
   const unitType = getUnitType(unit);
   
-  if (unitType === UnitType.WEIGHT) {
+  if (unitType === UnitType.WEIGHT && WEIGHT_CONVERSIONS[unit]) {
     return {
       quantity: quantity * WEIGHT_CONVERSIONS[unit],
       unit: Unit.GRAM,
@@ -74,7 +80,7 @@ export function normalizeToBaseUnit(quantity: number, unit: string): NormalizedQ
     };
   }
   
-  if (unitType === UnitType.VOLUME) {
+  if (unitType === UnitType.VOLUME && VOLUME_CONVERSIONS[unit]) {
     return {
       quantity: quantity * VOLUME_CONVERSIONS[unit],
       unit: Unit.MILLILITER,
@@ -115,7 +121,7 @@ export function getBestDisplayUnit(quantity: number, baseUnit: string): { quanti
 export interface AggregatedQuantity {
   totalQuantity: number;
   displayUnit: string;
-  breakdown: Array<{ quantity: number; unit: string }>;
+  breakdown: Array<{ quantity: number; unit: string}>;
   canAggregate: boolean;
 }
 
@@ -130,7 +136,7 @@ export function aggregateQuantities(items: Array<{ quantity: number; unit: strin
   }
 
   // Group by unit type
-  const typeGroups = new Map<UnitType, Array<{ quantity: number; unit: string }>>();
+  const typeGroups = new Map<UnitType, Array<{ quantity: number; unit: string}>>();
   
   items.forEach(item => {
     const type = getUnitType(item.unit);
@@ -142,13 +148,24 @@ export function aggregateQuantities(items: Array<{ quantity: number; unit: strin
 
   // If all items are the same type and convertible, aggregate them
   if (typeGroups.size === 1) {
-    const [type, groupItems] = Array.from(typeGroups.entries())[0];
+    const entries = Array.from(typeGroups.entries());
+    const firstEntry = entries[0];
+    if (!firstEntry) {
+      return {
+        totalQuantity: 0,
+        displayUnit: Unit.PIECE,
+        breakdown: items,
+        canAggregate: false
+      };
+    }
+    
+    const [type, groupItems] = firstEntry;
     
     if (type === UnitType.WEIGHT || type === UnitType.VOLUME) {
       // Normalize all to base unit and sum
-      const normalized = groupItems.map(item => normalizeToBaseUnit(item.quantity, item.unit));
-      const totalInBaseUnit = normalized.reduce((sum, item) => sum + item.quantity, 0);
-      const baseUnit = normalized[0].unit;
+      const normalized = groupItems.map((item: { quantity: number; unit: string; }) => normalizeToBaseUnit(item.quantity, item.unit));
+      const totalInBaseUnit = normalized.reduce((sum: any, item: { quantity: any; }) => sum + item.quantity, 0);
+      const baseUnit = normalized[0]?.unit ?? Unit.GRAM;
       
       // Get best display unit
       const display = getBestDisplayUnit(totalInBaseUnit, baseUnit);
@@ -165,7 +182,7 @@ export function aggregateQuantities(items: Array<{ quantity: number; unit: strin
   // Cannot aggregate - return breakdown only
   return {
     totalQuantity: 0,
-    displayUnit: items[0].unit,
+    displayUnit: items[0]?.unit ?? Unit.PIECE,
     breakdown: items,
     canAggregate: false
   };

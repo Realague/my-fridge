@@ -8,6 +8,7 @@ const WEIGHT_CONVERSIONS: Record<string, number> = {
 
 const VOLUME_CONVERSIONS: Record<string, number> = {
   [Unit.MILLILITER]: 1,
+  [Unit.CENTILITER]: 10,
   [Unit.LITER]: 1000,
 };
 

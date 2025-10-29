@@ -215,7 +215,7 @@ export const DEFAULT_ITEMS: DefaultItem[] = [
     name: 'milk',
     category: ItemCategory.DAIRY,
     defaultUnit: Unit.LITER,
-    availableUnits: [Unit.LITER, Unit.MILLILITER, Unit.CUP],
+    availableUnits: [Unit.LITER, Unit.CENTILITER, Unit.MILLILITER, Unit.CUP],
   },
   {
     name: 'cheese',
@@ -245,7 +245,7 @@ export const DEFAULT_ITEMS: DefaultItem[] = [
     name: 'cream',
     category: ItemCategory.DAIRY,
     defaultUnit: Unit.MILLILITER,
-    availableUnits: [Unit.MILLILITER, Unit.LITER, Unit.CUP],
+    availableUnits: [Unit.MILLILITER, Unit.CENTILITER, Unit.LITER, Unit.CUP],
   },
   {
     name: 'sourCream',
@@ -458,19 +458,19 @@ export const DEFAULT_ITEMS: DefaultItem[] = [
     name: 'oliveOil',
     category: ItemCategory.OTHER,
     defaultUnit: Unit.MILLILITER,
-    availableUnits: [Unit.MILLILITER, Unit.LITER, Unit.CUP, Unit.TABLESPOON],
+    availableUnits: [Unit.MILLILITER, Unit.CENTILITER, Unit.LITER, Unit.CUP, Unit.TABLESPOON],
   },
   {
     name: 'vinegar',
     category: ItemCategory.OTHER,
     defaultUnit: Unit.MILLILITER,
-    availableUnits: [Unit.MILLILITER, Unit.LITER, Unit.TABLESPOON],
+    availableUnits: [Unit.MILLILITER, Unit.CENTILITER, Unit.LITER, Unit.TABLESPOON],
   },
   {
     name: 'soySauce',
     category: ItemCategory.OTHER,
     defaultUnit: Unit.MILLILITER,
-    availableUnits: [Unit.MILLILITER, Unit.LITER, Unit.TABLESPOON],
+    availableUnits: [Unit.MILLILITER, Unit.CENTILITER, Unit.LITER, Unit.TABLESPOON],
   },
   {
     name: 'ketchup',
@@ -495,7 +495,7 @@ export const DEFAULT_ITEMS: DefaultItem[] = [
     name: 'water',
     category: ItemCategory.BEVERAGES,
     defaultUnit: Unit.LITER,
-    availableUnits: [Unit.LITER, Unit.MILLILITER, Unit.CUP],
+    availableUnits: [Unit.LITER, Unit.CENTILITER, Unit.MILLILITER, Unit.CUP],
   },
   {
     name: 'coffee',
@@ -513,13 +513,13 @@ export const DEFAULT_ITEMS: DefaultItem[] = [
     name: 'juice',
     category: ItemCategory.BEVERAGES,
     defaultUnit: Unit.LITER,
-    availableUnits: [Unit.LITER, Unit.MILLILITER, Unit.CUP],
+    availableUnits: [Unit.LITER, Unit.CENTILITER, Unit.MILLILITER, Unit.CUP],
   },
   {
     name: 'soda',
     category: ItemCategory.BEVERAGES,
     defaultUnit: Unit.LITER,
-    availableUnits: [Unit.LITER, Unit.MILLILITER, Unit.CUP],
+    availableUnits: [Unit.LITER, Unit.CENTILITER, Unit.MILLILITER, Unit.CUP],
   },
   // Snacks
   {

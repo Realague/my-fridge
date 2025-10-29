@@ -11,6 +11,7 @@ export const STORAGE_UNITS = [
   Unit.GRAM,
   Unit.KILOGRAM,
   Unit.MILLILITER,
+  Unit.CENTILITER,
   Unit.LITER,
   Unit.PIECE,
   Unit.PACK,
@@ -31,7 +32,7 @@ export const UNIT_CATEGORIES: Record<string, UnitCategory> = {
   [ItemCategory.DAIRY]: {
     name: 'Dairy',
     defaultUnit: Unit.PIECE,
-    availableUnits: [Unit.GRAM, Unit.KILOGRAM, Unit.PIECE, Unit.LITER, Unit.MILLILITER, Unit.PACK]
+    availableUnits: [Unit.GRAM, Unit.KILOGRAM, Unit.PIECE, Unit.LITER, Unit.CENTILITER, Unit.MILLILITER, Unit.PACK]
   },
   [ItemCategory.VEGETABLES]: {
     name: 'Vegetables',
@@ -56,7 +57,7 @@ export const UNIT_CATEGORIES: Record<string, UnitCategory> = {
   [ItemCategory.BEVERAGES]: {
     name: 'Beverages',
     defaultUnit: Unit.LITER,
-    availableUnits: [Unit.LITER, Unit.MILLILITER, Unit.PACK]
+    availableUnits: [Unit.LITER, Unit.CENTILITER, Unit.MILLILITER, Unit.PACK]
   },
   [ItemCategory.CANNED]: {
     name: 'Canned',
@@ -76,7 +77,7 @@ export const UNIT_CATEGORIES: Record<string, UnitCategory> = {
   [ItemCategory.CONDIMENTS]: {
     name: 'Condiments',
     defaultUnit: Unit.PACK,
-    availableUnits: [Unit.PACK, Unit.PIECE, Unit.MILLILITER]
+    availableUnits: [Unit.PACK, Unit.PIECE, Unit.CENTILITER, Unit.MILLILITER]
   },
   [ItemCategory.SPICES]: {
     name: 'Spices',
@@ -96,7 +97,7 @@ export const UNIT_CATEGORIES: Record<string, UnitCategory> = {
   [ItemCategory.CLEANING_PRODUCTS]: {
     name: 'Cleaning Products',
     defaultUnit: Unit.PIECE,
-    availableUnits: [Unit.PACK, Unit.PIECE, Unit.LITER, Unit.MILLILITER]
+    availableUnits: [Unit.PACK, Unit.PIECE, Unit.LITER, Unit.CENTILITER, Unit.MILLILITER]
   },
   [ItemCategory.OTHER]: {
     name: 'Other',
@@ -131,6 +132,7 @@ export const getUnitDisplayName = (unit: string): string => {
     [Unit.GRAM]: 'g',
     [Unit.KILOGRAM]: 'kg',
     [Unit.MILLILITER]: 'ml',
+    [Unit.CENTILITER]: 'cl',
     [Unit.LITER]: 'l',
     [Unit.CUP]: 'cup',
     [Unit.TABLESPOON]: 'tbsp',

@@ -36,6 +36,7 @@ export enum Unit {
   
   // Volume
   MILLILITER = 'ml',
+  CENTILITER = 'cl',
   LITER = 'l',
   CUP = 'cup',
   TABLESPOON = 'tbsp',

@@ -176,6 +176,7 @@ export class MealPlanService {
     
     // Group ingredients by item ID and calculate total quantities with unit conversion
     const ingredientTotals = new Map<string, {
+      itemId: string;
       itemName: string;
       totalQuantityInBaseUnit: number;
       baseUnit: string;
@@ -187,12 +188,13 @@ export class MealPlanService {
       if (!recipe) continue;
 
       for (const ingredient of recipe.ingredients || []) {
-        const key = ingredient.itemId;
+        
         const neededQuantity = Number(ingredient.quantity / recipe.servings * mealPlan.servings);
         
         // Normalize to base unit for aggregation
         const normalized = normalizeToBaseUnit(neededQuantity, ingredient.unit);
-        
+        const key = ingredient.itemId+normalized.unit;
+
         if (ingredientTotals.has(key)) {
           const existing = ingredientTotals.get(key)!;
           // Only aggregate if same base unit (weight with weight, volume with volume)
@@ -206,6 +208,7 @@ export class MealPlanService {
           const item = await this.itemRepository.findById(ingredient.itemId);
           if (item) {
             ingredientTotals.set(key, {
+              itemId: item.id,
               itemName: item.name,
               totalQuantityInBaseUnit: normalized.quantity,
               baseUnit: normalized.unit,
@@ -216,18 +219,21 @@ export class MealPlanService {
       }
     }
 
+    console.log(ingredientTotals);
+
     // Check current stock and calculate what's actually needed
     const neededItems = new Map<string, {
+      itemId: string;
       itemName: string;
       quantityNeeded: number;
       unit: string;
       recipes: string[];
     }>();
 
-    for (const [itemId, data] of ingredientTotals) {
+    for (const [key, data] of ingredientTotals) {
       // Get current stock in the same base unit
       const currentStock = await storedItemRepository.getTotalQuantityByItem(
-        itemId,
+        data.itemId,
         householdId,
         data.baseUnit
       );
@@ -239,7 +245,8 @@ export class MealPlanService {
         // Convert to best display unit (kg instead of 1000g, etc.)
         const display = getBestDisplayUnit(shortage, data.baseUnit);
         
-        neededItems.set(itemId, {
+        neededItems.set(key, {
+          itemId: data.itemId,
           itemName: data.itemName,
           quantityNeeded: display.quantity,
           unit: display.unit,
@@ -248,12 +255,14 @@ export class MealPlanService {
       }
     }
 
+    console.log(neededItems);
+
     // Create shopping items in the database (only for items that are needed)
     const createdShoppingItems: ShoppingListItemDto[] = [];
-    for (const [itemId, data] of neededItems) {
+    for (const [key, data] of neededItems) {
       try {
         const shoppingItemData: CreateShoppingItemDto = {
-          itemId,
+          itemId: data.itemId,
           householdId,
           quantity: data.quantityNeeded,
           unit: data.unit,
@@ -264,7 +273,7 @@ export class MealPlanService {
         await this.shoppingItemRepository.create(shoppingItemData);
         
         createdShoppingItems.push({
-          itemId,
+          itemId: data.itemId,
           itemName: data.itemName,
           totalQuantity: data.quantityNeeded,
           unit: data.unit,

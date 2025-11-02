@@ -17,6 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
 import { useTranslation } from 'react-i18next';
 import { Item } from '@/services/itemService';
+import { ImageUpload } from '@/components/ImageUpload';
 
 interface RecipeIngredientWithId extends CreateRecipeIngredientDto {
   id: string;
@@ -65,6 +66,7 @@ const AddRecipe = () => {
   const [tags, setTags] = React.useState<string[]>([]);
   const [newTag, setNewTag] = React.useState('');
   const [ingredientStepMap, setIngredientStepMap] = React.useState<{[ingredientId: string]: number[]}>({});
+  const [imageUrl, setImageUrl] = React.useState<string | null>(null);
 
   // Clear any existing errors when component mounts
   React.useEffect(() => {
@@ -185,6 +187,7 @@ const AddRecipe = () => {
       difficulty: data.difficulty,
       instructions: filteredInstructions,
       tags,
+      image: imageUrl,
       ingredients: ingredientsForApi,
     };
 
@@ -242,6 +245,14 @@ const AddRecipe = () => {
                 <CardDescription>{t('pages.recipes.basicInformationDescription')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                <ImageUpload
+                  currentImageUrl={imageUrl}
+                  onImageUpload={setImageUrl}
+                  onImageRemove={() => setImageUrl(null)}
+                  folder="recipes"
+                  label={t('pages.recipes.recipeImage')}
+                />
+
                 <FormField
                   control={form.control}
                   name="title"

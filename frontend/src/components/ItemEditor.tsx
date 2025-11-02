@@ -15,6 +15,7 @@ import { useHouseholdStore } from '@/stores/householdStore';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { ImageUpload } from '@/components/ImageUpload';
 
 interface ItemEditorProps {
   item: Item;
@@ -30,6 +31,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
   const [name, setName] = useState(item.name);
   const [category, setCategory] = useState(item.category);
   const [defaultUnit, setDefaultUnit] = useState(item.defaultUnit);
+  const [imageUrl, setImageUrl] = useState<string | null>(item.image || null);
   
   // Ensure availableUnits is always an array (handle cases where it might be a string from DB)
   const initialAvailableUnits = React.useMemo(() => {
@@ -80,6 +82,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
       category,
       defaultUnit,
       availableUnits,
+      image: imageUrl,
     });
   };
 
@@ -99,6 +102,14 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
         </DialogHeader>
         
         <div className="space-y-4">
+          <ImageUpload
+            currentImageUrl={imageUrl}
+            onImageUpload={setImageUrl}
+            onImageRemove={() => setImageUrl(null)}
+            folder="items"
+            label={t('itemEditor.itemImage')}
+          />
+
           <div>
             <Label htmlFor="item-name">{t('forms.name')}</Label>
             <Input

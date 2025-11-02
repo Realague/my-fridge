@@ -19,15 +19,51 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// CORS configuration
+const isDevelopment = process.env.NODE_ENV !== 'production';
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:8080',
+  'https://preview--my-fridge.lovable.app',
+  'https://my-fridge.multiplus.ovh',
+  'http://my-fridge.multiplus.ovh',
+  'http://my-fridge.multiplus.ovh:3000',
+];
+
+// In development, allow localhost variations
+if (isDevelopment) {
+  allowedOrigins.push(
+    'http://localhost:8080',
+    'http://127.0.0.1:8080',
+    'http://0.0.0.0:8080',
+    'http://localhost:5173', // Vite default port
+    'http://127.0.0.1:5173'
+  );
+}
+
 // Middleware
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL || 'http://localhost:8080',
-    'https://preview--my-fridge.lovable.app',
-    'https://my-fridge.multiplus.ovh',
-    'http://my-fridge.multiplus.ovh',
-    'http://my-fridge.multiplus.ovh:3000',
-  ],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    // In development, be more permissive with localhost
+    if (isDevelopment && (
+      origin.startsWith('http://localhost:') ||
+      origin.startsWith('http://127.0.0.1:') ||
+      origin.startsWith('http://0.0.0.0:')
+    )) {
+      return callback(null, true);
+    }
+    
+    // Check against allowed origins
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 

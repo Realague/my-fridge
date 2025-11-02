@@ -70,6 +70,11 @@ export const AddMealPlanDialog = ({
     }
   }, [isOpen]);
 
+  const onRecipeSelect = (recipe: RecipeDto) => {
+    setSelectedRecipe(recipe);
+    setSelectedServings(recipe.servings || 1);
+  };
+
   const handleSaveMeal = async () => {
     const dateToUse = selectedDate || (selectedDateInput ? new Date(selectedDateInput) : null);
     
@@ -157,7 +162,7 @@ export const AddMealPlanDialog = ({
             <div>
               <label className="block text-sm font-medium mb-2">{t('pages.mealPlans.recipe')}</label>
               <RecipeSelector
-                onRecipeSelect={(recipe) => setSelectedRecipe(recipe)}
+                onRecipeSelect={onRecipeSelect}
                 selectedRecipe={selectedRecipe}
                 recipes={convertedRecipes}
                 loading={recipesLoading}

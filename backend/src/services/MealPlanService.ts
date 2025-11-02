@@ -219,8 +219,6 @@ export class MealPlanService {
       }
     }
 
-    console.log(ingredientTotals);
-
     // Check current stock and calculate what's actually needed
     const neededItems = new Map<string, {
       itemId: string;

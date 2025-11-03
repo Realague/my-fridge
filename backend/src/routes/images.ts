@@ -17,14 +17,20 @@ router.use(authenticateGoogleToken);
 // Generate signed upload signature
 router.post('/signature', async (req: Request, res: Response) => {
   try {
-    const { folder = 'myfridge' } = req.body;
+    let folder: string | undefined;
+    try {
+      const parsed = JSON.parse(req.body);
+      folder = parsed?.folder;
+    } catch {
+      folder = undefined;
+    }
+    folder = folder ?? 'myfridge';
     const timestamp = Math.round(new Date().getTime() / 1000);
     
     const signature = cloudinary.utils.api_sign_request(
       {
         timestamp,
         folder,
-        upload_preset: 'myfridge_uploads',
       },
       process.env.CLOUDINARY_API_SECRET!
     );

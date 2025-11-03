@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Camera, Upload, X, Loader2 } from 'lucide-react';
+import { Camera, Upload, X, Loader2, Pencil } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { useApiWithAuth } from '@/hooks/useApiWithAuth';
@@ -11,6 +11,9 @@ interface ImageUploadProps {
   onImageRemove?: () => void;
   folder?: string;
   label?: string;
+  // When true, do not upload immediately; emit selected file for parent to handle later
+  deferUpload?: boolean;
+  onImageSelected?: (file: File, previewUrl: string) => void;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -19,6 +22,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   onImageRemove,
   folder = 'myfridge',
   label,
+  deferUpload = false,
+  onImageSelected,
 }) => {
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -107,6 +112,11 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       // Create preview
       const previewUrl = URL.createObjectURL(compressedFile);
       setPreview(previewUrl);
+
+      if (deferUpload) {
+        onImageSelected?.(compressedFile, previewUrl);
+        return; // Defer the actual upload to the parent flow
+      }
 
       // Get upload signature from backend
       const signatureResponse = await makeApiCall('/api/images/signature', {
@@ -197,7 +207,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
             >
-              {t('buttons.change')}
+              <Pencil className="h-4 w-4" />
             </Button>
             <Button
               type="button"
@@ -229,7 +239,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                 <Upload className="h-8 w-8 text-muted-foreground" />
               </div>
               <p className="text-sm text-muted-foreground text-center px-4">
-                {t('imageUpload.tapToUpload')}
+                {t('itemSelector.itemImagePlaceholder')}
               </p>
             </>
           )}

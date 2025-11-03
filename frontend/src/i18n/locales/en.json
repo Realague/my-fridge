@@ -123,6 +123,7 @@
     "pleaseEnterName": "Please enter a storage area name"
   },
   "itemEditor": {
+    "itemImage": "Item Image",  
     "editItem": "Edit Item",
     "createNewItem": "Create New Item",
     "itemNamePlaceholder": "Item name",
@@ -131,6 +132,8 @@
     "addUnit": "Add unit"
   },
   "itemSelector": {
+    "itemImage": "Item Image",  
+    "itemImagePlaceholder": "Item image (optional)",
     "searchOrAddItemPlaceholder": "Search or add item...",
     "quickAddWithDefaultSettings": "Quick add with default settings",
     "createWithDetails": "Create \"{{query}}\" with details",

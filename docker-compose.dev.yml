@@ -36,6 +36,9 @@ services:
       PORT: 3000
       AUTO_MIGRATE: true
       FRONTEND_URL: http://localhost:8080
+      CLOUDINARY_CLOUD_NAME: duxpbou8b
+      CLOUDINARY_API_KEY: 586693787827898
+      CLOUDINARY_API_SECRET: FOEVgQYs5JLNgPcDe2En6KIyj04
     ports:
       - "3000:3000"
       - "9229:9229"  # Debug port
@@ -44,7 +47,7 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app
-      - /app/node_modules
+      # Use modules from image; keep dist inside container
       - /app/dist
     command: npm run dev
 

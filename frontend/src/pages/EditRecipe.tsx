@@ -17,6 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useItemService } from '@/services/itemService';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { ImageUpload } from '@/components/ImageUpload';
 
 interface RecipeFormData {
   title: string;
@@ -58,6 +59,7 @@ const EditRecipe = () => {
   const [tags, setTags] = useState<string[]>(recipe?.tags || []);
   const [newTag, setNewTag] = useState('');
   const [ingredientStepMap, setIngredientStepMap] = useState<{[ingredientKey: string]: number[]}>({});
+  const [imageUrl, setImageUrl] = useState<string | null>(recipe?.image || null);
 
   // Helper function to generate a unique key for ingredients
   const getIngredientKey = (ingredient: any, index: number) => {
@@ -91,6 +93,7 @@ const EditRecipe = () => {
       })));
       setInstructions(recipe.instructions);
       setTags(recipe.tags);
+      setImageUrl(recipe.image);
       
       // Initialize ingredient-step mapping from existing recipe
       const initialMap: {[ingredientKey: string]: number[]} = {};
@@ -245,7 +248,8 @@ const EditRecipe = () => {
       ...data,
       ingredients: ingredientsWithSteps,
       instructions: filteredInstructions,
-      tags
+      tags,
+      image: imageUrl || undefined
     };
 
     try {
@@ -412,6 +416,23 @@ const EditRecipe = () => {
                     )}
                   />
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Recipe Image */}
+            <Card className="bg-card/80 backdrop-blur-sm border border-border/50 shadow-lg">
+              <CardHeader>
+                <CardTitle>{t('pages.recipes.recipeImage')}</CardTitle>
+                <CardDescription>{t('pages.recipes.recipeImageDescription')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ImageUpload
+                  currentImageUrl={imageUrl}
+                  onImageUpload={setImageUrl}
+                  onImageRemove={() => setImageUrl(null)}
+                  folder="recipes"
+                  label={t('pages.recipes.uploadImage')}
+                />
               </CardContent>
             </Card>
 

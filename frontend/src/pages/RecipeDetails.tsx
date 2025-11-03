@@ -210,7 +210,13 @@ const RecipeDetails = () => {
                 </CardDescription>
               </div>
               {recipe.image && (
-                <div className="w-full md:w-48 h-32 bg-muted rounded-lg"></div>
+                <div className="w-full md:w-48 h-48 rounded-lg overflow-hidden bg-muted">
+                  <img
+                    src={recipe.image}
+                    alt={recipe.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               )}
             </div>
             

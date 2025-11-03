@@ -190,9 +190,18 @@ const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGri
       {recipes.map((recipe) => (
         <Card
           key={recipe.id}
-          className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+          className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden"
           onClick={() => navigate(`/recipes/${recipe.id}`)}
         >
+          {recipe.image && (
+            <div className="w-full h-40 overflow-hidden bg-muted">
+              <img
+                src={recipe.image}
+                alt={recipe.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">
               <div className="flex-1">

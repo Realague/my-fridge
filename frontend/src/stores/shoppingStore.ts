@@ -11,6 +11,7 @@ export interface ShoppingItem {
     category: string;
     defaultUnit: string;
     availableUnits: string[];
+    imageUrl: string | null;
     createdBy: string | null;
     householdId: string | null;
     createdAt: string;

@@ -243,10 +243,10 @@ const StorageArea = () => {
       <Card className="bg-card backdrop-blur-sm border-0 shadow-lg">
         <CardContent className="p-4">
           <div className="flex items-start justify-between gap-3">
-            {item.image && (
+            {item.imageUrl && (
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                 <img
-                  src={item.image}
+                  src={item.imageUrl}
                   alt={getItemDisplayName(item, t)}
                   className="w-full h-full object-cover"
                 />

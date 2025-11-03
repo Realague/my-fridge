@@ -562,6 +562,15 @@ export const ItemSelector = ({
                   className="group flex items-center justify-between p-2 hover:bg-muted cursor-pointer rounded transition-colors"
                 >
                   <div className="flex items-center gap-2 flex-1 min-w-0">
+                    {item.imageUrl && (
+                      <div className="w-10 h-10 rounded-md overflow-hidden bg-muted flex-shrink-0">
+                        <img 
+                          src={item.imageUrl} 
+                          alt={getItemDisplayName(item, t)}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm truncate">{getItemDisplayName(item, t)}</div>
                       <div className="flex items-center gap-2">

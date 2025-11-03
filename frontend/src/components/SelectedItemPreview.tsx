@@ -20,7 +20,16 @@ export const SelectedItemPreview = ({ item, onClear }: SelectedItemPreviewProps)
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3 flex-1">
             <div className="p-2 rounded-lg bg-primary/10">
-              <Package className="h-5 w-5 text-primary" />
+              {item.imageUrl && (
+                <img 
+                  src={item.imageUrl} 
+                  alt={getItemDisplayName(item, t)}
+                  className="w-10 h-10 rounded-md object-cover"
+                />
+              )}
+              {!item.imageUrl && (
+                <Package className="h-10 w-10 text-primary" />
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">

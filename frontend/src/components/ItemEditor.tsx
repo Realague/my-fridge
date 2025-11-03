@@ -31,7 +31,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
   const [name, setName] = useState(item.name);
   const [category, setCategory] = useState(item.category);
   const [defaultUnit, setDefaultUnit] = useState(item.defaultUnit);
-  const [imageUrl, setImageUrl] = useState<string | null>(item.image || null);
+  const [imageUrl, setImageUrl] = useState<string | null>(item.imageUrl || null);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   
   // Ensure availableUnits is always an array (handle cases where it might be a string from DB)
@@ -83,7 +83,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
       category,
       defaultUnit,
       availableUnits,
-      image: imageUrl,
+      imageUrl: imageUrl,
       // Pass the selected file for deferred upload handling via an extra property onSave 
       ...(selectedImageFile ? { _selectedImageFile: selectedImageFile } : {}),
     });

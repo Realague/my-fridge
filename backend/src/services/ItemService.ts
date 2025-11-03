@@ -239,6 +239,7 @@ export class ItemService {
       availableUnits: availableUnits,
       createdBy: item.createdBy,
       householdId: item.householdId,
+      imageUrl: item.imageUrl,
       createdAt: item.createdAt.toISOString(),
       updatedAt: item.updatedAt.toISOString(),
       creator: item.creator ? {

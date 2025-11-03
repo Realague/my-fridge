@@ -364,7 +364,7 @@ export const ItemSelector = ({
         if (selectedFile) {
           try {
             const imageUrl = await uploadImageWithSignature('items', selectedFile);
-            await itemService.updateItem(editingItem.id, { image: imageUrl }, selectedHouseholdId);
+            await itemService.updateItem(editingItem.id, { imageUrl: imageUrl }, selectedHouseholdId);
           } catch (e) {
             console.error('Deferred item image upload failed:', e);
           }
@@ -411,7 +411,7 @@ export const ItemSelector = ({
         if (selectedFile) {
           try {
             const imageUrl = await uploadImageWithSignature('items', selectedFile);
-            await itemService.updateItem(newApiItem.id, { image: imageUrl }, selectedHouseholdId);
+            await itemService.updateItem(newApiItem.id, { imageUrl: imageUrl }, selectedHouseholdId);
           } catch (e) {
             console.error('Deferred item image upload failed:', e);
           }
@@ -652,6 +652,7 @@ export const ItemSelector = ({
             category: 'other',
             defaultUnit: 'piece',
             availableUnits: ['piece'],
+            imageUrl: null,
             createdBy: null,
             householdId: null,
             createdAt: '',

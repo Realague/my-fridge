@@ -8,7 +8,7 @@ export interface Item {
   availableUnits: string[];
   createdBy: string | null;
   householdId: string | null;
-  image?: string | null;
+  imageUrl: string | null;
   createdAt: string;
   updatedAt: string;
   //scope: string;
@@ -22,7 +22,7 @@ export interface CreateItemRequest {
   defaultUnit?: string;
   availableUnits?: string[];
   householdId: string;
-  image?: string | null;
+  imageUrl?: string | null;
 }
 
 export interface UpdateItemRequest {
@@ -30,7 +30,7 @@ export interface UpdateItemRequest {
   category?: string;
   defaultUnit?: string;
   availableUnits?: string[];
-  image?: string | null;
+  imageUrl?: string | null;
 }
 
 export interface SearchItemsRequest {

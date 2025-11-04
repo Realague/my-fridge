@@ -17,7 +17,7 @@ interface RecipeAttributes {
   difficulty: RecipeDifficulty;
   instructions: string[];
   tags: string[];
-  image: string | null;
+  imageUrl: string | null;
   isFavorite: boolean;
   householdId: string;
   createdBy: string;
@@ -26,7 +26,7 @@ interface RecipeAttributes {
 }
 
 // Some attributes are optional in `Recipe.build()` and `Recipe.create()`
-export interface RecipeCreationAttributes extends Optional<RecipeAttributes, 'id' | 'description' | 'image' | 'isFavorite' | 'createdAt' | 'updatedAt'> {}
+export interface RecipeCreationAttributes extends Optional<RecipeAttributes, 'id' | 'description' | 'imageUrl' | 'isFavorite' | 'createdAt' | 'updatedAt'> {}
 
 export class Recipe extends Model<RecipeAttributes, RecipeCreationAttributes> implements RecipeAttributes {
   public id!: string;
@@ -38,8 +38,8 @@ export class Recipe extends Model<RecipeAttributes, RecipeCreationAttributes> im
   public difficulty!: RecipeDifficulty;
   public instructions!: string[];
   public tags!: string[];
-  public image!: string | null;
   public isFavorite!: boolean;
+  public imageUrl!: string | null;
   public householdId!: string;
   public readonly createdBy!: string;
   public readonly createdAt!: Date;
@@ -130,7 +130,7 @@ Recipe.init(
       allowNull: false,
       defaultValue: [],
     },
-    image: {
+    imageUrl: {
       type: DataTypes.TEXT,
       allowNull: true,
     },

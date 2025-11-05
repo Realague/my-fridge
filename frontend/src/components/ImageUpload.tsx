@@ -21,7 +21,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   currentImageUrl,
   onImageUpload,
   onImageRemove,
-  folder = 'myfridge',
+  folder,
   label,
   description,
   deferUpload = false,

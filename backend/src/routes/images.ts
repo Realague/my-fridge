@@ -22,9 +22,8 @@ router.post('/signature', async (req: Request, res: Response) => {
       const parsed = JSON.parse(req.body);
       folder = parsed?.folder;
     } catch {
-      folder = undefined;
+      return res.status(400).json({ error: 'Invalid request body' });
     }
-    folder = folder ?? 'myfridge';
     const timestamp = Math.round(new Date().getTime() / 1000);
     
     const signature = cloudinary.utils.api_sign_request(

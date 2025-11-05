@@ -18,6 +18,8 @@ import { StructuredIngredientInput } from '@/components/StructuredIngredientInpu
 import { useTranslation } from 'react-i18next';
 import { Item } from '@/services/itemService';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { ImageUpload } from '@/components/ImageUpload';
+import { uploadImageWithSignature } from '@/services/imageUploadService';
 
 interface RecipeIngredientWithId extends CreateRecipeIngredientDto {
   id: string;
@@ -66,6 +68,8 @@ const AddRecipe = () => {
   const [tags, setTags] = React.useState<string[]>([]);
   const [newTag, setNewTag] = React.useState('');
   const [ingredientStepMap, setIngredientStepMap] = React.useState<{[ingredientId: string]: number[]}>({});
+  const [imageUrl, setImageUrl] = React.useState<string | null>(null);
+  const [selectedImageFile, setSelectedImageFile] = React.useState<File | null>(null);
 
   // Clear any existing errors when component mounts
   React.useEffect(() => {
@@ -186,6 +190,7 @@ const AddRecipe = () => {
       difficulty: data.difficulty,
       instructions: filteredInstructions,
       tags,
+      // image is uploaded after create
       ingredients: ingredientsForApi,
     };
 
@@ -194,6 +199,17 @@ const AddRecipe = () => {
       clearError();
       
       const newRecipe = await createRecipe(recipeData);
+
+      // If an image was selected, upload it now and update the recipe
+      if (selectedImageFile) {
+        try {
+          const imageUrl = await uploadImageWithSignature('recipes', selectedImageFile);
+          await useRecipeStore.getState().updateRecipe(newRecipe.id, { imageUrl: imageUrl });
+        } catch (e) {
+          // Non-fatal: recipe is created without image
+          console.error('Deferred image upload failed:', e);
+        }
+      }
       
       toast({
         title: t('messages.success.recipeAdded'),
@@ -243,6 +259,17 @@ const AddRecipe = () => {
                 <CardDescription>{t('pages.recipes.basicInformationDescription')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                <ImageUpload
+                  currentImageUrl={imageUrl}
+                  onImageUpload={setImageUrl}
+                  onImageRemove={() => { setImageUrl(null); setSelectedImageFile(null); }}
+                  folder="recipes"
+                  label={t('pages.recipes.recipeImage')}
+                  description={t('pages.recipes.recipeImageDescription')}
+                  deferUpload
+                  onImageSelected={(file) => { setSelectedImageFile(file); }}
+                />
+
                 <FormField
                   control={form.control}
                   name="title"

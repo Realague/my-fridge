@@ -257,7 +257,16 @@ const StorageArea = () => {
     return (
       <Card className="bg-card backdrop-blur-sm border-0 shadow-lg">
         <CardContent className="p-4">
-              <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between gap-3">
+            {item.imageUrl && (
+              <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                <img
+                  src={item.imageUrl}
+                  alt={getItemDisplayName(item, t)}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <h3 className="font-medium text-foreground">{getItemDisplayName(item, t)}</h3>
@@ -371,7 +380,7 @@ const StorageArea = () => {
             </div>
             
             {!isEditing && (
-              <div className="flex items-center gap-2 ml-4">
+              <div className="flex flex-col items-center gap-2">
                 <Button
                   variant="ghost"
                   size="sm"

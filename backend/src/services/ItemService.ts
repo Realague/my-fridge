@@ -240,6 +240,7 @@ export class ItemService {
       daysAfterOpening: item.daysAfterOpening || undefined,
       createdBy: item.createdBy,
       householdId: item.householdId,
+      imageUrl: item.imageUrl,
       createdAt: item.createdAt.toISOString(),
       updatedAt: item.updatedAt.toISOString(),
       creator: item.creator ? {

@@ -24,6 +24,7 @@ export interface StoredItem {
     daysAfterOpening?: number;
     createdBy: string | null;
     householdId: string | null;
+    imageUrl: string | null;
     createdAt: string;
     updatedAt: string;
   };

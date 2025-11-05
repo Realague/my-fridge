@@ -12,6 +12,7 @@ interface ItemAttributes {
   defaultUnit: Unit;
   availableUnits: Unit[];
   daysAfterOpening: number | null;
+  imageUrl: string | null;
   householdId: string | null;
   createdBy: string | null;
   createdAt?: Date;
@@ -28,6 +29,7 @@ export class Item extends Model<ItemAttributes, ItemCreationAttributes> implemen
   public defaultUnit!: Unit;
   public availableUnits!: Unit[];
   public daysAfterOpening!: number | null;
+  public imageUrl!: string | null;
   public createdBy!: string | null;
   public householdId!: string | null;
   public readonly createdAt!: Date;
@@ -96,6 +98,10 @@ Item.init(
         model: 'households',
         key: 'id',
       },
+    },
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     createdBy: {
       type: DataTypes.UUID,

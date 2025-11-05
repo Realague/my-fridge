@@ -122,8 +122,9 @@
     "pleaseEnterName": "Veuillez saisir un nom pour la zone de stockage"
   },
   "itemEditor": {
-    "editItem": "Modifier l'article",
-    "createNewItem": "Créer un nouvel article",
+    "itemImage": "Image de l'article",
+    "editItem": "Modifier l'Article",
+    "createNewItem": "Créer un Nouvel Article",
     "itemNamePlaceholder": "Nom de l'article",
     "defaultUnit": "Unité par défaut",
     "availableUnits": "Unités disponibles",
@@ -147,6 +148,8 @@
     "consumeWithinDays": "À consommer dans les {{days}} jours après ouverture"
   },
   "itemSelector": {
+    "itemImage": "Image de l'article",
+    "itemImagePlaceholder": "Image de l'article (facultatif)",
     "searchOrAddItemPlaceholder": "Rechercher ou ajouter un article...",
     "quickAddWithDefaultSettings": "Ajout rapide avec les paramètres par défaut",
     "createWithDetails": "Créer \"{{query}}\" avec des détails",
@@ -422,7 +425,9 @@
       "descriptionPlaceholder": "Brève description de votre recette...",
       "stepInstructionsPlaceholder": "Étape {{step}} instructions...",
       "recipeNotFound": "Recette non trouvée",
-      "editRecipeTitle": "Modifier la recette",
+      "editRecipeTitle": "Modifier la Recette",
+      "recipeImage": "Image de la Recette",
+      "recipeImageDescription": "Ajoutez une photo de votre plat terminé (facultatif)",
       "difficultyOptions": {
         "easy": "Facile",
         "medium": "Moyen",

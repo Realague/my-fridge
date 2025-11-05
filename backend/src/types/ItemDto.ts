@@ -17,6 +17,7 @@ export interface UpdateItemDto {
   defaultUnit?: Unit;
   availableUnits?: Unit[];
   daysAfterOpening?: number;
+  imageUrl?: string;
 }
 
 export interface ItemDto {
@@ -26,6 +27,7 @@ export interface ItemDto {
   defaultUnit: Unit;
   availableUnits: Unit[];
   daysAfterOpening?: number;
+  imageUrl: string | null;
   createdBy: string | null;
   householdId: string | null;
   createdAt: string;

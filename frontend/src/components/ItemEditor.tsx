@@ -15,6 +15,7 @@ import { useHouseholdStore } from '@/stores/householdStore';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { ImageUpload } from '@/components/ImageUpload';
 
 interface ItemEditorProps {
   item: Item;
@@ -82,7 +83,10 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
       name: name.trim(),
       category,
       defaultUnit,
-      availableUnits
+      availableUnits,
+      imageUrl: imageUrl,
+      // Pass the selected file for deferred upload handling via an extra property onSave 
+      ...(selectedImageFile ? { _selectedImageFile: selectedImageFile } : {}),
     };
     
     // Only include daysAfterOpening if it's a valid positive number
@@ -109,6 +113,17 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
         </DialogHeader>
         
         <div className="space-y-4">
+          <ImageUpload
+            currentImageUrl={imageUrl}
+            onImageUpload={setImageUrl}
+            onImageRemove={() => { setImageUrl(null); setSelectedImageFile(null); }}
+            folder="items"
+            label={t('itemEditor.itemImage')}
+            description={t('itemEditor.itemImageDescription')}
+            deferUpload
+            onImageSelected={(file) => setSelectedImageFile(file)}
+          />
+
           <div>
             <Label htmlFor="item-name">{t('forms.name')}</Label>
             <Input

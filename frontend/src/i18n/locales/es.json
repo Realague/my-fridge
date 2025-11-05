@@ -122,8 +122,9 @@
     "pleaseEnterName": "Por favor ingrese un nombre para el área de almacenamiento"
   },
   "itemEditor": {
-    "editItem": "Editar artículo",
-    "createNewItem": "Crear nuevo artículo",
+    "itemImage": "Imagen del artículo",  
+    "editItem": "Editar Artículo",
+    "createNewItem": "Crear Nuevo Artículo",
     "itemNamePlaceholder": "Nombre del artículo",
     "defaultUnit": "Unidad predeterminada",
     "availableUnits": "Unidades disponibles",
@@ -147,6 +148,8 @@
     "consumeWithinDays": "Consumir dentro de {{days}} días después de abrir"
   },
   "itemSelector": {
+    "itemImage": "Imagen del artículo", 
+    "itemImagePlaceholder": "Imagen del artículo (opcional)",
     "searchOrAddItemPlaceholder": "Buscar o agregar artículo...",
     "quickAddWithDefaultSettings": "Agregar rápidamente con configuración predeterminada",
     "createWithDetails": "Crear \"{{query}}\" con detalles",
@@ -458,7 +461,9 @@
       "addToMealPlan": "Agregar al plan de comidas",
       "deleteRecipe": "Eliminar receta",
       "deleteWarning": "Esta acción no se puede deshacer.",
-      "addNewRecipe": "Agregar nueva receta"
+      "addNewRecipe": "Agregar Nueva Receta",
+      "recipeImage": "Imagen de la Receta",
+      "recipeImageDescription": "Agrega una imagen de tu plato terminado (opcional)"
     },
     "settings": {
       "title": "Configuración",

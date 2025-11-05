@@ -67,7 +67,7 @@ export class RecipeService {
         difficulty: recipeData.difficulty,
         instructions: recipeData.instructions,
         tags: recipeData.tags,
-        image: recipeData.image || null,
+        imageUrl: recipeData.imageUrl || null,
         householdId: recipeData.householdId,
         createdBy: recipeData.createdBy
       }, transaction);
@@ -228,7 +228,7 @@ export class RecipeService {
       difficulty: recipe.difficulty,
       instructions: recipe.instructions,
       tags: recipe.tags,
-      image: recipe.image,
+      imageUrl: recipe.imageUrl,
       isFavorite: recipe.isFavorite,
       householdId: recipe.householdId,
       createdBy: recipe.createdBy,
@@ -254,7 +254,7 @@ export class RecipeService {
       servings: recipe.servings,
       difficulty: recipe.difficulty,
       tags: recipe.tags,
-      image: recipe.image,
+      imageUrl: recipe.imageUrl,
       isFavorite: recipe.isFavorite,
       createdBy: recipe.createdBy,
       createdAt: recipe.createdAt.toISOString(),

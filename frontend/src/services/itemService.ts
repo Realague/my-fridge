@@ -9,6 +9,7 @@ export interface Item {
   daysAfterOpening?: number;
   createdBy: string | null;
   householdId: string | null;
+  imageUrl: string | null;
   createdAt: string;
   updatedAt: string;
   //scope: string;
@@ -23,6 +24,7 @@ export interface CreateItemRequest {
   availableUnits?: string[];
   daysAfterOpening?: number;
   householdId: string;
+  imageUrl?: string | null;
 }
 
 export interface UpdateItemRequest {
@@ -31,6 +33,7 @@ export interface UpdateItemRequest {
   defaultUnit?: string;
   availableUnits?: string[];
   daysAfterOpening?: number;
+  imageUrl?: string | null;
 }
 
 export interface SearchItemsRequest {

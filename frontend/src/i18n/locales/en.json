@@ -122,8 +122,9 @@
     "pleaseEnterName": "Please enter a storage area name"
   },
   "itemEditor": {
-    "editItem": "Edit item",
-    "createNewItem": "Create new item",
+    "itemImage": "Item Image",  
+    "editItem": "Edit Item",
+    "createNewItem": "Create New Item",
     "itemNamePlaceholder": "Item name",
     "defaultUnit": "Default unit",
     "availableUnits": "Available units",
@@ -147,6 +148,8 @@
     "consumeWithinDays": "To be consumed within {{days}} days after opening"
   },
   "itemSelector": {
+    "itemImage": "Item Image",  
+    "itemImagePlaceholder": "Item image (optional)",
     "searchOrAddItemPlaceholder": "Search or add item...",
     "quickAddWithDefaultSettings": "Quick add with default settings",
     "createWithDetails": "Create \"{{query}}\" with details",
@@ -441,6 +444,9 @@
       "updateFailed": "Failed to update favorite status",
       "titlePlaceholder": "e.g., Chicken Teriyaki",
       "descriptionPlaceholder": "Brief description of your recipe...",
+      "recipeImage": "Recipe Image",
+      "recipeImageDescription": "Add a photo of your finished dish (optional)",
+      "uploadImage": "Upload Recipe Image",
       "stepInstructionsPlaceholder": "Step {{step}} instructions...",
       "recipeNotFound": "Recipe not found",
       "editRecipeTitle": "Edit recipe",

@@ -193,10 +193,10 @@ const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGri
           className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden"
           onClick={() => navigate(`/recipes/${recipe.id}`)}
         >
-          {recipe.image && (
+          {recipe.imageUrl && (
             <div className="w-full h-40 overflow-hidden bg-muted">
               <img
-                src={recipe.image}
+                src={recipe.imageUrl}
                 alt={recipe.title}
                 className="w-full h-full object-cover"
               />

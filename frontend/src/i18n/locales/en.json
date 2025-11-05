@@ -399,7 +399,7 @@
       "titlePlaceholder": "e.g., Chicken Teriyaki",
       "descriptionPlaceholder": "Brief description of your recipe...",
       "recipeImage": "Recipe Image",
-      "recipeImageDescription": "Add a photo of your finished dish",
+      "recipeImageDescription": "Add a photo of your finished dish (optional)",
       "uploadImage": "Upload Recipe Image",
       "stepInstructionsPlaceholder": "Step {{step}} instructions...",
       "recipeNotFound": "Recipe not found",

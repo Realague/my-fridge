@@ -59,7 +59,7 @@ const EditRecipe = () => {
   const [tags, setTags] = useState<string[]>(recipe?.tags || []);
   const [newTag, setNewTag] = useState('');
   const [ingredientStepMap, setIngredientStepMap] = useState<{[ingredientKey: string]: number[]}>({});
-  const [imageUrl, setImageUrl] = useState<string | null>(recipe?.image || null);
+  const [imageUrl, setImageUrl] = useState<string | null>(recipe?.imageUrl || null);
 
   // Helper function to generate a unique key for ingredients
   const getIngredientKey = (ingredient: any, index: number) => {
@@ -93,7 +93,7 @@ const EditRecipe = () => {
       })));
       setInstructions(recipe.instructions);
       setTags(recipe.tags);
-      setImageUrl(recipe.image);
+      setImageUrl(recipe.imageUrl);
       
       // Initialize ingredient-step mapping from existing recipe
       const initialMap: {[ingredientKey: string]: number[]} = {};
@@ -249,7 +249,7 @@ const EditRecipe = () => {
       ingredients: ingredientsWithSteps,
       instructions: filteredInstructions,
       tags,
-      image: imageUrl || undefined
+      imageUrl: imageUrl || undefined
     };
 
     try {

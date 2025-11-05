@@ -111,6 +111,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
             onImageRemove={() => { setImageUrl(null); setSelectedImageFile(null); }}
             folder="items"
             label={t('itemEditor.itemImage')}
+            description={t('itemEditor.itemImageDescription')}
             deferUpload
             onImageSelected={(file) => setSelectedImageFile(file)}
           />

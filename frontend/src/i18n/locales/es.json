@@ -435,7 +435,9 @@
       "addToMealPlan": "Agregar al Plan de Comidas",
       "deleteRecipe": "Eliminar Receta",
       "deleteWarning": "Esta acción no se puede deshacer.",
-      "addNewRecipe": "Agregar Nueva Receta"
+      "addNewRecipe": "Agregar Nueva Receta",
+      "recipeImage": "Imagen de la Receta",
+      "recipeImageDescription": "Agrega una imagen de tu plato terminado (opcional)"
     },
     "settings": {
       "title": "Configuración",

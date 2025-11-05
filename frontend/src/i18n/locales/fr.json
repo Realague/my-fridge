@@ -400,6 +400,8 @@
       "stepInstructionsPlaceholder": "Étape {{step}} instructions...",
       "recipeNotFound": "Recette non trouvée",
       "editRecipeTitle": "Modifier la Recette",
+      "recipeImage": "Image de la Recette",
+      "recipeImageDescription": "Ajoutez une photo de votre plat terminé (facultatif)",
       "difficultyOptions": {
         "easy": "Facile",
         "medium": "Moyen",

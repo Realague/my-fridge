@@ -37,7 +37,7 @@ export interface CreateRecipeDto {
   difficulty: RecipeDifficulty;
   instructions: string[];
   tags: string[];
-  image?: string;
+  imageUrl?: string;
   ingredients: CreateRecipeIngredientDto[];
 }
 
@@ -50,7 +50,7 @@ export interface UpdateRecipeDto {
   difficulty?: RecipeDifficulty;
   instructions?: string[];
   tags?: string[];
-  image?: string;
+  imageUrl?: string;
   isFavorite?: boolean;
   ingredients?: CreateRecipeIngredientDto[];
 }

@@ -14,6 +14,7 @@ interface ImageUploadProps {
   // When true, do not upload immediately; emit selected file for parent to handle later
   deferUpload?: boolean;
   onImageSelected?: (file: File, previewUrl: string) => void;
+  description?: string;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -22,6 +23,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   onImageRemove,
   folder = 'myfridge',
   label,
+  description,
   deferUpload = false,
   onImageSelected,
 }) => {
@@ -239,7 +241,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                 <Upload className="h-8 w-8 text-muted-foreground" />
               </div>
               <p className="text-sm text-muted-foreground text-center px-4">
-                {t('itemSelector.itemImagePlaceholder')}
+                {description}
               </p>
             </>
           )}

@@ -203,7 +203,7 @@ const AddRecipe = () => {
       if (selectedImageFile) {
         try {
           const imageUrl = await uploadImageWithSignature('recipes', selectedImageFile);
-          await useRecipeStore.getState().updateRecipe(newRecipe.id, { image: imageUrl });
+          await useRecipeStore.getState().updateRecipe(newRecipe.id, { imageUrl: imageUrl });
         } catch (e) {
           // Non-fatal: recipe is created without image
           console.error('Deferred image upload failed:', e);
@@ -264,6 +264,7 @@ const AddRecipe = () => {
                   onImageRemove={() => { setImageUrl(null); setSelectedImageFile(null); }}
                   folder="recipes"
                   label={t('pages.recipes.recipeImage')}
+                  description={t('pages.recipes.recipeImageDescription')}
                   deferUpload
                   onImageSelected={(file) => { setSelectedImageFile(file); }}
                 />

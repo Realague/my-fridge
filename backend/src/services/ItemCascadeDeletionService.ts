@@ -7,6 +7,7 @@ import {
   Item
 } from '../models';
 import sequelize from '../config/database';
+import { deleteImageFromCloudinary } from '../utils/imageUploader';
 
 export class ItemCascadeDeletionService {
   
@@ -185,6 +186,24 @@ export class ItemCascadeDeletionService {
    * Delete the item itself
    */
   private async deleteItem(itemId: string, transaction: Transaction): Promise<void> {
+    // First, get the item to check if it has an image
+    const item = await Item.findByPk(itemId, { transaction });
+    
+    if (!item) {
+      throw new Error(`Item with ID ${itemId} not found`);
+    }
+    
+    // Delete the image from Cloudinary if it exists
+    if (item.imageUrl) {
+      try {
+        await deleteImageFromCloudinary(item.imageUrl);
+      } catch (error) {
+        // Log error but don't fail the deletion if image deletion fails
+        console.error(`Failed to delete image for item ${itemId}:`, error);
+      }
+    }
+    
+    // Delete the item from database
     const deletedCount = await Item.destroy({
       where: { 
         id: itemId 
@@ -193,7 +212,7 @@ export class ItemCascadeDeletionService {
     });
     
     if (deletedCount === 0) {
-      throw new Error(`Item with ID ${itemId} not found`);
+      throw new Error(`Failed to delete item ${itemId}`);
     }
     
     console.log(`Deleted item ${itemId}`);

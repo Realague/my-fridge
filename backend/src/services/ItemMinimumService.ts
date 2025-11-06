@@ -116,6 +116,7 @@ export class ItemMinimumService {
         category: itemMinimum.item.category,
         defaultUnit: itemMinimum.item.defaultUnit,
         availableUnits: itemMinimum.item.availableUnits,
+        imageUrl: itemMinimum.item.imageUrl,
         createdBy: itemMinimum.item.createdBy,
         householdId: itemMinimum.item.householdId,
         createdAt: itemMinimum.item.createdAt.toISOString(),

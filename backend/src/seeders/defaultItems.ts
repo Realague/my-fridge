@@ -7,6 +7,7 @@ export interface DefaultItem {
   category: ItemCategory;
   defaultUnit: Unit;
   availableUnits: Unit[];
+  imageUrl?: string;
 }
 
 export const DEFAULT_ITEMS: DefaultItem[] = [
@@ -592,6 +593,7 @@ export class ItemSeeder {
       category: defaultItem.category,
       defaultUnit: defaultItem.defaultUnit,
       availableUnits: defaultItem.availableUnits,
+      imageUrl: defaultItem.imageUrl,
       createdBy: createdBy || null,
       householdId: householdId || null,
     };

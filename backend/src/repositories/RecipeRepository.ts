@@ -5,6 +5,7 @@ import { RecipeIngredient } from '../models/RecipeIngredient';
 import { Item } from '../models/Item';
 import { User } from '../models/User';
 import { RecipeSearchParams } from '../types/RecipeDto';
+import { deleteImageFromCloudinary } from '../utils/imageUploader';
 
 export class RecipeRepository {
   
@@ -141,6 +142,23 @@ export class RecipeRepository {
   }
 
   async delete(id: string, householdId: string, transaction?: Transaction): Promise<number> {
+    // First, get the recipe to check if it has an image
+    const recipe = await Recipe.findOne({
+      where: { id, householdId },
+      attributes: ['id', 'imageUrl'],
+      transaction
+    });
+
+    // Delete the image from Cloudinary if it exists
+    if (recipe?.imageUrl) {
+      try {
+        await deleteImageFromCloudinary(recipe.imageUrl);
+      } catch (error) {
+        // Log error but don't fail the deletion if image deletion fails
+        console.error(`Failed to delete image for recipe ${id}:`, error);
+      }
+    }
+
     return Recipe.destroy({
       where: { id, householdId },
       transaction

@@ -21,6 +21,7 @@ export interface StoredItem {
     availableUnits: string[];
     createdBy: string | null;
     householdId: string | null;
+    imageUrl: string | null;
     createdAt: string;
     updatedAt: string;
   };

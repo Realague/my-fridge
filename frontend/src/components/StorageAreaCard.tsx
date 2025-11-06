@@ -27,11 +27,11 @@ const StorageAreaCard = ({ area, onClick }: StorageAreaCardProps) => {
     >
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center">
+          <div className="flex items-center gap-4 flex-1 min-w-0">
+            <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center flex-shrink-0">
               <span className="text-2xl">{area.emoji}</span>
             </div>
-            <div>
+            <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-foreground">{area.name}</h3>
               <p className="text-sm text-muted-foreground">{t(`storageArea.types.${area.type}`)}</p>
               <p className="text-sm text-muted-foreground">

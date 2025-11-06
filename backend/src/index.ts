@@ -8,6 +8,7 @@ import itemRoutes from './routes/items';
 import storedItemRoutes from './routes/storedItems';
 import recipeRoutes from './routes/recipes';
 import mealPlanRoutes from './routes/mealPlans';
+import imageRoutes from './routes/images';
 import { sequelize } from './models';
 import { executeSmartMigration } from './utils/migrationStrategy';
 import { ItemRepository } from './repositories/ItemRepository';
@@ -31,7 +32,7 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json());
+app.use(express.json({ strict: false }));
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
@@ -42,6 +43,7 @@ app.use('/api/households', storedItemRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api', recipeRoutes);
 app.use('/api', mealPlanRoutes);
+app.use('/api/images', imageRoutes);
 
 app.get('/', (req, res) => {
   res.json({

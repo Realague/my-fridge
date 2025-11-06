@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
+import { uploadImageWithSignature } from '@/services/imageUploadService';
 
 interface ItemSelectorProps {
   onItemSelect: (item: Item | null) => void;
@@ -350,12 +351,24 @@ export const ItemSelector = ({
 
     try {
       if (user && selectedHouseholdId) {
+        const selectedFile = (updates as any)._selectedImageFile as File | null;
+        // First update core fields
         await itemService.updateItem(editingItem.id, {
           name: updates.name,
           category: updates.category,
           defaultUnit: updates.defaultUnit,
           availableUnits: updates.availableUnits,
         }, selectedHouseholdId);
+
+        // If a new image was selected, upload it now and update the item image
+        if (selectedFile) {
+          try {
+            const imageUrl = await uploadImageWithSignature('items', selectedFile);
+            await itemService.updateItem(editingItem.id, { imageUrl: imageUrl }, selectedHouseholdId);
+          } catch (e) {
+            console.error('Deferred item image upload failed:', e);
+          }
+        }
         toast.success(t('messages.success.itemUpdated'));
         // Refresh the household items cache
         await refreshHouseholdItems();
@@ -386,6 +399,7 @@ export const ItemSelector = ({
 
     try {
       if (user && selectedHouseholdId) {
+        const selectedFile = (newItemData as any)._selectedImageFile as File | null;
         const newApiItem = await itemService.createItem({
           name: newName,
           category: newItemData.category || 'other',
@@ -393,7 +407,15 @@ export const ItemSelector = ({
           availableUnits: newItemData.availableUnits,
           householdId: selectedHouseholdId,
         });
-        
+        // If an image was selected, upload it now and set on the new item
+        if (selectedFile) {
+          try {
+            const imageUrl = await uploadImageWithSignature('items', selectedFile);
+            await itemService.updateItem(newApiItem.id, { imageUrl: imageUrl }, selectedHouseholdId);
+          } catch (e) {
+            console.error('Deferred item image upload failed:', e);
+          }
+        }
         onItemSelect(newApiItem);
         setQuery('');
         setCreatingNewItem(false);
@@ -540,6 +562,15 @@ export const ItemSelector = ({
                   className="group flex items-center justify-between p-2 hover:bg-muted cursor-pointer rounded transition-colors"
                 >
                   <div className="flex items-center gap-2 flex-1 min-w-0">
+                    {item.imageUrl && (
+                      <div className="w-10 h-10 rounded-md overflow-hidden bg-muted flex-shrink-0">
+                        <img 
+                          src={item.imageUrl} 
+                          alt={getItemDisplayName(item, t)}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm truncate">{getItemDisplayName(item, t)}</div>
                       <div className="flex items-center gap-2">
@@ -630,6 +661,7 @@ export const ItemSelector = ({
             category: 'other',
             defaultUnit: 'piece',
             availableUnits: ['piece'],
+            imageUrl: null,
             createdBy: null,
             householdId: null,
             createdAt: '',

@@ -200,18 +200,26 @@ const RecipeDetails = () => {
 
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Recipe Header */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg overflow-hidden">
+          {recipe.imageUrl ? (
+            <div className="w-full aspect-video md:aspect-[4/3] overflow-hidden bg-muted">
+              <img
+                src={recipe.imageUrl}
+                alt={recipe.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <div className="w-full aspect-video md:aspect-[4/3] bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+              <ChefHat className="h-16 w-16 text-muted-foreground/40" />
+            </div>
+          )}
           <CardHeader>
-            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-              <div className="flex-1">
-                <CardTitle className="text-2xl mb-2">{recipe.title}</CardTitle>
-                <CardDescription className="text-base">
-                  {recipe.description}
-                </CardDescription>
-              </div>
-              {recipe.image && (
-                <div className="w-full md:w-48 h-32 bg-muted rounded-lg"></div>
-              )}
+            <div>
+              <CardTitle className="text-2xl mb-2">{recipe.title}</CardTitle>
+              <CardDescription className="text-base">
+                {recipe.description}
+              </CardDescription>
             </div>
             
             <div className="flex flex-wrap items-center gap-4 pt-4">
@@ -340,15 +348,13 @@ const RecipeDetailsSkeleton = () => {
   return (
     <div className="space-y-6">
       {/* Recipe Header */}
-      <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg overflow-hidden">
+        <Skeleton className="w-full aspect-video md:aspect-[4/3]" />
         <CardHeader>
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-8 w-3/4" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-2/3" />
-            </div>
-            <Skeleton className="w-full md:w-48 h-32 rounded-lg" />
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-3/4" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
           </div>
           
           <div className="flex flex-wrap items-center gap-4 pt-4">

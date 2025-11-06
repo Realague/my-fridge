@@ -120,7 +120,7 @@ export const AddMealPlanDialog = ({
     difficulty: recipe.difficulty,
     instructions: [],
     tags: Array.isArray(recipe.tags) ? recipe.tags : [],
-    image: recipe.image,
+    imageUrl: recipe.imageUrl,
     isFavorite: recipe.isFavorite,
     householdId: '',
     createdBy: recipe.createdBy,

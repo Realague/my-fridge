@@ -15,6 +15,7 @@ export interface UpdateItemDto {
   emoji?: string;
   defaultUnit?: Unit;
   availableUnits?: Unit[];
+  imageUrl?: string;
 }
 
 export interface ItemDto {
@@ -23,6 +24,7 @@ export interface ItemDto {
   category: ItemCategory;
   defaultUnit: Unit;
   availableUnits: Unit[];
+  imageUrl: string | null;
   createdBy: string | null;
   householdId: string | null;
   createdAt: string;

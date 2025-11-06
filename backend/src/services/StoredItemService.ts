@@ -81,6 +81,7 @@ export class StoredItemService {
         category: storedItem.item.category,
         defaultUnit: storedItem.item.defaultUnit,
         availableUnits: storedItem.item.availableUnits,
+        imageUrl: storedItem.item.imageUrl,
         createdBy: storedItem.item.createdBy,
         householdId: storedItem.item.householdId,
         createdAt: storedItem.item.createdAt.toISOString(),

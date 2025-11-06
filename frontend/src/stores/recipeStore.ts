@@ -203,7 +203,7 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
         servings: newRecipe.servings,
         difficulty: newRecipe.difficulty,
         tags: newRecipe.tags,
-        image: newRecipe.image,
+        imageUrl: newRecipe.imageUrl,
         isFavorite: newRecipe.isFavorite,
         createdBy: newRecipe.createdBy,
         createdAt: newRecipe.createdAt,

@@ -122,6 +122,7 @@
     "pleaseEnterName": "Por favor ingrese un nombre para el área de almacenamiento"
   },
   "itemEditor": {
+    "itemImage": "Imagen del artículo",  
     "editItem": "Editar Artículo",
     "createNewItem": "Crear Nuevo Artículo",
     "itemNamePlaceholder": "Nombre del artículo",
@@ -130,6 +131,8 @@
     "addUnit": "Agregar unidad"
   },
   "itemSelector": {
+    "itemImage": "Imagen del artículo", 
+    "itemImagePlaceholder": "Imagen del artículo (opcional)",
     "searchOrAddItemPlaceholder": "Buscar o agregar artículo...",
     "quickAddWithDefaultSettings": "Agregar rápidamente con configuración predeterminada",
     "createWithDetails": "Crear \"{{query}}\" con detalles",
@@ -432,7 +435,9 @@
       "addToMealPlan": "Agregar al Plan de Comidas",
       "deleteRecipe": "Eliminar Receta",
       "deleteWarning": "Esta acción no se puede deshacer.",
-      "addNewRecipe": "Agregar Nueva Receta"
+      "addNewRecipe": "Agregar Nueva Receta",
+      "recipeImage": "Imagen de la Receta",
+      "recipeImageDescription": "Agrega una imagen de tu plato terminado (opcional)"
     },
     "settings": {
       "title": "Configuración",

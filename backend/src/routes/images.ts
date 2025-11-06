@@ -19,9 +19,9 @@ router.post('/signature', async (req: Request, res: Response) => {
   try {
     let folder: string | undefined;
     try {
-      const parsed = JSON.parse(req.body);
-      folder = parsed?.folder;
-    } catch {
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      folder = body?.folder;
+    } catch (e) {
       return res.status(400).json({ error: 'Invalid request body' });
     }
     const timestamp = Math.round(new Date().getTime() / 1000);
@@ -34,7 +34,7 @@ router.post('/signature', async (req: Request, res: Response) => {
       process.env.CLOUDINARY_API_SECRET!
     );
 
-    res.json({
+    return res.json({
       signature,
       timestamp,
       cloudName: process.env.CLOUDINARY_CLOUD_NAME,
@@ -43,7 +43,7 @@ router.post('/signature', async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error generating Cloudinary signature:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to generate upload signature',
       message: error instanceof Error ? error.message : 'Unknown error'
     });

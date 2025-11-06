@@ -6,6 +6,7 @@ export interface CreateItemDto {
   defaultUnit?: Unit;
   availableUnits?: Unit[];
   daysAfterOpening?: number;
+  imageUrl?: string;
   createdBy: string | null;
   householdId: string | null;
 }

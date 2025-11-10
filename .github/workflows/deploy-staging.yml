@@ -1,4 +1,4 @@
-name: Deploy to Raspberry Pi
+name: Deploy to Staging Environment
 
 on:
   push:
@@ -7,7 +7,11 @@ on:
 
 jobs:
   deploy:
+    name: Deploy to Staging Environment
     runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: http://my-fridge.multiplus.ovh:8081
 
     steps:
       - name: Checkout repository
@@ -26,5 +30,5 @@ jobs:
             cd ~/Desktop/my-fridge &&
             git pull origin main &&
             docker compose down &&
-            docker compose up -d --build
+            docker compose -f docker-compose.staging.yml up -d --build
           "

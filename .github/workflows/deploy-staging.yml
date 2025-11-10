@@ -29,6 +29,6 @@ jobs:
           ssh ${{ secrets.PI_USER }}@${{ secrets.PI_HOST }} "
             cd ~/Desktop/my-fridge &&
             git pull origin main &&
-            docker compose down &&
+            docker compose -f docker-compose.staging.yml down &&
             docker compose -f docker-compose.staging.yml up -d --build
           "

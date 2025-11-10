@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5433:5433"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -45,6 +45,7 @@ services:
     volumes:
       - ./backend:/app
       # Use modules installed in the image; avoid masking with an empty volume
+      - /app/node_modules
     command: npm run dev
 
   # Frontend React App

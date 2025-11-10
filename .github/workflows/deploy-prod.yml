@@ -13,7 +13,7 @@ jobs:
     name: Deploy to Production Environment
     runs-on: ubuntu-latest
     environment:
-      name: staging
+      name: production
       url: http://my-fridge.multiplus.ovh:8080
 
     steps:

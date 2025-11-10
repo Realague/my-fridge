@@ -54,6 +54,8 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
   }, [item.availableUnits, item.defaultUnit]);
   
   const [availableUnits, setAvailableUnits] = useState<string[]>(initialAvailableUnits);
+  const [imageUrl, setImageUrl] = useState<string | null>(item.imageUrl || null);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
 
   const handleCategoryChange = (newCategory: string) => {
     setCategory(newCategory);

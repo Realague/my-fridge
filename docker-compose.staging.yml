@@ -34,9 +34,9 @@ services:
       DB_NAME: my_fridge_db
       PORT: 3001
       FRONTEND_URL: http://my-fridge.multiplus.ovh:8081
-      CLOUDINARY_CLOUD_NAME: duxpbou8b
-      CLOUDINARY_API_KEY: 934727417568911
-      CLOUDINARY_API_SECRET: lU8aMdzx2aD0q9qw2R5Dia64z54
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
     ports:
       - "3001:3001"
     depends_on:

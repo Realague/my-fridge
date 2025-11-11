@@ -6,11 +6,11 @@ services:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_DB: my_fridge_db
+      POSTGRES_DB: my_fridge_db_staging
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5433:5433"
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -28,7 +28,7 @@ services:
     environment:
       NODE_ENV: development
       DB_HOST: db
-      DB_PORT: 5433
+      DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: my_fridge_db
@@ -56,6 +56,7 @@ services:
     restart: always
     environment:
       VITE_API_URL: http://my-fridge.multiplus.ovh:3001
+      VITE_PORT: 8081
     ports:
       - "8081:8081"
     volumes:

@@ -607,6 +607,23 @@
     "other": "autre"
   },
   "items": {
+    "categories": {
+      "vegetables": "Légumes",
+      "fruits": "Fruits",
+      "meat": "Viande",
+      "dairy": "Lait",
+      "grains": "Céréales",
+      "spices": "Épices",
+      "beverages": "Boissons",
+      "snacks": "Snacks",
+      "condiments": "Condiments",
+      "frozen": "Congelé",
+      "canned": "En conserve",
+      "meal": "Repas",
+      "preparation": "Préparation",
+      "cleaning_products": "Produits de nettoyage",
+      "other": "Autres"
+    },
     "cuskEel": "Abadèche",
     "offal": "Abats",
     "abundance": "Abondance",

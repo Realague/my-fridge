@@ -606,6 +606,23 @@
     "other": "other"
   },
   "items": {
+    "categories": {
+      "vegetables": "Vegetales",
+      "fruits": "Frutas",
+      "meat": "Carne",
+      "dairy": "Lacteos",
+      "grains": "Cereales",
+      "spices": "Especias",
+      "beverages": "Bebidas",
+      "snacks": "Snacks",
+      "condiments": "Condimentos",
+      "frozen": "Congelados",
+      "canned": "Enlatados",
+      "meal": "Comida",
+      "preparation": "Preparación",
+      "cleaning_products": "Productos de limpieza",
+      "other": "Otros"
+    },
     "cuskEel": "Abadía",
     "offal": "Menudencias",
     "abundance": "Abundancia",

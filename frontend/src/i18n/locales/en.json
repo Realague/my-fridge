@@ -629,6 +629,23 @@
     "other": "other"
   },
   "items": {
+    "categories": {
+      "vegetables": "Vegetables",
+      "fruits": "Fruits",
+      "meat": "Meat",
+      "dairy": "Dairy",
+      "grains": "Grains",
+      "spices": "Spices",
+      "beverages": "Beverages",
+      "snacks": "Snacks",
+      "condiments": "Condiments",
+      "frozen": "Frozen",
+      "canned": "Canned",
+      "meal": "Meal",
+      "preparation": "Preparation",
+      "cleaning_products": "Cleaning products",
+      "other": "Other"
+    },
     "cuskEel": "Cusk-eel",
     "offal": "Offal",
     "abundance": "Abundance",

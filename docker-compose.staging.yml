@@ -6,7 +6,7 @@ services:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_DB: my_fridge_db
+      POSTGRES_DB: my_fridge_db_staging
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
@@ -32,13 +32,13 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: my_fridge_db
-      PORT: 3000
-      FRONTEND_URL: http://my-fridge.multiplus.ovh:8080
+      PORT: 3001
+      FRONTEND_URL: http://my-fridge.multiplus.ovh:8081
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
     ports:
-      - "3000:3000"
+      - "3001:3001"
     depends_on:
       db:
         condition: service_healthy
@@ -55,9 +55,10 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      VITE_API_URL: http://my-fridge.multiplus.ovh:3000
+      VITE_API_URL: http://my-fridge.multiplus.ovh:3001
+      VITE_PORT: 8081
     ports:
-      - "8080:8080"
+      - "8081:8081"
     volumes:
       - ./frontend:/app
       - /app/node_modules

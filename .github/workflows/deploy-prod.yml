@@ -1,13 +1,20 @@
-name: Deploy to Raspberry Pi
+name: Deploy to Production Environment
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to deploy"
+        required: false
+        default: "latest"
 
 jobs:
   deploy:
+    name: Deploy to Production Environment
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: http://my-fridge.multiplus.ovh:8080
 
     steps:
       - name: Checkout repository
@@ -25,6 +32,6 @@ jobs:
           ssh ${{ secrets.PI_USER }}@${{ secrets.PI_HOST }} "
             cd ~/Desktop/my-fridge &&
             git pull origin main &&
-            docker compose down &&
-            docker compose up -d --build
+            docker compose -f docker-compose.yml down &&
+            docker compose -f docker-compose.yml up -d --build
           "

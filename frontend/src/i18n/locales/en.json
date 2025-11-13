@@ -123,6 +123,7 @@
   },
   "itemEditor": {
     "itemImage": "Item Image",
+    "itemImageDescription": "Item image (optional)",
     "editItem": "Edit Item",
     "createNewItem": "Create New Item",
     "itemNamePlaceholder": "Item name",

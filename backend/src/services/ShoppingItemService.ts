@@ -5,6 +5,9 @@ import { StoredItemService } from './StoredItemService';
 import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto, ShoppingItemDto } from '../types/ItemDto';
 import { ApiResponse } from '../types/ApiResponse';
 import { ShoppingItem } from '../models/ShoppingItem';
+import { STORAGE_UNITS, Unit } from '../types/enums';
+import { convertToStorageUnit } from '../utils/unitConversion';
+import { Item } from '../models/Item';
 
 export class ShoppingItemService {
   private shoppingItemRepository: ShoppingItemRepository;
@@ -42,6 +45,14 @@ export class ShoppingItemService {
           success: false,
           error: 'Household not found',
         };
+      }
+
+      // Convert cooking measurements to storage-appropriate units
+      // For dry ingredients, convert volume to weight (e.g., tsp of salt -> grams)
+      if (!STORAGE_UNITS.includes(data.unit as Unit)) {
+        const converted = convertToStorageUnit(data.quantity, data.unit, item.category);
+        data.quantity = converted.quantity;
+        data.unit = converted.unit;
       }
 
       // Check for duplicate item with same unit in the household
@@ -157,6 +168,19 @@ export class ShoppingItemService {
           success: false,
           error: 'Shopping item not found',
         };
+      }
+
+      // Convert cooking measurements to storage-appropriate units if unit is being updated
+      // For dry ingredients, convert volume to weight (e.g., tbsp of butter -> grams)
+      if (data.unit && data.quantity !== undefined) {
+        if (!STORAGE_UNITS.includes(data.unit as Unit)) {
+          // Get item category for density-based conversion
+          const item = existingItem.item || await this.itemRepository.findById(existingItem.itemId);
+          const category = item?.category;
+          const converted = convertToStorageUnit(data.quantity, data.unit, category);
+          data.quantity = converted.quantity;
+          data.unit = converted.unit;
+        }
       }
 
       // Check for duplicates if itemId, householdId, or unit are being updated

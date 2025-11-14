@@ -1,6 +1,6 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
-import { Unit, UNITS } from '../types/enums';
+import { Unit, UNITS, STORAGE_UNITS } from '../types/enums';
 import { User } from './User';
 import { Item } from './Item';
 import { StorageArea } from './StorageArea';
@@ -120,6 +120,14 @@ StoredItem.init(
       type: DataTypes.ENUM(...UNITS),
       allowNull: false,
       defaultValue: Unit.PIECE,
+      validate: {
+        isStorageUnit(value: string) {
+          // Cooking measurements (cup, tbsp, tsp) are only allowed in recipes, not in storage
+          if (!STORAGE_UNITS.includes(value as Unit)) {
+            throw new Error(`Unit ${value} is only available for recipes, not for storage items`);
+          }
+        },
+      },
     },
     expirationDate: {
       type: DataTypes.DATEONLY,

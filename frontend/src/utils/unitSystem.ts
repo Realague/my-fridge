@@ -18,6 +18,7 @@ export const STORAGE_UNITS = [
   Unit.BUNCH,
   Unit.DOZEN,
   Unit.SERVING,
+  Unit.OTHER,
 ];
 
 // Recipe units (includes all units including cooking measurements)

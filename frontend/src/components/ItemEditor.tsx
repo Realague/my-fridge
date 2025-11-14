@@ -8,8 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { X, Trash2 } from 'lucide-react';
 import { Item, itemService } from '@/services/itemService';
-import { getUnitsForCategory, getUnitDisplayName } from '@/utils/unitSystem';
-import { ITEM_CATEGORIES, UNITS } from '@/types/enums';
+import { getUnitsForCategory, getUnitDisplayName, STORAGE_UNITS } from '@/utils/unitSystem';
+import { ITEM_CATEGORIES } from '@/types/enums';
 import { useTranslation } from 'react-i18next';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -197,7 +197,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
                   <SelectValue placeholder={t('itemEditor.addUnit')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {UNITS.filter(unit => !availableUnits.includes(unit)).map((unit) => (
+                  {STORAGE_UNITS.filter(unit => !availableUnits.includes(unit)).map((unit) => (
                     <SelectItem key={unit} value={unit}>
                       {t(`units.${getUnitDisplayName(unit)}`)}
                     </SelectItem>

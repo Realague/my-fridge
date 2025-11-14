@@ -31,25 +31,25 @@ export function getUnitsForCategory(category: ItemCategory): {
       // We'll default to GRAM, but this can be overridden for specific items
       return {
         defaultUnit: Unit.GRAM,
-        availableUnits: [Unit.GRAM, Unit.KILOGRAM, Unit.MILLILITER, Unit.CENTILITER, Unit.LITER, Unit.CUP, Unit.PIECE],
+        availableUnits: [Unit.GRAM, Unit.KILOGRAM, Unit.MILLILITER, Unit.CENTILITER, Unit.LITER, Unit.PIECE],
       };
 
     case ItemCategory.BEVERAGES:
       return {
         defaultUnit: Unit.LITER,
-        availableUnits: [Unit.LITER, Unit.CENTILITER, Unit.MILLILITER, Unit.CUP],
+        availableUnits: [Unit.LITER, Unit.CENTILITER, Unit.MILLILITER],
       };
 
     case ItemCategory.SPICES:
       return {
         defaultUnit: Unit.GRAM,
-        availableUnits: [Unit.GRAM, Unit.KILOGRAM, Unit.TEASPOON, Unit.TABLESPOON],
+        availableUnits: [Unit.GRAM, Unit.KILOGRAM],
       };
 
     case ItemCategory.GRAINS:
       return {
         defaultUnit: Unit.KILOGRAM,
-        availableUnits: [Unit.KILOGRAM, Unit.GRAM, Unit.CUP, Unit.PIECE],
+        availableUnits: [Unit.KILOGRAM, Unit.GRAM, Unit.PIECE],
       };
 
     case ItemCategory.SNACKS:
@@ -61,7 +61,7 @@ export function getUnitsForCategory(category: ItemCategory): {
     case ItemCategory.CONDIMENTS:
       return {
         defaultUnit: Unit.GRAM,
-        availableUnits: [Unit.GRAM, Unit.KILOGRAM, Unit.MILLILITER, Unit.CENTILITER, Unit.LITER, Unit.TABLESPOON],
+        availableUnits: [Unit.GRAM, Unit.KILOGRAM, Unit.MILLILITER, Unit.CENTILITER, Unit.LITER],
       };
 
     case ItemCategory.FROZEN:
@@ -85,7 +85,7 @@ export function getUnitsForCategory(category: ItemCategory): {
     case ItemCategory.PREPARATION:
       return {
         defaultUnit: Unit.GRAM,
-        availableUnits: [Unit.GRAM, Unit.KILOGRAM, Unit.TEASPOON, Unit.TABLESPOON],
+        availableUnits: [Unit.GRAM, Unit.KILOGRAM],
       };
 
     case ItemCategory.CLEANING_PRODUCTS:

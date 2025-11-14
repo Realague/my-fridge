@@ -275,38 +275,6 @@ export const ItemSelector = ({
     setIsOpen(false);
   };
 
-  const handleQuickCreate = async () => {
-    const validationResult = itemNameSchema.safeParse(query);
-
-    if (!validationResult.success) {
-      toast.error(validationResult.error.errors[0].message);
-      return;
-    }
-
-    if (exactMatch) return;
-
-    try {
-      if (user && selectedHouseholdId) {
-        const newApiItem = await itemService.createItem({
-          name: validationResult.data,
-          category: 'other',
-          householdId: selectedHouseholdId,
-        });
-        
-        onItemSelect(newApiItem);
-        setQuery('');
-        setIsOpen(false);
-        toast.success(t('messages.success.itemAdded', { item: validationResult.data }));
-        // Refresh the household items cache
-        await refreshHouseholdItems();
-        return;
-      }
-    } catch (error) {
-      console.error('Failed to create item:', error);
-      toast.error(t('messages.error.failedToCreateItem'));
-    }
-  };
-
   const handleEditItem = (item: Item, e: React.MouseEvent) => {
     e.stopPropagation();
     setEditingItem(item);
@@ -562,22 +530,10 @@ export const ItemSelector = ({
               <Button
                 type="button"
                 variant="ghost"
-                onClick={handleQuickCreate}
+                onClick={handleCreateNew}
                 className="w-full justify-start p-3 h-auto text-left hover:bg-muted"
               >
                 <Plus className="h-4 w-4 mr-2 text-primary" />
-                <div>
-                  <div className="font-medium">{t('itemSelector.add', { query })}</div>
-                  <div className="text-xs text-muted-foreground">{t('itemSelector.quickAddWithDefaultSettings')}</div>
-                </div>
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={handleCreateNew}
-                className="w-full justify-start p-3 h-auto text-left hover:bg-muted border-t border-border"
-              >
-                <Edit className="h-4 w-4 mr-2 text-primary" />
                 <div>
                   <div className="font-medium">{t('itemSelector.createWithDetails', { query })}</div>
                   <div className="text-xs text-muted-foreground">{t('itemSelector.setCategoryUnitsAndOtherOptions')}</div>

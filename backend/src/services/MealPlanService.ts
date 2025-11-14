@@ -170,7 +170,7 @@ export class MealPlanService {
     const mealPlans = await this.mealPlanRepository.findByDateRange(householdId, startDate, endDate, true);
     
     // Import unit conversion utilities
-    const { convertQuantity, canConvertUnits, normalizeToBaseUnit, getBestDisplayUnit } = require('../utils/unitConversion');
+    const { convertQuantity, canConvertUnits, normalizeToBaseUnit, getBestDisplayUnit, convertToStorageUnit } = require('../utils/unitConversion');
     const StoredItemRepository = require('../repositories/StoredItemRepository').StoredItemRepository;
     const storedItemRepository = new StoredItemRepository();
     
@@ -178,6 +178,7 @@ export class MealPlanService {
     const ingredientTotals = new Map<string, {
       itemId: string;
       itemName: string;
+      itemCategory: string;
       totalQuantityInBaseUnit: number;
       baseUnit: string;
       recipes: string[];
@@ -210,6 +211,7 @@ export class MealPlanService {
             ingredientTotals.set(key, {
               itemId: item.id,
               itemName: item.name,
+              itemCategory: item.category,
               totalQuantityInBaseUnit: normalized.quantity,
               baseUnit: normalized.unit,
               recipes: [recipe.title]
@@ -241,7 +243,16 @@ export class MealPlanService {
       
       if (shortage > 0) {
         // Convert to best display unit (kg instead of 1000g, etc.)
-        const display = getBestDisplayUnit(shortage, data.baseUnit);
+        // Use forStorage=true to ensure we get storage-appropriate units only
+        // For volume measurements of dry goods, try to convert to weight based on category
+        let display;
+        if (data.baseUnit === 'ml' && (data.itemCategory === 'spices' || data.itemCategory === 'grains' || data.itemCategory === 'condiments')) {
+          // Try volume-to-weight conversion for dry ingredients
+          const weightConversion = convertToStorageUnit(shortage, data.baseUnit, data.itemCategory);
+          display = weightConversion;
+        } else {
+          display = getBestDisplayUnit(shortage, data.baseUnit, true);
+        }
         
         neededItems.set(key, {
           itemId: data.itemId,

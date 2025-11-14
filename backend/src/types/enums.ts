@@ -48,11 +48,37 @@ export enum Unit {
   BUNCH = 'bunch',
   DOZEN = 'dozen',
   
+  // Meal
+  SERVING = 'serving',
+  
   // Other
   OTHER = 'other'
 }
 
 export const UNITS = Object.values(Unit);
+
+// Storage units (excluding cooking measurements like cup, tbsp, tsp)
+export const STORAGE_UNITS = [
+  Unit.GRAM,
+  Unit.KILOGRAM,
+  Unit.MILLILITER,
+  Unit.CENTILITER,
+  Unit.LITER,
+  Unit.PIECE,
+  Unit.PACK,
+  Unit.BUNCH,
+  Unit.DOZEN,
+  Unit.SERVING,
+  Unit.OTHER,
+];
+
+// Recipe units (includes all units including cooking measurements)
+export const RECIPE_UNITS = [
+  ...STORAGE_UNITS,
+  Unit.CUP,
+  Unit.TABLESPOON,
+  Unit.TEASPOON,
+];
 
 export enum ShoppingItemStatus {
   PENDING = 'pending',

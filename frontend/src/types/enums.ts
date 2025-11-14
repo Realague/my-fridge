@@ -51,7 +51,6 @@ export enum Unit {
   SERVING = 'serving',
   
   // Other
-  CLEANING_PRODUCTS = 'cleaning_products',
   OTHER = 'other'
 }
 

@@ -1,4 +1,4 @@
-import { Unit } from '../types/enums';
+import { Unit, STORAGE_UNITS } from '../types/enums';
 
 // Conversion rates to base units (grams for weight, milliliters for volume)
 const WEIGHT_CONVERSIONS: Record<string, number> = {
@@ -10,6 +10,10 @@ const VOLUME_CONVERSIONS: Record<string, number> = {
   [Unit.MILLILITER]: 1,
   [Unit.CENTILITER]: 10,
   [Unit.LITER]: 1000,
+  // Cooking measurements (approximate conversions)
+  [Unit.CUP]: 240,        // 1 cup = 240ml (US standard)
+  [Unit.TABLESPOON]: 15,  // 1 tbsp = 15ml
+  [Unit.TEASPOON]: 5,     // 1 tsp = 5ml
 };
 
 // Unit categories for conversion
@@ -100,22 +104,114 @@ export function normalizeToBaseUnit(quantity: number, unit: string): NormalizedQ
 }
 
 // Get the best display unit for a quantity (prefer kg over 1000g, etc.)
-export function getBestDisplayUnit(quantity: number, baseUnit: string): { quantity: number; unit: string } {
-  if (baseUnit === Unit.GRAM && quantity >= 1000) {
-    return {
-      quantity: quantity / 1000,
-      unit: Unit.KILOGRAM
-    };
+// For shopping lists (forStorage = true), only return storage-appropriate units
+export function getBestDisplayUnit(quantity: number, baseUnit: string, forStorage: boolean = false): { quantity: number; unit: string } {
+  if (baseUnit === Unit.GRAM) {
+    if (quantity >= 1000) {
+      return {
+        quantity: quantity / 1000,
+        unit: Unit.KILOGRAM
+      };
+    }
+    return { quantity, unit: baseUnit };
   }
   
-  if (baseUnit === Unit.MILLILITER && quantity >= 1000) {
-    return {
-      quantity: quantity / 1000,
-      unit: Unit.LITER
-    };
+  if (baseUnit === Unit.MILLILITER) {
+    if (quantity >= 1000) {
+      return {
+        quantity: quantity / 1000,
+        unit: Unit.LITER
+      };
+    }
+    // For storage lists, prefer larger units for better readability
+    if (forStorage && quantity >= 100) {
+      return {
+        quantity: quantity / 10,
+        unit: Unit.CENTILITER
+      };
+    }
+    return { quantity, unit: baseUnit };
   }
   
   return { quantity, unit: baseUnit };
+}
+
+// Ingredient density estimates for volume-to-weight conversions (grams per ml)
+// These are approximate values for common ingredients
+const INGREDIENT_DENSITIES: Record<string, number> = {
+  // Liquids (close to water density)
+  'water': 1.0,
+  'milk': 1.03,
+  'oil': 0.92,
+  
+  // Dry ingredients (grams per ml when measured)
+  'flour': 0.5,      // 1 cup (240ml) ≈ 120g
+  'sugar': 0.85,     // 1 cup (240ml) ≈ 200g
+  'salt': 1.2,       // 1 tsp (5ml) ≈ 6g
+  'rice': 0.8,       // 1 cup (240ml) ≈ 190g
+  'butter': 0.96,    // 1 tbsp (15ml) ≈ 14g
+};
+
+// Convert volume cooking measurements to weight for dry ingredients
+// This requires knowing the ingredient type to apply the correct density
+export function convertVolumeToWeight(quantity: number, volumeUnit: string, ingredientCategory?: string): { quantity: number; unit: string } | null {
+  // Only convert volume units
+  if (!VOLUME_CONVERSIONS[volumeUnit]) {
+    return null;
+  }
+  
+  // Convert to ml first
+  const normalized = normalizeToBaseUnit(quantity, volumeUnit);
+  const volumeInMl = normalized.quantity;
+  
+  // Determine density based on ingredient category
+  // Default to keeping as volume if we don't have density data
+  let density = null;
+  
+  // Map categories to density estimates
+  if (ingredientCategory) {
+    const categoryLower = ingredientCategory.toLowerCase();
+    if (categoryLower.includes('flour') || categoryLower === 'grains') {
+      density = INGREDIENT_DENSITIES.flour;
+    } else if (categoryLower.includes('sugar') || categoryLower === 'condiments') {
+      density = INGREDIENT_DENSITIES.sugar;
+    } else if (categoryLower === 'spices') {
+      density = INGREDIENT_DENSITIES.salt; // Use salt density for spices
+    } else if (categoryLower === 'beverages' || categoryLower === 'dairy') {
+      density = INGREDIENT_DENSITIES.milk;
+    }
+  }
+  
+  if (density) {
+    // Convert to grams
+    const weightInGrams = volumeInMl * density;
+    return getBestDisplayUnit(weightInGrams, Unit.GRAM, true);
+  }
+  
+  return null;
+}
+
+// Convert recipe units to storage-appropriate units for shopping lists
+// This ensures cooking measurements (cup, tbsp, tsp) are converted to ml, cl, l, or g/kg
+export function convertToStorageUnit(quantity: number, unit: string, itemCategory?: string): { quantity: number; unit: string } {
+  // If already a storage unit, return as-is
+  if (STORAGE_UNITS.includes(unit as Unit)) {
+    return { quantity, unit };
+  }
+  
+  // Try to convert volume to weight for dry ingredients
+  if (itemCategory) {
+    const weightConversion = convertVolumeToWeight(quantity, unit, itemCategory);
+    if (weightConversion) {
+      return weightConversion;
+    }
+  }
+  
+  // Otherwise, convert cooking measurements to milliliters
+  const normalized = normalizeToBaseUnit(quantity, unit);
+  
+  // Then get the best storage-appropriate display unit
+  return getBestDisplayUnit(normalized.quantity, normalized.unit, true);
 }
 
 // Aggregate quantities of items with different units
@@ -168,8 +264,8 @@ export function aggregateQuantities(items: Array<{ quantity: number; unit: strin
       const totalInBaseUnit = normalized.reduce((sum: any, item: { quantity: any; }) => sum + item.quantity, 0);
       const baseUnit = normalized[0]?.unit ?? Unit.GRAM;
       
-      // Get best display unit
-      const display = getBestDisplayUnit(totalInBaseUnit, baseUnit);
+      // Get best display unit (use forStorage=true to ensure storage-appropriate units)
+      const display = getBestDisplayUnit(totalInBaseUnit, baseUnit, true);
       
       return {
         totalQuantity: display.quantity,

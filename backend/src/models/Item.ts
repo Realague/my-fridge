@@ -1,6 +1,6 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
-import { ItemCategory, Unit, ITEM_CATEGORIES, UNITS } from '../types/enums';
+import { ItemCategory, Unit, ITEM_CATEGORIES, UNITS, STORAGE_UNITS } from '../types/enums';
 import { User } from './User';
 import { Household } from './Household';
 
@@ -79,6 +79,10 @@ Item.init(
           for (const unit of value) {
             if (!UNITS.includes(unit)) {
               throw new Error(`Invalid unit: ${unit}`);
+            }
+            // Cooking measurements (cup, tbsp, tsp) are only allowed in recipes, not in item definitions
+            if (!STORAGE_UNITS.includes(unit)) {
+              throw new Error(`Unit ${unit} is only available for recipes, not for storage items`);
             }
           }
         },

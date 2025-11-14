@@ -632,6 +632,7 @@
   },
   "items": {
     "categories": {
+      "all": "All",
       "vegetables": "Vegetables",
       "fruits": "Fruits",
       "meat": "Meat",

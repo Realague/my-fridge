@@ -610,6 +610,7 @@
   },
   "items": {
     "categories": {
+      "all": "Tous",
       "vegetables": "Légumes",
       "fruits": "Fruits",
       "meat": "Viande",

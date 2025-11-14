@@ -119,8 +119,12 @@ export const getUnitsForCategory = (category: string, context: 'storage' | 'reci
     };
   }
   
-  // For recipe context, include all units
-  return categoryUnits;
+  // For recipe context, add cooking measurements to available units
+  const cookingUnits = [Unit.CUP, Unit.TABLESPOON, Unit.TEASPOON];
+  return {
+    ...categoryUnits,
+    availableUnits: [...categoryUnits.availableUnits, ...cookingUnits]
+  };
 };
 
 export const getAllCategories = (): string[] => {

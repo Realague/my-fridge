@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Item } from '@/services/itemService';
 import { getUnitDisplayName, getUnitsForCategory } from '@/utils/unitSystem';
+import { useTranslation } from 'react-i18next';
 
 interface QuantitySelectorProps {
   item: Item;
@@ -21,6 +22,7 @@ export const QuantitySelector = ({
   className = '',
   context = 'storage'
 }: QuantitySelectorProps) => {
+  const { t } = useTranslation();
   const [quantity, setQuantity] = useState(initialQuantity);
   const [unit, setUnit] = useState(initialUnit);
 
@@ -28,6 +30,12 @@ export const QuantitySelector = ({
   const availableUnits = React.useMemo(() => {
     const categoryUnits = getUnitsForCategory(item.category, context);
     
+    // For recipe context, always use category units (includes cooking measurements)
+    if (context === 'recipe') {
+      return categoryUnits.availableUnits;
+    }
+    
+    // For storage context, filter by item's available units
     if (Array.isArray(item.availableUnits)) {
       // Filter item's available units by context-appropriate units
       return item.availableUnits.filter(unit => 
@@ -78,7 +86,7 @@ export const QuantitySelector = ({
         <SelectContent>
           {availableUnits.map((availableUnit) => (
             <SelectItem key={availableUnit} value={availableUnit}>
-              {getUnitDisplayName(availableUnit)}
+              {t(`units.${getUnitDisplayName(availableUnit)}`)}
             </SelectItem>
           ))}
         </SelectContent>

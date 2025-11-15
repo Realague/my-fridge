@@ -31,7 +31,7 @@ services:
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: postgres
-      DB_NAME: my_fridge_db
+      DB_NAME: my_fridge_db_staging
       PORT: 3001
       FRONTEND_URL: http://my-fridge.multiplus.ovh:8081
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}

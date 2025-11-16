@@ -23,7 +23,8 @@
     "migrate:validate": "npm run build && node -e \"require('./dist/utils/migrationManager').migrationManager.validateMigrations().then(r => console.log('Validation:', r)).catch(console.error)\"",
     "dev:no-migrate": "AUTO_MIGRATE=false nodemon src/index.ts",
     "dev:manual": "NODE_ENV=manual nodemon src/index.ts",
-    "seed:items": "ts-node src/scripts/seedItemsFromCSV.ts"
+    "seed:items": "ts-node src/scripts/seedItemsFromCSV.ts",
+    "seed:items:custom": "ts-node src/scripts/seedItemsFromCSV.ts"
   },
   "keywords": [
     "express",

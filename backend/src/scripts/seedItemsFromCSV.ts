@@ -1,11 +1,28 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { Sequelize } from 'sequelize';
 import { Item } from '../models/Item';
-import sequelize from '../config/database';
 import { ItemCategory, Unit } from '../types/enums';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 // CSV format: nameKey, frenchName, image, category, englishName, spanishName
 const CSV_PATH = process.env.CSV_PATH || path.join(__dirname, 'output_with_categories_and_en_v4_slug_from_col5_camel.csv');
+
+// Get database name from command line argument or environment variable
+const DB_NAME = process.argv[2] || process.env.DB_NAME || 'my_fridge_db';
+
+// Create a custom Sequelize instance with the specified database
+const sequelize = new Sequelize({
+  dialect: 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '5432'),
+  username: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || 'postgres',
+  database: DB_NAME,
+  logging: false,
+});
 
 // Cloudinary base URL for images
 const CLOUDINARY_BASE_URL = 'https://res.cloudinary.com/your-cloud-name/image/upload/v1/items';
@@ -94,13 +111,17 @@ function getDefaultUnit(category: ItemCategory): Unit {
 async function seedItems() {
   try {
     console.log('Starting item seeding from CSV...\n');
+    console.log(`Target database: ${DB_NAME}\n`);
     
     // Check if CSV file exists
     if (!fs.existsSync(CSV_PATH)) {
       console.error(`CSV file not found at: ${CSV_PATH}`);
-      console.log('Please ensure the CSV file is in the project root directory.');
+      console.log('Please ensure the CSV file is in the scripts directory.');
       process.exit(1);
     }
+    
+    // Initialize Item model with this sequelize instance
+    Item.init(Item.getAttributes(), { sequelize });
     
     // Connect to database
     await sequelize.authenticate();

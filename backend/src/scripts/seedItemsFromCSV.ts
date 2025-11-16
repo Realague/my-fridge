@@ -5,7 +5,7 @@ import sequelize from '../config/database';
 import { ItemCategory, Unit } from '../types/enums';
 
 // CSV format: nameKey, frenchName, image, category, englishName, spanishName
-const CSV_PATH = process.env.CSV_PATH || 'C:\\Users\\Realague\\Desktop\\output_with_categories_and_en_v4_slug_from_col5_camel.csv';
+const CSV_PATH = process.env.CSV_PATH || path.join(__dirname, 'output_with_categories_and_en_v4_slug_from_col5_camel.csv');
 
 // Cloudinary base URL for images
 const CLOUDINARY_BASE_URL = 'https://res.cloudinary.com/your-cloud-name/image/upload/v1/items';

@@ -11,6 +11,7 @@ import mealPlanRoutes from './routes/mealPlans';
 import imageRoutes from './routes/images';
 import { sequelize } from './models';
 import { executeSmartMigration } from './utils/migrationStrategy';
+import { ensureDatabase } from './utils/ensureDatabase';
 
 // Load environment variables
 dotenv.config();
@@ -138,6 +139,9 @@ app.use('*', (req, res) => {
 // Start server with automatic migrations
 async function startServer() {
   try {
+    // Ensure database exists (create if necessary)
+    await ensureDatabase();
+    
     // Test database connection
     await sequelize.authenticate();
     console.log('✅ Database connection established successfully.');

@@ -48,15 +48,15 @@ src/
    - Update the database credentials and other environment variables
 
 3. **Database Setup:**
+   
+   The database is automatically created on first startup if it doesn't exist.
+   Migrations are also run automatically when the server starts.
+   
    ```bash
-   # Create database (optional, if using Sequelize CLI)
-   npm run db:create
-   
-   # Run migrations (when you create them)
-   npm run db:migrate
-   
-   # Run seeders (when you create them)
-   npm run db:seed
+   # Manual database operations (optional)
+   npm run db:create      # Manually create database
+   npm run db:migrate     # Manually run migrations
+   npm run db:seed        # Run seeders
    ```
 
 4. **Development:**
@@ -73,11 +73,11 @@ src/
 
 ## Available Scripts
 
-- `npm run dev` - Start development server with nodemon
+- `npm run dev` - Start development server with nodemon (auto-creates DB and runs migrations)
 - `npm run build` - Build TypeScript to JavaScript
-- `npm start` - Start production server
-- `npm run db:create` - Create database
-- `npm run db:migrate` - Run database migrations
+- `npm start` - Start production server (auto-creates DB and runs migrations)
+- `npm run db:create` - Manually create database (optional, done automatically on startup)
+- `npm run db:migrate` - Manually run database migrations (optional, done automatically on startup)
 - `npm run db:seed` - Run database seeders
 
 ## API Endpoints

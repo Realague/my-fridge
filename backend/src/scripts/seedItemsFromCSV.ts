@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Sequelize } from 'sequelize';
-import { Item } from '../models/Item';
-import { ItemCategory, Unit } from '../types/enums';
+import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
+import { ItemCategory, Unit, ITEM_CATEGORIES, UNITS, STORAGE_UNITS } from '../types/enums';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -26,6 +25,121 @@ const sequelize = new Sequelize({
 
 // Cloudinary base URL for images
 const CLOUDINARY_BASE_URL = 'https://res.cloudinary.com/your-cloud-name/image/upload/v1/items';
+
+// Define Item model locally for seeding
+interface ItemAttributes {
+  id: string;
+  name: string;
+  category: ItemCategory;
+  defaultUnit: Unit;
+  availableUnits: Unit[];
+  daysAfterOpening: number | null;
+  imageUrl: string | null;
+  householdId: string | null;
+  createdBy: string | null;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+interface ItemCreationAttributes extends Optional<ItemAttributes, 'id' | 'defaultUnit' | 'availableUnits' | 'daysAfterOpening' | 'createdAt' | 'updatedAt'> {}
+
+class ItemModel extends Model<ItemAttributes, ItemCreationAttributes> implements ItemAttributes {
+  public id!: string;
+  public name!: string;
+  public category!: ItemCategory;
+  public defaultUnit!: Unit;
+  public availableUnits!: Unit[];
+  public daysAfterOpening!: number | null;
+  public imageUrl!: string | null;
+  public createdBy!: string | null;
+  public householdId!: string | null;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+
+ItemModel.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: [1, 100],
+      },
+    },
+    category: {
+      type: DataTypes.ENUM(...ITEM_CATEGORIES),
+      allowNull: false,
+      defaultValue: ItemCategory.OTHER,
+    },
+    defaultUnit: {
+      type: DataTypes.ENUM(...UNITS),
+      allowNull: false,
+      defaultValue: Unit.PIECE,
+    },
+    availableUnits: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: [Unit.PIECE],
+      validate: {
+        isValidUnitsArray(value: any) {
+          if (!Array.isArray(value)) {
+            throw new Error('Available units must be an array');
+          }
+          if (value.length === 0) {
+            throw new Error('Available units array cannot be empty');
+          }
+          for (const unit of value) {
+            if (!UNITS.includes(unit)) {
+              throw new Error(`Invalid unit: ${unit}`);
+            }
+            if (!STORAGE_UNITS.includes(unit)) {
+              throw new Error(`Unit ${unit} is only available for recipes, not for storage items`);
+            }
+          }
+        },
+      },
+    },
+    daysAfterOpening: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      validate: {
+        min: 1,
+      },
+    },
+    householdId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: 'households',
+        key: 'id',
+      },
+    },
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    createdBy: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id',
+      },
+    },
+  },
+  {
+    sequelize,
+    tableName: 'items',
+    timestamps: true,
+  }
+);
+
+const Item = ItemModel;
 
 // Map CSV categories to our ItemCategory enum
 const CATEGORY_MAP: { [key: string]: ItemCategory } = {
@@ -119,9 +233,6 @@ async function seedItems() {
       console.log('Please ensure the CSV file is in the scripts directory.');
       process.exit(1);
     }
-    
-    // Initialize Item model with this sequelize instance
-    Item.init(Item.getAttributes(), { sequelize });
     
     // Connect to database
     await sequelize.authenticate();

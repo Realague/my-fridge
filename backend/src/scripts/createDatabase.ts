@@ -4,14 +4,17 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /**
- * Ensures the database exists, creating it if necessary
+ * Standalone script to create the database
+ * Usage: npm run db:create:script
  */
-export async function ensureDatabase(): Promise<void> {
+async function createDatabase() {
   const dbName = process.env.DB_NAME || 'my_fridge_db';
   const dbHost = process.env.DB_HOST || 'localhost';
   const dbPort = parseInt(process.env.DB_PORT || '5432');
   const dbUser = process.env.DB_USER || 'postgres';
   const dbPassword = process.env.DB_PASSWORD || 'postgres';
+
+  console.log(`🔌 Connecting to PostgreSQL at ${dbHost}:${dbPort}...`);
 
   // Connect to the default 'postgres' database to check/create our database
   const client = new Client({
@@ -24,6 +27,7 @@ export async function ensureDatabase(): Promise<void> {
 
   try {
     await client.connect();
+    console.log('✅ Connected to PostgreSQL server');
     
     // Check if database exists
     const result = await client.query(
@@ -40,10 +44,25 @@ export async function ensureDatabase(): Promise<void> {
       console.log(`✅ Database '${dbName}' already exists.`);
     }
   } catch (error) {
-    console.error('❌ Error ensuring database exists:', error);
-    throw error;
+    console.error('❌ Error creating database:', error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+    }
+    process.exit(1);
   } finally {
     await client.end();
+    console.log('🔌 Disconnected from PostgreSQL');
   }
 }
+
+// Run the script
+createDatabase()
+  .then(() => {
+    console.log('✨ Database setup complete!');
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error('💥 Fatal error:', error);
+    process.exit(1);
+  });
 

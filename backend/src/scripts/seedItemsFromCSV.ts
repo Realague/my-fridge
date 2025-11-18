@@ -182,6 +182,7 @@ function parseCSVLine(line: string): string[] {
 }
 
 // Get appropriate available units for a category
+// Note: Only STORAGE_UNITS are allowed (CUP, TABLESPOON, TEASPOON are recipe-only units)
 function getAvailableUnits(category: ItemCategory): Unit[] {
   switch (category) {
     case ItemCategory.VEGETABLES:
@@ -191,9 +192,9 @@ function getAvailableUnits(category: ItemCategory): Unit[] {
     case ItemCategory.DAIRY:
       return [Unit.MILLILITER, Unit.LITER, Unit.PIECE, Unit.GRAM];
     case ItemCategory.GRAINS:
-      return [Unit.GRAM, Unit.KILOGRAM, Unit.CUP, Unit.TABLESPOON];
+      return [Unit.GRAM, Unit.KILOGRAM, Unit.PIECE];
     case ItemCategory.SPICES:
-      return [Unit.GRAM, Unit.TEASPOON, Unit.TABLESPOON, Unit.PIECE];
+      return [Unit.GRAM, Unit.PIECE];
     case ItemCategory.BEVERAGES:
       return [Unit.MILLILITER, Unit.LITER, Unit.PIECE];
     case ItemCategory.SNACKS:
@@ -201,7 +202,7 @@ function getAvailableUnits(category: ItemCategory): Unit[] {
     case ItemCategory.CANNED:
       return [Unit.PIECE, Unit.GRAM, Unit.KILOGRAM, Unit.PACK];
     case ItemCategory.CONDIMENTS:
-      return [Unit.MILLILITER, Unit.LITER, Unit.GRAM, Unit.TABLESPOON, Unit.TEASPOON];
+      return [Unit.MILLILITER, Unit.LITER, Unit.GRAM, Unit.PIECE];
     default:
       return [Unit.PIECE, Unit.GRAM, Unit.KILOGRAM];
   }
@@ -337,7 +338,11 @@ async function seedItems() {
         created += batch.length;
         console.log(`  Created ${created}/${newItems.length} items...`);
       } catch (error: any) {
-        console.error(`Error creating batch starting at index ${i}:`, error.message);
+        const errorMessage = error?.message || error?.toString() || JSON.stringify(error);
+        console.error(`Error creating batch starting at index ${i}:`, errorMessage);
+        if (error?.errors) {
+          console.error('  Validation errors:', error.errors.map((e: any) => e.message).join(', '));
+        }
         // Continue with next batch
       }
     }

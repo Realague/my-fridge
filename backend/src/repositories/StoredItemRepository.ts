@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 import { StoredItem } from '../models/StoredItem';
 import { Item } from '../models/Item';
 import { StorageArea } from '../models/StorageArea';
+import { StorageAreaType } from '../types/enums';
 import { User } from '../models/User';
 import { CreateStoredItemDto, UpdateStoredItemDto, GetStoredItemsQueryDto } from '../types/ItemDto';
 
@@ -161,17 +162,20 @@ export class StoredItemRepository {
     });
   }
 
-  async update(id: string, householdId: string, data: UpdateStoredItemDto): Promise<StoredItem | null> {
+  async update(id: string, householdId: string, data: UpdateStoredItemDto & { frozenDate?: string | null }): Promise<StoredItem | null> {
     const storedItem = await StoredItem.findOne({ where: { id, householdId } });
     if (!storedItem) return null;
 
-    const updateData = {
+    const updateData: any = {
       ...data,
       expirationDate: data.expirationDate !== undefined 
         ? (data.expirationDate ? new Date(data.expirationDate) : null)
         : undefined,
       openedDate: data.openedDate !== undefined 
         ? (data.openedDate ? new Date(data.openedDate) : null)
+        : undefined,
+      frozenDate: data.frozenDate !== undefined
+        ? (data.frozenDate ? new Date(data.frozenDate) : null)
         : undefined,
     };
 

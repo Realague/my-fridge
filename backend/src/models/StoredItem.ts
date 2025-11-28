@@ -4,6 +4,7 @@ import { Unit, UNITS, STORAGE_UNITS } from '../types/enums';
 import { User } from './User';
 import { Item } from './Item';
 import { StorageArea } from './StorageArea';
+import { getRecommendedFreezerDays } from '../utils/freezerStorageRecommendations';
 
 // These are all the attributes in the StoredItem model
 interface StoredItemAttributes {
@@ -16,6 +17,7 @@ interface StoredItemAttributes {
   location: string | null;
   isOpened: boolean;
   openedDate: Date | null;
+  frozenDate: Date | null;
   householdId: string;
   createdBy: string;
   createdAt?: Date;
@@ -23,7 +25,7 @@ interface StoredItemAttributes {
 }
 
 // Some attributes are optional in `StoredItem.build()` and `StoredItem.create()`
-interface StoredItemCreationAttributes extends Optional<StoredItemAttributes, 'id' | 'quantity' | 'unit' | 'expirationDate' | 'location' | 'isOpened' | 'openedDate' | 'createdAt' | 'updatedAt'> {}
+interface StoredItemCreationAttributes extends Optional<StoredItemAttributes, 'id' | 'quantity' | 'unit' | 'expirationDate' | 'location' | 'isOpened' | 'openedDate' | 'frozenDate' | 'createdAt' | 'updatedAt'> {}
 
 export class StoredItem extends Model<StoredItemAttributes, StoredItemCreationAttributes> implements StoredItemAttributes {
   public id!: string;
@@ -35,6 +37,7 @@ export class StoredItem extends Model<StoredItemAttributes, StoredItemCreationAt
   public location!: string | null;
   public isOpened!: boolean;
   public openedDate!: Date | null;
+  public frozenDate!: Date | null;
   public householdId!: string;
   public readonly createdBy!: string;
   public readonly createdAt!: Date;
@@ -82,6 +85,31 @@ export class StoredItem extends Model<StoredItemAttributes, StoredItemCreationAt
     const today = new Date();
     const diffTime = effectiveDate.getTime() - today.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  // Helper method to get days since frozen
+  public getDaysFrozen(): number | null {
+    if (!this.frozenDate) return null;
+    const frozenDate = new Date(this.frozenDate);
+    const today = new Date();
+    const diffTime = today.getTime() - frozenDate.getTime();
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  // Helper method to get recommended freezer storage days based on item category
+  public getRecommendedFreezerStorageDays(): number | null {
+    if (!this.item?.category) return null;
+    return getRecommendedFreezerDays(this.item.category);
+  }
+
+  // Helper method to check if item has been frozen too long
+  public isFrozenTooLong(): boolean {
+    if (!this.frozenDate) return false;
+    const recommendedDays = this.getRecommendedFreezerStorageDays();
+    if (!recommendedDays) return false;
+    const daysFrozen = this.getDaysFrozen();
+    if (daysFrozen === null) return false;
+    return daysFrozen > recommendedDays;
   }
 }
 
@@ -146,6 +174,10 @@ StoredItem.init(
       defaultValue: false,
     },
     openedDate: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    frozenDate: {
       type: DataTypes.DATEONLY,
       allowNull: true,
     },

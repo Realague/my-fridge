@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, ArrowLeft, Calendar, MapPin, AlertTriangle, Edit, Trash2, Save, X, PackageOpen } from 'lucide-react';
+import { Plus, ArrowLeft, Calendar, MapPin, AlertTriangle, Edit, Trash2, Save, X, PackageOpen, Snowflake } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
 import { QuantitySelector } from '@/components/QuantitySelector';
@@ -279,6 +279,12 @@ const StorageArea = () => {
                     {t('storedItems.opened')}
                   </Badge>
                 )}
+                {storageItem.frozenDate && (
+                  <Badge variant={storageItem.isFrozenTooLong ? "destructive" : "secondary"} className={`text-xs ${storageItem.isFrozenTooLong ? '' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'}`}>
+                    <Snowflake className="h-3 w-3 mr-1" />
+                    {storageItem.isFrozenTooLong ? t('storedItems.freezerWarning') : t('storedItems.frozen')}
+                  </Badge>
+                )}
                 {getExpirationBadge(storageItem.effectiveExpirationDate || storageItem.expirationDate)}
               </div>
               
@@ -372,6 +378,23 @@ const StorageArea = () => {
                       <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
                         <PackageOpen className="h-3 w-3" />
                         <span>{t('storedItems.openedOn')} {formatDate(new Date(storageItem.openedDate), 'MMM d')}</span>
+                      </div>
+                    )}
+                    {storageItem.frozenDate && (
+                      <div className={`flex items-center gap-1 ${storageItem.isFrozenTooLong ? 'text-red-600 dark:text-red-400' : 'text-blue-600 dark:text-blue-400'}`}>
+                        <Snowflake className="h-3 w-3" />
+                        <span>
+                          {t('storedItems.frozenDate')} {formatDate(new Date(storageItem.frozenDate), 'MMM d')}
+                          {storageItem.daysFrozen !== null && storageItem.daysFrozen !== undefined && (
+                            <span> ({t('storedItems.frozenTooLong', { days: storageItem.daysFrozen })})</span>
+                          )}
+                        </span>
+                      </div>
+                    )}
+                    {storageItem.isFrozenTooLong && (
+                      <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
+                        <AlertTriangle className="h-3 w-3" />
+                        <span>{t('storedItems.freezerWarning')}</span>
                       </div>
                     )}
                   </div>

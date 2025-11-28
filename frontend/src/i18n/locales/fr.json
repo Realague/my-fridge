@@ -146,6 +146,10 @@
     "opened": "OUVERT",
     "openedStatus": "Ouvert/Fermé",
     "openedDate": "Date d'ouverture",
+    "frozenDate": "Congelé le",
+    "frozen": "CONGELÉ",
+    "frozenTooLong": "Congelé pour {{days}} jours",
+    "freezerWarning": "Congelé plus longtemps que recommandé",
     "consumeWithinDays": "À consommer dans les {{days}} jours après ouverture"
   },
   "itemSelector": {

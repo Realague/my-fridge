@@ -146,7 +146,11 @@
     "opened": "ABIERTO",
     "openedStatus": "Abierto/Cerrado",
     "openedDate": "Fecha de apertura",
-    "consumeWithinDays": "Consumir dentro de {{days}} días después de abrir"
+    "frozenDate": "Congelado el",
+    "frozen": "CONGELADO",
+    "frozenTooLong": "Congelado por {{days}} días",
+    "freezerWarning": "Congelado por más tiempo que el recomendado",
+    "consumeWithinDays": "Consumir dentro de {{days}} días"
   },
   "itemSelector": {
     "itemImage": "Imagen del artículo",
@@ -606,7 +610,7 @@
     "serving": "serving",
     "dozen": "dozen",
     "other": "other"
-  },
+  },  
   "items": {
     "categories": {
       "all": "Todos",

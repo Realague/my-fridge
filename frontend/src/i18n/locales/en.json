@@ -145,6 +145,10 @@
     "openedItems": "Opened items",
     "opened": "OPENED",
     "openedStatus": "Opened/Sealed",
+    "frozenDate": "Frozen on",
+    "frozen": "FROZEN",
+    "frozenTooLong": "Frozen for {{days}} days",
+    "freezerWarning": "Frozen longer than recommended",
     "openedDate": "Opening date",
     "consumeWithinDays": "To be consumed within {{days}} days after opening"
   },

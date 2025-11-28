@@ -1,6 +1,8 @@
 import { StoredItemRepository } from '../repositories/StoredItemRepository';
 import { CreateStoredItemDto, UpdateStoredItemDto, GetStoredItemsQueryDto, StoredItemDto } from '../types/ItemDto';
 import { StoredItem } from '../models/StoredItem';
+import { StorageArea } from '../models/StorageArea';
+import { StorageAreaType } from '../types/enums';
 
 export class StoredItemService {
   private storedItemRepository: StoredItemRepository;
@@ -10,7 +12,16 @@ export class StoredItemService {
   }
 
   async createStoredItem(data: CreateStoredItemDto): Promise<StoredItemDto> {
-    const storedItem = await this.storedItemRepository.create(data);
+    // Check if storage area is freezer type and set frozenDate accordingly
+    const storageArea = await StorageArea.findByPk(data.storageAreaId);
+    const createData = {
+      ...data,
+      frozenDate: storageArea?.type === StorageAreaType.FREEZER 
+        ? new Date().toISOString().split('T')[0] 
+        : undefined,
+    };
+    
+    const storedItem = await this.storedItemRepository.create(createData);
     return this.mapToDto(storedItem);
   }
 
@@ -43,7 +54,29 @@ export class StoredItemService {
   }
 
   async updateStoredItem(id: string, householdId: string, data: UpdateStoredItemDto): Promise<StoredItemDto | null> {
-    const storedItem = await this.storedItemRepository.update(id, householdId, data);
+    // Get current stored item to check current storage area
+    const currentItem = await this.storedItemRepository.findById(id, householdId);
+    if (!currentItem) return null;
+
+    const updateData: UpdateStoredItemDto = { ...data };
+
+    // Handle storage area change and frozenDate logic
+    if (data.storageAreaId && data.storageAreaId !== currentItem.storageAreaId) {
+      // Storage area is being changed
+      const newStorageArea = await StorageArea.findByPk(data.storageAreaId);
+      const currentStorageArea = await StorageArea.findByPk(currentItem.storageAreaId);
+
+      // If moving TO freezer, set frozenDate to today
+      if (newStorageArea?.type === StorageAreaType.FREEZER) {
+        currentItem.frozenDate = new Date();
+      }
+      // If moving FROM freezer, clear frozenDate
+      else if (currentStorageArea?.type === StorageAreaType.FREEZER) {
+        currentItem.frozenDate = null;
+      }
+    }
+
+    const storedItem = await this.storedItemRepository.update(id, householdId, updateData);
     return storedItem ? this.mapToDto(storedItem) : null;
   }
 
@@ -68,6 +101,7 @@ export class StoredItemService {
       location: storedItem.location,
       isOpened: storedItem.isOpened,
       openedDate: storedItem.openedDate ? new Date(storedItem.openedDate).toISOString().split('T')[0] : null,
+      frozenDate: storedItem.frozenDate ? new Date(storedItem.frozenDate).toISOString().split('T')[0] : null,
       householdId: storedItem.householdId,
       createdBy: storedItem.createdBy,
       createdAt: storedItem.createdAt.toISOString(),
@@ -76,6 +110,8 @@ export class StoredItemService {
       isExpiringSoon: storedItem.isExpiringSoon(),
       daysUntilExpiration: storedItem.getDaysUntilExpiration(),
       effectiveExpirationDate: effectiveExpirationDate ? effectiveExpirationDate.toISOString().split('T')[0] : null,
+      daysFrozen: storedItem.getDaysFrozen(),
+      isFrozenTooLong: storedItem.isFrozenTooLong(),
     };
 
     // Add related data if loaded

@@ -87,7 +87,7 @@ const StorageAreaDialog = ({ isOpen, onClose, onSubmit, mode, initialData }: Sto
             <select 
               value={type} 
               onChange={(e) => setType(e.target.value as StorageAreaType)}
-              className="w-full p-2 border rounded-md"
+              className="w-full p-2 border rounded-md bg-background"
             >
               <option value={StorageAreaType.FRIDGE}>{t('storageArea.types.fridge')}</option>
               <option value={StorageAreaType.FREEZER}>{t('storageArea.types.freezer')}</option>

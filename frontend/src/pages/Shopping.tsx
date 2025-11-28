@@ -323,8 +323,6 @@ const Shopping = () => {
           isCompleted ? 'bg-accent opacity-75' : 'bg-muted'
         } ${draggedItem === shoppingItem.id ? 'opacity-50' : ''}`}
       >
-        <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab flex-shrink-0" />
-        
         <button
           onClick={() => toggleItemComplete(shoppingItem.id)}
           className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors ${

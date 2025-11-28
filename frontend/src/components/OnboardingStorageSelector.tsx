@@ -171,7 +171,7 @@ export const OnboardingStorageSelector = ({
           <Label className="text-sm font-medium">Selected Storage Areas ({selectedAreas.length})</Label>
           <div className="space-y-2 max-h-64 overflow-y-auto">
             {selectedAreas.map((area, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-border">
+              <div key={index} className="flex items-center justify-between p-3 rounded-lg border border-border bg-background">
                 <div className="flex items-center gap-3">
                   <div className="text-lg">{area.emoji}</div>
                   <div>
@@ -192,9 +192,9 @@ export const OnboardingStorageSelector = ({
                   </Button>
                   <Button
                     size="sm"
-                    variant="ghost"
+                    variant="deleteTrash"
                     onClick={() => handleRemoveArea(index)}
-                    className="h-8 w-8 p-0 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                    className="h-8 w-8 p-0"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

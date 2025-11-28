@@ -223,7 +223,7 @@ export const AddMealPlanDialog = ({
           <Button 
             onClick={handleSaveMeal}
             disabled={!selectedRecipe || !selectedMealType || savingMealPlan}
-            className="bg-green-600 hover:bg-green-700 text-white"
+            className="bg-green-600 hover:bg-green-700 text-white mb-4"
           >
             {savingMealPlan ? t('forms.adding') : t('pages.mealPlans.addMeal')}
           </Button>

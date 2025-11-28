@@ -157,7 +157,7 @@ const Settings = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">{t('forms.email')}</Label>
-                  <Input id="email" type="email" defaultValue={user?.email} readOnly className="bg-muted" />
+                  <Input id="email" type="email" defaultValue={user?.email} readOnly className="bg-muted bg-background" />
                   <p className="text-xs text-muted-foreground">{t('pages.settings.profileSettings.emailCannotBeChanged')}</p>
                 </div>
                 <Button 

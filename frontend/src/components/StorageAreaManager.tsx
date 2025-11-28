@@ -93,7 +93,7 @@ const StorageAreaManager = () => {
 
 
   return (
-    <Card className="bg-primary/10 backdrop-blur-sm border-0 shadow-lg">
+    <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>{t('storageAreaManager.title')}</span>

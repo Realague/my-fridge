@@ -178,7 +178,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
                   variant={unit === defaultUnit ? "default" : "secondary"}
                   className="cursor-pointer"
                 >
-                  {getUnitDisplayName(unit)}
+                  {t(`units.${getUnitDisplayName(unit)}`)}
                   {availableUnits.length > 1 && (
                     <button
                       onClick={() => handleRemoveUnit(unit)}

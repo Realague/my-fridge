@@ -23,7 +23,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.staging
     restart: always
     environment:
       NODE_ENV: development
@@ -52,7 +52,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.staging
     restart: always
     environment:
       VITE_API_URL: http://my-fridge.multiplus.ovh:3001

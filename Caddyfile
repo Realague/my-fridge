@@ -1,3 +1,3 @@
-my-fridge.multiplus.ovh, www.my-fridge.multiplus.ovh {
+my-fridge.multiplus.ovh {
     reverse_proxy app:8080
 }

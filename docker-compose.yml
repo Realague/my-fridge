@@ -1,6 +1,18 @@
 version: '3.8'
 
 services:
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+
   # PostgreSQL Database
   db:
     image: postgres:15
@@ -53,15 +65,17 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    restart: always
+    restart: unless-stopped
     environment:
       VITE_API_URL: http://my-fridge.multiplus.ovh:3000
-    ports:
-      - "8080:8080"
     volumes:
       - ./frontend:/app
       - /app/node_modules
     command: npm run dev
+    expose:
+      - "8080"
 
 volumes:
-  pgdata: 
+  pgdata:
+  caddy_data:
+  caddy_config:

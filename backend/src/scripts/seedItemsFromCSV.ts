@@ -24,7 +24,7 @@ const sequelize = new Sequelize({
 });
 
 // Cloudinary base URL for images
-const CLOUDINARY_BASE_URL = 'https://res.cloudinary.com/your-cloud-name/image/upload/v1/items';
+const CLOUDINARY_BASE_URL = 'https://res.cloudinary.com/duxpbou8b/image/upload/v1763055075/items';
 
 // Define Item model locally for seeding
 interface ItemAttributes {
@@ -223,6 +223,17 @@ function getDefaultUnit(category: ItemCategory): Unit {
   }
 }
 
+// Build full Cloudinary image URL from nameKey
+// Images in Cloudinary are stored as: {CLOUDINARY_BASE_URL}/{nameKey}.jpg
+function buildImageUrl(nameKey: string, hasImage: boolean): string | null {
+  if (!hasImage) {
+    return null;
+  }
+  
+  // Return full Cloudinary URL using the camelCase nameKey
+  return `${CLOUDINARY_BASE_URL}/${nameKey}.jpg`;
+}
+
 async function seedItems() {
   try {
     console.log('Starting item seeding from CSV...\n');
@@ -271,13 +282,8 @@ async function seedItems() {
       // Map category
       const category = CATEGORY_MAP[(categoryStr || 'other').toLowerCase()] || ItemCategory.OTHER;
       
-      // Build image URL
-      let imageUrl: string | null = null;
-      if (imageName && imageName.trim() !== '') {
-        // For now, we'll use a placeholder. You can update this with actual Cloudinary URLs
-        // imageUrl = `${CLOUDINARY_BASE_URL}/${imageName}`;
-        imageUrl = imageName; // Store just the filename for now
-      }
+      // Build full Cloudinary image URL (only if image exists in CSV)
+      const imageUrl = buildImageUrl(nameKey, !!(imageName && imageName.trim()));
       
       // Create item data
       itemsToCreate.push({

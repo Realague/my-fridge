@@ -1,7 +1,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { getUnauthHeaders, getAuthHeaders } from '@/utils/apiHeaders';
+import { getUnauthHeaders, getAuthHeaders, getAuthBaseUrl } from '@/utils/apiHeaders';
 
 export interface User {
   id: string;
@@ -129,7 +129,7 @@ export const useAuthStore = create<AuthState>()(
             return false;
           }
 
-          const response = await fetch(`${import.meta.env.VITE_API_URL || 'localhost:3000'}/auth/refresh`, {
+          const response = await fetch(`${getAuthBaseUrl()}/auth/refresh`, {
             method: 'POST',
             headers: getUnauthHeaders(),
             body: JSON.stringify({ sessionToken: state.tokens.sessionToken }),
@@ -202,7 +202,7 @@ export const useAuthStore = create<AuthState>()(
           throw new Error('No valid authentication token found');
         }
 
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'localhost:3000'}/auth/me`, {
+        const response = await fetch(`${getAuthBaseUrl()}/auth/me`, {
           method: 'PUT',
           headers: getAuthHeaders(token),
           body: JSON.stringify({ firstName, lastName }),

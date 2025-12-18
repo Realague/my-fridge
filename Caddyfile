@@ -1,7 +1,6 @@
 my-fridge.multiplus.ovh {
     # API requests proxied to backend
     handle /api/* {
-        uri strip_prefix /api
         reverse_proxy backend:3000
     }
     

@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '@/utils/dateFormatting';
 import { toast } from 'sonner';
 import { SelectedItemPreview } from '@/components/SelectedItemPreview';
-import { getItemDisplayName } from '@/utils/itemUtils';
+import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
 import { OpenedStatusToggle } from '@/components/OpenedStatusToggle';
 
 const StorageArea = () => {
@@ -270,7 +270,7 @@ const StorageArea = () => {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <h3 className="font-medium text-foreground">{getItemDisplayName(item, t)}</h3>
-                <Badge variant="outline" className="text-xs text-foreground">
+                <Badge variant="outline" className={getCategoryColor(item.category)}>
                   { t(`items.categories.${item.category}`) }
                 </Badge>
                 {storageItem.isOpened && (

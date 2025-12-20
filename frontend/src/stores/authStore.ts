@@ -87,15 +87,45 @@ export const useAuthStore = create<AuthState>()(
         // Check if we have stored tokens
         if (state.tokens?.accessToken) {
           try {
+            let validToken = state.tokens.accessToken;
+            
             // Check if access token is expired
             if (get().isTokenExpired(state.tokens.accessToken)) {
               // Try to refresh the token
               const refreshed = await get().refreshTokens();
               if (!refreshed) {
-                set({ user: null, tokens: null, isAuthenticated: false });
+                set({ user: null, tokens: null, isAuthenticated: false, isLoading: false });
+                return;
               }
-            } else {
-              // Token is still valid, keep current state
+              validToken = get().tokens?.accessToken || '';
+            }
+            
+            // Fetch fresh user data from the server to ensure selectedHouseholdId is synced
+            // This is especially important when connecting from a new device
+            try {
+              const response = await fetch(`${getAuthBaseUrl()}/auth/me`, {
+                method: 'GET',
+                headers: getAuthHeaders(validToken),
+              });
+              
+              if (response.ok) {
+                const responseData = await response.json();
+                if (responseData.success && responseData.data?.user) {
+                  // Update user with fresh data from server (includes selectedHouseholdId)
+                  get().setUser(responseData.data.user);
+                  set({ isAuthenticated: true });
+                } else {
+                  // Token valid but couldn't get user data, keep existing state
+                  set({ isAuthenticated: true });
+                }
+              } else {
+                // Failed to fetch user, but token might still be valid
+                // Keep existing user data if available
+                set({ isAuthenticated: true });
+              }
+            } catch (fetchError) {
+              console.error('Failed to fetch fresh user data:', fetchError);
+              // Network error, keep existing state if we have user data
               set({ isAuthenticated: true });
             }
           } catch (error) {

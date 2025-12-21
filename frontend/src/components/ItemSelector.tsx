@@ -123,9 +123,11 @@ export const ItemSelector = ({
           
           try {
             // Use backend translation search for better performance
+            // Normalize language to base code (e.g., 'fr-FR' → 'fr') for mobile browser compatibility
+            const normalizedLanguage = i18n.language.split('-')[0];
             const response = await itemService.searchItems({
               search: query, // Search with the actual query
-              language: i18n.language, // Pass current language for backend translation search
+              language: normalizedLanguage, // Pass normalized language for backend translation search
               limit: 20,
             });
             

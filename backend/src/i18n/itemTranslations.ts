@@ -7766,11 +7766,24 @@ export const itemTranslations: ItemTranslations = {
 };
 
 /**
+ * Normalize a language code to its base language (e.g., 'fr-FR' → 'fr', 'en-US' → 'en')
+ * This handles mobile browsers that may return full locale codes
+ */
+function normalizeLanguageCode(language: string): string {
+  if (!language) return 'en';
+  // Extract base language from locale codes like 'fr-FR', 'en-US', etc.
+  const baseLang = language.split('-')[0]?.toLowerCase() || 'en';
+  // Return the base language if we have translations for it, otherwise default to 'en'
+  return itemTranslations[baseLang] ? baseLang : 'en';
+}
+
+/**
  * Get reverse translation map for a given language
  * Maps translated names back to nameKeys
  */
 export function getReverseTranslationMap(language: string): { [translatedName: string]: string } {
-  const translations = itemTranslations[language];
+  const normalizedLang = normalizeLanguageCode(language);
+  const translations = itemTranslations[normalizedLang];
   if (!translations) {
     return {};
   }
@@ -7787,7 +7800,8 @@ export function getReverseTranslationMap(language: string): { [translatedName: s
  * Get all translated names for a given language
  */
 export function getTranslatedNames(language: string): string[] {
-  const translations = itemTranslations[language];
+  const normalizedLang = normalizeLanguageCode(language);
+  const translations = itemTranslations[normalizedLang];
   if (!translations) {
     return [];
   }

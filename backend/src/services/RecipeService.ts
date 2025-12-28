@@ -68,6 +68,7 @@ export class RecipeService {
         instructions: recipeData.instructions,
         tags: recipeData.tags,
         imageUrl: recipeData.imageUrl || null,
+        sourceUrl: recipeData.sourceUrl || null,
         householdId: recipeData.householdId,
         createdBy: recipeData.createdBy
       }, transaction);
@@ -229,6 +230,7 @@ export class RecipeService {
       instructions: recipe.instructions,
       tags: recipe.tags,
       imageUrl: recipe.imageUrl,
+      sourceUrl: recipe.sourceUrl,
       isFavorite: recipe.isFavorite,
       householdId: recipe.householdId,
       createdBy: recipe.createdBy,
@@ -255,6 +257,7 @@ export class RecipeService {
       difficulty: recipe.difficulty,
       tags: recipe.tags,
       imageUrl: recipe.imageUrl,
+      sourceUrl: recipe.sourceUrl,
       isFavorite: recipe.isFavorite,
       createdBy: recipe.createdBy,
       createdAt: recipe.createdAt.toISOString(),

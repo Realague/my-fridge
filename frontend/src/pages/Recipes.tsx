@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Plus, Search, Heart, Clock, Users, ChefHat } from 'lucide-react';
+import { Plus, Search, Heart, Clock, Users, ChefHat, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useRecipeStore } from '@/stores/recipeStore';
@@ -103,14 +103,24 @@ const Recipes = () => {
                 {loading ? t('common.loading') : t('pages.recipes.recipeSaved', { count: total || 0 })}
               </p>
             </div>
-            <Button
-              variant="green"
-              className="touch-friendly"
-              onClick={() => navigate('/add-recipe')}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              {t('pages.recipes.addRecipe')}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                className="touch-friendly"
+                onClick={() => navigate('/import-recipe')}
+              >
+                <Download className="h-4 w-4 mr-2" />
+                {t('pages.importRecipe.import')}
+              </Button>
+              <Button
+                variant="green"
+                className="touch-friendly"
+                onClick={() => navigate('/add-recipe')}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                {t('pages.recipes.addRecipe')}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

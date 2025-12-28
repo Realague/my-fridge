@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, ChefHat } from 'lucide-react';
+import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, ChefHat, ExternalLink } from 'lucide-react';
 import { AddMealPlanDialog } from '@/components/AddMealPlanDialog';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useToast } from '@/hooks/use-toast';
@@ -245,6 +245,21 @@ const RecipeDetails = () => {
                 </Badge>
               ))}
             </div>
+
+            {/* Source URL */}
+            {recipe.sourceUrl && (
+              <div className="pt-2">
+                <a
+                  href={recipe.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  {t('pages.importRecipe.viewOriginal')}
+                </a>
+              </div>
+            )}
 
             {/* Action Buttons */}
             <div className="pt-4 space-y-3">

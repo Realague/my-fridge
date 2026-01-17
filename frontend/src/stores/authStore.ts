@@ -1,7 +1,8 @@
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { getUnauthHeaders, getAuthHeaders, getAuthBaseUrl } from '@/utils/apiHeaders';
+import { getSafeStorage } from '@/utils/safeStorage';
 
 export interface User {
   id: string;
@@ -261,10 +262,11 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({ 
+      storage: createJSONStorage(getSafeStorage),
+      partialize: (state) => ({
         user: state.user,
         tokens: state.tokens,
-        isAuthenticated: state.isAuthenticated 
+        isAuthenticated: state.isAuthenticated,
       }),
     }
   )

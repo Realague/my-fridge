@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { useApiWithAuth } from '@/hooks/useApiWithAuth';
 import { toast } from 'sonner';
-import { StoredItem, CreateStoredItemRequest, UpdateStoredItemRequest, GetStoredItemsRequest } from '@/services/storedItemService';
+import { StoredItem, CreateStoredItemRequest, UpdateStoredItemRequest, GetStoredItemsRequest, storedItemService } from '@/services/storedItemService';
 import { useHouseholdStore } from './householdStore';
 
 interface StoredItemStore {
@@ -19,6 +18,7 @@ interface StoredItemStore {
   createStoredItem: (data: CreateStoredItemRequest) => Promise<StoredItem>;
   updateStoredItem: (id: string, data: UpdateStoredItemRequest) => Promise<void>;
   deleteStoredItem: (id: string) => Promise<void>;
+  markAsOpened: (id: string, openedDate?: string) => Promise<void>;
   
   // Internal actions
   setLoading: (loading: boolean) => void;
@@ -29,10 +29,15 @@ interface StoredItemStore {
   updateStoredItemInHousehold: (storedItem: StoredItem) => void;
   removeStoredItemFromHousehold: (storedItemId: string) => void;
   
+  // Item deletion cleanup
+  removeStoredItemsByItemId: (itemId: string) => void;
+  
   // Computed getters
   getStoredItemsForHousehold: () => StoredItem[];
   getStoredItemById: (storedItemId: string) => StoredItem | null;
   getStoredItemsByStorageArea: (storageAreaId: string) => StoredItem[];
+  getStoredItemsByItemAndUnit: (itemId: string, unit: string) => StoredItem[];
+  getTotalQuantityForItem: (itemId: string) => any;
   getExpiringStoredItems: () => StoredItem[];
   getExpiredStoredItems: () => StoredItem[];
 }
@@ -51,21 +56,6 @@ const getHouseholdId = (providedId?: string): string | null => {
   }
   
   return null; // No household available
-};
-
-// Create API instance outside the store to avoid circular dependencies
-let apiInstance: ReturnType<typeof useApiWithAuth> | null = null;
-
-const getApi = () => {
-  if (!apiInstance) {
-    console.warn('API instance not initialized. Store operations will be skipped.');
-    return null;
-  }
-  return apiInstance;
-};
-
-export const initializeStoredItemStore = (api: ReturnType<typeof useApiWithAuth>) => {
-  apiInstance = api;
 };
 
 export const useStoredItemStore = create<StoredItemStore>()(
@@ -131,45 +121,30 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }));
       },
 
+      removeStoredItemsByItemId: (itemId: string) => {
+        const householdId = getHouseholdId();
+        if (!householdId) return;
+        
+        set(state => ({
+          storedItemsByHousehold: {
+            ...state.storedItemsByHousehold,
+            [householdId]: (state.storedItemsByHousehold[householdId] || []).filter(item => item.itemId !== itemId)
+          }
+        }));
+      },
+
       fetchStoredItems: async (params?: GetStoredItemsRequest) => {
         const householdId = getHouseholdId();
         if (!householdId) {
           return;
         }
 
-        const api = getApi();
-        if (!api) {
-          return;
-        }
-
         set({ loading: true, error: null });
         
         try {
-          const searchParams = new URLSearchParams();
-          
-          if (params?.storageAreaId) searchParams.append('storageAreaId', params.storageAreaId);
-          if (params?.itemId) searchParams.append('itemId', params.itemId);
-          if (params?.search) searchParams.append('search', params.search);
-          if (params?.isExpired !== undefined) searchParams.append('isExpired', params.isExpired.toString());
-          if (params?.isExpiringSoon !== undefined) searchParams.append('isExpiringSoon', params.isExpiringSoon.toString());
-          if (params?.limit) searchParams.append('limit', params.limit.toString());
-          if (params?.offset) searchParams.append('offset', params.offset.toString());
-
-          const response = await api.get(`/api/households/${householdId}/stored-items?${searchParams.toString()}`);
-          
-          if (response.ok) {
-            const responseData = await response.json();
-            if (responseData.success) {
-              const store = get();
-              store.setStoredItemsForHousehold(responseData.data?.items || []);
-            } else {
-              throw new Error(responseData.message || 'Failed to fetch stored items');
-            }
-          } else {
-            const errorText = await response.text();
-            console.error('fetchStoredItems: Error response:', response.status, errorText);
-            throw new Error(`Failed to fetch stored items: ${response.status}`);
-          }
+          const result = await storedItemService.getStoredItems(householdId, params);
+          const store = get();
+          store.setStoredItemsForHousehold(result.items || []);
         } catch (error) {
           if (error instanceof TypeError && error.message.includes('NetworkError')) {
             const message = 'Network error: Unable to connect to the server. Please check if the backend is running.';
@@ -189,29 +164,12 @@ export const useStoredItemStore = create<StoredItemStore>()(
           return;
         }
 
-        const api = getApi();
-        if (!api) {
-          return;
-        }
-
         set({ loading: true, error: null });
         
         try {
-          const response = await api.get(`/api/households/${householdId}/storage-areas/${storageAreaId}/stored-items`);
-          
-          if (response.ok) {
-            const responseData = await response.json();
-            if (responseData.success) {
-              const store = get();
-              store.setStoredItemsForHousehold(responseData.data || []);
-            } else {
-              throw new Error(responseData.message || 'Failed to fetch stored items by storage area');
-            }
-          } else {
-            const errorText = await response.text();
-            console.error('fetchStoredItemsByStorageArea: Error response:', response.status, errorText);
-            throw new Error(`Failed to fetch stored items by storage area: ${response.status}`);
-          }
+          const items = await storedItemService.getStoredItemsByStorageArea(householdId, storageAreaId);
+          const store = get();
+          store.setStoredItemsForHousehold(items);
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to fetch stored items by storage area';
           set({ error: message });
@@ -226,32 +184,12 @@ export const useStoredItemStore = create<StoredItemStore>()(
           return;
         }
 
-        const api = getApi();
-        if (!api) {
-          return;
-        }
-
         set({ loading: true, error: null });
         
         try {
-          const searchParams = new URLSearchParams();
-          if (days) searchParams.append('days', days.toString());
-
-          const response = await api.get(`/api/households/${householdId}/stored-items/expiring?${searchParams.toString()}`);
-          
-          if (response.ok) {
-            const responseData = await response.json();
-            if (responseData.success) {
-              const store = get();
-              store.setStoredItemsForHousehold(responseData.data || []);
-            } else {
-              throw new Error(responseData.message || 'Failed to fetch expiring items');
-            }
-          } else {
-            const errorText = await response.text();
-            console.error('fetchExpiringItems: Error response:', response.status, errorText);
-            throw new Error(`Failed to fetch expiring items: ${response.status}`);
-          }
+          const items = await storedItemService.getExpiringItems(householdId, days);
+          const store = get();
+          store.setStoredItemsForHousehold(items);
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to fetch expiring items';
           set({ error: message });
@@ -266,29 +204,12 @@ export const useStoredItemStore = create<StoredItemStore>()(
           return;
         }
 
-        const api = getApi();
-        if (!api) {
-          return;
-        }
-
         set({ loading: true, error: null });
         
         try {
-          const response = await api.get(`/api/households/${householdId}/stored-items/expired`);
-          
-          if (response.ok) {
-            const responseData = await response.json();
-            if (responseData.success) {
-              const store = get();
-              store.setStoredItemsForHousehold(responseData.data || []);
-            } else {
-              throw new Error(responseData.message || 'Failed to fetch expired items');
-            }
-          } else {
-            const errorText = await response.text();
-            console.error('fetchExpiredItems: Error response:', response.status, errorText);
-            throw new Error(`Failed to fetch expired items: ${response.status}`);
-          }
+          const items = await storedItemService.getExpiredItems(householdId);
+          const store = get();
+          store.setStoredItemsForHousehold(items);
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to fetch expired items';
           set({ error: message });
@@ -303,34 +224,18 @@ export const useStoredItemStore = create<StoredItemStore>()(
           throw new Error('No household ID provided');
         }
 
-        const api = getApi();
-        if (!api) {
-          throw new Error('API not initialized');
-        }
-
         set({ loading: true, error: null });
         
         try {
-          const response = await api.post(`/api/households/${householdId}/stored-items`, data);
+          const createdItem = await storedItemService.createStoredItem(householdId, data);
           
-          if (response.ok) {
-            const responseData = await response.json();
-            
-            if (responseData.success) {
-              toast.success("Item Added!", {
-                description: `Item has been added to storage successfully.`,
-              });
-              
-              const store = get();
-              store.addStoredItemToHousehold(responseData.data);
-              return responseData.data;
-            } else {
-              throw new Error(responseData.message || 'Failed to create stored item');
-            }
-          } else {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `Failed to create stored item: ${response.status}`);
-          }
+          toast.success("Item Added!", {
+            description: `Item has been added to storage successfully.`,
+          });
+          
+          const store = get();
+          store.addStoredItemToHousehold(createdItem);
+          return createdItem;
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to create stored item';
           set({ error: message });
@@ -349,33 +254,17 @@ export const useStoredItemStore = create<StoredItemStore>()(
           throw new Error('No household ID provided');
         }
 
-        const api = getApi();
-        if (!api) {
-          throw new Error('API not initialized');
-        }
-
         set({ loading: true, error: null });
         
         try {
-          const response = await api.put(`/api/households/${householdId}/stored-items/${id}`, data);
+          const updatedItem = await storedItemService.updateStoredItem(householdId, id, data);
           
-          if (response.ok) {
-            const responseData = await response.json();
-            
-            if (responseData.success) {
-              toast.success("Item Updated!", {
-                description: `Item has been updated successfully.`,
-              });
-              
-              const store = get();
-              store.updateStoredItemInHousehold(responseData.data);
-            } else {
-              throw new Error(responseData.message || 'Failed to update stored item');
-            }
-          } else {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `Failed to update stored item: ${response.status}`);
-          }
+          toast.success("Item Updated!", {
+            description: `Item has been updated successfully.`,
+          });
+          
+          const store = get();
+          store.updateStoredItemInHousehold(updatedItem);
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to update stored item';
           set({ error: message });
@@ -394,33 +283,17 @@ export const useStoredItemStore = create<StoredItemStore>()(
           throw new Error('No household ID provided');
         }
 
-        const api = getApi();
-        if (!api) {
-          throw new Error('API not initialized');
-        }
-
         set({ loading: true, error: null });
         
         try {
-          const response = await api.delete(`/api/households/${householdId}/stored-items/${id}`);
+          await storedItemService.deleteStoredItem(householdId, id);
           
-          if (response.ok) {
-            const responseData = await response.json();
-            
-            if (responseData.success) {
-              toast.success("Item Removed!", {
-                description: `Item has been removed from storage.`,
-              });
-              
-              const store = get();
-              store.removeStoredItemFromHousehold(id);
-            } else {
-              throw new Error(responseData.message || 'Failed to delete stored item');
-            }
-          } else {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `Failed to delete stored item: ${response.status}`);
-          }
+          toast.success("Item Removed!", {
+            description: `Item has been removed from storage.`,
+          });
+          
+          const store = get();
+          store.removeStoredItemFromHousehold(id);
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to delete stored item';
           set({ error: message });
@@ -430,6 +303,24 @@ export const useStoredItemStore = create<StoredItemStore>()(
           throw error;
         } finally {
           set({ loading: false });
+        }
+      },
+
+      markAsOpened: async (id: string, openedDate?: string) => {
+        const store = get();
+        const today = openedDate || new Date().toISOString().split('T')[0];
+        
+        try {
+          await store.updateStoredItem(id, {
+            isOpened: true,
+            openedDate: today,
+          });
+          
+          toast.success("Item Marked as Opened", {
+            description: `The item is now tracked with its opened date.`,
+          });
+        } catch (error) {
+          throw error;
         }
       },
 
@@ -452,6 +343,32 @@ export const useStoredItemStore = create<StoredItemStore>()(
         const state = get();
         const storedItems = state.storedItemsByHousehold[householdId] || [];
         return storedItems.filter(item => item.storageAreaId === storageAreaId);
+      },
+
+      getStoredItemsByItemAndUnit: (itemId: string, unit: string) => {
+        const householdId = getHouseholdId();
+        const state = get();
+        const storedItems = state.storedItemsByHousehold[householdId] || [];
+        return storedItems.filter(item => item.itemId === itemId && item.unit === unit);
+      },
+
+      // Get aggregated quantity for an item across all storage areas
+      getTotalQuantityForItem: (itemId: string) => {
+        const storedItems = get().getStoredItemsForHousehold();
+        const itemStoredItems = storedItems.filter(item => item.itemId === itemId);
+        
+        if (itemStoredItems.length === 0) return null;
+
+        // Use unit conversion to aggregate
+        const { aggregateQuantities } = require('@/utils/unitConversion');
+        
+        return aggregateQuantities(
+          itemStoredItems.map(item => ({
+            quantity: item.quantity,
+            unit: item.unit,
+            storageAreaName: item.storageArea?.name
+          }))
+        );
       },
 
       getExpiringStoredItems: () => {

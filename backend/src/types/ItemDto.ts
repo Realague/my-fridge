@@ -5,6 +5,8 @@ export interface CreateItemDto {
   category: ItemCategory;
   defaultUnit?: Unit;
   availableUnits?: Unit[];
+  daysAfterOpening?: number;
+  imageUrl?: string;
   createdBy: string | null;
   householdId: string | null;
 }
@@ -15,6 +17,7 @@ export interface UpdateItemDto {
   emoji?: string;
   defaultUnit?: Unit;
   availableUnits?: Unit[];
+  daysAfterOpening?: number;
   imageUrl?: string;
 }
 
@@ -24,6 +27,7 @@ export interface ItemDto {
   category: ItemCategory;
   defaultUnit: Unit;
   availableUnits: Unit[];
+  daysAfterOpening?: number;
   imageUrl: string | null;
   createdBy: string | null;
   householdId: string | null;
@@ -93,6 +97,8 @@ export interface CreateStoredItemDto {
   unit: Unit;
   expirationDate?: string; // ISO date string
   location?: string;
+  isOpened?: boolean;
+  openedDate?: string; // ISO date string
   householdId: string;
   createdBy: string;
 }
@@ -102,6 +108,9 @@ export interface UpdateStoredItemDto {
   unit?: Unit;
   expirationDate?: string; // ISO date string
   location?: string;
+  isOpened?: boolean;
+  openedDate?: string; // ISO date string
+  storageAreaId?: string; // Allow moving items between storage areas
 }
 
 export interface StoredItemDto {
@@ -112,6 +121,9 @@ export interface StoredItemDto {
   unit: Unit;
   expirationDate: string | null | undefined;
   location: string | null;
+  isOpened: boolean;
+  openedDate: string | null | undefined;
+  frozenDate: string | null | undefined;
   householdId: string;
   createdBy: string;
   createdAt: string;
@@ -131,6 +143,9 @@ export interface StoredItemDto {
   isExpired?: boolean;
   isExpiringSoon?: boolean;
   daysUntilExpiration?: number | null;
+  effectiveExpirationDate?: string | null;
+  daysFrozen?: number | null;
+  isFrozenTooLong?: boolean;
 }
 
 export interface GetStoredItemsQueryDto {

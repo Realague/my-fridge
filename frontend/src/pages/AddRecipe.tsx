@@ -17,8 +17,10 @@ import { useToast } from '@/hooks/use-toast';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
 import { useTranslation } from 'react-i18next';
 import { Item } from '@/services/itemService';
+import { getItemDisplayName } from '@/utils/itemUtils';
 import { ImageUpload } from '@/components/ImageUpload';
 import { uploadImageWithSignature } from '@/services/imageUploadService';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface RecipeIngredientWithId extends CreateRecipeIngredientDto {
   id: string;
@@ -38,6 +40,7 @@ interface RecipeFormData {
 }
 
 const AddRecipe = () => {
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
@@ -240,7 +243,7 @@ const AddRecipe = () => {
               className="text-muted-foreground"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('pages.recipes.backToRecipes')}
+              { isMobile ? '' : t('pages.recipes.backToRecipes')}
             </Button>
             <h1 className="text-xl font-bold text-foreground">{t('pages.recipes.addNewRecipe')}</h1>
             <div className="w-20"></div>
@@ -467,7 +470,7 @@ const AddRecipe = () => {
                                   onCheckedChange={() => toggleIngredientForStep(ingredient.id, index)}
                                 />
                                 <span className="text-sm text-muted-foreground">
-                                  {ingredient.quantity} {ingredient.unit} {ingredient.item?.name}
+                                  {ingredient.quantity} {ingredient.unit} {getItemDisplayName(ingredient.item, t)}
                                 </span>
                               </div>
                             );

@@ -3,7 +3,7 @@
  * Used by both React hooks and stores/services
  */
 
-import { getAuthHeaders, getCommonHeaders } from '@/utils/apiHeaders';
+import { getAuthHeaders, getCommonHeaders, getApiBaseUrl } from '@/utils/apiHeaders';
 import { toast } from "sonner";
 import i18n from '@/i18n/config';
 
@@ -27,7 +27,7 @@ export const makeAuthenticatedApiCall = async (
   options: ApiOptions = {}, 
   callbacks: AuthCallbacks = {}
 ): Promise<Response> => {
-  const baseUrl = import.meta.env.VITE_API_URL || 'localhost:3000';
+  const baseUrl = getApiBaseUrl();
   const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
   const timeout = options.timeout || 10000;
   const { onAuthError, showToast = true } = callbacks;

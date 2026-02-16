@@ -1,6 +1,6 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
-import { ItemCategory, Unit, ITEM_CATEGORIES, UNITS } from '../types/enums';
+import { ItemCategory, Unit, ITEM_CATEGORIES, UNITS, STORAGE_UNITS } from '../types/enums';
 import { User } from './User';
 import { Household } from './Household';
 
@@ -11,6 +11,7 @@ interface ItemAttributes {
   category: ItemCategory;
   defaultUnit: Unit;
   availableUnits: Unit[];
+  daysAfterOpening: number | null;
   imageUrl: string | null;
   householdId: string | null;
   createdBy: string | null;
@@ -19,7 +20,7 @@ interface ItemAttributes {
 }
 
 // Some attributes are optional in `Item.build()` and `Item.create()`
-interface ItemCreationAttributes extends Optional<ItemAttributes, 'id' | 'defaultUnit' | 'availableUnits' | 'createdAt' | 'updatedAt'> {}
+interface ItemCreationAttributes extends Optional<ItemAttributes, 'id' | 'defaultUnit' | 'availableUnits' | 'daysAfterOpening' | 'createdAt' | 'updatedAt'> {}
 
 export class Item extends Model<ItemAttributes, ItemCreationAttributes> implements ItemAttributes {
   public id!: string;
@@ -27,6 +28,7 @@ export class Item extends Model<ItemAttributes, ItemCreationAttributes> implemen
   public category!: ItemCategory;
   public defaultUnit!: Unit;
   public availableUnits!: Unit[];
+  public daysAfterOpening!: number | null;
   public imageUrl!: string | null;
   public createdBy!: string | null;
   public householdId!: string | null;
@@ -78,8 +80,19 @@ Item.init(
             if (!UNITS.includes(unit)) {
               throw new Error(`Invalid unit: ${unit}`);
             }
+            // Cooking measurements (cup, tbsp, tsp) are only allowed in recipes, not in item definitions
+            if (!STORAGE_UNITS.includes(unit)) {
+              throw new Error(`Unit ${unit} is only available for recipes, not for storage items`);
+            }
           }
         },
+      },
+    },
+    daysAfterOpening: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      validate: {
+        min: 1,
       },
     },
     householdId: {

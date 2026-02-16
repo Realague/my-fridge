@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, ArrowLeft, Calendar, MapPin, AlertTriangle, Edit, Trash2, Save, X, Package } from 'lucide-react';
+import { Plus, ArrowLeft, Calendar, MapPin, AlertTriangle, Edit, Trash2, Save, X, PackageOpen, Snowflake } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
 import { QuantitySelector } from '@/components/QuantitySelector';
@@ -14,13 +14,14 @@ import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { itemService } from '@/services/itemService';
 import { format } from 'date-fns';
-import { Unit } from '@/types/enums';
+import { Unit, StorageAreaType } from '@/types/enums';
 import { Item } from '@/services/itemService';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '@/utils/dateFormatting';
 import { toast } from 'sonner';
 import { SelectedItemPreview } from '@/components/SelectedItemPreview';
-import { getItemDisplayName } from '@/utils/itemUtils';
+import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
+import { OpenedStatusToggle } from '@/components/OpenedStatusToggle';
 
 const StorageArea = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,13 +31,13 @@ const StorageArea = () => {
   
   // Store hooks
   const { getStorageAreaById, fetchStorageAreas } = useStorageAreaStore();
-  const { 
+  const {
     getStoredItemsByStorageArea, 
     createStoredItem, 
     updateStoredItem, 
     deleteStoredItem,
     fetchStoredItemsByStorageArea,
-    loading: storedItemsLoading 
+    loading: storedItemsLoading
   } = useStoredItemStore();
   const { selectedHouseholdId } = useProtectedRoute();
   
@@ -47,6 +48,8 @@ const StorageArea = () => {
   const [newItemUnit, setNewItemUnit] = useState('');
   const [expirationDate, setExpirationDate] = useState('');
   const [location, setLocation] = useState('');
+  const [isOpened, setIsOpened] = useState(false);
+  const [openedDate, setOpenedDate] = useState('');
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [items, setItems] = useState<Record<string, Item>>({});
 
@@ -133,6 +136,8 @@ const StorageArea = () => {
         unit: newItemUnit as Unit,
         expirationDate: expirationDate || undefined,
         location: location.trim() || undefined,
+        isOpened: isOpened,
+        openedDate: isOpened && openedDate ? openedDate : undefined,
       });
       
       // Show success toast with specific details
@@ -144,6 +149,8 @@ const StorageArea = () => {
       setNewItemUnit('');
       setExpirationDate('');
       setLocation('');
+      setIsOpened(false);
+      setOpenedDate('');
       setShowAddForm(false);
     } catch (error) {
       console.error('Failed to add item:', error);
@@ -194,6 +201,10 @@ const StorageArea = () => {
     const [editExpiration, setEditExpiration] = useState(
       storageItem.expirationDate ? format(new Date(storageItem.expirationDate), 'yyyy-MM-dd') : ''
     );
+    const [editIsOpened, setEditIsOpened] = useState(storageItem.isOpened);
+    const [editOpenedDate, setEditOpenedDate] = useState(
+      storageItem.openedDate ? format(new Date(storageItem.openedDate), 'yyyy-MM-dd') : ''
+    );
 
     if (!item) {
       return (
@@ -214,6 +225,8 @@ const StorageArea = () => {
           unit: editUnit as Unit,
           location: editLocation.trim() || undefined,
           expirationDate: editExpiration || undefined,
+          isOpened: editIsOpened,
+          openedDate: editIsOpened && editOpenedDate ? editOpenedDate : undefined,
         });
         setEditingItem(null);
       } catch (error) {
@@ -226,6 +239,8 @@ const StorageArea = () => {
       setEditUnit(storageItem.unit);
       setEditLocation(storageItem.location || '');
       setEditExpiration(storageItem.expirationDate ? format(new Date(storageItem.expirationDate), 'yyyy-MM-dd') : '');
+      setEditIsOpened(storageItem.isOpened);
+      setEditOpenedDate(storageItem.openedDate ? format(new Date(storageItem.openedDate), 'yyyy-MM-dd') : '');
       setEditingItem(null);
     };
 
@@ -255,10 +270,22 @@ const StorageArea = () => {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <h3 className="font-medium text-foreground">{getItemDisplayName(item, t)}</h3>
-                <Badge variant="outline" className="text-xs text-foreground">
+                <Badge variant="outline" className={getCategoryColor(item.category)}>
                   { t(`items.categories.${item.category}`) }
                 </Badge>
-                {getExpirationBadge(storageItem.expirationDate)}
+                {storageItem.isOpened && (
+                  <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400">
+                    <PackageOpen className="h-3 w-3 mr-1" />
+                    {t('storedItems.opened')}
+                  </Badge>
+                )}
+                {storageItem.frozenDate && (
+                  <Badge variant={storageItem.isFrozenTooLong ? "destructive" : "secondary"} className={`text-xs ${storageItem.isFrozenTooLong ? '' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'}`}>
+                    <Snowflake className="h-3 w-3 mr-1" />
+                    {storageItem.isFrozenTooLong ? t('storedItems.freezerWarning') : t('storedItems.frozen')}
+                  </Badge>
+                )}
+                {getExpirationBadge(storageItem.effectiveExpirationDate || storageItem.expirationDate)}
               </div>
               
               {isEditing ? (
@@ -287,15 +314,33 @@ const StorageArea = () => {
                     />
                   </div>
                   
-                  <div>
-                    <Label className="text-sm">{t('storageArea.expirationDate')}</Label>
-                    <Input
-                      type="date"
-                      value={editExpiration}
-                      onChange={(e) => setEditExpiration(e.target.value)}
-                      className="mt-1"
+                  {area.type !== StorageAreaType.FREEZER && (
+                    <div>
+                      <Label className="text-sm">{t('storageArea.expirationDate')}</Label>
+                      <Input
+                        type="date"
+                        value={editExpiration}
+                        onChange={(e) => setEditExpiration(e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                  )}
+                  
+                  {item.daysAfterOpening && (
+                    <OpenedStatusToggle
+                      isOpened={editIsOpened}
+                      openedDate={editOpenedDate}
+                      daysAfterOpening={item.daysAfterOpening}
+                      effectiveExpirationDate={editIsOpened && editOpenedDate ? 
+                        new Date(new Date(editOpenedDate).getTime() + item.daysAfterOpening * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
+                        : undefined
+                      }
+                      onToggle={(opened, date) => {
+                        setEditIsOpened(opened);
+                        setEditOpenedDate(date || '');
+                      }}
                     />
-                  </div>
+                  )}
                   
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={handleCancel}>
@@ -325,10 +370,33 @@ const StorageArea = () => {
                       <Calendar className="h-3 w-3" />
                       <span>{t('storageArea.added')} {formatDate(new Date(storageItem.createdAt), 'MMM d')}</span>
                     </div>
-                    {storageItem.expirationDate && (
+                    {(storageItem.effectiveExpirationDate || storageItem.expirationDate) && (
                       <div className="flex items-center gap-1">
                         <AlertTriangle className="h-3 w-3" />
-                        <span>{t('storageArea.expiresIn', { days: getDaysUntilExpiration(storageItem.expirationDate) })}</span>
+                        <span>{t('storageArea.expiresIn', { days: getDaysUntilExpiration(storageItem.effectiveExpirationDate || storageItem.expirationDate) })}</span>
+                      </div>
+                    )}
+                    {storageItem.isOpened && storageItem.openedDate && (
+                      <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
+                        <PackageOpen className="h-3 w-3" />
+                        <span>{t('storedItems.openedOn')} {formatDate(new Date(storageItem.openedDate), 'MMM d')}</span>
+                      </div>
+                    )}
+                    {storageItem.frozenDate && (
+                      <div className={`flex items-center gap-1 ${storageItem.isFrozenTooLong ? 'text-red-600 dark:text-red-400' : 'text-blue-600 dark:text-blue-400'}`}>
+                        <Snowflake className="h-3 w-3" />
+                        <span>
+                          {t('storedItems.frozenDate')} {formatDate(new Date(storageItem.frozenDate), 'MMM d')}
+                          {storageItem.daysFrozen !== null && storageItem.daysFrozen !== undefined && (
+                            <span> ({t('storedItems.frozenTooLong', { days: storageItem.daysFrozen })})</span>
+                          )}
+                        </span>
+                      </div>
+                    )}
+                    {storageItem.isFrozenTooLong && (
+                      <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
+                        <AlertTriangle className="h-3 w-3" />
+                        <span>{t('storedItems.freezerWarning')}</span>
                       </div>
                     )}
                   </div>
@@ -347,10 +415,10 @@ const StorageArea = () => {
                   <Edit className="h-4 w-4" />
                 </Button>
                 <Button
-                  variant="ghost"
+                  variant="deleteTrash"
                   size="sm"
                   onClick={handleDelete}
-                  className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                  className="h-8 w-8 p-0"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -468,18 +536,37 @@ const StorageArea = () => {
                     />
                   </div>
                   
-                  {/* Expiration Date */}
-                  <div>
-                    <Label className="text-sm font-medium mb-2 block">
-                      {t('storageArea.expirationDate')} <span className="text-muted-foreground">({t('common.optional')})</span>
-                    </Label>
-                    <Input
-                      type="date"
-                      value={expirationDate}
-                      onChange={(e) => setExpirationDate(e.target.value)}
-                      className="mt-1"
+                  {/* Expiration Date - not shown for freezer (frozen items use recommended storage times) */}
+                  {area.type !== StorageAreaType.FREEZER && (
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block">
+                        {t('storageArea.expirationDate')} <span className="text-muted-foreground">({t('common.optional')})</span>
+                      </Label>
+                      <Input
+                        type="date"
+                        value={expirationDate}
+                        onChange={(e) => setExpirationDate(e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Opened Status Toggle */}
+                  {selectedItem.daysAfterOpening && (
+                    <OpenedStatusToggle
+                      isOpened={isOpened}
+                      openedDate={openedDate}
+                      daysAfterOpening={selectedItem.daysAfterOpening}
+                      effectiveExpirationDate={isOpened && openedDate ? 
+                        new Date(new Date(openedDate).getTime() + selectedItem.daysAfterOpening * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
+                        : undefined
+                      }
+                      onToggle={(opened, date) => {
+                        setIsOpened(opened);
+                        setOpenedDate(date || '');
+                      }}
                     />
-                  </div>
+                  )}
                   
                   {/* Action Buttons */}
                   <div className="flex gap-2 pt-2">
@@ -543,7 +630,7 @@ const StorageArea = () => {
         </div>
       </div>
 
-      <BottomNavigation currentPage="dashboard" />
+      <BottomNavigation currentPage="home" />
     </div>
   );
 };

@@ -126,7 +126,7 @@ const Onboarding = () => {
         {step === 1 && (
           <Card className="bg-card backdrop-blur-sm border border-border/50 shadow-xl">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
+              <div className="mx-auto w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center">
                 <span className="text-2xl">🏠</span>
               </div>
               <CardTitle className="text-2xl">{t('pages.household.setupHousehold')}</CardTitle>
@@ -139,13 +139,13 @@ const Onboarding = () => {
               <Button
                 variant="green"
                 onClick={() => setStep(2)}
-                className="w-full h-16 text-left justify-start px-6"
+                className="w-full h-auto min-h-16 text-left justify-start px-6 py-4 whitespace-normal"
               >
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-background/20 rounded-lg flex items-center justify-center mr-4">
+                <div className="flex items-center w-full">
+                  <div className="w-10 h-10 bg-background/20 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
                     <Plus className="h-5 w-5" />
                   </div>
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <div className="font-semibold">{t('pages.household.createNewHousehold')}</div>
                     <div className="text-sm opacity-90">{t('pages.household.createNewHouseholdDescription')}</div>
                   </div>
@@ -155,13 +155,13 @@ const Onboarding = () => {
               <Button
                 onClick={() => setStep(4)}
                 variant="outline"
-                className="w-full h-16 text-left justify-start px-6"
+                className="w-full h-auto min-h-16 text-left justify-start px-6 py-4 whitespace-normal"
               >
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center mr-4">
+                <div className="flex items-center w-full">
+                  <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
                     <Users className="h-5 w-5" />
                   </div>
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <div className="font-semibold">{t('pages.household.joinExistingHousehold')}</div>
                     <div className="text-sm opacity-75">{t('pages.household.joinExistingHouseholdDescription')}</div>
                   </div>
@@ -178,7 +178,7 @@ const Onboarding = () => {
         {step === 2 && (
           <Card className="bg-card backdrop-blur-sm border border-border/50 shadow-xl">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
+              <div className="mx-auto w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center">
                 <Plus className="h-8 w-8 text-primary-foreground" />
               </div>
               <CardTitle className="text-2xl">{t('pages.household.createYourHousehold')}</CardTitle>
@@ -224,7 +224,7 @@ const Onboarding = () => {
         {step === 3 && (
           <Card className="bg-card backdrop-blur-sm border border-border/50 shadow-xl">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
+              <div className="mx-auto w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center">
                 <span className="text-2xl">🏺</span>
               </div>
               <CardTitle className="text-2xl">{t('pages.household.setupStorageAreas')}</CardTitle>

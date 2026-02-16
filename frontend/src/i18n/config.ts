@@ -23,10 +23,26 @@ i18n
       escapeValue: false, // React already does escaping
     },
     
-    detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage'],
-    },
+    detection: (() => {
+      const canUseLocalStorage = () => {
+        if (typeof window === 'undefined') return false;
+        try {
+          const testKey = '__i18n_storage_test__';
+          window.localStorage.setItem(testKey, '1');
+          window.localStorage.removeItem(testKey);
+          return true;
+        } catch (error) {
+          return false;
+        }
+      };
+
+      const useLocalStorage = canUseLocalStorage();
+
+      return {
+        order: useLocalStorage ? ['localStorage', 'navigator', 'htmlTag'] : ['navigator', 'htmlTag'],
+        caches: useLocalStorage ? ['localStorage'] : [],
+      };
+    })(),
   });
 
 export default i18n;

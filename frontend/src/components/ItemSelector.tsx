@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { itemService, Item } from '@/services/itemService';
+import { ItemDeletionService } from '@/services/itemDeletionService';
 import { useAuthStore } from '@/stores/authStore';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { ItemEditor } from '@/components/ItemEditor';
@@ -14,6 +15,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
+import { ItemCategory } from '@/types/enums';
 import { uploadImageWithSignature } from '@/services/imageUploadService';
 
 interface ItemSelectorProps {
@@ -22,6 +24,7 @@ interface ItemSelectorProps {
   className?: string;
   selectedItem?: Item | null;
   excludedItems?: Item[];
+  excludeCleaningProducts?: boolean;
 }
 
 export const ItemSelector = ({ 
@@ -29,7 +32,8 @@ export const ItemSelector = ({
   placeholder, 
   className,
   selectedItem = null,
-  excludedItems = []
+  excludedItems = [],
+  excludeCleaningProducts = false
 }: ItemSelectorProps) => {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -37,6 +41,7 @@ export const ItemSelector = ({
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [creatingNewItem, setCreatingNewItem] = useState(false);
   const [deleteItem, setDeleteItem] = useState<Item | null>(null);
+  const [deletionImpact, setDeletionImpact] = useState<string>('');
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const [apiResults, setApiResults] = useState<Item[]>([]);
   const [apiLoading, setApiLoading] = useState(false);
@@ -118,9 +123,11 @@ export const ItemSelector = ({
           
           try {
             // Use backend translation search for better performance
+            // Normalize language to base code (e.g., 'fr-FR' → 'fr') for mobile browser compatibility
+            const normalizedLanguage = i18n.language.split('-')[0];
             const response = await itemService.searchItems({
               search: query, // Search with the actual query
-              language: i18n.language, // Pass current language for backend translation search
+              language: normalizedLanguage, // Pass normalized language for backend translation search
               limit: 20,
             });
             
@@ -156,9 +163,19 @@ export const ItemSelector = ({
     };
   }, [query]); // Only query dependency to prevent any re-renders
 
-  const filteredResults = apiResults.filter(item => 
-    !excludedItems.some(excluded => excluded.id === item.id)
-  );
+  const filteredResults = apiResults.filter(item => {
+    // Exclude items that are in the excludedItems list
+    if (excludedItems.some(excluded => excluded.id === item.id)) {
+      return false;
+    }
+    
+    // Exclude cleaning products if the prop is set to true
+    if (excludeCleaningProducts && item.category === ItemCategory.CLEANING_PRODUCTS) {
+      return false;
+    }
+    
+    return true;
+  });
 
   const exactMatch = filteredResults.find(item => 
     item.name.toLowerCase() === query.toLowerCase()
@@ -260,38 +277,6 @@ export const ItemSelector = ({
     setIsOpen(false);
   };
 
-  const handleQuickCreate = async () => {
-    const validationResult = itemNameSchema.safeParse(query);
-
-    if (!validationResult.success) {
-      toast.error(validationResult.error.errors[0].message);
-      return;
-    }
-
-    if (exactMatch) return;
-
-    try {
-      if (user && selectedHouseholdId) {
-        const newApiItem = await itemService.createItem({
-          name: validationResult.data,
-          category: 'other',
-          householdId: selectedHouseholdId,
-        });
-        
-        onItemSelect(newApiItem);
-        setQuery('');
-        setIsOpen(false);
-        toast.success(t('messages.success.itemAdded', { item: validationResult.data }));
-        // Refresh the household items cache
-        await refreshHouseholdItems();
-        return;
-      }
-    } catch (error) {
-      console.error('Failed to create item:', error);
-      toast.error(t('messages.error.failedToCreateItem'));
-    }
-  };
-
   const handleEditItem = (item: Item, e: React.MouseEvent) => {
     e.stopPropagation();
     setEditingItem(item);
@@ -301,6 +286,15 @@ export const ItemSelector = ({
   const confirmDeleteItem = (item: Item, e: React.MouseEvent) => {
     e.stopPropagation();
     setDeleteItem(item);
+    // Get the impact summary for this item with translations
+    const impact = ItemDeletionService.getDeletionImpactSummary(item.id, {
+      storedItems: (count: number) => t('itemSelector.storedItems', { count }),
+      itemMinimums: (count: number) => t('itemSelector.itemMinimums', { count }),
+      shoppingItems: (count: number) => t('itemSelector.shoppingItems', { count }),
+      noReferencesFound: t('itemSelector.noReferencesFound'),
+      deletionImpactSummary: (impacts: string) => t('itemSelector.deletionImpactSummary', { impacts })
+    });
+    setDeletionImpact(impact);
     setIsOpen(false);
   };
 
@@ -311,8 +305,15 @@ export const ItemSelector = ({
     }
     
     try {
-      await itemService.deleteItem(item.id, selectedHouseholdId);
-      toast.success(t('messages.success.itemDeleted', { item: getItemDisplayName(item, t) }));
+      // Use the centralized deletion service with translated messages
+      await ItemDeletionService.deleteItem(
+        item.id, 
+        selectedHouseholdId, 
+        getItemDisplayName(item, t),
+        t('messages.success.itemDeleted'),
+        t('messages.success.itemDeletedDescription', { item: getItemDisplayName(item, t) })
+      );
+      
       // Refresh the household items cache
       await refreshHouseholdItems();
       setEditingItem(null);
@@ -358,6 +359,7 @@ export const ItemSelector = ({
           category: updates.category,
           defaultUnit: updates.defaultUnit,
           availableUnits: updates.availableUnits,
+          daysAfterOpening: updates.daysAfterOpening,
         }, selectedHouseholdId);
 
         // If a new image was selected, upload it now and update the item image
@@ -406,6 +408,7 @@ export const ItemSelector = ({
           defaultUnit: newItemData.defaultUnit,
           availableUnits: newItemData.availableUnits,
           householdId: selectedHouseholdId,
+          daysAfterOpening: newItemData.daysAfterOpening,
         });
         // If an image was selected, upload it now and set on the new item
         if (selectedFile) {
@@ -508,7 +511,7 @@ export const ItemSelector = ({
       {isOpen && createPortal(
         <div
           ref={dropdownRef}
-          className="fixed z-50 bg-card border border-border rounded-md shadow-lg max-h-64 overflow-y-auto"
+          className="fixed z-[100] bg-card border border-border rounded-md shadow-lg max-h-64 overflow-y-auto pointer-events-auto"
           style={{
             top: dropdownPosition.top,
             left: dropdownPosition.left,
@@ -529,22 +532,10 @@ export const ItemSelector = ({
               <Button
                 type="button"
                 variant="ghost"
-                onClick={handleQuickCreate}
+                onClick={handleCreateNew}
                 className="w-full justify-start p-3 h-auto text-left hover:bg-muted"
               >
                 <Plus className="h-4 w-4 mr-2 text-primary" />
-                <div>
-                  <div className="font-medium">{t('itemSelector.add', { query })}</div>
-                  <div className="text-xs text-muted-foreground">{t('itemSelector.quickAddWithDefaultSettings')}</div>
-                </div>
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={handleCreateNew}
-                className="w-full justify-start p-3 h-auto text-left hover:bg-muted border-t border-border"
-              >
-                <Edit className="h-4 w-4 mr-2 text-primary" />
                 <div>
                   <div className="font-medium">{t('itemSelector.createWithDetails', { query })}</div>
                   <div className="text-xs text-muted-foreground">{t('itemSelector.setCategoryUnitsAndOtherOptions')}</div>
@@ -587,11 +578,10 @@ export const ItemSelector = ({
                     <div className="flex items-center gap-1">
                       <Button
                         type="button"
-                        variant="ghost"
+                        variant="editIconButton"
                         size="sm"
                         onClick={(e) => handleEditItem(item, e)}
-                        className="h-6 w-6 p-0 hover:bg-primary/10 transition-opacity"
-                        title="Edit item"
+                        className="h-6 w-6 p-0"
                       >
                         <Edit className="h-3 w-3" />
                       </Button>
@@ -602,7 +592,6 @@ export const ItemSelector = ({
                           size="sm"
                           onClick={(e) => confirmDeleteItem(item, e)}
                           className="h-6 w-6 p-0"
-                          title="Delete item"
                         >
                           <Trash2 className="h-3 w-3" />
                         </Button>
@@ -673,22 +662,33 @@ export const ItemSelector = ({
       )}
 
        {deleteItem && (
-         <AlertDialog open={!!deleteItem} onOpenChange={(open) => !open && setDeleteItem(null)}>
+         <AlertDialog open={!!deleteItem} onOpenChange={(open) => {
+           if (!open) {
+             setDeleteItem(null);
+             setDeletionImpact('');
+           }
+         }}>
            <AlertDialogContent>
              <AlertDialogHeader>
                <AlertDialogTitle>{t('itemSelector.deleteItem')}</AlertDialogTitle>
-               <AlertDialogDescription>
-                 {t('itemSelector.deleteItemConfirmation', { item: getItemDisplayName(deleteItem, t) })}
-               </AlertDialogDescription>
+             <AlertDialogDescription>
+               {t('itemSelector.deleteItemConfirmation', { item: getItemDisplayName(deleteItem, t) })}
+               <br /><br />
+               <span className="text-sm text-muted-foreground">{deletionImpact}</span>
+             </AlertDialogDescription>
              </AlertDialogHeader>
              <AlertDialogFooter>
-               <AlertDialogCancel onClick={() => setDeleteItem(null)}>
+               <AlertDialogCancel onClick={() => {
+                 setDeleteItem(null);
+                 setDeletionImpact('');
+               }}>
                  {t('buttons.cancel')}
                </AlertDialogCancel>
                 <AlertDialogAction 
                   onClick={() => {
                     handleDeleteItem(deleteItem);
                     setDeleteItem(null);
+                    setDeletionImpact('');
                   }} 
                   className="text-foreground bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                 >

@@ -175,11 +175,12 @@ export class ShoppingItemRepository {
     }
   }
 
-  async getDuplicateShoppingItem(itemId: string, householdId: string, unit: string, excludeId?: string): Promise<ShoppingItem | null> {
+  async getDuplicateShoppingItem(itemId: string, householdId: string, unit: string, completed: boolean, excludeId?: string): Promise<ShoppingItem | null> {
     const whereClause: any = {
       itemId,
       householdId,
       unit,
+      completed,
     };
 
     if (excludeId) {

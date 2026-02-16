@@ -22,7 +22,6 @@ router.post('/signature', async (req: Request, res: Response) => {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
       folder = body?.folder;
     } catch (e) {
-      console.log(e)
       return res.status(400).json({ error: 'Invalid request body' });
     }
     const timestamp = Math.round(new Date().getTime() / 1000);

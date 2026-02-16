@@ -5,6 +5,9 @@ import { StoredItemService } from './StoredItemService';
 import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto, ShoppingItemDto } from '../types/ItemDto';
 import { ApiResponse } from '../types/ApiResponse';
 import { ShoppingItem } from '../models/ShoppingItem';
+import { STORAGE_UNITS, Unit } from '../types/enums';
+import { convertToStorageUnit } from '../utils/unitConversion';
+import { Item } from '../models/Item';
 
 export class ShoppingItemService {
   private shoppingItemRepository: ShoppingItemRepository;
@@ -44,11 +47,20 @@ export class ShoppingItemService {
         };
       }
 
+      // Convert cooking measurements to storage-appropriate units
+      // For dry ingredients, convert volume to weight (e.g., tsp of salt -> grams)
+      if (!STORAGE_UNITS.includes(data.unit as Unit)) {
+        const converted = convertToStorageUnit(data.quantity, data.unit, item.category);
+        data.quantity = converted.quantity;
+        data.unit = converted.unit;
+      }
+
       // Check for duplicate item with same unit in the household
       const existingShoppingItem = await this.shoppingItemRepository.getDuplicateShoppingItem(
         data.itemId,
         data.householdId,
-        data.unit
+        data.unit,
+        false
       );
 
       if (existingShoppingItem) {
@@ -158,6 +170,19 @@ export class ShoppingItemService {
         };
       }
 
+      // Convert cooking measurements to storage-appropriate units if unit is being updated
+      // For dry ingredients, convert volume to weight (e.g., tbsp of butter -> grams)
+      if (data.unit && data.quantity !== undefined) {
+        if (!STORAGE_UNITS.includes(data.unit as Unit)) {
+          // Get item category for density-based conversion
+          const item = existingItem.item || await this.itemRepository.findById(existingItem.itemId);
+          const category = item?.category;
+          const converted = convertToStorageUnit(data.quantity, data.unit, category);
+          data.quantity = converted.quantity;
+          data.unit = converted.unit;
+        }
+      }
+
       // Check for duplicates if itemId, householdId, or unit are being updated
       const itemId = existingItem.item?.id;
       const householdId = existingItem.householdId;
@@ -169,6 +194,7 @@ export class ShoppingItemService {
           itemId,
           householdId,
           unit,
+          false,
           id // Exclude current item from duplicate check
         );
         
@@ -238,10 +264,21 @@ export class ShoppingItemService {
       const wasCompleted = shoppingItem.completed;
       const willBeCompleted = !wasCompleted;
 
-      const updatedShoppingItem = await this.shoppingItemRepository.update(
-        id,
-        { completed: willBeCompleted },
+      const duplicateShoppingItem = await this.shoppingItemRepository.getDuplicateShoppingItem(
+        shoppingItem.itemId,
+        shoppingItem.householdId,
+        shoppingItem.unit,
+        willBeCompleted,
+        id
       );
+
+      let updatedShoppingItem: ShoppingItem | null = null;
+      if (duplicateShoppingItem) {
+        await this.deleteShoppingItem(duplicateShoppingItem.id);
+        updatedShoppingItem = await this.shoppingItemRepository.update(id, {quantity: duplicateShoppingItem.quantity + shoppingItem.quantity, completed: willBeCompleted });
+      } else {
+        updatedShoppingItem = await this.shoppingItemRepository.update(id, { completed: willBeCompleted });
+      }
 
       if (!updatedShoppingItem) {
         return {

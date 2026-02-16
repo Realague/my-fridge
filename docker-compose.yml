@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+
   # PostgreSQL Database
   db:
     image: postgres:15
@@ -33,7 +48,7 @@ services:
       DB_PASSWORD: postgres
       DB_NAME: my_fridge_db
       PORT: 3000
-      FRONTEND_URL: http://my-fridge.multiplus.ovh:8080
+      FRONTEND_URL: https://my-fridge.multiplus.ovh
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
@@ -53,15 +68,15 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    restart: always
+    restart: unless-stopped
     environment:
-      VITE_API_URL: http://my-fridge.multiplus.ovh:3000
-    ports:
-      - "8080:8080"
+      VITE_API_URL: https://my-fridge.multiplus.ovh
     volumes:
       - ./frontend:/app
       - /app/node_modules
     command: npm run dev
 
 volumes:
-  pgdata: 
+  pgdata:
+  caddy_data:
+  caddy_config:

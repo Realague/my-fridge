@@ -6,6 +6,7 @@ export interface Item {
   category: string;
   defaultUnit: string;
   availableUnits: string[];
+  daysAfterOpening?: number;
   createdBy: string | null;
   householdId: string | null;
   imageUrl: string | null;
@@ -21,6 +22,7 @@ export interface CreateItemRequest {
   category: string;
   defaultUnit?: string;
   availableUnits?: string[];
+  daysAfterOpening?: number;
   householdId: string;
   imageUrl?: string | null;
 }
@@ -30,6 +32,7 @@ export interface UpdateItemRequest {
   category?: string;
   defaultUnit?: string;
   availableUnits?: string[];
+  daysAfterOpening?: number;
   imageUrl?: string | null;
 }
 

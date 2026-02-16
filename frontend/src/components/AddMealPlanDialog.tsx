@@ -70,6 +70,11 @@ export const AddMealPlanDialog = ({
     }
   }, [isOpen]);
 
+  const onRecipeSelect = (recipe: RecipeDto) => {
+    setSelectedRecipe(recipe);
+    setSelectedServings(recipe.servings || 1);
+  };
+
   const handleSaveMeal = async () => {
     const dateToUse = selectedDate || (selectedDateInput ? new Date(selectedDateInput) : null);
     
@@ -157,7 +162,7 @@ export const AddMealPlanDialog = ({
             <div>
               <label className="block text-sm font-medium mb-2">{t('pages.mealPlans.recipe')}</label>
               <RecipeSelector
-                onRecipeSelect={(recipe) => setSelectedRecipe(recipe)}
+                onRecipeSelect={onRecipeSelect}
                 selectedRecipe={selectedRecipe}
                 recipes={convertedRecipes}
                 loading={recipesLoading}
@@ -218,7 +223,7 @@ export const AddMealPlanDialog = ({
           <Button 
             onClick={handleSaveMeal}
             disabled={!selectedRecipe || !selectedMealType || savingMealPlan}
-            className="bg-green-600 hover:bg-green-700 text-white"
+            className="bg-green-600 hover:bg-green-700 text-white mb-4"
           >
             {savingMealPlan ? t('forms.adding') : t('pages.mealPlans.addMeal')}
           </Button>

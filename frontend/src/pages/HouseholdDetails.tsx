@@ -219,9 +219,9 @@ const HouseholdDetails = () => {
                   </Badge>
                   {isAdmin && member.id !== currentUser?.id && (
                     <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                    variant="deleteTrash" 
+                    size="icon"
+                    className="h-8 w-8"
                     onClick={() => handleRemoveMember(member.id, `${member.firstName || ''} ${member.lastName || ''}`.trim())}
                   >
                      <Trash2 className="h-4 w-4" />

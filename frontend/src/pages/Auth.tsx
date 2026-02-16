@@ -5,7 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { useTranslation } from 'react-i18next';
-import { getUnauthHeaders } from '@/utils/apiHeaders';
+import { getUnauthHeaders, getAuthBaseUrl } from '@/utils/apiHeaders';
 
 const Auth = () => {
   const { t } = useTranslation();
@@ -32,7 +32,7 @@ const Auth = () => {
           setLoading(true);
           
           // Exchange the authorization code for tokens
-          const response = await fetch(`${import.meta.env.VITE_API_URL || 'localhost:3000'}/auth/google/exchange`, {
+          const response = await fetch(`${getAuthBaseUrl()}/auth/google/exchange`, {
             method: 'POST',
             headers: getUnauthHeaders(),
             body: JSON.stringify({ code }),

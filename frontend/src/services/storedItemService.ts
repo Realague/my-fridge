@@ -9,6 +9,9 @@ export interface StoredItem {
   unit: Unit;
   expirationDate: string | null | undefined;
   location: string | null;
+  isOpened: boolean;
+  openedDate: string | null | undefined;
+  frozenDate: string | null | undefined;
   householdId: string;
   createdBy: string;
   createdAt: string;
@@ -19,6 +22,7 @@ export interface StoredItem {
     category: string;
     defaultUnit: string;
     availableUnits: string[];
+    daysAfterOpening?: number;
     createdBy: string | null;
     householdId: string | null;
     imageUrl: string | null;
@@ -39,6 +43,9 @@ export interface StoredItem {
   isExpired?: boolean;
   isExpiringSoon?: boolean;
   daysUntilExpiration?: number | null;
+  effectiveExpirationDate?: string | null;
+  daysFrozen?: number | null;
+  isFrozenTooLong?: boolean;
 }
 
 export interface CreateStoredItemRequest {
@@ -48,6 +55,8 @@ export interface CreateStoredItemRequest {
   unit: Unit;
   expirationDate?: string;
   location?: string;
+  isOpened?: boolean;
+  openedDate?: string;
 }
 
 export interface UpdateStoredItemRequest {
@@ -55,6 +64,9 @@ export interface UpdateStoredItemRequest {
   unit?: Unit;
   expirationDate?: string;
   location?: string;
+  isOpened?: boolean;
+  openedDate?: string;
+  storageAreaId?: string;
 }
 
 export interface GetStoredItemsRequest {

@@ -22,7 +22,10 @@
     "migrate:production": "NODE_ENV=production FORCE_PRODUCTION_MIGRATION=true npm run migrate:smart",
     "migrate:validate": "npm run build && node -e \"require('./dist/utils/migrationManager').migrationManager.validateMigrations().then(r => console.log('Validation:', r)).catch(console.error)\"",
     "dev:no-migrate": "AUTO_MIGRATE=false nodemon src/index.ts",
-    "dev:manual": "NODE_ENV=manual nodemon src/index.ts"
+    "dev:manual": "NODE_ENV=manual nodemon src/index.ts",
+    "db:create:script": "ts-node src/scripts/createDatabase.ts",
+    "seed:items": "ts-node src/scripts/seedItemsFromCSV.ts",
+    "seed:items:custom": "ts-node src/scripts/seedItemsFromCSV.ts"
   },
   "keywords": [
     "express",

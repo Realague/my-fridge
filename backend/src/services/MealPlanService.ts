@@ -169,11 +169,18 @@ export class MealPlanService {
 
     const mealPlans = await this.mealPlanRepository.findByDateRange(householdId, startDate, endDate, true);
     
-    // Group ingredients by item ID and calculate total quantities
+    // Import unit conversion utilities
+    const { convertQuantity, canConvertUnits, normalizeToBaseUnit, getBestDisplayUnit, convertToStorageUnit } = require('../utils/unitConversion');
+    const StoredItemRepository = require('../repositories/StoredItemRepository').StoredItemRepository;
+    const storedItemRepository = new StoredItemRepository();
+    
+    // Group ingredients by item ID and calculate total quantities with unit conversion
     const ingredientTotals = new Map<string, {
+      itemId: string;
       itemName: string;
-      totalQuantity: number;
-      unit: string;
+      itemCategory: string;
+      totalQuantityInBaseUnit: number;
+      baseUnit: string;
       recipes: string[];
     }>();
 
@@ -182,12 +189,19 @@ export class MealPlanService {
       if (!recipe) continue;
 
       for (const ingredient of recipe.ingredients || []) {
-        const key = ingredient.itemId;
+        
         const neededQuantity = Number(ingredient.quantity / recipe.servings * mealPlan.servings);
         
-        if (ingredientTotals.has(key) && ingredientTotals.get(key)!.unit === ingredient.unit) {
+        // Normalize to base unit for aggregation
+        const normalized = normalizeToBaseUnit(neededQuantity, ingredient.unit);
+        const key = ingredient.itemId+normalized.unit;
+
+        if (ingredientTotals.has(key)) {
           const existing = ingredientTotals.get(key)!;
-          existing.totalQuantity += neededQuantity;
+          // Only aggregate if same base unit (weight with weight, volume with volume)
+          if (existing.baseUnit === normalized.unit) {
+            existing.totalQuantityInBaseUnit += normalized.quantity;
+          }
           if (!existing.recipes.includes(recipe.title)) {
             existing.recipes.push(recipe.title);
           }
@@ -195,9 +209,11 @@ export class MealPlanService {
           const item = await this.itemRepository.findById(ingredient.itemId);
           if (item) {
             ingredientTotals.set(key, {
+              itemId: item.id,
               itemName: item.name,
-              totalQuantity: neededQuantity,
-              unit: ingredient.unit,
+              itemCategory: item.category,
+              totalQuantityInBaseUnit: normalized.quantity,
+              baseUnit: normalized.unit,
               recipes: [recipe.title]
             });
           }
@@ -205,14 +221,59 @@ export class MealPlanService {
       }
     }
 
-    // Create shopping items in the database
+    // Check current stock and calculate what's actually needed
+    const neededItems = new Map<string, {
+      itemId: string;
+      itemName: string;
+      quantityNeeded: number;
+      unit: string;
+      recipes: string[];
+    }>();
+
+    for (const [key, data] of ingredientTotals) {
+      // Get current stock in the same base unit
+      const currentStock = await storedItemRepository.getTotalQuantityByItem(
+        data.itemId,
+        householdId,
+        data.baseUnit
+      );
+
+      // Calculate shortage
+      const shortage = data.totalQuantityInBaseUnit - currentStock;
+      
+      if (shortage > 0) {
+        // Convert to best display unit (kg instead of 1000g, etc.)
+        // Use forStorage=true to ensure we get storage-appropriate units only
+        // For volume measurements of dry goods, try to convert to weight based on category
+        let display;
+        if (data.baseUnit === 'ml' && (data.itemCategory === 'spices' || data.itemCategory === 'grains' || data.itemCategory === 'condiments')) {
+          // Try volume-to-weight conversion for dry ingredients
+          const weightConversion = convertToStorageUnit(shortage, data.baseUnit, data.itemCategory);
+          display = weightConversion;
+        } else {
+          display = getBestDisplayUnit(shortage, data.baseUnit, true);
+        }
+        
+        neededItems.set(key, {
+          itemId: data.itemId,
+          itemName: data.itemName,
+          quantityNeeded: display.quantity,
+          unit: display.unit,
+          recipes: data.recipes
+        });
+      }
+    }
+
+    console.log(neededItems);
+
+    // Create shopping items in the database (only for items that are needed)
     const createdShoppingItems: ShoppingListItemDto[] = [];
-    for (const [itemId, data] of ingredientTotals) {
+    for (const [key, data] of neededItems) {
       try {
         const shoppingItemData: CreateShoppingItemDto = {
-          itemId,
+          itemId: data.itemId,
           householdId,
-          quantity: data.totalQuantity,
+          quantity: data.quantityNeeded,
           unit: data.unit,
           createdBy,
           priority: 0
@@ -221,9 +282,9 @@ export class MealPlanService {
         await this.shoppingItemRepository.create(shoppingItemData);
         
         createdShoppingItems.push({
-          itemId,
+          itemId: data.itemId,
           itemName: data.itemName,
-          totalQuantity: data.totalQuantity,
+          totalQuantity: data.quantityNeeded,
           unit: data.unit,
           recipes: data.recipes
         });

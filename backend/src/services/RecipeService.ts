@@ -142,7 +142,7 @@ export class RecipeService {
       // Delete ingredients first (due to foreign key constraints)
       await this.recipeIngredientRepository.deleteByRecipeId(id, transaction);
       
-      // Delete recipe
+      // Delete recipe (this will also delete the image via RecipeRepository)
       await this.recipeRepository.delete(id, householdId, transaction);
 
       await transaction.commit();

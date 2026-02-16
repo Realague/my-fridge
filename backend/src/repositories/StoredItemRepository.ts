@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 import { StoredItem } from '../models/StoredItem';
 import { Item } from '../models/Item';
 import { StorageArea } from '../models/StorageArea';
+import { StorageAreaType } from '../types/enums';
 import { User } from '../models/User';
 import { CreateStoredItemDto, UpdateStoredItemDto, GetStoredItemsQueryDto } from '../types/ItemDto';
 
@@ -10,6 +11,7 @@ export class StoredItemRepository {
     const createData = {
       ...data,
       expirationDate: data.expirationDate ? new Date(data.expirationDate) : null,
+      openedDate: data.openedDate ? new Date(data.openedDate) : null,
     };
     return await StoredItem.create(createData);
   }
@@ -160,14 +162,20 @@ export class StoredItemRepository {
     });
   }
 
-  async update(id: string, householdId: string, data: UpdateStoredItemDto): Promise<StoredItem | null> {
+  async update(id: string, householdId: string, data: UpdateStoredItemDto & { frozenDate?: string | null }): Promise<StoredItem | null> {
     const storedItem = await StoredItem.findOne({ where: { id, householdId } });
     if (!storedItem) return null;
 
-    const updateData = {
+    const updateData: any = {
       ...data,
       expirationDate: data.expirationDate !== undefined 
         ? (data.expirationDate ? new Date(data.expirationDate) : null)
+        : undefined,
+      openedDate: data.openedDate !== undefined 
+        ? (data.openedDate ? new Date(data.openedDate) : null)
+        : undefined,
+      frozenDate: data.frozenDate !== undefined
+        ? (data.frozenDate ? new Date(data.frozenDate) : null)
         : undefined,
     };
 
@@ -180,14 +188,66 @@ export class StoredItemRepository {
     return result > 0;
   }
 
-  async getTotalQuantityByItem(itemId: string, householdId: string): Promise<number> {
+  async getTotalQuantityByItem(itemId: string, householdId: string, targetUnit?: string): Promise<number> {
     const storedItems = await StoredItem.findAll({
       where: { itemId, householdId },
       attributes: ['quantity', 'unit'],
     });
 
-    // TODO: Implement unit conversion logic to get accurate total
-    // For now, just sum quantities (assuming same units)
-    return storedItems.reduce((total, item) => total + Number(item.quantity), 0);
+    if (storedItems.length === 0) return 0;
+
+    // Import unit conversion utilities
+    const { normalizeToBaseUnit, getUnitType, convertQuantity, UnitType } = require('../utils/unitConversion');
+
+    // Group by unit type
+    const unitTypes = new Map<string, Array<{ quantity: number; unit: string }>>();
+    
+    storedItems.forEach((item) => {
+      const type = getUnitType(item.unit);
+      if (!unitTypes.has(type)) {
+        unitTypes.set(type, []);
+      }
+      unitTypes.get(type)!.push({
+        quantity: Number(item.quantity),
+        unit: item.unit
+      });
+    });
+
+    // If target unit is specified and all items can be converted to it
+    if (targetUnit) {
+      const targetType = getUnitType(targetUnit);
+      const itemsOfTargetType = unitTypes.get(targetType) || [];
+      
+      if (itemsOfTargetType.length === storedItems.length) {
+        // All items are convertible to target unit
+        return itemsOfTargetType.reduce((total, item) => {
+          const converted = convertQuantity(item.quantity, item.unit, targetUnit);
+          return total + (converted || 0);
+        }, 0);
+      }
+    }
+
+    // If all items are weight or volume, normalize and sum
+    if (unitTypes.size === 1) {
+      const entry = Array.from(unitTypes.entries())[0];
+      if (entry) {
+        const [type, items] = entry;
+        if (type === UnitType.WEIGHT || type === UnitType.VOLUME) {
+          // Normalize all to base unit and sum
+          return items.reduce((total: number, item: { quantity: number; unit: string; }) => {
+          const normalized = normalizeToBaseUnit(item.quantity, item.unit);
+          return total + normalized.quantity;
+        }, 0);
+      }
+    }
+  }
+
+    // Cannot aggregate - return sum (for COUNT types) or 0
+    if (unitTypes.size === 1 && unitTypes.has(UnitType.COUNT)) {
+      return storedItems.reduce((total, item) => total + Number(item.quantity), 0);
+    }
+
+    // Mixed unit types - return 0 to indicate incompatible units
+    return 0;
   }
 } 

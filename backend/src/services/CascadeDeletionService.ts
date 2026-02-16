@@ -10,6 +10,7 @@ import {
   HouseholdMember 
 } from '../models';
 import sequelize from '../config/database';
+import { deleteImageFromCloudinary } from '../utils/imageUploader';
 
 export class CascadeDeletionService {
   
@@ -105,6 +106,26 @@ export class CascadeDeletionService {
    * Delete all recipes for the household
    */
   private async deleteRecipes(householdId: string, transaction: Transaction): Promise<void> {
+    // First, get all recipes to delete their images
+    const recipes = await Recipe.findAll({
+      where: { householdId },
+      attributes: ['id', 'imageUrl'],
+      transaction
+    });
+    
+    // Delete images from Cloudinary
+    for (const recipe of recipes) {
+      if (recipe.imageUrl) {
+        try {
+          await deleteImageFromCloudinary(recipe.imageUrl);
+        } catch (error) {
+          // Log error but don't fail the deletion if image deletion fails
+          console.error(`Failed to delete image for recipe ${recipe.id}:`, error);
+        }
+      }
+    }
+    
+    // Then delete the recipes from database
     const deletedCount = await Recipe.destroy({
       where: { householdId },
       transaction
@@ -154,6 +175,28 @@ export class CascadeDeletionService {
    * Keep global items (items with householdId = null or items used by other households)
    */
   private async deleteHouseholdItems(householdId: string, transaction: Transaction): Promise<void> {
+    // First, get all items to delete their images
+    const items = await Item.findAll({
+      where: { 
+        householdId: householdId 
+      },
+      attributes: ['id', 'imageUrl'],
+      transaction
+    });
+    
+    // Delete images from Cloudinary
+    for (const item of items) {
+      if (item.imageUrl) {
+        try {
+          await deleteImageFromCloudinary(item.imageUrl);
+        } catch (error) {
+          // Log error but don't fail the deletion if image deletion fails
+          console.error(`Failed to delete image for item ${item.id}:`, error);
+        }
+      }
+    }
+    
+    // Then delete the items from database
     const deletedCount = await Item.destroy({
       where: { 
         householdId: householdId 

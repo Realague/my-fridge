@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 import { Item, User, Household } from '../models';
 import { CreateItemDto, UpdateItemDto, GetItemsQueryDto } from '../types/ItemDto';
 import { getReverseTranslationMap } from '../i18n/itemTranslations';
+import { deleteImageFromCloudinary } from '../utils/imageUploader';
 
 export class ItemRepository {
   async create(itemData: CreateItemDto): Promise<Item | null> {
@@ -166,6 +167,16 @@ export class ItemRepository {
     const item = await Item.findByPk(id);
     if (!item) {
       return false;
+    }
+
+    // Delete the image from Cloudinary if it exists
+    if (item.imageUrl) {
+      try {
+        await deleteImageFromCloudinary(item.imageUrl);
+      } catch (error) {
+        // Log error but don't fail the deletion if image deletion fails
+        console.error(`Failed to delete image for item ${id}:`, error);
+      }
     }
 
     await item.destroy();

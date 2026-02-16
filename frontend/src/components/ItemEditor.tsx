@@ -8,8 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { X, Trash2 } from 'lucide-react';
 import { Item, itemService } from '@/services/itemService';
-import { getUnitsForCategory, getUnitDisplayName } from '@/utils/unitSystem';
-import { ITEM_CATEGORIES, UNITS } from '@/types/enums';
+import { getUnitsForCategory, getUnitDisplayName, STORAGE_UNITS } from '@/utils/unitSystem';
+import { ITEM_CATEGORIES } from '@/types/enums';
 import { useTranslation } from 'react-i18next';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -31,8 +31,9 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
   const [name, setName] = useState(item.name);
   const [category, setCategory] = useState(item.category);
   const [defaultUnit, setDefaultUnit] = useState(item.defaultUnit);
-  const [imageUrl, setImageUrl] = useState<string | null>(item.imageUrl || null);
-  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [daysAfterOpening, setDaysAfterOpening] = useState<string>(
+    item.daysAfterOpening?.toString() || ''
+  );
   
   // Ensure availableUnits is always an array (handle cases where it might be a string from DB)
   const initialAvailableUnits = React.useMemo(() => {
@@ -53,6 +54,8 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
   }, [item.availableUnits, item.defaultUnit]);
   
   const [availableUnits, setAvailableUnits] = useState<string[]>(initialAvailableUnits);
+  const [imageUrl, setImageUrl] = useState<string | null>(item.imageUrl || null);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
 
   const handleCategoryChange = (newCategory: string) => {
     setCategory(newCategory);
@@ -78,7 +81,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
   };
 
   const handleSave = () => {
-    onSave({
+    const updates: Partial<Item> = {
       name: name.trim(),
       category,
       defaultUnit,
@@ -86,7 +89,14 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
       imageUrl: imageUrl,
       // Pass the selected file for deferred upload handling via an extra property onSave 
       ...(selectedImageFile ? { _selectedImageFile: selectedImageFile } : {}),
-    });
+    };
+    
+    // Only include daysAfterOpening if it's a valid positive number
+    if (daysAfterOpening && parseInt(daysAfterOpening) > 0) {
+      updates.daysAfterOpening = parseInt(daysAfterOpening);
+    }
+    
+    onSave(updates);
   };
 
   const handleDelete = async () => {
@@ -168,7 +178,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
                   variant={unit === defaultUnit ? "default" : "secondary"}
                   className="cursor-pointer"
                 >
-                  {getUnitDisplayName(unit)}
+                  {t(`units.${getUnitDisplayName(unit)}`)}
                   {availableUnits.length > 1 && (
                     <button
                       onClick={() => handleRemoveUnit(unit)}
@@ -187,7 +197,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
                   <SelectValue placeholder={t('itemEditor.addUnit')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {UNITS.filter(unit => !availableUnits.includes(unit)).map((unit) => (
+                  {STORAGE_UNITS.filter(unit => !availableUnits.includes(unit)).map((unit) => (
                     <SelectItem key={unit} value={unit}>
                       {t(`units.${getUnitDisplayName(unit)}`)}
                     </SelectItem>
@@ -195,6 +205,24 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          
+          <div>
+            <Label htmlFor="days-after-opening">
+              {t('itemEditor.daysAfterOpening')} <span className="text-muted-foreground text-xs">({t('common.optional')})</span>
+            </Label>
+            <Input
+              id="days-after-opening"
+              type="number"
+              min="1"
+              value={daysAfterOpening}
+              onChange={(e) => setDaysAfterOpening(e.target.value)}
+              placeholder={t('itemEditor.daysAfterOpeningPlaceholder')}
+              className="mt-1"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              {t('itemEditor.daysAfterOpeningHint')}
+            </p>
           </div>
         </div>
         

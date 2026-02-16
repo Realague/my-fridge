@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format, isToday, addWeeks, subWeeks, startOfWeek, endOfWeek } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus, Trash2, ExternalLink, ShoppingCart } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Trash2, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -27,9 +27,7 @@ const MealPlans = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [weekDays, setWeekDays] = useState<Date[]>(getWeekDays(currentDate));
   const [isAddMealDialogOpen, setIsAddMealDialogOpen] = useState(false);
-  const [isViewMealPlanDialogOpen, setIsViewMealPlanDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [viewingMealPlan, setViewingMealPlan] = useState<any>(null);
   const [isGenerateShoppingListDialogOpen, setIsGenerateShoppingListDialogOpen] = useState(false);
   const [shoppingListDateRange, setShoppingListDateRange] = useState<{
     from: Date | undefined;
@@ -87,8 +85,7 @@ const MealPlans = () => {
   };
 
   const handleViewMealPlan = (mealPlan: MealPlan) => {
-    setViewingMealPlan(mealPlan);
-    setIsViewMealPlanDialogOpen(true);
+    navigate(`/recipes/${mealPlan.recipe?.id}`);
   };
 
   const handleQuickDeleteMealPlan = async (e: React.MouseEvent, mealPlanId: string) => {
@@ -108,28 +105,6 @@ const MealPlans = () => {
         variant: "destructive",
       });
     }
-  };
-
-  const handleDeleteMealPlan = async (mealPlanId: string) => {
-    try {
-      await deleteMealPlan(mealPlanId);
-      setIsViewMealPlanDialogOpen(false);
-      toast({
-        title: t('pages.mealPlans.mealPlanDeleted'),
-        description: t('pages.mealPlans.mealPlanRemoved'),
-      });
-    } catch (error) {
-      console.error('Error deleting meal plan:', error);
-      toast({
-        title: t('messages.error.somethingWentWrong'),
-        description: t('messages.error.failedToDeleteMealPlan'),
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleViewRecipe = (recipeId: string) => {
-    navigate(`/recipes/${recipeId}`);
   };
 
   const generateShoppingList = () => {
@@ -327,10 +302,10 @@ const MealPlans = () => {
                                     )}
                                   </div>
                                   <Button
-                                    variant="ghost"
+                                    variant="deleteTrash"
                                     size="sm"
                                     onClick={(e) => handleQuickDeleteMealPlan(e, mealPlan.id)}
-                                    className="h-8 w-8 p-0 opacity-60 group-hover:opacity-100 transition-opacity bg-destructive/10 hover:bg-destructive/20 text-destructive touch-friendly"
+                                    className="h-8 w-8 p-0 touch-friendly"
                                     disabled={deletingMealPlan}
                                   >
                                     <Trash2 className="h-4 w-4" />
@@ -425,88 +400,6 @@ const MealPlans = () => {
           onClose={() => setIsAddMealDialogOpen(false)}
           selectedDate={selectedDate}
         />
-
-        {/* View Meal Plan Dialog */}
-        <Dialog open={isViewMealPlanDialogOpen} onOpenChange={setIsViewMealPlanDialogOpen}>
-          <DialogContent className="max-w-md">
-            {viewingMealPlan && (
-              <>
-                <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2">
-                    {viewingMealPlan.recipe ? (
-                      <Button
-                        variant="link"
-                        className="p-0 h-auto text-left text-lg font-semibold text-foreground hover:text-primary"
-                        onClick={() => handleViewRecipe(viewingMealPlan.recipe.id)}
-                      >
-                        {viewingMealPlan.recipe.title}
-                        <ExternalLink className="h-4 w-4 ml-1" />
-                      </Button>
-                    ) : (
-                      'Recipe not found'
-                    )}
-                  </DialogTitle>
-                  <DialogDescription>
-                    {formatDate(new Date(viewingMealPlan.plannedFor), 'EEEE, MMMM d')} • {t(`pages.mealPlans.mealTypes.${viewingMealPlan.mealType}`)}
-                    {` • ${viewingMealPlan.servings} servings`}
-                  </DialogDescription>
-                </DialogHeader>
-                
-                <div className="space-y-4">
-                  {viewingMealPlan.recipe?.description && (
-                    <div>
-                      <h4 className="font-medium mb-2">{t('pages.recipes.description')}</h4>
-                      <p className="text-sm text-muted-foreground">{viewingMealPlan.recipe.description}</p>
-                    </div>
-                  )}
-                  
-                  {viewingMealPlan.recipe && (
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <span className="font-medium">{t('pages.recipes.prepTime')}:</span> {viewingMealPlan.recipe.prepTime} min
-                      </div>
-                      <div>
-                        <span className="font-medium">{t('pages.recipes.cookTime')}:</span> {viewingMealPlan.recipe.cookTime} min
-                      </div>
-                      <div>
-                        <span className="font-medium">{t('pages.recipes.difficulty')}:</span> {viewingMealPlan.recipe.difficulty}
-                      </div>
-                      <div>
-                        <span className="font-medium">{t('pages.recipes.servings')}:</span> {viewingMealPlan.recipe.servings}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {viewingMealPlan.recipe?.tags && viewingMealPlan.recipe.tags.length > 0 && (
-                    <div>
-                      <h4 className="font-medium mb-2">{t('pages.recipes.tags')}</h4>
-                      <div className="flex flex-wrap gap-1">
-                        {viewingMealPlan.recipe.tags.map((tag, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsViewMealPlanDialogOpen(false)}>
-                    {t('buttons.close')}
-                  </Button>
-                  <Button 
-                    variant="destructive"
-                    onClick={() => handleDeleteMealPlan(viewingMealPlan.id)}
-                    disabled={deletingMealPlan}
-                  >
-                    {deletingMealPlan ? t('buttons.delete')+'...' : t('buttons.delete')}
-                  </Button>
-                </DialogFooter>
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
 
         {/* Generate Shopping List Dialog */}
         <Dialog open={isGenerateShoppingListDialogOpen} onOpenChange={setIsGenerateShoppingListDialogOpen}>

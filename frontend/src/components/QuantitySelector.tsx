@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Item } from '@/services/itemService';
-import { getUnitDisplayName } from '@/utils/unitSystem';
+import { getUnitDisplayName, getUnitsForCategory } from '@/utils/unitSystem';
+import { useTranslation } from 'react-i18next';
 
 interface QuantitySelectorProps {
   item: Item;
@@ -10,6 +11,7 @@ interface QuantitySelectorProps {
   initialUnit: string;
   onQuantityChange: (quantity: string, unit: string) => void;
   className?: string;
+  context?: 'storage' | 'recipe';
 }
 
 export const QuantitySelector = ({
@@ -17,28 +19,44 @@ export const QuantitySelector = ({
   initialQuantity,
   initialUnit,
   onQuantityChange,
-  className = ''
+  className = '',
+  context = 'storage'
 }: QuantitySelectorProps) => {
+  const { t } = useTranslation();
   const [quantity, setQuantity] = useState(initialQuantity);
   const [unit, setUnit] = useState(initialUnit);
 
-  // Ensure availableUnits is always an array (handle cases where it might be a string from DB)
+  // Ensure availableUnits is always an array and filtered by context
   const availableUnits = React.useMemo(() => {
+    const categoryUnits = getUnitsForCategory(item.category, context);
+    
+    // For recipe context, always use category units (includes cooking measurements)
+    if (context === 'recipe') {
+      return categoryUnits.availableUnits;
+    }
+    
+    // For storage context, filter by item's available units
     if (Array.isArray(item.availableUnits)) {
-      return item.availableUnits;
+      // Filter item's available units by context-appropriate units
+      return item.availableUnits.filter(unit => 
+        categoryUnits.availableUnits.includes(unit)
+      );
     }
     // If it's a string (JSON), try to parse it
     if (typeof item.availableUnits === 'string') {
       try {
         const parsed = JSON.parse(item.availableUnits);
-        return Array.isArray(parsed) ? parsed : [item.defaultUnit];
+        const parsedArray = Array.isArray(parsed) ? parsed : [item.defaultUnit];
+        return parsedArray.filter(unit => 
+          categoryUnits.availableUnits.includes(unit)
+        );
       } catch {
         return [item.defaultUnit];
       }
     }
-    // Fallback to default unit
-    return [item.defaultUnit];
-  }, [item.availableUnits, item.defaultUnit]);
+    // Fallback to category units
+    return categoryUnits.availableUnits;
+  }, [item.availableUnits, item.defaultUnit, item.category, context]);
 
   const handleQuantityChange = (value: string) => {
     setQuantity(value);
@@ -68,7 +86,7 @@ export const QuantitySelector = ({
         <SelectContent>
           {availableUnits.map((availableUnit) => (
             <SelectItem key={availableUnit} value={availableUnit}>
-              {getUnitDisplayName(availableUnit)}
+              {t(`units.${getUnitDisplayName(availableUnit)}`)}
             </SelectItem>
           ))}
         </SelectContent>

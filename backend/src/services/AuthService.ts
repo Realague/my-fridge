@@ -23,7 +23,7 @@ export class AuthService {
     this.validateGoogleOAuthExchangeDto(exchangeDto);
 
     try {
-      const redirectUri = process.env.FRONTEND_URL ? `${process.env.FRONTEND_URL}/auth` : 'http://localhost:3000/auth';
+      const redirectUri = process.env.FRONTEND_URL ? `${process.env.FRONTEND_URL}/auth` : 'http://localhost:8080/auth';
       
       // Exchange code for tokens using client secret (backend only)
       const { tokens } = await this.googleClient.getToken({

@@ -18,6 +18,7 @@ import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
+import { StorageAreaType } from '@/types/enums';
 
 const Shopping = () => {
   const { t } = useTranslation();
@@ -500,15 +501,17 @@ const Shopping = () => {
                 />
               </div>
               
-              <div>
-                <Label className="text-sm">{t('pages.shopping.expirationDateOptional')}</Label>
-                <Input
-                  type="date"
-                  value={storageExpirationDate}
-                  onChange={(e) => setStorageExpirationDate(e.target.value)}
-                  className="mt-1"
-                />
-              </div>
+              {storageAreas.find((a) => a.id === selectedStorageArea)?.type !== StorageAreaType.FREEZER && (
+                <div>
+                  <Label className="text-sm">{t('pages.shopping.expirationDateOptional')}</Label>
+                  <Input
+                    type="date"
+                    value={storageExpirationDate}
+                    onChange={(e) => setStorageExpirationDate(e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+              )}
               
               <div className="flex gap-2 pt-2">
               <Button 

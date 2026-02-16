@@ -14,7 +14,7 @@ import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { itemService } from '@/services/itemService';
 import { format } from 'date-fns';
-import { Unit } from '@/types/enums';
+import { Unit, StorageAreaType } from '@/types/enums';
 import { Item } from '@/services/itemService';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '@/utils/dateFormatting';
@@ -314,15 +314,33 @@ const StorageArea = () => {
                     />
                   </div>
                   
-                  <div>
-                    <Label className="text-sm">{t('storageArea.expirationDate')}</Label>
-                    <Input
-                      type="date"
-                      value={editExpiration}
-                      onChange={(e) => setEditExpiration(e.target.value)}
-                      className="mt-1"
+                  {area.type !== StorageAreaType.FREEZER && (
+                    <div>
+                      <Label className="text-sm">{t('storageArea.expirationDate')}</Label>
+                      <Input
+                        type="date"
+                        value={editExpiration}
+                        onChange={(e) => setEditExpiration(e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                  )}
+                  
+                  {item.daysAfterOpening && (
+                    <OpenedStatusToggle
+                      isOpened={editIsOpened}
+                      openedDate={editOpenedDate}
+                      daysAfterOpening={item.daysAfterOpening}
+                      effectiveExpirationDate={editIsOpened && editOpenedDate ? 
+                        new Date(new Date(editOpenedDate).getTime() + item.daysAfterOpening * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
+                        : undefined
+                      }
+                      onToggle={(opened, date) => {
+                        setEditIsOpened(opened);
+                        setEditOpenedDate(date || '');
+                      }}
                     />
-                  </div>
+                  )}
                   
                   {item.daysAfterOpening && (
                     <OpenedStatusToggle
@@ -534,18 +552,37 @@ const StorageArea = () => {
                     />
                   </div>
                   
-                  {/* Expiration Date */}
-                  <div>
-                    <Label className="text-sm font-medium mb-2 block">
-                      {t('storageArea.expirationDate')} <span className="text-muted-foreground">({t('common.optional')})</span>
-                    </Label>
-                    <Input
-                      type="date"
-                      value={expirationDate}
-                      onChange={(e) => setExpirationDate(e.target.value)}
-                      className="mt-1"
+                  {/* Expiration Date - not shown for freezer (frozen items use recommended storage times) */}
+                  {area.type !== StorageAreaType.FREEZER && (
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block">
+                        {t('storageArea.expirationDate')} <span className="text-muted-foreground">({t('common.optional')})</span>
+                      </Label>
+                      <Input
+                        type="date"
+                        value={expirationDate}
+                        onChange={(e) => setExpirationDate(e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Opened Status Toggle */}
+                  {selectedItem.daysAfterOpening && (
+                    <OpenedStatusToggle
+                      isOpened={isOpened}
+                      openedDate={openedDate}
+                      daysAfterOpening={selectedItem.daysAfterOpening}
+                      effectiveExpirationDate={isOpened && openedDate ? 
+                        new Date(new Date(openedDate).getTime() + selectedItem.daysAfterOpening * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
+                        : undefined
+                      }
+                      onToggle={(opened, date) => {
+                        setIsOpened(opened);
+                        setOpenedDate(date || '');
+                      }}
                     />
-                  </div>
+                  )}
                   
                   {/* Opened Status Toggle */}
                   {selectedItem.daysAfterOpening && (

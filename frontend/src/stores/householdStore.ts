@@ -1,7 +1,8 @@
 import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
+import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import { StorageArea } from '@/types/household';
 import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
+import { getSafeStorage } from '@/utils/safeStorage';
 
 export interface Household {
   id: string;
@@ -447,6 +448,7 @@ export const useHouseholdStore = create<HouseholdStore>()(
       }),
       {
         name: 'household-store',
+        storage: createJSONStorage(getSafeStorage),
         // Only persist non-sensitive data
         partialize: (state) => ({
           selectedHouseholdId: state.selectedHouseholdId,

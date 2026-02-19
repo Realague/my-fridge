@@ -45,7 +45,6 @@ const Shopping = () => {
   
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [completedItemsLoaded, setCompletedItemsLoaded] = useState(false);
   const [loadingCompleted, setLoadingCompleted] = useState(false);
 
@@ -219,25 +218,6 @@ const Shopping = () => {
     setEditingItem(null);
   };
 
-  // Drag and drop handlers
-  const handleDragStart = (e: React.DragEvent, itemId: string) => {
-    setDraggedItem(itemId);
-    e.dataTransfer.effectAllowed = 'move';
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  };
-
-  const handleDrop = (e: React.DragEvent, targetId: string) => {
-    e.preventDefault();
-    if (!draggedItem || draggedItem === targetId) return;
-
-    // Note: drag and drop reordering would need to be implemented in the store
-    setDraggedItem(null);
-  };
-
   // Group and aggregate items by itemId
   const aggregateShoppingItems = (itemsList: ShoppingItem[]) => {
     const grouped = new Map<string, ShoppingItem[]>();
@@ -316,13 +296,9 @@ const Shopping = () => {
 
     return (
       <div
-        draggable={!isEditing}
-        onDragStart={(e) => handleDragStart(e, shoppingItem.id)}
-        onDragOver={handleDragOver}
-        onDrop={(e) => handleDrop(e, shoppingItem.id)}
         className={`flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors cursor-move ${
           isCompleted ? 'bg-accent opacity-75' : 'bg-muted'
-        } ${draggedItem === shoppingItem.id ? 'opacity-50' : ''}`}
+        }`}
       >
         <button
           onClick={() => toggleItemComplete(shoppingItem.id)}

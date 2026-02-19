@@ -23,6 +23,7 @@ interface AuthState {
   tokens: TokenInfo | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isCheckingAuth: boolean; // Track if checkStoredAuth is already running
   // Actions
   setUser: (user: User | null) => void;
   setTokens: (tokens: TokenInfo | null) => void;
@@ -45,6 +46,7 @@ export const useAuthStore = create<AuthState>()(
       tokens: null,
       isLoading: true,
       isAuthenticated: false,
+      isCheckingAuth: false, // Track if checkStoredAuth is already running
 
       setUser: (user) => {
         set({ user });
@@ -78,11 +80,23 @@ export const useAuthStore = create<AuthState>()(
       setAuthenticated: (authenticated) => set({ isAuthenticated: authenticated }),
 
       initializeGoogleAuth: () => {
-        get().checkStoredAuth();
+        const state = get();
+        // Only call checkStoredAuth if not already checking
+        if (!state.isCheckingAuth) {
+          get().checkStoredAuth();
+        }
       },
 
 
       checkStoredAuth: async () => {
+        const currentState = get();
+        // Prevent concurrent calls
+        if (currentState.isCheckingAuth) {
+          return;
+        }
+
+        // Set checking flag and loading to true when we start checking
+        set({ isCheckingAuth: true, isLoading: true });
         const state = get();
         
         // Check if we have stored tokens
@@ -95,7 +109,7 @@ export const useAuthStore = create<AuthState>()(
               // Try to refresh the token
               const refreshed = await get().refreshTokens();
               if (!refreshed) {
-                set({ user: null, tokens: null, isAuthenticated: false, isLoading: false });
+                set({ user: null, tokens: null, isAuthenticated: false, isLoading: false, isCheckingAuth: false });
                 return;
               }
               validToken = get().tokens?.accessToken || '';
@@ -131,14 +145,14 @@ export const useAuthStore = create<AuthState>()(
             }
           } catch (error) {
             console.error('Token validation failed:', error);
-            set({ user: null, tokens: null, isAuthenticated: false });
+            set({ user: null, tokens: null, isAuthenticated: false, isLoading: false, isCheckingAuth: false });
           }
         } else {
           // No tokens found, ensure auth state is clear
           set({ user: null, tokens: null, isAuthenticated: false });
         }
         // Always set loading to false after checking stored auth
-        set({ isLoading: false });
+        set({ isLoading: false, isCheckingAuth: false });
       },
 
       isTokenExpired: (token: string): boolean => {
@@ -268,6 +282,14 @@ export const useAuthStore = create<AuthState>()(
         tokens: state.tokens,
         isAuthenticated: state.isAuthenticated,
       }),
+      onRehydrateStorage: () => (state) => {
+        // After rehydration, set isLoading and isCheckingAuth to false since we haven't started checking yet
+        // They will be set to true when initializeGoogleAuth is called
+        if (state) {
+          state.isLoading = false;
+          state.isCheckingAuth = false;
+        }
+      },
     }
   )
 );

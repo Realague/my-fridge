@@ -39,9 +39,10 @@ function App() {
   const initializeGoogleAuth = useAuthStore(state => state.initializeGoogleAuth);
 
   useEffect(() => {
-    // Initialize Google Auth when the app loads
+    // Initialize Google Auth when the app loads (only once on mount)
     initializeGoogleAuth();
-  }, [initializeGoogleAuth]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array ensures this only runs once on mount
 
     return (
     <QueryClientProvider client={queryClient}>

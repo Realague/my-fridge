@@ -1,21 +1,38 @@
 import { Item } from '../services/itemService';
 
 /**
- * Get the display name for an item, using translation for seeded items
- * and the original name for user-created items
+ * Get the display name for an item.
+ *
+ * Rules:
+ * - User-created / household items (householdId not null) → return original name
+ * - Seeded/global items (householdId === null) → try i18n key `items.<name>`
+ *   and fall back to the raw name if no translation exists
+ * - Items without a defined householdId (undefined) are treated as custom and
+ *   **not** forced through the translation layer (fallback to raw name).
  */
-export const getItemDisplayName = (item: Item | undefined, t: (key: string, options?: any) => string): string => {
-  if (!item) {
-    return '';
-  }
+export const getItemDisplayName = (
+  item: Item | undefined,
+  t: (key: string, options?: any) => string
+): string => {
+  if (!item) return '';
 
-  // If it's a user-created item (has householdId), return the original name
-  if (item?.householdId) {
+  const householdId = (item as any).householdId;
+
+  // User-created / household-specific items: always use the stored name
+  if (householdId !== null && householdId !== undefined) {
     return item.name;
   }
-  
-  // If it's a seeded item (householdId is null), use the name as translation key
-  return t(`items.${item.name}`);
+
+  // Seeded/global items: try translation first
+  const translationKey = `items.${item.name}`;
+  const translated = t(translationKey);
+
+  // If no translation is found (i18n returns the key itself), fall back to the raw name
+  if (!translated || translated === translationKey) {
+    return item.name;
+  }
+
+  return translated;
 };
 
 /**

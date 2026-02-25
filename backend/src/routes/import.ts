@@ -140,17 +140,30 @@ router.post('/import/marmiton', async (req: Request, res: Response) => {
       }
     }
 
-    // Get image URL
+    // Get image URL: first from JSON-LD, then fallbacks from the page
     let imageUrl: string | null = null;
     if (recipeData.image) {
       if (typeof recipeData.image === 'string') {
         imageUrl = recipeData.image;
       } else if (Array.isArray(recipeData.image) && recipeData.image.length > 0) {
-        imageUrl = typeof recipeData.image[0] === 'string' 
-          ? recipeData.image[0] 
+        imageUrl = typeof recipeData.image[0] === 'string'
+          ? recipeData.image[0]
           : recipeData.image[0]?.url || null;
       } else if (recipeData.image.url) {
         imageUrl = recipeData.image.url;
+      }
+    }
+    // Fallback: first photo from the page (og:image or first recipe image)
+    if (!imageUrl) {
+      const ogImage = $('meta[property="og:image"]').attr('content');
+      if (ogImage) {
+        imageUrl = ogImage;
+      }
+    }
+    if (!imageUrl) {
+      const firstRecipeImg = $('.recipe-media img, .mrtn-recipe-header img, [class*="recipe"] img, main img').first().attr('src');
+      if (firstRecipeImg) {
+        imageUrl = firstRecipeImg.startsWith('http') ? firstRecipeImg : new URL(firstRecipeImg, url).href;
       }
     }
 

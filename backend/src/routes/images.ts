@@ -14,7 +14,7 @@ cloudinary.config({
 // Apply authentication middleware to all routes
 router.use(authenticateGoogleToken);
 
-// Generate signed upload signature
+// Generate signed upload signature for direct browser uploads
 router.post('/signature', async (req: Request, res: Response) => {
   try {
     let folder: string | undefined;
@@ -46,6 +46,42 @@ router.post('/signature', async (req: Request, res: Response) => {
     return res.status(500).json({ 
       error: 'Failed to generate upload signature',
       message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Upload an image to Cloudinary from a remote URL (used for imported recipes)
+router.post('/import-from-url', async (req: Request, res: Response) => {
+  try {
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const imageUrl = body?.url as string | undefined;
+    const folder = body?.folder as string | undefined;
+
+    if (!imageUrl || typeof imageUrl !== 'string') {
+      return res.status(400).json({ error: 'Image URL is required' });
+    }
+
+    try {
+      const result = await cloudinary.uploader.upload(imageUrl, {
+        folder,
+      });
+
+      return res.json({
+        secureUrl: result.secure_url,
+        publicId: result.public_id,
+      });
+    } catch (uploadError) {
+      console.error('Error uploading image from URL to Cloudinary:', uploadError);
+      return res.status(500).json({
+        error: 'Failed to upload image from URL',
+        message: uploadError instanceof Error ? uploadError.message : 'Unknown error',
+      });
+    }
+  } catch (error) {
+    console.error('Error handling import-from-url request:', error);
+    return res.status(500).json({
+      error: 'Failed to process request',
+      message: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 });

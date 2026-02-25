@@ -271,7 +271,7 @@ const RecipeCookingMode = () => {
                           <div key={ingredient.id} className="flex items-center gap-2 text-sm">
                             <span className="w-2 h-2 bg-primary rounded-full"></span>
                             <span className="font-medium text-foreground">
-                              {ingredient.quantity} {ingredient.unit} {getItemDisplayName(ingredient?.item as Item, t)}
+                              {ingredient.quantity} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient?.item as Item, t)}
                             </span>
                             {ingredient.notes && (
                               <span className="text-muted-foreground italic">({ingredient.notes})</span>
@@ -345,7 +345,7 @@ const RecipeCookingMode = () => {
                           />
                           <div className={`flex-1 text-sm ${checkedIngredients[index] ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
                             <div className={`font-medium ${isRelevant ? 'text-primary' : ''}`}>
-                              {ingredient.quantity} {ingredient.unit} {getItemDisplayName(ingredient?.item as Item, t)}
+                              {ingredient.quantity} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient?.item as Item, t)}
                             </div>
                             {ingredient.notes && (
                               <div className={`text-xs ${isRelevant ? 'text-primary' : 'text-muted-foreground'}`}>

@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { Item } from '@/services/itemService';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { ImageUpload } from '@/components/ImageUpload';
-import { uploadImageWithSignature } from '@/services/imageUploadService';
+import { uploadImageWithSignature, uploadImageFromUrl } from '@/services/imageUploadService';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface RecipeIngredientWithId extends CreateRecipeIngredientDto {
@@ -249,20 +249,35 @@ const AddRecipe = () => {
       
       const newRecipe = await createRecipe(recipeData);
 
-      // If an image was selected, upload it now and update the recipe
+      // Handle image upload after recipe creation:
+      // 1) If the user selected a local image file, upload that
+      // 2) Otherwise, if we have an imported image URL, import it to Cloudinary
       if (selectedImageFile) {
         try {
-          const imageUrl = await uploadImageWithSignature('recipes', selectedImageFile);
-          await useRecipeStore.getState().updateRecipe(newRecipe.id, { imageUrl: imageUrl });
+          const uploadedImageUrl = await uploadImageWithSignature('recipes', selectedImageFile);
+          await useRecipeStore.getState().updateRecipe(newRecipe.id, { imageUrl: uploadedImageUrl });
         } catch (e) {
           // Non-fatal: recipe is created without image
           console.error('Deferred image upload failed:', e);
+        }
+      } else if (imageUrl) {
+        try {
+          // If the image is not already a Cloudinary URL, import it
+          const isCloudinary = imageUrl.includes('res.cloudinary.com');
+          const finalImageUrl = isCloudinary
+            ? imageUrl
+            : await uploadImageFromUrl('recipes', imageUrl);
+
+          await useRecipeStore.getState().updateRecipe(newRecipe.id, { imageUrl: finalImageUrl });
+        } catch (e) {
+          // Non-fatal: recipe is created without image
+          console.error('Imported image upload failed:', e);
         }
       }
       
       toast({
         title: t('messages.success.recipeAdded'),
-        description: t('messages.success.recipeSavedToCollection'),
+        description: t('messages.success.recipeSaved'),
       });
       
       // Clear any errors that might have been set and navigate
@@ -541,7 +556,7 @@ const AddRecipe = () => {
                                   onCheckedChange={() => toggleIngredientForStep(ingredient.id, index)}
                                 />
                                 <span className="text-sm text-muted-foreground">
-                                  {ingredient.quantity} {ingredient.unit} {getItemDisplayName(ingredient.item, t)}
+                                  {ingredient.quantity} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient.item, t)}
                                 </span>
                               </div>
                             );

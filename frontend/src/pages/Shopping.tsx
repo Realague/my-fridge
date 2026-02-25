@@ -368,7 +368,7 @@ const Shopping = () => {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <span>{shoppingItem.quantity} {shoppingItem.unit}</span>
+                <span>{shoppingItem.quantity} {shoppingItem.unit !== 'piece' ? shoppingItem.unit : ''}</span>
                 <span>•</span>
                 <span>{t('pages.shopping.addedBy')}</span>
               </div>
@@ -444,7 +444,7 @@ const Shopping = () => {
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {itemToStore.quantity} {itemToStore.unit}
+                  {itemToStore.quantity} {itemToStore.unit !== 'piece' ? itemToStore.unit : ''}
                 </p>
               </div>
               

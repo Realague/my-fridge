@@ -119,6 +119,10 @@ const FRENCH_STOP_WORDS = [
   'selon', 'goût', 'facultatif', 'optionnel',
 ];
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export class IngredientMatchingService {
   /**
    * Parse a raw ingredient string to extract quantity, unit and item name
@@ -161,11 +165,18 @@ export class IngredientMatchingService {
     
     // Extract unit
     let unit: string | null = null;
-    const unitPattern = new RegExp(`^(${Object.keys(FRENCH_UNIT_MAP).join('|')})\\b`, 'i');
+    const escapedUnitKeys = Object.keys(FRENCH_UNIT_MAP)
+      .sort((a, b) => b.length - a.length)
+      .map(escapeRegExp);
+    const unitPattern = new RegExp(`^(${escapedUnitKeys.join('|')})\\b`, 'i');
     const unitMatch = workingText.match(unitPattern);
     if (unitMatch && unitMatch[1]) {
-      unit = FRENCH_UNIT_MAP[unitMatch[1].toLowerCase()] || null;
-      workingText = workingText.substring(unitMatch[0].length).trim();
+      const normalizedMatch = unitMatch[1].toLowerCase();
+      const mappedUnit = FRENCH_UNIT_MAP[normalizedMatch];
+      if (mappedUnit) {
+        unit = mappedUnit;
+        workingText = workingText.substring(unitMatch[0].length).trim();
+      }
     }
     
     // Remove stop words and clean up

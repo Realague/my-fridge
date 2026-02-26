@@ -2,9 +2,13 @@ import { Router, Request, Response } from 'express';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { IngredientMatchingService, MatchedIngredient } from '../services/IngredientMatchingService';
+import { authenticateGoogleToken } from '../middleware/auth';
 
 const router = Router();
 const ingredientMatchingService = new IngredientMatchingService();
+
+// Apply authentication middleware to all routes
+router.use(authenticateGoogleToken);
 
 interface ParsedRecipe {
   title: string;
@@ -47,6 +51,21 @@ function mapDifficulty(difficulty: string | undefined): 'Easy' | 'Medium' | 'Har
   return 'Medium';
 }
 
+function isAllowedMarmitonUrl(rawUrl: string): boolean {
+  try {
+    const parsedUrl = new URL(rawUrl);
+    const protocol = parsedUrl.protocol.toLowerCase();
+    if (protocol !== 'http:' && protocol !== 'https:') {
+      return false;
+    }
+
+    const hostname = parsedUrl.hostname.toLowerCase();
+    return hostname === 'marmiton.org' || hostname.endsWith('.marmiton.org');
+  } catch {
+    return false;
+  }
+}
+
 router.post('/import/marmiton', async (req: Request, res: Response) => {
   const { url } = req.body;
 
@@ -54,12 +73,13 @@ router.post('/import/marmiton', async (req: Request, res: Response) => {
     return res.status(400).json({ error: 'URL is required' });
   }
 
-  if (!url.includes('marmiton.org')) {
+  const normalizedUrl = url.trim();
+  if (!isAllowedMarmitonUrl(normalizedUrl)) {
     return res.status(400).json({ error: 'URL must be from marmiton.org' });
   }
 
   try {
-    const response = await axios.get(url, {
+    const response = await axios.get(normalizedUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -163,7 +183,7 @@ router.post('/import/marmiton', async (req: Request, res: Response) => {
     if (!imageUrl) {
       const firstRecipeImg = $('.recipe-media img, .mrtn-recipe-header img, [class*="recipe"] img, main img').first().attr('src');
       if (firstRecipeImg) {
-        imageUrl = firstRecipeImg.startsWith('http') ? firstRecipeImg : new URL(firstRecipeImg, url).href;
+        imageUrl = firstRecipeImg.startsWith('http') ? firstRecipeImg : new URL(firstRecipeImg, normalizedUrl).href;
       }
     }
 
@@ -187,8 +207,12 @@ router.post('/import/marmiton', async (req: Request, res: Response) => {
     }
 
     // Match ingredients with database items
-    // Get householdId from authenticated user if available
+    // Defensive guard: this route is authenticated at router level and
+    // should always have req.user set by the auth middleware.
     const user = (req as any).user;
+    if (!user) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
     const householdId = user?.selectedHouseholdId;
     
     const matchedIngredients = await ingredientMatchingService.matchIngredients(
@@ -208,7 +232,7 @@ router.post('/import/marmiton', async (req: Request, res: Response) => {
       ingredients,
       matchedIngredients,
       imageUrl,
-      sourceUrl: url,
+      sourceUrl: normalizedUrl,
     };
 
     return res.json(parsedRecipe);

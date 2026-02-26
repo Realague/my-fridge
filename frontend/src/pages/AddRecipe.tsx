@@ -70,14 +70,14 @@ const AddRecipe = () => {
   
   const form = useForm<RecipeFormData>({
     defaultValues: {
-      title: importedRecipe?.title || '',
-      description: importedRecipe?.description || '',
-      prepTime: importedRecipe?.prepTime || 10,
-      cookTime: importedRecipe?.cookTime || 20,
-      servings: importedRecipe?.servings || 4,
-      difficulty: importedRecipe?.difficulty || 'Easy',
+      title: importedRecipe?.title ?? '',
+      description: importedRecipe?.description ?? '',
+      prepTime: importedRecipe?.prepTime ?? 10,
+      cookTime: importedRecipe?.cookTime ?? 20,
+      servings: importedRecipe?.servings ?? 4,
+      difficulty: importedRecipe?.difficulty ?? 'Easy',
       ingredients: [],
-      instructions: importedRecipe?.instructions || [''],
+      instructions: importedRecipe?.instructions ?? [''],
       tags: [],
     },
   });

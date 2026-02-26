@@ -342,22 +342,6 @@ const StorageArea = () => {
                     />
                   )}
                   
-                  {item.daysAfterOpening && (
-                    <OpenedStatusToggle
-                      isOpened={editIsOpened}
-                      openedDate={editOpenedDate}
-                      daysAfterOpening={item.daysAfterOpening}
-                      effectiveExpirationDate={editIsOpened && editOpenedDate ? 
-                        new Date(new Date(editOpenedDate).getTime() + item.daysAfterOpening * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
-                        : undefined
-                      }
-                      onToggle={(opened, date) => {
-                        setEditIsOpened(opened);
-                        setEditOpenedDate(date || '');
-                      }}
-                    />
-                  )}
-                  
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={handleCancel}>
                       <X className="h-3 w-3 mr-1" />
@@ -565,23 +549,6 @@ const StorageArea = () => {
                         className="mt-1"
                       />
                     </div>
-                  )}
-                  
-                  {/* Opened Status Toggle */}
-                  {selectedItem.daysAfterOpening && (
-                    <OpenedStatusToggle
-                      isOpened={isOpened}
-                      openedDate={openedDate}
-                      daysAfterOpening={selectedItem.daysAfterOpening}
-                      effectiveExpirationDate={isOpened && openedDate ? 
-                        new Date(new Date(openedDate).getTime() + selectedItem.daysAfterOpening * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
-                        : undefined
-                      }
-                      onToggle={(opened, date) => {
-                        setIsOpened(opened);
-                        setOpenedDate(date || '');
-                      }}
-                    />
                   )}
                   
                   {/* Opened Status Toggle */}

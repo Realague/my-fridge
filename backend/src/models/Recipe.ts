@@ -18,6 +18,7 @@ interface RecipeAttributes {
   instructions: string[];
   tags: string[];
   imageUrl: string | null;
+  sourceUrl: string | null;
   isFavorite: boolean;
   householdId: string;
   createdBy: string;
@@ -26,7 +27,7 @@ interface RecipeAttributes {
 }
 
 // Some attributes are optional in `Recipe.build()` and `Recipe.create()`
-export interface RecipeCreationAttributes extends Optional<RecipeAttributes, 'id' | 'description' | 'imageUrl' | 'isFavorite' | 'createdAt' | 'updatedAt'> {}
+export interface RecipeCreationAttributes extends Optional<RecipeAttributes, 'id' | 'description' | 'imageUrl' | 'sourceUrl' | 'isFavorite' | 'createdAt' | 'updatedAt'> {}
 
 export class Recipe extends Model<RecipeAttributes, RecipeCreationAttributes> implements RecipeAttributes {
   public id!: string;
@@ -40,6 +41,7 @@ export class Recipe extends Model<RecipeAttributes, RecipeCreationAttributes> im
   public tags!: string[];
   public isFavorite!: boolean;
   public imageUrl!: string | null;
+  public sourceUrl!: string | null;
   public householdId!: string;
   public readonly createdBy!: string;
   public readonly createdAt!: Date;
@@ -131,6 +133,10 @@ Recipe.init(
       defaultValue: [],
     },
     imageUrl: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    sourceUrl: {
       type: DataTypes.TEXT,
       allowNull: true,
     },

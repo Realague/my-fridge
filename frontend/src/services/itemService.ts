@@ -7,6 +7,7 @@ export interface Item {
   defaultUnit: string;
   availableUnits: string[];
   daysAfterOpening?: number;
+  excludeFromShopping?: boolean;
   createdBy: string | null;
   householdId: string | null;
   imageUrl: string | null;

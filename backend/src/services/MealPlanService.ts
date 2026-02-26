@@ -207,7 +207,8 @@ export class MealPlanService {
           }
         } else {
           const item = await this.itemRepository.findById(ingredient.itemId);
-          if (item) {
+          // Skip items that are marked as excludeFromShopping (e.g., water)
+          if (item && !item.excludeFromShopping) {
             ingredientTotals.set(key, {
               itemId: item.id,
               itemName: item.name,

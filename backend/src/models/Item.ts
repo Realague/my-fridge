@@ -12,6 +12,7 @@ interface ItemAttributes {
   defaultUnit: Unit;
   availableUnits: Unit[];
   daysAfterOpening: number | null;
+  excludeFromShopping: boolean;
   imageUrl: string | null;
   householdId: string | null;
   createdBy: string | null;
@@ -20,7 +21,7 @@ interface ItemAttributes {
 }
 
 // Some attributes are optional in `Item.build()` and `Item.create()`
-interface ItemCreationAttributes extends Optional<ItemAttributes, 'id' | 'defaultUnit' | 'availableUnits' | 'daysAfterOpening' | 'createdAt' | 'updatedAt'> {}
+interface ItemCreationAttributes extends Optional<ItemAttributes, 'id' | 'defaultUnit' | 'availableUnits' | 'daysAfterOpening' | 'excludeFromShopping' | 'createdAt' | 'updatedAt'> {}
 
 export class Item extends Model<ItemAttributes, ItemCreationAttributes> implements ItemAttributes {
   public id!: string;
@@ -29,6 +30,7 @@ export class Item extends Model<ItemAttributes, ItemCreationAttributes> implemen
   public defaultUnit!: Unit;
   public availableUnits!: Unit[];
   public daysAfterOpening!: number | null;
+  public excludeFromShopping!: boolean;
   public imageUrl!: string | null;
   public createdBy!: string | null;
   public householdId!: string | null;
@@ -94,6 +96,11 @@ Item.init(
       validate: {
         min: 1,
       },
+    },
+    excludeFromShopping: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
     householdId: {
       type: DataTypes.UUID,

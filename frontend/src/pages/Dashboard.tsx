@@ -231,7 +231,7 @@ const Dashboard = () => {
                  <p className="text-gray-500 mb-4">{t('pages.dashboard.noStorageAreas')}</p>
                  <AddStorageAreaDialog 
                    trigger={
-                     <Button className="bg-green-600 hover:bg-green-700">
+                     <Button variant="green">
                        {t('pages.dashboard.addFirstStorageArea')}
                      </Button>
                    }

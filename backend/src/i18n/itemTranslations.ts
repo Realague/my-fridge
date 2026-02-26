@@ -7808,3 +7808,16 @@ export function getTranslatedNames(language: string): string[] {
 
   return Object.values(translations);
 }
+
+/**
+ * Get translated name for a single item nameKey
+ */
+export function getTranslatedName(nameKey: string, language: string): string {
+  const normalizedLang = normalizeLanguageCode(language);
+  const translations = itemTranslations[normalizedLang];
+  if (!translations || !translations[nameKey]) {
+    // Fallback to nameKey if translation not found
+    return nameKey;
+  }
+  return translations[nameKey];
+}

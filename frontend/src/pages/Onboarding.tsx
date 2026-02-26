@@ -33,6 +33,18 @@ const Onboarding = () => {
     }
   }, [isLoading, isAuthenticated, navigate]);
 
+  // Check URL parameters and set initial step
+  // IMPORTANT: This must be called before any early returns to follow Rules of Hooks
+  useEffect(() => {
+    const stepParam = searchParams.get('step');
+    if (stepParam) {
+      const stepNumber = parseInt(stepParam, 10);
+      if (stepNumber >= 1 && stepNumber <= 4) {
+        setStep(stepNumber);
+      }
+    }
+  }, [searchParams, step]);
+
   // Show loading spinner while auth is loading
   if (isLoading) {
     return (
@@ -44,17 +56,6 @@ const Onboarding = () => {
       </div>
     );
   }
-
-  // Check URL parameters and set initial step
-  useEffect(() => {
-    const stepParam = searchParams.get('step');
-    if (stepParam) {
-      const stepNumber = parseInt(stepParam, 10);
-      if (stepNumber >= 1 && stepNumber <= 4) {
-        setStep(stepNumber);
-      }
-    }
-  }, [searchParams]);
 
   const handleCreateHousehold = async () => {
     try {

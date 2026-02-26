@@ -105,6 +105,10 @@ const FRENCH_UNIT_MAP: { [key: string]: string } = {
   'poignées': 'other',
 };
 
+// Some French tokens can be both units and ingredient names.
+// Keep them as ingredient names when they appear alone after quantity (e.g. "3 noix").
+const AMBIGUOUS_FRENCH_UNITS = new Set(['noix']);
+
 // Words to remove from ingredient text (French)
 const FRENCH_STOP_WORDS = [
   'de', 'd\'', 'du', 'des', 'la', 'le', 'les', 'l\'', 'un', 'une',
@@ -174,8 +178,14 @@ export class IngredientMatchingService {
       const normalizedMatch = unitMatch[1].toLowerCase();
       const mappedUnit = FRENCH_UNIT_MAP[normalizedMatch];
       if (mappedUnit) {
-        unit = mappedUnit;
-        workingText = workingText.substring(unitMatch[0].length).trim();
+        const remainingText = workingText.substring(unitMatch[0].length).trim();
+        const shouldKeepAsIngredient =
+          AMBIGUOUS_FRENCH_UNITS.has(normalizedMatch) && remainingText.length === 0;
+
+        if (!shouldKeepAsIngredient) {
+          unit = mappedUnit;
+          workingText = remainingText;
+        }
       }
     }
     

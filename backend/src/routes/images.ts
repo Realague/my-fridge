@@ -4,6 +4,40 @@ import { authenticateGoogleToken } from '../middleware/auth';
 
 const router = Router();
 
+const DEFAULT_ALLOWED_IMAGE_IMPORT_HOSTS = [
+  'marmiton.org',
+  'assets.afcdn.com',
+];
+
+function getAllowedImageImportHosts(): string[] {
+  const configuredHosts = process.env.IMAGE_IMPORT_ALLOWED_HOSTS
+    ?.split(',')
+    .map((host) => host.trim().toLowerCase())
+    .filter(Boolean);
+
+  return configuredHosts && configuredHosts.length > 0
+    ? configuredHosts
+    : DEFAULT_ALLOWED_IMAGE_IMPORT_HOSTS;
+}
+
+function isAllowedImageImportUrl(rawUrl: string): boolean {
+  try {
+    const parsedUrl = new URL(rawUrl);
+    const protocol = parsedUrl.protocol.toLowerCase();
+    if (protocol !== 'http:' && protocol !== 'https:') {
+      return false;
+    }
+
+    const hostname = parsedUrl.hostname.toLowerCase();
+    return getAllowedImageImportHosts().some(
+      (allowedHost) =>
+        hostname === allowedHost || hostname.endsWith(`.${allowedHost}`)
+    );
+  } catch {
+    return false;
+  }
+}
+
 // Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -54,16 +88,24 @@ router.post('/signature', async (req: Request, res: Response) => {
 router.post('/import-from-url', async (req: Request, res: Response) => {
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    const imageUrl = body?.url as string | undefined;
+    const rawImageUrl = body?.url as string | undefined;
     const folder = body?.folder as string | undefined;
 
-    if (!imageUrl || typeof imageUrl !== 'string') {
+    if (!rawImageUrl || typeof rawImageUrl !== 'string') {
       return res.status(400).json({ error: 'Image URL is required' });
+    }
+
+    const imageUrl = rawImageUrl.trim();
+    if (!isAllowedImageImportUrl(imageUrl)) {
+      return res.status(400).json({
+        error: `Image URL host is not allowed. Allowed hosts: ${getAllowedImageImportHosts().join(', ')}`,
+      });
     }
 
     try {
       const result = await cloudinary.uploader.upload(imageUrl, {
         folder,
+        resource_type: 'image',
       });
 
       return res.json({

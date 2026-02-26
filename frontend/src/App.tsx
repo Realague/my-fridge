@@ -25,6 +25,7 @@ import RecipeDetails from "./pages/RecipeDetails";
 import RecipeCookingMode from "./pages/RecipeCookingMode";
 import AddRecipe from "./pages/AddRecipe";
 import EditRecipe from "./pages/EditRecipe";
+import ImportRecipe from "./pages/ImportRecipe";
 import MealPlans from "./pages/MealPlans";
 import Household from "./pages/Household";
 import HouseholdDetails from "./pages/HouseholdDetails";
@@ -66,6 +67,7 @@ function App() {
                       <Route path="/recipes/:id" element={<RecipeDetails />} />
                       <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />
                       <Route path="/add-recipe" element={<AddRecipe />} />
+                      <Route path="/import-recipe" element={<ImportRecipe />} />
                       <Route path="/recipes/:id/edit" element={<EditRecipe />} />
                       <Route path="/meal-plans" element={<MealPlans />} />
                       <Route path="/household" element={<Household />} />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,14 +12,14 @@ import { ArrowLeft, Plus, X } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
-import { CreateRecipeIngredientDto, RecipeDifficulty } from '@/services/recipeService';
+import { CreateRecipeIngredientDto, RecipeDifficulty, ParsedMarmitonRecipe } from '@/services/recipeService';
 import { useToast } from '@/hooks/use-toast';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
 import { useTranslation } from 'react-i18next';
 import { Item } from '@/services/itemService';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { ImageUpload } from '@/components/ImageUpload';
-import { uploadImageWithSignature } from '@/services/imageUploadService';
+import { uploadImageWithSignature, uploadImageFromUrl } from '@/services/imageUploadService';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface RecipeIngredientWithId extends CreateRecipeIngredientDto {
@@ -42,8 +42,25 @@ interface RecipeFormData {
 const AddRecipe = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const { t } = useTranslation();
+
+  // Get imported recipe and selected ingredients from navigation state
+  const locationState = location.state as { 
+    importedRecipe?: ParsedMarmitonRecipe;
+    selectedIngredients?: Array<{
+      originalText: string;
+      quantity: number | null;
+      unit: string | null;
+      itemId: string | null;
+      itemName: string | null;
+      translatedName: string | null;
+      availableUnits: string[];
+    }>;
+  };
+  const importedRecipe = locationState?.importedRecipe;
+  const selectedIngredients = locationState?.selectedIngredients;
 
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
@@ -53,25 +70,54 @@ const AddRecipe = () => {
   
   const form = useForm<RecipeFormData>({
     defaultValues: {
-      title: '',
-      description: '',
-      prepTime: 10,
-      cookTime: 20,
-      servings: 4,
-      difficulty: 'Easy',
+      title: importedRecipe?.title ?? '',
+      description: importedRecipe?.description ?? '',
+      prepTime: importedRecipe?.prepTime ?? 10,
+      cookTime: importedRecipe?.cookTime ?? 20,
+      servings: importedRecipe?.servings ?? 4,
+      difficulty: importedRecipe?.difficulty ?? 'Easy',
       ingredients: [],
-      instructions: [''],
+      instructions: importedRecipe?.instructions ?? [''],
       tags: [],
     },
   });
 
-  const [ingredients, setIngredients] = React.useState<RecipeIngredientWithId[]>([]);
-  const [instructions, setInstructions] = React.useState(['']);
+  // Initialize ingredients from selected ingredients if provided
+  const initialIngredients = React.useMemo(() => {
+    if (selectedIngredients && selectedIngredients.length > 0) {
+      return selectedIngredients
+        .filter(ing => ing.itemId !== null)
+        .map((ing, index) => ({
+          id: `imported-${index}-${Date.now()}`,
+          itemId: ing.itemId!,
+          quantity: ing.quantity || 1,
+          unit: ing.unit || 'piece',
+          notes: '',
+          item: {
+            id: ing.itemId!,
+            name: ing.itemName || '',
+            category: 'other',
+            defaultUnit: ing.unit || 'piece',
+            availableUnits: ing.availableUnits || [ing.unit || 'piece'],
+          } as Item,
+        }));
+    }
+    return [];
+  }, []);
+
+  const [ingredients, setIngredients] = React.useState<RecipeIngredientWithId[]>(initialIngredients);
+  const [instructions, setInstructions] = React.useState(importedRecipe?.instructions || ['']);
   const [tags, setTags] = React.useState<string[]>([]);
   const [newTag, setNewTag] = React.useState('');
   const [ingredientStepMap, setIngredientStepMap] = React.useState<{[ingredientId: string]: number[]}>({});
-  const [imageUrl, setImageUrl] = React.useState<string | null>(null);
+  const [imageUrl, setImageUrl] = React.useState<string | null>(importedRecipe?.imageUrl || null);
   const [selectedImageFile, setSelectedImageFile] = React.useState<File | null>(null);
+  const [sourceUrl] = React.useState<string | undefined>(importedRecipe?.sourceUrl);
+
+  // Store imported ingredients as raw text for display (only if no selected ingredients)
+  const [importedIngredients] = React.useState<string[]>(
+    selectedIngredients && selectedIngredients.length > 0 ? [] : (importedRecipe?.ingredients || [])
+  );
 
   // Clear any existing errors when component mounts
   React.useEffect(() => {
@@ -192,6 +238,7 @@ const AddRecipe = () => {
       difficulty: data.difficulty,
       instructions: filteredInstructions,
       tags,
+      sourceUrl,
       // image is uploaded after create
       ingredients: ingredientsForApi,
     };
@@ -202,20 +249,35 @@ const AddRecipe = () => {
       
       const newRecipe = await createRecipe(recipeData);
 
-      // If an image was selected, upload it now and update the recipe
+      // Handle image upload after recipe creation:
+      // 1) If the user selected a local image file, upload that
+      // 2) Otherwise, if we have an imported image URL, import it to Cloudinary
       if (selectedImageFile) {
         try {
-          const imageUrl = await uploadImageWithSignature('recipes', selectedImageFile);
-          await useRecipeStore.getState().updateRecipe(newRecipe.id, { imageUrl: imageUrl });
+          const uploadedImageUrl = await uploadImageWithSignature('recipes', selectedImageFile);
+          await useRecipeStore.getState().updateRecipe(newRecipe.id, { imageUrl: uploadedImageUrl });
         } catch (e) {
           // Non-fatal: recipe is created without image
           console.error('Deferred image upload failed:', e);
+        }
+      } else if (imageUrl) {
+        try {
+          // If the image is not already a Cloudinary URL, import it
+          const isCloudinary = imageUrl.includes('res.cloudinary.com');
+          const finalImageUrl = isCloudinary
+            ? imageUrl
+            : await uploadImageFromUrl('recipes', imageUrl);
+
+          await useRecipeStore.getState().updateRecipe(newRecipe.id, { imageUrl: finalImageUrl });
+        } catch (e) {
+          // Non-fatal: recipe is created without image
+          console.error('Imported image upload failed:', e);
         }
       }
       
       toast({
         title: t('messages.success.recipeAdded'),
-        description: t('messages.success.recipeSavedToCollection'),
+        description: t('messages.success.recipeSaved'),
       });
       
       // Clear any errors that might have been set and navigate
@@ -390,6 +452,30 @@ const AddRecipe = () => {
               </CardContent>
             </Card>
 
+            {/* Imported Ingredients Reference */}
+            {importedIngredients.length > 0 && (
+              <Card className="bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base text-amber-800 dark:text-amber-200">
+                    {t('pages.importRecipe.importedIngredients')}
+                  </CardTitle>
+                  <CardDescription className="text-amber-700 dark:text-amber-300">
+                    {t('pages.importRecipe.importedIngredientsDescription')}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-1 text-sm text-amber-800 dark:text-amber-200">
+                    {importedIngredients.map((ing, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <span className="text-amber-600 dark:text-amber-400 mt-0.5">•</span>
+                        <span>{ing}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Structured Ingredients */}
             <StructuredIngredientInput
               ingredients={ingredients}
@@ -470,7 +556,7 @@ const AddRecipe = () => {
                                   onCheckedChange={() => toggleIngredientForStep(ingredient.id, index)}
                                 />
                                 <span className="text-sm text-muted-foreground">
-                                  {ingredient.quantity} {ingredient.unit} {getItemDisplayName(ingredient.item, t)}
+                                  {ingredient.quantity} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient.item, t)}
                                 </span>
                               </div>
                             );

@@ -115,7 +115,8 @@ export const MealPlanProvider = ({ children }: { children: ReactNode }) => {
       if (!availability || !availability.available) {
         try {
           const item = await itemService.getItemById(ingredient.itemId);
-          if (item) {
+          // Skip items that are marked as excludeFromShopping (e.g., water)
+          if (item && !item.excludeFromShopping) {
             const shortfall = availability?.shortfall || totalQuantity;
             missingItems.push({
               item,

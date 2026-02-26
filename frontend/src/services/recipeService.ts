@@ -38,6 +38,7 @@ export interface CreateRecipeDto {
   instructions: string[];
   tags: string[];
   imageUrl?: string;
+  sourceUrl?: string;
   ingredients: CreateRecipeIngredientDto[];
 }
 
@@ -51,6 +52,7 @@ export interface UpdateRecipeDto {
   instructions?: string[];
   tags?: string[];
   imageUrl?: string;
+  sourceUrl?: string;
   isFavorite?: boolean;
   ingredients?: CreateRecipeIngredientDto[];
 }
@@ -67,6 +69,7 @@ export interface RecipeDto {
   instructions: string[];
   tags: string[];
   imageUrl: string | null;
+  sourceUrl: string | null;
   isFavorite: boolean;
   householdId: string;
   createdBy: string;
@@ -91,6 +94,7 @@ export interface RecipeListDto {
   difficulty: RecipeDifficulty;
   tags: string[];
   imageUrl: string | null;
+  sourceUrl: string | null;
   isFavorite: boolean;
   createdBy: string;
   createdAt: string;
@@ -125,6 +129,43 @@ export interface IngredientStats {
   itemName: string;
   usageCount: number;
   totalQuantity: number;
+}
+
+export interface ParsedIngredient {
+  originalText: string;
+  quantity: number | null;
+  unit: string | null;
+  itemName: string;
+}
+
+export interface IngredientMatch {
+  itemId: string;
+  itemName: string;  // Original name in DB
+  translatedName: string;  // Translated name for display
+  category: string;
+  defaultUnit: string;
+  availableUnits: string[];
+  confidence: number;  // 0-1 score
+}
+
+export interface MatchedIngredient {
+  parsed: ParsedIngredient;
+  matches: IngredientMatch[];
+  bestMatch: IngredientMatch | null;
+}
+
+export interface ParsedMarmitonRecipe {
+  title: string;
+  description: string;
+  prepTime: number;
+  cookTime: number;
+  servings: number;
+  difficulty: RecipeDifficulty;
+  instructions: string[];
+  ingredients: string[];
+  matchedIngredients: MatchedIngredient[];
+  imageUrl: string | null;
+  sourceUrl: string;
 }
 
 export const useRecipeService = () => {
@@ -233,6 +274,23 @@ export const useRecipeService = () => {
     return response.json();
   };
 
+  const importFromMarmiton = async (url: string): Promise<ParsedMarmitonRecipe> => {
+    const response = await makeApiCall('/api/import/marmiton', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: { url },
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Failed to import recipe' }));
+      throw new Error(errorData.error || `HTTP ${response.status}`);
+    }
+    
+    return response.json();
+  };
+
   return {
     getRecipes,
     getRecipeById,
@@ -245,5 +303,6 @@ export const useRecipeService = () => {
     getRecipeStats,
     getIngredientStats,
     getRecipesByUser,
+    importFromMarmiton,
   };
 };

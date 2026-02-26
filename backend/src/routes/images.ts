@@ -4,6 +4,40 @@ import { authenticateGoogleToken } from '../middleware/auth';
 
 const router = Router();
 
+const DEFAULT_ALLOWED_IMAGE_IMPORT_HOSTS = [
+  'marmiton.org',
+  'assets.afcdn.com',
+];
+
+function getAllowedImageImportHosts(): string[] {
+  const configuredHosts = process.env.IMAGE_IMPORT_ALLOWED_HOSTS
+    ?.split(',')
+    .map((host) => host.trim().toLowerCase())
+    .filter(Boolean);
+
+  return configuredHosts && configuredHosts.length > 0
+    ? configuredHosts
+    : DEFAULT_ALLOWED_IMAGE_IMPORT_HOSTS;
+}
+
+function isAllowedImageImportUrl(rawUrl: string): boolean {
+  try {
+    const parsedUrl = new URL(rawUrl);
+    const protocol = parsedUrl.protocol.toLowerCase();
+    if (protocol !== 'http:' && protocol !== 'https:') {
+      return false;
+    }
+
+    const hostname = parsedUrl.hostname.toLowerCase();
+    return getAllowedImageImportHosts().some(
+      (allowedHost) =>
+        hostname === allowedHost || hostname.endsWith(`.${allowedHost}`)
+    );
+  } catch {
+    return false;
+  }
+}
+
 // Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -14,7 +48,7 @@ cloudinary.config({
 // Apply authentication middleware to all routes
 router.use(authenticateGoogleToken);
 
-// Generate signed upload signature
+// Generate signed upload signature for direct browser uploads
 router.post('/signature', async (req: Request, res: Response) => {
   try {
     let folder: string | undefined;
@@ -46,6 +80,50 @@ router.post('/signature', async (req: Request, res: Response) => {
     return res.status(500).json({ 
       error: 'Failed to generate upload signature',
       message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Upload an image to Cloudinary from a remote URL (used for imported recipes)
+router.post('/import-from-url', async (req: Request, res: Response) => {
+  try {
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const rawImageUrl = body?.url as string | undefined;
+    const folder = body?.folder as string | undefined;
+
+    if (!rawImageUrl || typeof rawImageUrl !== 'string') {
+      return res.status(400).json({ error: 'Image URL is required' });
+    }
+
+    const imageUrl = rawImageUrl.trim();
+    if (!isAllowedImageImportUrl(imageUrl)) {
+      return res.status(400).json({
+        error: `Image URL host is not allowed. Allowed hosts: ${getAllowedImageImportHosts().join(', ')}`,
+      });
+    }
+
+    try {
+      const result = await cloudinary.uploader.upload(imageUrl, {
+        folder,
+        resource_type: 'image',
+      });
+
+      return res.json({
+        secureUrl: result.secure_url,
+        publicId: result.public_id,
+      });
+    } catch (uploadError) {
+      console.error('Error uploading image from URL to Cloudinary:', uploadError);
+      return res.status(500).json({
+        error: 'Failed to upload image from URL',
+        message: uploadError instanceof Error ? uploadError.message : 'Unknown error',
+      });
+    }
+  } catch (error) {
+    console.error('Error handling import-from-url request:', error);
+    return res.status(500).json({
+      error: 'Failed to process request',
+      message: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 });

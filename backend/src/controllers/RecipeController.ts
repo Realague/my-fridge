@@ -117,20 +117,29 @@ export class RecipeController {
         success: true,
         data: recipe
       });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('createRecipe error:', error);
-      
+
       if (error instanceof ValidationError) {
         res.status(400).json({
           success: false,
           error: error.message
         });
-      } else {
-        res.status(500).json({
-          success: false,
-          error: 'Failed to create recipe'
-        });
+        return;
       }
+      const err = error as { name?: string; errors?: Array<{ message?: string }> };
+      if (err?.name === 'SequelizeValidationError' || err?.name === 'SequelizeForeignKeyConstraintError' || err?.name === 'SequelizeUniqueConstraintError') {
+        const message = err.errors?.[0]?.message ?? 'Invalid recipe or ingredient data. Check that all articles exist and quantities are valid.';
+        res.status(400).json({
+          success: false,
+          error: message
+        });
+        return;
+      }
+      res.status(500).json({
+        success: false,
+        error: 'Failed to create recipe'
+      });
     }
   };
 
@@ -146,25 +155,37 @@ export class RecipeController {
         success: true,
         data: recipe
       });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('updateRecipe error:', error);
-      
+
       if (error instanceof NotFoundError) {
         res.status(404).json({
           success: false,
           error: error.message
         });
-      } else if (error instanceof ValidationError) {
+        return;
+      }
+      if (error instanceof ValidationError) {
         res.status(400).json({
           success: false,
           error: error.message
         });
-      } else {
-        res.status(500).json({
-          success: false,
-          error: 'Failed to update recipe'
-        });
+        return;
       }
+      // Sequelize validation or FK constraint (e.g. invalid ingredient data)
+      const err = error as { name?: string; errors?: Array<{ message?: string }> };
+      if (err?.name === 'SequelizeValidationError' || err?.name === 'SequelizeForeignKeyConstraintError' || err?.name === 'SequelizeUniqueConstraintError') {
+        const message = err.errors?.[0]?.message ?? 'Invalid recipe or ingredient data. Check that all articles exist and quantities are valid.';
+        res.status(400).json({
+          success: false,
+          error: message
+        });
+        return;
+      }
+      res.status(500).json({
+        success: false,
+        error: 'Failed to update recipe'
+      });
     }
   };
 

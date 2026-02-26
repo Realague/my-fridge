@@ -172,7 +172,12 @@ export class IngredientMatchingService {
     const escapedUnitKeys = Object.keys(FRENCH_UNIT_MAP)
       .sort((a, b) => b.length - a.length)
       .map(escapeRegExp);
-    const unitPattern = new RegExp(`^(${escapedUnitKeys.join('|')})\\b`, 'i');
+    // `\b` is ASCII-only in JS; use a Unicode-aware boundary so accented units
+    // like "cuillère(s) à café" are matched before the ingredient name.
+    const unitPattern = new RegExp(
+      `^(${escapedUnitKeys.join('|')})(?=$|[^\\p{L}\\p{N}_])`,
+      'iu'
+    );
     const unitMatch = workingText.match(unitPattern);
     if (unitMatch && unitMatch[1]) {
       const normalizedMatch = unitMatch[1].toLowerCase();

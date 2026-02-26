@@ -3,6 +3,7 @@ import { RecipeRepository } from '../repositories/RecipeRepository';
 import { RecipeIngredientRepository } from '../repositories/RecipeIngredientRepository';
 import { Recipe } from '../models/Recipe';
 import { RecipeIngredient } from '../models/RecipeIngredient';
+import { Item } from '../models/Item';
 import { 
   CreateRecipeDto, 
   UpdateRecipeDto, 
@@ -68,6 +69,7 @@ export class RecipeService {
         instructions: recipeData.instructions,
         tags: recipeData.tags,
         imageUrl: recipeData.imageUrl || null,
+        sourceUrl: recipeData.sourceUrl || null,
         householdId: recipeData.householdId,
         createdBy: recipeData.createdBy
       }, transaction);
@@ -112,6 +114,22 @@ export class RecipeService {
 
       // Update ingredients if provided
       if (ingredients) {
+        // Validate that all itemIds exist before replacing (avoids FK violation / 500)
+        const itemIds = [...new Set(ingredients.map(ing => ing.itemId).filter(Boolean))];
+        if (itemIds.length > 0) {
+          const existingItems = await Item.findAll({
+            where: { id: itemIds },
+            attributes: ['id'],
+            transaction
+          });
+          const existingIds = new Set(existingItems.map(i => i.id));
+          const missingIds = itemIds.filter(uid => !existingIds.has(uid));
+          if (missingIds.length > 0) {
+            throw new ValidationError(
+              'One or more ingredients reference an article that no longer exists. Please remove them or choose another article.'
+            );
+          }
+        }
         await this.recipeIngredientRepository.replaceIngredients(
           id, 
           ingredients, 
@@ -229,6 +247,7 @@ export class RecipeService {
       instructions: recipe.instructions,
       tags: recipe.tags,
       imageUrl: recipe.imageUrl,
+      sourceUrl: recipe.sourceUrl,
       isFavorite: recipe.isFavorite,
       householdId: recipe.householdId,
       createdBy: recipe.createdBy,
@@ -255,6 +274,7 @@ export class RecipeService {
       difficulty: recipe.difficulty,
       tags: recipe.tags,
       imageUrl: recipe.imageUrl,
+      sourceUrl: recipe.sourceUrl,
       isFavorite: recipe.isFavorite,
       createdBy: recipe.createdBy,
       createdAt: recipe.createdAt.toISOString(),

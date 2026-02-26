@@ -36,6 +36,7 @@ export interface CreateRecipeDto {
   instructions: string[];
   tags: string[];
   imageUrl?: string;
+  sourceUrl?: string;
   ingredients: CreateRecipeIngredientDto[];
   householdId: string;
   createdBy: string;
@@ -51,6 +52,7 @@ export interface UpdateRecipeDto {
   instructions?: string[];
   tags?: string[];
   imageUrl?: string;
+  sourceUrl?: string;
   isFavorite?: boolean;
   ingredients?: CreateRecipeIngredientDto[];
 }
@@ -67,6 +69,7 @@ export interface RecipeDto {
   instructions: string[];
   tags: string[];
   imageUrl: string | null;
+  sourceUrl: string | null;
   isFavorite: boolean;
   householdId: string;
   createdBy: string;
@@ -91,6 +94,7 @@ export interface RecipeListDto {
   difficulty: RecipeDifficulty;
   tags: string[];
   imageUrl: string | null;
+  sourceUrl: string | null;
   isFavorite: boolean;
   createdBy: string;
   createdAt: string;

@@ -517,7 +517,7 @@ const EditRecipe = () => {
                                   onCheckedChange={() => toggleIngredientForStep(ingredient, ingredientIndex, index)}
                                 />
                                 <span className="text-sm text-muted-foreground">
-                                  {getItemDisplayName(ingredient?.item, t)} {ingredient.quantity} {ingredient.unit}
+                                  {getItemDisplayName(ingredient?.item, t)} {ingredient.quantity} {ingredient.unit !== 'piece' ? ingredient.unit : ''}
                                 </span>
                               </div>
                             );

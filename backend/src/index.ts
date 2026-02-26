@@ -9,6 +9,7 @@ import storedItemRoutes from './routes/storedItems';
 import recipeRoutes from './routes/recipes';
 import mealPlanRoutes from './routes/mealPlans';
 import imageRoutes from './routes/images';
+import importRoutes from './routes/import';
 import { sequelize } from './models';
 import { executeSmartMigration } from './utils/migrationStrategy';
 
@@ -78,6 +79,7 @@ app.use('/api/items', itemRoutes);
 app.use('/api', recipeRoutes);
 app.use('/api', mealPlanRoutes);
 app.use('/api/images', imageRoutes);
+app.use('/api', importRoutes);
 
 app.get('/', (req, res) => {
   res.json({

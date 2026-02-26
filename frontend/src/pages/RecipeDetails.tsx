@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, ChefHat } from 'lucide-react';
+import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, ChefHat, ExternalLink } from 'lucide-react';
 import { AddMealPlanDialog } from '@/components/AddMealPlanDialog';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useToast } from '@/hooks/use-toast';
@@ -142,7 +142,28 @@ const RecipeDetails = () => {
     }
   };
 
+  const getRelevantIngredientsForStep = (stepIndex: number) => {
+    if (!recipe) return [];
 
+    const relevantIngredients: number[] = [];
+
+    recipe.ingredients.forEach((ingredient, index) => {
+      if (ingredient.usedInSteps && ingredient.usedInSteps.includes(stepIndex)) {
+        relevantIngredients.push(index);
+        return;
+      }
+
+      if (!ingredient.usedInSteps || ingredient.usedInSteps.length === 0) {
+        const stepText = recipe.instructions[stepIndex]?.toLowerCase() ?? '';
+
+        if (ingredient.notes && stepText.includes(ingredient.notes.toLowerCase())) {
+          relevantIngredients.push(index);
+        }
+      }
+    });
+
+    return relevantIngredients;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -166,6 +187,17 @@ const RecipeDetails = () => {
               {t('buttons.back')}
             </Button>
             <div className="flex gap-2">
+                  {recipe.sourceUrl && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => window.open(recipe.sourceUrl, '_blank', 'noopener,noreferrer')}
+                    className="w-full md:w-fit"
+                  >
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    {t('pages.importRecipe.viewOriginal')}
+                  </Button>
+                )}
               <Button
                 variant="ghost"
                 size="sm"
@@ -293,7 +325,7 @@ const RecipeDetails = () => {
                     <span className="text-green-600 mt-1.5 text-xs">●</span>
                     <div className="flex-1">
                       <div className="font-medium text-foreground">
-                        {getItemDisplayName(ingredient?.item as Item, t)} {ingredient.quantity} {ingredient.unit}
+                        {ingredient.quantity} {getItemDisplayName(ingredient?.item as Item, t)} {ingredient.unit !== 'piece' ? ingredient.unit : ''}
                       </div>
                       {ingredient.notes && (
                         <div className="text-sm text-muted-foreground mt-1">{ingredient.notes}</div>
@@ -313,14 +345,50 @@ const RecipeDetails = () => {
           </CardHeader>
           <CardContent>
             <ol className="space-y-4">
-              {recipe.instructions.map((instruction, index) => (
-                <li key={index} className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
-                    {index + 1}
-                  </span>
-                  <span className="text-foreground pt-0.5">{instruction}</span>
-                </li>
-              ))}
+              {recipe.instructions.map((instruction, index) => {
+                const relevantIngredients = getRelevantIngredientsForStep(index);
+
+                return (
+                  <li key={index} className="flex flex-col gap-3">
+                    <div className="flex gap-3">
+                      <span className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                        {index + 1}
+                      </span>
+                      <span className="text-foreground pt-0.5">{instruction}</span>
+                    </div>
+
+                    {relevantIngredients.length > 0 && (
+                      <div className="ml-9 mt-1 p-3 bg-muted rounded-lg">
+                        <ul className="space-y-1">
+                          {relevantIngredients.map((ingredientIndex) => {
+                            const ingredient = recipe.ingredients[ingredientIndex];
+
+                            return (
+                              <li
+                                key={ingredient.id ?? ingredientIndex}
+                                className="flex items-center gap-2 text-sm text-muted-foreground"
+                              >
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                                <span>
+                                  {ingredient.quantity}{' '}
+                                  {ingredient.unit !== 'piece' ? ingredient.unit : ''}{' '}
+                                  {getItemDisplayName(ingredient?.item as Item, t)}
+                                  {ingredient.notes && (
+                                    <span className="italic text-xs text-muted-foreground">
+                                      {' '}
+                                      ({ingredient.notes})
+                                    </span>
+                                  )}
+                                </span>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
             </ol>
           </CardContent>
         </Card>

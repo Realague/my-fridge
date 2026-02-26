@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, ArrowRight, Play, Pause, RotateCcw, Clock, ChefHat, Badge, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Play, Pause, RotateCcw, Clock, ChefHat, Badge, Eye, EyeOff, ExternalLink } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next'; 
@@ -172,6 +172,17 @@ const RecipeCookingMode = () => {
               {t('pages.recipes.exitCooking')}
             </Button>
             <div className="flex items-center gap-2">
+              {recipe.sourceUrl && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => window.open(recipe.sourceUrl, '_blank', 'noopener,noreferrer')}
+                className="w-full md:w-fit"
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                {t('pages.importRecipe.viewOriginal')}
+              </Button>
+              )}
               <ChefHat className="h-5 w-5 text-primary" />
               <span className="font-medium text-foreground">{t('pages.recipes.cookingMode')}</span>
             </div>
@@ -271,7 +282,7 @@ const RecipeCookingMode = () => {
                           <div key={ingredient.id} className="flex items-center gap-2 text-sm">
                             <span className="w-2 h-2 bg-primary rounded-full"></span>
                             <span className="font-medium text-foreground">
-                              {ingredient.quantity} {ingredient.unit} {getItemDisplayName(ingredient?.item as Item, t)}
+                              {ingredient.quantity} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient?.item as Item, t)}
                             </span>
                             {ingredient.notes && (
                               <span className="text-muted-foreground italic">({ingredient.notes})</span>
@@ -345,7 +356,7 @@ const RecipeCookingMode = () => {
                           />
                           <div className={`flex-1 text-sm ${checkedIngredients[index] ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
                             <div className={`font-medium ${isRelevant ? 'text-primary' : ''}`}>
-                              {ingredient.quantity} {ingredient.unit} {getItemDisplayName(ingredient?.item as Item, t)}
+                              {ingredient.quantity} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient?.item as Item, t)}
                             </div>
                             {ingredient.notes && (
                               <div className={`text-xs ${isRelevant ? 'text-primary' : 'text-muted-foreground'}`}>

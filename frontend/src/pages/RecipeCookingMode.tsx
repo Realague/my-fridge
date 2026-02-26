@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, ArrowRight, Play, Pause, RotateCcw, Clock, ChefHat, Badge, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Play, Pause, RotateCcw, Clock, ChefHat, Badge, Eye, EyeOff, ExternalLink } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next'; 
@@ -172,6 +172,17 @@ const RecipeCookingMode = () => {
               {t('pages.recipes.exitCooking')}
             </Button>
             <div className="flex items-center gap-2">
+              {recipe.sourceUrl && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => window.open(recipe.sourceUrl, '_blank', 'noopener,noreferrer')}
+                className="w-full md:w-fit"
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                {t('pages.importRecipe.viewOriginal')}
+              </Button>
+              )}
               <ChefHat className="h-5 w-5 text-primary" />
               <span className="font-medium text-foreground">{t('pages.recipes.cookingMode')}</span>
             </div>

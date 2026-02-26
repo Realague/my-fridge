@@ -187,6 +187,17 @@ const RecipeDetails = () => {
               {t('buttons.back')}
             </Button>
             <div className="flex gap-2">
+                  {recipe.sourceUrl && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => window.open(recipe.sourceUrl, '_blank', 'noopener,noreferrer')}
+                    className="w-full md:w-fit"
+                  >
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    {t('pages.importRecipe.viewOriginal')}
+                  </Button>
+                )}
               <Button
                 variant="ghost"
                 size="sm"
@@ -266,21 +277,6 @@ const RecipeDetails = () => {
                 </Badge>
               ))}
             </div>
-
-            {/* Source URL */}
-            {recipe.sourceUrl && (
-              <div className="pt-2">
-                <a
-                  href={recipe.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  {t('pages.importRecipe.viewOriginal')}
-                </a>
-              </div>
-            )}
 
             {/* Action Buttons */}
             <div className="pt-4 space-y-3">

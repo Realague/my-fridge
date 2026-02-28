@@ -273,6 +273,7 @@
       "recipeTitleRequired": "El título de la receta es requerido",
       "descriptionRequired": "La descripción es requerida",
       "failedToUpdateRecipe": "Error al actualizar receta. Por favor inténtalo de nuevo.",
+      "invalidRecipeIngredients": "Algunos ingredientes hacen referencia a artículos que ya no existen. Elimínalos o elige artículos válidos de la lista.",
       "householdNameRequired": "El nombre del hogar es requerido",
       "creationFailed": "Error de creación",
       "failedToCreateHousehold": "Error al crear hogar. Por favor inténtalo de nuevo.",

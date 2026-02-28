@@ -13,6 +13,7 @@ import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
+import { getAppUrl } from '@/utils/apiHeaders';
 
 const HouseholdDetails = () => {
   const navigate = useNavigate();
@@ -87,9 +88,11 @@ const HouseholdDetails = () => {
   const handleInviteMember = async () => {
     if (!householdDetails?.inviteCode) return;
     
-    const inviteMessage = t('messages.inviteMessage', { 
-      householdName: householdDetails.name, 
-      inviteCode: householdDetails.inviteCode 
+    const appUrl = getAppUrl();
+    const inviteLink = appUrl ? `${appUrl}/join?code=${encodeURIComponent(householdDetails.inviteCode)}` : '';
+    const inviteMessage = t('messages.inviteMessageWithLink', {
+      householdName: householdDetails.name,
+      inviteLink: inviteLink || householdDetails.inviteCode,
     });
     
     try {

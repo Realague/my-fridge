@@ -11,6 +11,21 @@ export const getApiBaseUrl = (): string => {
 };
 
 /**
+ * Gets the public URL of the frontend application (used for invite links, etc.).
+ * VITE_APP_URL should be set per environment (e.g. https://app.example.com, http://localhost:5173).
+ * Falls back to window.location.origin when not set (e.g. in dev).
+ */
+export const getAppUrl = (): string => {
+  if (typeof import.meta.env.VITE_APP_URL === 'string' && import.meta.env.VITE_APP_URL) {
+    return import.meta.env.VITE_APP_URL.replace(/\/$/, '');
+  }
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    return window.location.origin;
+  }
+  return '';
+};
+
+/**
  * Gets the base URL for auth requests (without /api suffix)
  * Auth routes are mounted at /auth, not /api/auth
  */

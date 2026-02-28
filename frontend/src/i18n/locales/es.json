@@ -295,6 +295,7 @@
       "leaveHousehold": "¿Estás seguro de que quieres dejar este hogar?"
     },
     "inviteMessage": "🏠 ¡Únete a mi hogar \"{{householdName}}\" en MyFridge!\n\nUsa el código de invitación: {{inviteCode}}\n\nMyFridge ayuda a gestionar el inventario compartido de tu cocina, planificar comidas juntos y reducir el desperdicio de alimentos. ¡Descarga la app y únete!",
+    "inviteMessageWithLink": "🏠 ¡Únete a mi hogar \"{{householdName}}\" en MyFridge!\n\nHaz clic en el enlace para iniciar sesión y unirte automáticamente:\n{{inviteLink}}\n\nMyFridge ayuda a gestionar el inventario compartido de tu cocina, planificar comidas juntos y reducir el desperdicio de alimentos.",
     "mealPlanDescription": "Tu plan de comida ha sido guardado.",
     "mealPlanDeletedDescription": "El plan de comida ha sido removido.",
     "shoppingListGeneratedDescription": "Se agregaron {{count}} artículos a tu lista de compras para {{dateRange}}",
@@ -582,6 +583,7 @@
       "setupStorageAreasDescription": "Selecciona las áreas de almacenamiento que tienes en tu cocina (opcional - puedes agregar más después)",
       "joinHousehold": "Unirse a un hogar",
       "joinHouseholdDescription": "Ingresa el código de invitación compartido por tu miembro del hogar",
+      "joiningHousehold": "Uniéndose al hogar…",
       "inviteCodePlaceholder": "Ingresa el código de 8 caracteres",
       "role": {
         "admin": "Administrador",

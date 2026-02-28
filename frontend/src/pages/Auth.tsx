@@ -6,6 +6,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { useTranslation } from 'react-i18next';
 import { getUnauthHeaders, getAuthBaseUrl } from '@/utils/apiHeaders';
+import { getAuthReturnUrl, clearAuthReturnUrl, setAuthReturnUrl } from '@/pages/JoinHousehold';
 
 const Auth = () => {
   const { t } = useTranslation();
@@ -14,6 +15,14 @@ const Auth = () => {
   const { signInWithGoogle, isAuthenticated, isLoading, user, setUser, setTokens, setAuthenticated, setLoading } = useAuthStore();
   const [authLoading, setAuthLoading] = useState(false);
   const googleButtonRef = useRef<HTMLDivElement>(null);
+
+  // Persist returnUrl from query so we can redirect after OAuth (OAuth leaves the page and drops query params)
+  useEffect(() => {
+    const returnUrl = searchParams.get('returnUrl');
+    if (returnUrl) {
+      setAuthReturnUrl(returnUrl);
+    }
+  }, [searchParams]);
 
   // Handle OAuth callback
   useEffect(() => {
@@ -74,6 +83,12 @@ const Auth = () => {
   useEffect(() => {
     // Redirect if already authenticated
     if (isAuthenticated && user) {
+      const returnUrl = getAuthReturnUrl();
+      if (returnUrl) {
+        clearAuthReturnUrl();
+        navigate(returnUrl, { replace: true });
+        return;
+      }
       // Check if user has a selected household
       if (user.selectedHouseholdId) {
         navigate('/dashboard');

@@ -209,6 +209,7 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
         createdAt: newRecipe.createdAt,
         ingredientCount: newRecipe.ingredients.length,
         creator: newRecipe.creator,
+        sourceUrl: newRecipe.sourceUrl,
       };
       
       set({

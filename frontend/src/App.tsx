@@ -29,6 +29,7 @@ import ImportRecipe from "./pages/ImportRecipe";
 import MealPlans from "./pages/MealPlans";
 import Household from "./pages/Household";
 import HouseholdDetails from "./pages/HouseholdDetails";
+import JoinHousehold from "./pages/JoinHousehold";
 import Demo from "./pages/Demo";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
@@ -59,6 +60,7 @@ function App() {
                     <Routes>
                       <Route path="/" element={<Index />} />
                       <Route path="/auth" element={<Auth />} />
+                      <Route path="/join" element={<JoinHousehold />} />
                       <Route path="/onboarding" element={<Onboarding />} />
                       <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/shopping" element={<Shopping />} />

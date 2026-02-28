@@ -317,6 +317,7 @@
       "leaveHousehold": "Are you sure you want to leave this household?"
     },
     "inviteMessage": "🏠 Join my household \"{{householdName}}\" on MyFridge!\n\nUse invite code: {{inviteCode}}\n\nMyFridge helps manage your shared kitchen inventory, plan meals together, and reduce food waste. Download the app and join us!",
+    "inviteMessageWithLink": "🏠 Join my household \"{{householdName}}\" on MyFridge!\n\nClick the link below to sign in and join automatically:\n{{inviteLink}}\n\nMyFridge helps manage your shared kitchen inventory, plan meals together, and reduce food waste.",
     "mealPlanDescription": "Your meal plan has been saved.",
     "mealPlanDeletedDescription": "The meal plan has been removed.",
     "shoppingListGeneratedDescription": "Added {{count}} items to your shopping list for {{dateRange}}",
@@ -606,6 +607,7 @@
       "setupStorageAreasDescription": "Select the storage areas you have in your kitchen (optional - you can add more later)",
       "joinHousehold": "Join a household",
       "joinHouseholdDescription": "Enter the invite code shared by your household member",
+      "joiningHousehold": "Joining household…",
       "inviteCodePlaceholder": "Enter the 8 characters long code",
       "role": {
         "admin": "Admin",

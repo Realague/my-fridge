@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 import { Item, User, Household } from '../models';
 import { CreateItemDto, UpdateItemDto, GetItemsQueryDto } from '../types/ItemDto';
-import { getReverseTranslationMap } from '../i18n/itemTranslations';
+import { getReverseTranslationMap, getTranslatedName } from '../i18n/itemTranslations';
 import { deleteImageFromCloudinary } from '../utils/imageUploader';
 
 export class ItemRepository {
@@ -94,15 +94,86 @@ export class ItemRepository {
       whereClause[Op.or] = searchConditions;
     }
 
-    const { rows: items, count: total } = await Item.findAndCountAll({
+    // Fetch all matching items (without pagination) to calculate relevance scores
+    const { rows: allItems, count: total } = await Item.findAndCountAll({
       where: whereClause,
       include: includeClause,
-      limit,
-      offset,
-      order: [['name', 'ASC']],
     });
 
-    return { items, total };
+    // If there's a search query, calculate relevance scores and sort
+    if (search && allItems.length > 0) {
+      const searchTerm = search.toLowerCase();
+      const searchWords = searchTerm.split(/\s+/).filter(word => word.length > 0);
+      
+      // Calculate relevance score for each item
+      const itemsWithScores = allItems.map(item => {
+        const itemName = item.name.toLowerCase();
+        const translatedName = language ? getTranslatedName(item.name, language).toLowerCase() : '';
+        const isHouseholdItem = householdId && item.householdId === householdId;
+        
+        let relevanceScore = 0;
+        
+        // Check exact match (highest priority)
+        if (itemName === searchTerm || translatedName === searchTerm) {
+          relevanceScore += 1000;
+        }
+        // Check starts with (high priority)
+        else if (itemName.startsWith(searchTerm) || translatedName.startsWith(searchTerm)) {
+          relevanceScore += 500;
+        }
+        // Check contains (medium priority)
+        else if (itemName.includes(searchTerm) || translatedName.includes(searchTerm)) {
+          relevanceScore += 100;
+        }
+        
+        // Multi-word search: boost score if all words match
+        if (searchWords.length > 1) {
+          const allWordsMatch = searchWords.every(word => 
+            itemName.includes(word) || translatedName.includes(word)
+          );
+          if (allWordsMatch) {
+            relevanceScore += 50;
+          }
+        }
+        
+        // Prioritize household items
+        if (isHouseholdItem) {
+          relevanceScore += 200;
+        }
+        
+        return { item, relevanceScore };
+      });
+      
+      // Sort by relevance score (descending), then alphabetically
+      itemsWithScores.sort((a, b) => {
+        if (b.relevanceScore !== a.relevanceScore) {
+          return b.relevanceScore - a.relevanceScore;
+        }
+        return a.item.name.localeCompare(b.item.name);
+      });
+      
+      // Extract items and apply pagination
+      const sortedItems = itemsWithScores.map(({ item }) => item);
+      const paginatedItems = sortedItems.slice(offset, offset + limit);
+      
+      return { items: paginatedItems, total };
+    }
+    
+    // No search query - just apply pagination and alphabetical sorting
+    const sortedItems = allItems.sort((a, b) => {
+      // Prioritize household items when no search
+      if (householdId) {
+        const aIsHousehold = a.householdId === householdId;
+        const bIsHousehold = b.householdId === householdId;
+        if (aIsHousehold !== bIsHousehold) {
+          return aIsHousehold ? -1 : 1;
+        }
+      }
+      return a.name.localeCompare(b.name);
+    });
+    
+    const paginatedItems = sortedItems.slice(offset, offset + limit);
+    return { items: paginatedItems, total };
   }
 
   async findByHouseholdId(householdId: string): Promise<Item[]> {

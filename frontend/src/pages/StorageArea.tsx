@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 import { SelectedItemPreview } from '@/components/SelectedItemPreview';
 import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
 import { OpenedStatusToggle } from '@/components/OpenedStatusToggle';
+import { ItemImage } from '@/components/ItemImage';
 
 const StorageArea = () => {
   const { id } = useParams<{ id: string }>();
@@ -259,13 +260,12 @@ const StorageArea = () => {
         <CardContent className="p-4">
           <div className="flex items-start justify-between gap-3">
             {item.imageUrl && (
-              <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                <img
-                  src={item.imageUrl}
-                  alt={getItemDisplayName(item, t)}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <ItemImage
+                src={item.imageUrl}
+                alt={getItemDisplayName(item, t)}
+                containerClassName="w-16 h-16 rounded-lg"
+                fallbackIconSize={48}
+              />
             )}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2 flex-wrap">

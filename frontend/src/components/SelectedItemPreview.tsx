@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Item } from '@/services/itemService';
 import { getItemDisplayName } from '@/utils/itemUtils';
-import { Package, X } from 'lucide-react';
+import { X } from 'lucide-react';
+import { ItemImage } from '@/components/ItemImage';
 import { useTranslation } from 'react-i18next';
 
 interface SelectedItemPreviewProps {
@@ -20,16 +21,12 @@ export const SelectedItemPreview = ({ item, onClear }: SelectedItemPreviewProps)
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3 flex-1">
             <div className="p-2 rounded-lg bg-primary/10">
-              {item.imageUrl && (
-                <img 
-                  src={item.imageUrl} 
-                  alt={getItemDisplayName(item, t)}
-                  className="w-10 h-10 rounded-md object-cover"
-                />
-              )}
-              {!item.imageUrl && (
-                <Package className="h-10 w-10 text-primary" />
-              )}
+              <ItemImage
+                src={item.imageUrl}
+                alt={getItemDisplayName(item, t)}
+                containerClassName="w-10 h-10 rounded-md"
+                fallbackIconSize={40}
+              />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">

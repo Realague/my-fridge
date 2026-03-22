@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
+import { ItemImage } from '@/components/ItemImage';
 import { ItemCategory } from '@/types/enums';
 import { uploadImageWithSignature } from '@/services/imageUploadService';
 
@@ -553,15 +554,12 @@ export const ItemSelector = ({
                   className="group flex items-center justify-between p-2 hover:bg-muted cursor-pointer rounded transition-colors"
                 >
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    {item.imageUrl && (
-                      <div className="w-10 h-10 rounded-md overflow-hidden bg-muted flex-shrink-0">
-                        <img 
-                          src={item.imageUrl} 
-                          alt={getItemDisplayName(item, t)}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
+                    <ItemImage
+                      src={item.imageUrl}
+                      alt={getItemDisplayName(item, t)}
+                      containerClassName="w-10 h-10 rounded-md"
+                      fallbackIconSize={40}
+                    />
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm truncate">{getItemDisplayName(item, t)}</div>
                       <div className="flex items-center gap-2">

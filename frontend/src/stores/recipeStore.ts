@@ -19,8 +19,9 @@ const createApiService = () => {
     });
     
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || `HTTP ${response.status}`);
+      const body = await response.json().catch(() => ({ message: 'Network error' }));
+      const message = body?.error ?? body?.message ?? `HTTP ${response.status}`;
+      throw new Error(message);
     }
     
     return response;

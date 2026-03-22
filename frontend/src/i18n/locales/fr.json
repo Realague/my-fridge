@@ -274,6 +274,7 @@
       "recipeTitleRequired": "Le titre de la recette est requis",
       "descriptionRequired": "La description est requise",
       "failedToUpdateRecipe": "Échec de la mise à jour de recette. Veuillez réessayer.",
+      "invalidRecipeIngredients": "Certains ingrédients font référence à des articles qui n'existent plus. Supprimez-les ou choisissez des articles valides dans la liste.",
       "householdNameRequired": "Le nom du foyer est requis",
       "creationFailed": "Échec de la création",
       "failedToCreateHousehold": "Échec de la création du foyer. Veuillez réessayer.",

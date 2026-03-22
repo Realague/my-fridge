@@ -263,9 +263,14 @@ const EditRecipe = () => {
       navigate(`/recipes/${recipe.id}`);
     } catch (error) {
       console.error('Recipe update failed:', error);
+      const message = error instanceof Error ? error.message : '';
+      const isInvalidIngredients =
+        message.includes('article that no longer exists') || message.includes('ingredients reference');
       toast({
         title: t('messages.error.somethingWentWrong'),
-        description: error instanceof Error ? error.message : t('messages.error.failedToUpdateRecipe'),
+        description: isInvalidIngredients
+          ? t('messages.error.invalidRecipeIngredients')
+          : message || t('messages.error.failedToUpdateRecipe'),
         variant: "destructive",
       });
     }

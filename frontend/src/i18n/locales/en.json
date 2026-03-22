@@ -294,6 +294,7 @@
       "recipeTitleRequired": "Recipe title is required",
       "descriptionRequired": "Description is required",
       "failedToUpdateRecipe": "Failed to update recipe. Please try again.",
+      "invalidRecipeIngredients": "Some ingredients reference items that no longer exist. Please remove them or choose valid items from the list.",
       "householdNameRequired": "Household name is required",
       "creationFailed": "Creation failed",
       "failedToCreateHousehold": "Failed to create household. Please try again.",

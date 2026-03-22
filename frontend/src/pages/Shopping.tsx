@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
 import { StorageAreaType } from '@/types/enums';
+import { ItemImage } from '@/components/ItemImage';
 
 const Shopping = () => {
   const { t } = useTranslation();
@@ -311,15 +312,12 @@ const Shopping = () => {
           {isCompleted && <Check className="h-4 w-4 text-white" />}
         </button>
 
-        {shoppingItem.item?.imageUrl && (
-          <div className="w-10 h-10 rounded-md overflow-hidden bg-muted flex-shrink-0">
-            <img 
-              src={shoppingItem.item.imageUrl} 
-              alt={getItemName(shoppingItem)}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
+        <ItemImage
+          src={shoppingItem.item?.imageUrl}
+          alt={getItemName(shoppingItem)}
+          containerClassName="w-10 h-10 rounded-md"
+          fallbackIconSize={40}
+        />
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 justify-between">

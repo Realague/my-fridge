@@ -312,14 +312,12 @@ const Shopping = () => {
           {isCompleted && <Check className="h-4 w-4 text-white" />}
         </button>
 
-        {shoppingItem.item?.imageUrl && (
-          <ItemImage
-            src={shoppingItem.item.imageUrl}
-            alt={getItemName(shoppingItem)}
-            containerClassName="w-10 h-10 rounded-md"
-            fallbackIconSize={40}
-          />
-        )}
+        <ItemImage
+          src={shoppingItem.item?.imageUrl}
+          alt={getItemName(shoppingItem)}
+          containerClassName="w-10 h-10 rounded-md"
+          fallbackIconSize={40}
+        />
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 justify-between">

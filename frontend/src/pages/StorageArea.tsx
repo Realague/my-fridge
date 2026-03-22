@@ -259,14 +259,12 @@ const StorageArea = () => {
       <Card className="bg-card backdrop-blur-sm border-0 shadow-lg">
         <CardContent className="p-4">
           <div className="flex items-start justify-between gap-3">
-            {item.imageUrl && (
-              <ItemImage
-                src={item.imageUrl}
-                alt={getItemDisplayName(item, t)}
-                containerClassName="w-16 h-16 rounded-lg"
-                fallbackIconSize={48}
-              />
-            )}
+            <ItemImage
+              src={item.imageUrl}
+              alt={getItemDisplayName(item, t)}
+              containerClassName="w-16 h-16 rounded-lg"
+              fallbackIconSize={48}
+            />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <h3 className="font-medium text-foreground">{getItemDisplayName(item, t)}</h3>

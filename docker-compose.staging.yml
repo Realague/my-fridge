@@ -44,8 +44,10 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app
-      # Use modules installed in the image; avoid masking with an empty volume
-      - /app/node_modules
+      # Named volume so a bad node_modules tree can be dropped without touching pgdata:
+      #   docker compose -f docker-compose.staging.yml stop backend && docker compose -f docker-compose.staging.yml rm -f backend
+      #   docker volume ls   # find *backend_node_modules*, then docker volume rm <that name>
+      - backend_node_modules:/app/node_modules
     command: npm run dev
 
   # Frontend React App
@@ -65,4 +67,5 @@ services:
     command: npm run dev
 
 volumes:
-  pgdata: 
+  pgdata:
+  backend_node_modules: 

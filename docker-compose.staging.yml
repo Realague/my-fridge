@@ -1,10 +1,17 @@
 version: '3.8'
 
+# Explicit network so backend always shares DNS with db (avoids ENOTFOUND db on some hosts).
+networks:
+  staging:
+    driver: bridge
+
 services:
   # PostgreSQL Database
   db:
     image: postgres:15
     restart: always
+    networks:
+      - staging
     environment:
       POSTGRES_DB: my_fridge_db_staging
       POSTGRES_USER: postgres
@@ -42,6 +49,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - staging
     volumes:
       - ./backend:/app
       # Named volume so a bad node_modules tree can be dropped without touching pgdata:
@@ -61,6 +70,8 @@ services:
       VITE_PORT: 8081
     ports:
       - "8081:8081"
+    networks:
+      - staging
     volumes:
       - ./frontend:/app
       - /app/node_modules

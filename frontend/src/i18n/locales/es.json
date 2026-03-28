@@ -470,7 +470,26 @@
       "deleteWarning": "Esta acción no se puede deshacer.",
       "addNewRecipe": "Agregar Nueva Receta",
       "recipeImage": "Imagen de la Receta",
-        "recipeImageDescription": "Agrega una imagen de tu plato terminado (opcional)"
+        "recipeImageDescription": "Agrega una imagen de tu plato terminado (opcional)",
+        "consume": {
+          "button": "Consumir ingredientes",
+          "title": "Consumir ingredientes del stock",
+          "servings": "Porciones",
+          "required": "Requerido",
+          "available": "disponible",
+          "sufficient": "Suficiente",
+          "partial": "Parcial",
+          "notInStock": "No en stock",
+          "incompatibleUnits": "Unidades incompatibles",
+          "expired": "Caducado",
+          "expiringSoon": "Caduca pronto",
+          "confirm": "Confirmar consumo",
+          "noDeductions": "No se seleccionaron deducciones",
+          "noIngredients": "Esta receta no tiene ingredientes",
+          "success": "Ingredientes consumidos",
+          "successDescription": "{{count}} art\u00edculo(s) deducido(s) de tu stock",
+          "failed": "Error al consumir ingredientes"
+        }
       },
       "importRecipe": {
         "title": "Importar Receta",

@@ -472,7 +472,26 @@
       "addToMealPlan": "Ajouter au plan de repas",
       "deleteRecipe": "Supprimer la recette",
       "deleteWarning": "Cette action ne peut pas être annulée.",
-      "addNewRecipe": "Ajouter une nouvelle recette"
+      "addNewRecipe": "Ajouter une nouvelle recette",
+      "consume": {
+        "button": "Consommer les ingr\u00e9dients",
+        "title": "Consommer les ingr\u00e9dients du stock",
+        "servings": "Portions",
+        "required": "Requis",
+        "available": "disponible",
+        "sufficient": "Suffisant",
+        "partial": "Partiel",
+        "notInStock": "Pas en stock",
+        "incompatibleUnits": "Unit\u00e9s incompatibles",
+        "expired": "Expir\u00e9",
+        "expiringSoon": "Expire bient\u00f4t",
+        "confirm": "Confirmer la consommation",
+        "noDeductions": "Aucune d\u00e9duction s\u00e9lectionn\u00e9e",
+        "noIngredients": "Cette recette n'a pas d'ingr\u00e9dients",
+        "success": "Ingr\u00e9dients consomm\u00e9s",
+        "successDescription": "{{count}} article(s) d\u00e9duit(s) de votre stock",
+        "failed": "\u00c9chec de la consommation des ingr\u00e9dients"
+      }
     },
     "importRecipe": {
       "title": "Importer une recette",

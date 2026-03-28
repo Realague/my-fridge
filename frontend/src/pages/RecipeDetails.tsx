@@ -5,8 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, ChefHat, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, ChefHat, ExternalLink, UtensilsCrossed, Minus, Plus } from 'lucide-react';
 import { AddMealPlanDialog } from '@/components/AddMealPlanDialog';
+import { ConsumeIngredientsDialog } from '@/components/ConsumeIngredientsDialog';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +32,8 @@ const RecipeDetails = () => {
   } = useRecipeStore();
   
   const [showMealPlanDialog, setShowMealPlanDialog] = useState(false);
+  const [showConsumeDialog, setShowConsumeDialog] = useState(false);
+  const [cookingServings, setCookingServings] = useState<number | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -41,6 +44,12 @@ const RecipeDetails = () => {
       clearCurrentRecipe();
     };
   }, [id, fetchRecipeById, clearCurrentRecipe]);
+
+  useEffect(() => {
+    if (recipe && cookingServings === null) {
+      setCookingServings(recipe.servings);
+    }
+  }, [recipe, cookingServings]);
 
   useEffect(() => {
     if (error) {
@@ -174,6 +183,13 @@ const RecipeDetails = () => {
         preselectedRecipe={recipe}
       />
 
+      {/* Consume Ingredients Dialog */}
+      <ConsumeIngredientsDialog
+        isOpen={showConsumeDialog}
+        onClose={() => setShowConsumeDialog(false)}
+        recipe={recipe}
+      />
+
       {/* Header */}
       <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
@@ -280,18 +296,49 @@ const RecipeDetails = () => {
 
             {/* Action Buttons */}
             <div className="pt-4 space-y-3">
-              <Button 
-                onClick={() => navigate(`/recipes/${recipe.id}/cook`)} 
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
-                size="lg"
-              >
-                <ChefHat className="h-5 w-5 mr-2" />
-                {t('pages.recipes.startCooking')}
-              </Button>
-              <Button onClick={() => setShowMealPlanDialog(true)} variant="outline" className="w-full md:w-auto">
-                <Calendar className="h-4 w-4 mr-2" />
-                {t('pages.recipes.addToMealPlan')}
-              </Button>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5 border rounded-lg px-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setCookingServings(Math.max(1, (cookingServings ?? recipe.servings) - 1))}
+                    disabled={(cookingServings ?? recipe.servings) <= 1}
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <span className="w-8 text-center font-medium text-sm tabular-nums">
+                    {cookingServings ?? recipe.servings}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setCookingServings((cookingServings ?? recipe.servings) + 1)}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                  <Users className="h-3.5 w-3.5 text-muted-foreground mr-1" />
+                </div>
+                <Button
+                  onClick={() => navigate(`/recipes/${recipe.id}/cook?servings=${cookingServings ?? recipe.servings}`)}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                  size="lg"
+                >
+                  <ChefHat className="h-5 w-5 mr-2" />
+                  {t('pages.recipes.startCooking')}
+                </Button>
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={() => setShowMealPlanDialog(true)} variant="outline" className="flex-1 md:flex-none">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  {t('pages.recipes.addToMealPlan')}
+                </Button>
+                <Button onClick={() => setShowConsumeDialog(true)} variant="outline" className="flex-1 md:flex-none">
+                  <UtensilsCrossed className="h-4 w-4 mr-2" />
+                  {t('pages.recipes.consume.button')}
+                </Button>
+              </div>
             </div>
           </CardHeader>
         </Card>

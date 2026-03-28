@@ -494,7 +494,26 @@
       "addToMealPlan": "Add to meal plan",
       "deleteRecipe": "Delete recipe",
       "deleteWarning": "This action cannot be undone.",
-      "addNewRecipe": "Add new recipe"
+      "addNewRecipe": "Add new recipe",
+      "consume": {
+        "button": "Consume ingredients",
+        "title": "Consume ingredients from stock",
+        "servings": "Servings",
+        "required": "Required",
+        "available": "available",
+        "sufficient": "Sufficient",
+        "partial": "Partial",
+        "notInStock": "Not in stock",
+        "incompatibleUnits": "Incompatible units",
+        "expired": "Expired",
+        "expiringSoon": "Expiring soon",
+        "confirm": "Confirm consumption",
+        "noDeductions": "No deductions selected",
+        "noIngredients": "This recipe has no ingredients",
+        "success": "Ingredients consumed",
+        "successDescription": "{{count}} item(s) deducted from your stock",
+        "failed": "Failed to consume ingredients"
+      }
     },
     "importRecipe": {
       "title": "Import Recipe",

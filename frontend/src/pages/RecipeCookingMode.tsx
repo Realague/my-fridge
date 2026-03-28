@@ -1,25 +1,39 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, ArrowRight, Play, Pause, RotateCcw, Clock, ChefHat, Badge, Eye, EyeOff, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Play, Pause, RotateCcw, Clock, ChefHat, Badge, Eye, EyeOff, ExternalLink, UtensilsCrossed, Minus, Plus, Users } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next'; 
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { Item } from '@/services/itemService';
+import { ConsumeIngredientsDialog } from '@/components/ConsumeIngredientsDialog';
 
 const RecipeCookingMode = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { t } = useTranslation();
   
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
   
   const { currentRecipe: recipe, fetchRecipeById, loading, error } = useRecipeStore();
+
+  const servingsParam = searchParams.get('servings');
+  const [cookingServings, setCookingServings] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (recipe && cookingServings === null) {
+      const fromUrl = servingsParam ? parseInt(servingsParam, 10) : NaN;
+      setCookingServings(isNaN(fromUrl) || fromUrl < 1 ? recipe.servings : fromUrl);
+    }
+  }, [recipe, cookingServings, servingsParam]);
+
+  const scale = recipe ? (cookingServings ?? recipe.servings) / recipe.servings : 1;
 
   // Fetch the recipe when component mounts
   useEffect(() => {
@@ -34,6 +48,7 @@ const RecipeCookingMode = () => {
   const [timer, setTimer] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [showIngredients, setShowIngredients] = useState(true);
+  const [showConsumeDialog, setShowConsumeDialog] = useState(false);
 
   useEffect(() => {
     if (recipe) {
@@ -53,6 +68,11 @@ const RecipeCookingMode = () => {
     }
     return () => clearInterval(interval);
   }, [isTimerRunning, timer]);
+
+  const scaleQty = (qty: number) => {
+    const scaled = qty * scale;
+    return Math.round(scaled * 100) / 100;
+  };
 
   // Show loading state
   if (loading) {
@@ -282,7 +302,7 @@ const RecipeCookingMode = () => {
                           <div key={ingredient.id} className="flex items-center gap-2 text-sm">
                             <span className="w-2 h-2 bg-primary rounded-full"></span>
                             <span className="font-medium text-foreground">
-                              {ingredient.quantity} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient?.item as Item, t)}
+                              {scaleQty(ingredient.quantity)} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient?.item as Item, t)}
                             </span>
                             {ingredient.notes && (
                               <span className="text-muted-foreground italic">({ingredient.notes})</span>
@@ -356,7 +376,7 @@ const RecipeCookingMode = () => {
                           />
                           <div className={`flex-1 text-sm ${checkedIngredients[index] ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
                             <div className={`font-medium ${isRelevant ? 'text-primary' : ''}`}>
-                              {ingredient.quantity} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient?.item as Item, t)}
+                              {scaleQty(ingredient.quantity)} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient?.item as Item, t)}
                             </div>
                             {ingredient.notes && (
                               <div className={`text-xs ${isRelevant ? 'text-primary' : 'text-muted-foreground'}`}>
@@ -385,9 +405,24 @@ const RecipeCookingMode = () => {
                     <span className="text-muted-foreground">{t('pages.recipes.cookTime')}:</span>
                     <span className="font-medium">{recipe.cookTime}m</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">{t('pages.recipes.servings')}:</span>
-                    <span className="font-medium">{recipe.servings}</span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        className="h-6 w-6 rounded flex items-center justify-center hover:bg-muted transition-colors"
+                        onClick={() => setCookingServings(Math.max(1, (cookingServings ?? recipe.servings) - 1))}
+                        disabled={(cookingServings ?? recipe.servings) <= 1}
+                      >
+                        <Minus className="h-3 w-3" />
+                      </button>
+                      <span className="font-medium w-6 text-center tabular-nums">{cookingServings ?? recipe.servings}</span>
+                      <button
+                        className="h-6 w-6 rounded flex items-center justify-center hover:bg-muted transition-colors"
+                        onClick={() => setCookingServings((cookingServings ?? recipe.servings) + 1)}
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
+                    </div>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{t('pages.recipes.difficulty')}:</span>
@@ -406,12 +441,26 @@ const RecipeCookingMode = () => {
               <ChefHat className="h-12 w-12 text-primary mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-foreground mb-2">{t('pages.recipes.congratulations')}</h2>
               <p className="text-muted-foreground mb-4">{t('pages.recipes.congratulationsDescription', { recipeTitle: recipe.title })}</p>
-              <Button variant="green" onClick={() => navigate(`/recipes/${recipe.id}`)}>
-                {t('pages.recipes.backToRecipes')}
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button variant="outline" onClick={() => setShowConsumeDialog(true)}>
+                  <UtensilsCrossed className="h-4 w-4 mr-2" />
+                  {t('pages.recipes.consume.button')}
+                </Button>
+                <Button variant="green" onClick={() => navigate(`/recipes/${recipe.id}`)}>
+                  {t('pages.recipes.backToRecipes')}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
+
+        {/* Consume Ingredients Dialog */}
+        <ConsumeIngredientsDialog
+          isOpen={showConsumeDialog}
+          onClose={() => setShowConsumeDialog(false)}
+          recipe={recipe}
+          initialServings={cookingServings ?? undefined}
+        />
       </div>
     </div>
   );

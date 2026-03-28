@@ -1,13 +1,16 @@
 import { Request, Response } from 'express';
 import { RecipeService } from '../services/RecipeService';
+import { RecipeConsumeService } from '../services/RecipeConsumeService';
 import { CreateRecipeDto, UpdateRecipeDto, RecipeSearchParams } from '../types/RecipeDto';
 import { ValidationError, NotFoundError } from '../errors/CustomErrors';
 
 export class RecipeController {
   private recipeService: RecipeService;
+  private recipeConsumeService: RecipeConsumeService;
 
   constructor() {
     this.recipeService = new RecipeService();
+    this.recipeConsumeService = new RecipeConsumeService();
   }
 
   // GET /api/households/:householdId/recipes
@@ -335,6 +338,86 @@ export class RecipeController {
         success: false,
         error: 'Failed to fetch user recipes'
       });
+    }
+  };
+
+  // GET /api/households/:householdId/recipes/:id/consume-preview
+  getConsumePreview = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { householdId, id } = req.params as { householdId: string; id: string };
+      const servings = req.query.servings
+        ? parseInt(req.query.servings as string)
+        : undefined;
+
+      if (servings !== undefined && (isNaN(servings) || servings < 1)) {
+        res.status(400).json({
+          success: false,
+          error: 'Servings must be a positive integer',
+        });
+        return;
+      }
+
+      const preview = await this.recipeConsumeService.getConsumePreview(
+        id,
+        householdId,
+        servings
+      );
+
+      res.json({
+        success: true,
+        data: preview,
+      });
+    } catch (error) {
+      console.error('getConsumePreview error:', error);
+
+      if (error instanceof NotFoundError) {
+        res.status(404).json({ success: false, error: error.message });
+      } else {
+        res.status(500).json({
+          success: false,
+          error: 'Failed to generate consume preview',
+        });
+      }
+    }
+  };
+
+  // POST /api/households/:householdId/recipes/:id/consume
+  consumeIngredients = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { householdId, id } = req.params as { householdId: string; id: string };
+      const { deductions } = req.body;
+
+      if (!deductions || !Array.isArray(deductions) || deductions.length === 0) {
+        res.status(400).json({
+          success: false,
+          error: 'Deductions array is required and must not be empty',
+        });
+        return;
+      }
+
+      const result = await this.recipeConsumeService.consumeIngredients(
+        id,
+        householdId,
+        deductions
+      );
+
+      res.json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      console.error('consumeIngredients error:', error);
+
+      if (error instanceof NotFoundError) {
+        res.status(404).json({ success: false, error: error.message });
+      } else if (error instanceof ValidationError) {
+        res.status(400).json({ success: false, error: error.message });
+      } else {
+        res.status(500).json({
+          success: false,
+          error: 'Failed to consume ingredients',
+        });
+      }
     }
   };
 } 

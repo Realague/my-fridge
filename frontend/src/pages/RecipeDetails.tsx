@@ -163,7 +163,7 @@ const RecipeDetails = () => {
       }
 
       if (!ingredient.usedInSteps || ingredient.usedInSteps.length === 0) {
-        const stepText = recipe.instructions[stepIndex]?.toLowerCase() ?? '';
+        const stepText = recipe.instructions[stepIndex]?.text?.toLowerCase() ?? '';
 
         if (ingredient.notes && stepText.includes(ingredient.notes.toLowerCase())) {
           relevantIngredients.push(index);
@@ -401,7 +401,7 @@ const RecipeDetails = () => {
                       <span className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
                         {index + 1}
                       </span>
-                      <span className="text-foreground pt-0.5">{instruction}</span>
+                      <span className="text-foreground pt-0.5">{instruction.text}</span>
                     </div>
 
                     {relevantIngredients.length > 0 && (

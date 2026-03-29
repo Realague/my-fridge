@@ -10,6 +10,11 @@ const ingredientMatchingService = new IngredientMatchingService();
 // Apply authentication middleware to all routes
 router.use(authenticateGoogleToken);
 
+interface RecipeStep {
+  text: string;
+  duration?: number | null;
+}
+
 interface ParsedRecipe {
   title: string;
   description: string;
@@ -17,7 +22,7 @@ interface ParsedRecipe {
   cookTime: number;
   servings: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
-  instructions: string[];
+  instructions: RecipeStep[];
   ingredients: string[];
   matchedIngredients: MatchedIngredient[];
   imageUrl: string | null;
@@ -35,6 +40,21 @@ function parseDuration(duration: string | undefined): number {
   const minutes = parseInt(match[2] || '0', 10);
   
   return hours * 60 + minutes;
+}
+
+// Parse ISO 8601 duration to seconds (for per-step durations)
+function parseDurationToSeconds(duration: string | undefined): number | null {
+  if (!duration) return null;
+
+  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!match) return null;
+
+  const hours = parseInt(match[1] || '0', 10);
+  const minutes = parseInt(match[2] || '0', 10);
+  const seconds = parseInt(match[3] || '0', 10);
+
+  const total = hours * 3600 + minutes * 60 + seconds;
+  return total > 0 ? total : null;
 }
 
 // Map Marmiton difficulty to our difficulty levels
@@ -139,20 +159,25 @@ router.post('/import/marmiton', async (req: Request, res: Response) => {
       }
     }
 
-    // Parse instructions
-    const instructions: string[] = [];
+    // Parse instructions into RecipeStep objects with optional durations
+    const instructions: RecipeStep[] = [];
     if (Array.isArray(recipeData.recipeInstructions)) {
       for (const inst of recipeData.recipeInstructions) {
         if (typeof inst === 'string') {
-          instructions.push(inst.trim());
+          instructions.push({ text: inst.trim(), duration: null });
         } else if (inst && typeof inst === 'object') {
-          // HowToStep or HowToSection
           if (inst.text) {
-            instructions.push(inst.text.trim());
+            instructions.push({
+              text: inst.text.trim(),
+              duration: parseDurationToSeconds(inst.performTime),
+            });
           } else if (inst.itemListElement && Array.isArray(inst.itemListElement)) {
             for (const step of inst.itemListElement) {
               if (step.text) {
-                instructions.push(step.text.trim());
+                instructions.push({
+                  text: step.text.trim(),
+                  duration: parseDurationToSeconds(step.performTime),
+                });
               }
             }
           }

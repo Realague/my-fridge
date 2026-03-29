@@ -329,7 +329,7 @@ const ImportRecipe = () => {
                         <span className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
                           {index + 1}
                         </span>
-                        <span className="text-muted-foreground">{instruction}</span>
+                        <span className="text-muted-foreground">{instruction.text}</span>
                       </li>
                     ))}
                   </ol>

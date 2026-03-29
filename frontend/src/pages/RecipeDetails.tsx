@@ -250,7 +250,7 @@ const RecipeDetails = () => {
         {/* Recipe Header */}
         <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg overflow-hidden">
           {recipe.imageUrl ? (
-            <div className="w-full aspect-video md:aspect-[4/3] overflow-hidden bg-muted">
+            <div className="w-full max-h-[400px] overflow-hidden bg-muted">
               <img
                 src={recipe.imageUrl}
                 alt={recipe.title}
@@ -258,7 +258,7 @@ const RecipeDetails = () => {
               />
             </div>
           ) : (
-            <div className="w-full aspect-video md:aspect-[4/3] bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+            <div className="w-full max-h-[400px] bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center py-16">
               <ChefHat className="h-16 w-16 text-muted-foreground/40" />
             </div>
           )}
@@ -464,7 +464,7 @@ const RecipeDetailsSkeleton = () => {
     <div className="space-y-6">
       {/* Recipe Header */}
       <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg overflow-hidden">
-        <Skeleton className="w-full aspect-video md:aspect-[4/3]" />
+        <Skeleton className="w-full max-h-[400px] h-[300px]" />
         <CardHeader>
           <div className="space-y-2">
             <Skeleton className="h-8 w-3/4" />

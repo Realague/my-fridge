@@ -1,10 +1,17 @@
 version: '3.8'
 
+# Explicit network so backend always shares DNS with db (avoids ENOTFOUND db on some hosts).
+networks:
+  staging:
+    driver: bridge
+
 services:
   # PostgreSQL Database
   db:
     image: postgres:15
     restart: always
+    networks:
+      - staging
     environment:
       POSTGRES_DB: my_fridge_db_staging
       POSTGRES_USER: postgres
@@ -42,10 +49,14 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - staging
     volumes:
       - ./backend:/app
-      # Use modules installed in the image; avoid masking with an empty volume
-      - /app/node_modules
+      # Named volume so a bad node_modules tree can be dropped without touching pgdata:
+      #   docker compose -f docker-compose.staging.yml stop backend && docker compose -f docker-compose.staging.yml rm -f backend
+      #   docker volume ls   # find *backend_node_modules*, then docker volume rm <that name>
+      - backend_node_modules:/app/node_modules
     command: npm run dev
 
   # Frontend React App
@@ -59,10 +70,13 @@ services:
       VITE_PORT: 8081
     ports:
       - "8081:8081"
+    networks:
+      - staging
     volumes:
       - ./frontend:/app
       - /app/node_modules
     command: npm run dev
 
 volumes:
-  pgdata: 
+  pgdata:
+  backend_node_modules: 

@@ -149,6 +149,8 @@
     "frozen": "FROZEN",
     "frozenTooLong": "Frozen for {{days}} days",
     "freezerWarning": "Frozen longer than recommended",
+    "freezerDaysRemaining": "{{days}}d remaining",
+    "freezerExpiredDays": "Exceeded by {{days}}d",
     "openedDate": "Opening date",
     "consumeWithinDays": "To be consumed within {{days}} days after opening"
   },

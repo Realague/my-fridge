@@ -385,8 +385,8 @@ const StorageArea = () => {
                         <Snowflake className="h-3 w-3" />
                         <span>
                           {t('storedItems.frozenDate')} {formatDate(new Date(storageItem.frozenDate), 'MMM d')}
-                          {storageItem.daysFrozen !== null && storageItem.daysFrozen !== undefined && (
-                            <span> ({t('storedItems.frozenTooLong', { days: storageItem.daysFrozen })})</span>
+                          {storageItem.daysRemainingInFreezer !== null && storageItem.daysRemainingInFreezer !== undefined && (
+                            <span> ({t('storedItems.frozenTooLong', { days: storageItem.daysRemainingInFreezer > 0 ? storageItem.daysRemainingInFreezer : 0 })})</span>
                           )}
                         </span>
                       </div>

@@ -150,6 +150,8 @@
     "frozen": "CONGELADO",
     "frozenTooLong": "Congelado por {{days}} días",
     "freezerWarning": "Congelado por más tiempo que el recomendado",
+    "freezerDaysRemaining": "{{days}}d restantes",
+    "freezerExpiredDays": "Excedido por {{days}}d",
     "consumeWithinDays": "Consumir dentro de {{days}} días"
   },
   "itemSelector": {

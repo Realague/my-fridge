@@ -33,7 +33,7 @@ case "$ENV" in
 esac
 
 DB_USER="postgres"
-BACKUP_DIR="../$SCRIPT_DIR/backups/$ENV"
+BACKUP_DIR="../../$SCRIPT_DIR/backups/$ENV"
 RETENTION_DAYS=30
 
 TIMESTAMP="$(date +%Y-%m-%d_%H-%M-%S)"

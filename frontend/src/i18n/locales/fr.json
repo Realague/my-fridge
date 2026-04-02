@@ -676,6 +676,15 @@
     "serving": "portion",
     "other": "autre"
   },
+  "unitConversion": {
+    "title": "Équivalences",
+    "tsp_ml": "1 cuillère à café = 5 ml",
+    "tsp_g": "1 cuillère à café ≈ 5 g",
+    "tbsp_ml": "1 cuillère à soupe = 15 ml",
+    "tbsp_g": "1 cuillère à soupe ≈ 15 g",
+    "cup_ml": "1 tasse = 240 ml",
+    "cup_g": "1 tasse ≈ 240 g"
+  },
   "items": {
     "categories": {
       "all": "Tous",

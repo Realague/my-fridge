@@ -4,6 +4,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Item } from '@/services/itemService';
 import { getUnitDisplayName, getUnitsForCategory } from '@/utils/unitSystem';
 import { useTranslation } from 'react-i18next';
+import { UnitConversionPopover } from './UnitConversionPopover';
+
+const COOKING_UNIT_ML: Record<string, number> = {
+  tbsp: 15,
+  tsp: 5,
+  cup: 240,
+};
 
 interface QuantitySelectorProps {
   item: Item;
@@ -87,10 +94,16 @@ export const QuantitySelector = ({
           {availableUnits.map((availableUnit) => (
             <SelectItem key={availableUnit} value={availableUnit}>
               {t(`units.${getUnitDisplayName(availableUnit)}`)}
+              {context === 'recipe' && COOKING_UNIT_ML[availableUnit] && (
+                <span className="text-muted-foreground ml-1">
+                  ({COOKING_UNIT_ML[availableUnit]} ml)
+                </span>
+              )}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
+      {context === 'recipe' && <UnitConversionPopover />}
     </div>
   );
 };

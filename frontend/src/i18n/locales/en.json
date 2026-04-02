@@ -698,6 +698,15 @@
     "serving": "serving",
     "other": "other"
   },
+  "unitConversion": {
+    "title": "Equivalences",
+    "tsp_ml": "1 teaspoon = 5 ml",
+    "tsp_g": "1 teaspoon ≈ 5 g",
+    "tbsp_ml": "1 tablespoon = 15 ml",
+    "tbsp_g": "1 tablespoon ≈ 15 g",
+    "cup_ml": "1 cup = 240 ml",
+    "cup_g": "1 cup ≈ 240 g"
+  },
   "items": {
     "categories": {
       "all": "All",

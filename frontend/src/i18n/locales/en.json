@@ -177,7 +177,9 @@
     "itemMinimums_other": "{{count}} minimum stock settings",
     "shoppingItems_one": "{{count}} shopping list item",
     "shoppingItems_other": "{{count}} shopping list items",
-    "noReferencesFound": "No stored items, minimums, or shopping list entries will be affected.",
+    "recipes_one": "used in {{count}} recipe",
+    "recipes_other": "used in {{count}} recipes",
+    "noReferencesFound": "No stored items, minimums, shopping list entries, or recipes will be affected.",
     "deletionImpactSummary": "This will also remove: {{impacts}}."
   },
   "ingredientInput": {

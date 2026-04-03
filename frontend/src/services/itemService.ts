@@ -180,6 +180,16 @@ const getItemsByCategory = async (category: string, householdId?: string): Promi
   return result.data || [];
 };
 
+const getRecipeCount = async (itemId: string): Promise<number> => {
+  try {
+    const response = await apiService.get(`/api/items/${itemId}/recipe-count`);
+    const result: ApiResponse<{ count: number }> = await response.json();
+    return result.data?.count ?? 0;
+  } catch {
+    return 0;
+  }
+};
+
 // Export the service methods directly
 export const itemService = {
   searchItems,
@@ -189,6 +199,7 @@ export const itemService = {
   deleteItem,
   getItemsByHousehold,
   getItemsByCategory,
+  getRecipeCount,
 };
 
 // Hook that returns the service methods (for backward compatibility)

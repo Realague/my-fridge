@@ -27,6 +27,10 @@ router.get('/:id',
   itemController.getItemById.bind(itemController)
 );
 
+router.get('/:id/recipe-count',
+  itemController.getRecipeCount.bind(itemController)
+);
+
 // Household-specific routes
 router.get('/household/:householdId', 
   itemController.getItemsByHousehold.bind(itemController)

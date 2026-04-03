@@ -71,10 +71,11 @@ export class ItemDeletionService {
    * @param itemId - The ID of the item to check
    * @returns Object with counts of references in each store
    */
-  static getItemReferenceCounts(itemId: string): {
+  static getItemReferenceCounts(itemId: string, recipeCount: number = 0): {
     storedItems: number;
     itemMinimums: number;
     shoppingItems: number;
+    recipes: number;
     total: number;
   } {
     const storedItemStore = useStoredItemStore.getState();
@@ -97,7 +98,8 @@ export class ItemDeletionService {
       storedItems,
       itemMinimums,
       shoppingItems,
-      total: storedItems + itemMinimums + shoppingItems,
+      recipes: recipeCount,
+      total: storedItems + itemMinimums + shoppingItems + recipeCount,
     };
   }
 
@@ -117,14 +119,15 @@ export class ItemDeletionService {
    * @param translations - Object containing translated strings
    * @returns A string describing what will be removed
    */
-  static getDeletionImpactSummary(itemId: string, translations: {
+  static getDeletionImpactSummary(itemId: string, recipeCount: number, translations: {
     storedItems: (count: number) => string;
     itemMinimums: (count: number) => string;
     shoppingItems: (count: number) => string;
+    recipes: (count: number) => string;
     noReferencesFound: string;
     deletionImpactSummary: (impacts: string) => string;
   }): string {
-    const counts = this.getItemReferenceCounts(itemId);
+    const counts = this.getItemReferenceCounts(itemId, recipeCount);
     const impacts: string[] = [];
 
     if (counts.storedItems > 0) {
@@ -135,6 +138,9 @@ export class ItemDeletionService {
     }
     if (counts.shoppingItems > 0) {
       impacts.push(translations.shoppingItems(counts.shoppingItems));
+    }
+    if (counts.recipes > 0) {
+      impacts.push(translations.recipes(counts.recipes));
     }
 
     if (impacts.length === 0) {

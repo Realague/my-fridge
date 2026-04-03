@@ -149,6 +149,8 @@
     "frozenDate": "Congelé le",
     "frozen": "CONGELÉ",
     "frozenTooLong": "Congelé pour {{days}} jours",
+    "frozenProgress": "Congelé pour {{current}}/{{total}} jours",
+    "freezerRecommendation": "Les produits type {{category}} sont conservables ~{{months}} mois au congélateur.",
     "freezerWarning": "Congelé plus longtemps que recommandé",
     "freezerDaysRemaining": "{{days}}j restants",
     "freezerExpiredDays": "Dépassé de {{days}}j",

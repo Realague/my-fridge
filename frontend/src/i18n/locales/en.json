@@ -148,6 +148,8 @@
     "frozenDate": "Frozen on",
     "frozen": "FROZEN",
     "frozenTooLong": "Frozen for {{days}} days",
+    "frozenProgress": "Frozen {{current}}/{{total}} days",
+    "freezerRecommendation": "{{category}} products can be stored ~{{months}} months in the freezer.",
     "freezerWarning": "Frozen longer than recommended",
     "freezerDaysRemaining": "{{days}}d remaining",
     "freezerExpiredDays": "Exceeded by {{days}}d",

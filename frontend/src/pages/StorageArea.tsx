@@ -23,6 +23,25 @@ import { SelectedItemPreview } from '@/components/SelectedItemPreview';
 import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
 import { OpenedStatusToggle } from '@/components/OpenedStatusToggle';
 import { ItemImage } from '@/components/ItemImage';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
+
+/** Text/badge color by share of recommended freezer time used (<70% blue, 70–90% orange, >90% red). */
+function getFreezerColorClass(daysFrozen: number, recommendedDays: number): string {
+  const total = recommendedDays > 0 ? recommendedDays : 180;
+  const ratio = daysFrozen / total;
+  if (ratio > 0.9) return 'text-red-600 dark:text-red-400';
+  if (ratio >= 0.7) return 'text-orange-600 dark:text-orange-400';
+  return 'text-blue-600 dark:text-blue-400';
+}
+
+function getFreezerBadgeClassName(daysFrozen: number, recommendedDays: number): string {
+  const total = recommendedDays > 0 ? recommendedDays : 180;
+  const ratio = daysFrozen / total;
+  if (ratio > 0.9) return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+  if (ratio >= 0.7) return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400';
+  return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+}
 
 const StorageArea = () => {
   const { id } = useParams<{ id: string }>();
@@ -278,7 +297,17 @@ const StorageArea = () => {
                   </Badge>
                 )}
                 {storageItem.frozenDate && (
-                  <Badge variant={storageItem.isFrozenTooLong ? "destructive" : "secondary"} className={`text-xs ${storageItem.isFrozenTooLong ? '' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'}`}>
+                  <Badge
+                    variant={storageItem.isFrozenTooLong ? 'destructive' : 'secondary'}
+                    className={cn(
+                      'text-xs',
+                      !storageItem.isFrozenTooLong &&
+                        getFreezerBadgeClassName(
+                          storageItem.daysFrozen ?? 0,
+                          storageItem.recommendedFreezerDays ?? 180
+                        )
+                    )}
+                  >
                     <Snowflake className="h-3 w-3 mr-1" />
                     {storageItem.isFrozenTooLong ? t('storedItems.freezerWarning') : t('storedItems.frozen')}
                   </Badge>
@@ -363,10 +392,48 @@ const StorageArea = () => {
                     )}
                   </div>
                   
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      <span>{t('storageArea.added')} {formatDate(new Date(storageItem.createdAt), 'MMM d')}</span>
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
+                    <div className="flex items-start gap-1 min-w-0">
+                      <Calendar className="h-3 w-3 shrink-0 mt-0.5" />
+                      <span>
+                        {t('storageArea.added')} {formatDate(new Date(storageItem.createdAt), 'MMM d')}
+                        {storageItem.frozenDate && (
+                          <>
+                            {' '}
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span
+                                  className={cn(
+                                    'cursor-help font-medium underline decoration-dotted decoration-current underline-offset-2',
+                                    getFreezerColorClass(
+                                      storageItem.daysFrozen ?? 0,
+                                      storageItem.recommendedFreezerDays ?? 180
+                                    )
+                                  )}
+                                >
+                                  [
+                                  {t('storedItems.frozenProgress', {
+                                    current: storageItem.daysFrozen ?? 0,
+                                    total: storageItem.recommendedFreezerDays ?? 180,
+                                  })}
+                                  ]
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="max-w-xs">
+                                <p>
+                                  {t('storedItems.freezerRecommendation', {
+                                    category: t(`items.categories.${item.category}`),
+                                    months: Math.max(
+                                      1,
+                                      Math.round((storageItem.recommendedFreezerDays ?? 180) / 30)
+                                    ),
+                                  })}
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </>
+                        )}
+                      </span>
                     </div>
                     {(storageItem.effectiveExpirationDate || storageItem.expirationDate) && (
                       <div className="flex items-center gap-1">
@@ -378,23 +445,6 @@ const StorageArea = () => {
                       <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
                         <PackageOpen className="h-3 w-3" />
                         <span>{t('storedItems.openedOn')} {formatDate(new Date(storageItem.openedDate), 'MMM d')}</span>
-                      </div>
-                    )}
-                    {storageItem.frozenDate && (
-                      <div className={`flex items-center gap-1 ${storageItem.isFrozenTooLong ? 'text-red-600 dark:text-red-400' : 'text-blue-600 dark:text-blue-400'}`}>
-                        <Snowflake className="h-3 w-3" />
-                        <span>
-                          {t('storedItems.frozenDate')} {formatDate(new Date(storageItem.frozenDate), 'MMM d')}
-                          {storageItem.daysRemainingInFreezer !== null && storageItem.daysRemainingInFreezer !== undefined && (
-                            <span> ({t('storedItems.frozenTooLong', { days: storageItem.daysRemainingInFreezer > 0 ? storageItem.daysRemainingInFreezer : 0 })})</span>
-                          )}
-                        </span>
-                      </div>
-                    )}
-                    {storageItem.isFrozenTooLong && (
-                      <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
-                        <AlertTriangle className="h-3 w-3" />
-                        <span>{t('storedItems.freezerWarning')}</span>
                       </div>
                     )}
                   </div>

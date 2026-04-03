@@ -351,6 +351,8 @@
       "lowStockItems": "Low stock items",
       "itemsNeedRestock": "{{count}} items need restocking",
       "noLowStockItems": "All items are well stocked",
+      "alreadyInShoppingList": "In shopping list",
+      "addedToShoppingList": "Added to shopping list",
       "viewAll": "View all",
       "itemMinimums": "Item minimums",
       "itemsTracked": "{{count}} items tracked"

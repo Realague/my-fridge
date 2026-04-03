@@ -1,21 +1,35 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, Plus, Settings } from 'lucide-react';
+import { AlertCircle, Plus, Settings, ShoppingCart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useItemMinimumStore } from '@/stores/itemMinimumStore';
 import { useShoppingStore } from '@/stores/shoppingStore';
 import { toast } from 'sonner';
-import { useEffect } from 'react';
+import { useCallback, useMemo } from 'react';
 
 export const LowStockCard = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { getLowStockItemsForHousehold, fetchLowStockItems } = useItemMinimumStore();
-  const { createShoppingItem } = useShoppingStore();
+  const { getLowStockItemsForHousehold } = useItemMinimumStore();
+  const { createShoppingItem, items: shoppingItems } = useShoppingStore();
   const lowStockItems = getLowStockItemsForHousehold();
 
+  const shoppingItemIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const item of shoppingItems) {
+      if (!item.completed && item.item?.id) {
+        ids.add(item.item.id);
+      }
+    }
+    return ids;
+  }, [shoppingItems]);
+
+  const isInShoppingList = useCallback(
+    (itemId: string) => shoppingItemIds.has(itemId),
+    [shoppingItemIds]
+  );
 
   const handleAddToShopping = async (itemId: string, quantity: number, unit: string) => {
     try {
@@ -24,6 +38,7 @@ export const LowStockCard = () => {
         quantity: quantity.toString(),
         unit,
       });
+      toast.success(t('pages.dashboard.addedToShoppingList'));
     } catch (error) {
       console.error('Failed to add to shopping:', error);
     }
@@ -75,19 +90,26 @@ export const LowStockCard = () => {
                   })}
                 </div>
               </div>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => handleAddToShopping(
-                  lowStockItem.itemMinimum.itemId,
-                  lowStockItem.quantityNeeded,
-                  lowStockItem.itemMinimum.minimumUnit
-                )}
-                className="ml-2"
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                {t('buttons.add')}
-              </Button>
+              {isInShoppingList(lowStockItem.itemMinimum.itemId) ? (
+                <Badge variant="secondary" className="ml-2 flex items-center gap-1">
+                  <ShoppingCart className="h-3 w-3" />
+                  {t('pages.dashboard.alreadyInShoppingList')}
+                </Badge>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleAddToShopping(
+                    lowStockItem.itemMinimum.itemId,
+                    lowStockItem.quantityNeeded,
+                    lowStockItem.itemMinimum.minimumUnit
+                  )}
+                  className="ml-2"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  {t('buttons.add')}
+                </Button>
+              )}
             </div>
           ))}
           {lowStockItems.length > 3 && (

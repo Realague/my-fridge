@@ -326,6 +326,8 @@
       "savedRecipes": "{{count}} recetas guardadas",
       "lowStockItems": "Artículos con stock bajo",
       "itemsNeedRestock": "{{count}} artículos necesitan reabastecimiento",
+      "alreadyInShoppingList": "En la lista de compras",
+      "addedToShoppingList": "Añadido a la lista de compras",
       "viewAll": "Ver todo",
       "itemMinimums": "Mínimos de artículos",
       "itemsTracked": "{{count}} artículos rastreados"

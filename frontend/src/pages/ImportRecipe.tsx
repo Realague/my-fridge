@@ -156,11 +156,15 @@ const ImportRecipe = () => {
   const handleCreateRecipe = () => {
     if (!parsedRecipe) return;
     
-    // Navigate to add-recipe with the parsed data and selected ingredients
+    const filteredWithIndex = selectedIngredients
+      .map((ing, originalIndex) => ({ ...ing, originalIndex }))
+      .filter(ing => ing.itemId !== null);
+
     navigate('/add-recipe', { 
       state: { 
         importedRecipe: parsedRecipe,
-        selectedIngredients: selectedIngredients.filter(ing => ing.itemId !== null)
+        selectedIngredients: filteredWithIndex,
+        ingredientStepMapping: parsedRecipe.ingredientStepMapping,
       } 
     });
   };

@@ -57,10 +57,13 @@ const AddRecipe = () => {
       itemName: string | null;
       translatedName: string | null;
       availableUnits: string[];
+      originalIndex?: number;
     }>;
+    ingredientStepMapping?: { [ingredientIndex: number]: number[] };
   };
   const importedRecipe = locationState?.importedRecipe;
   const selectedIngredients = locationState?.selectedIngredients;
+  const ingredientStepMapping = locationState?.ingredientStepMapping;
 
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
@@ -109,7 +112,21 @@ const AddRecipe = () => {
   const [instructions, setInstructions] = React.useState<RecipeStep[]>(importedRecipe?.instructions || [{ text: '', duration: null }]);
   const [tags, setTags] = React.useState<string[]>([]);
   const [newTag, setNewTag] = React.useState('');
-  const [ingredientStepMap, setIngredientStepMap] = React.useState<{[ingredientId: string]: number[]}>({});
+  const initialStepMap = React.useMemo(() => {
+    if (!ingredientStepMapping || !selectedIngredients || initialIngredients.length === 0) return {};
+    const map: { [ingredientId: string]: number[] } = {};
+    const filtered = selectedIngredients.filter(ing => ing.itemId !== null);
+    filtered.forEach((ing, i) => {
+      const origIdx = ing.originalIndex;
+      if (origIdx === undefined) return;
+      const steps = ingredientStepMapping[origIdx];
+      if (steps && steps.length > 0 && initialIngredients[i]) {
+        map[initialIngredients[i].id] = steps;
+      }
+    });
+    return map;
+  }, []);
+  const [ingredientStepMap, setIngredientStepMap] = React.useState<{[ingredientId: string]: number[]}>(initialStepMap);
   const [imageUrl, setImageUrl] = React.useState<string | null>(importedRecipe?.imageUrl || null);
   const [selectedImageFile, setSelectedImageFile] = React.useState<File | null>(null);
   const [sourceUrl] = React.useState<string | undefined>(importedRecipe?.sourceUrl);

@@ -27,6 +27,7 @@ interface ParsedRecipe {
   matchedIngredients: MatchedIngredient[];
   imageUrl: string | null;
   sourceUrl: string;
+  ingredientStepMapping: { [ingredientIndex: number]: number[] };
 }
 
 // Parse ISO 8601 duration (e.g., "PT30M", "PT1H30M") to minutes
@@ -69,6 +70,11 @@ function mapDifficulty(difficulty: string | undefined): 'Easy' | 'Medium' | 'Har
     return 'Hard';
   }
   return 'Medium';
+}
+
+function extractImageId(url: string): string | null {
+  const match = url.match(/\/(\d+)_w\d+/);
+  return match?.[1] ?? null;
 }
 
 function isAllowedMarmitonUrl(rawUrl: string): boolean {
@@ -246,6 +252,53 @@ router.post('/import/marmiton', async (req: Request, res: Response) => {
       householdId
     );
 
+    // Build step-ingredient mapping from DOM ingredient images.
+    // Each .card-ingredient has a data-name and an image with a unique ID.
+    // Steps (.recipe-step-list__container) show the same images to indicate
+    // which ingredients are used; matching by image ID lets us pre-fill
+    // the usedInSteps relationship.
+    const imageIdToIngredientName = new Map<string, string>();
+    $('.card-ingredient').each((_, el) => {
+      const name = $(el).attr('data-name');
+      if (!name) return;
+      const imgSrc = $(el).find('.card-ingredient-image img').attr('data-src');
+      if (!imgSrc) return;
+      const imgId = extractImageId(imgSrc);
+      if (imgId) {
+        imageIdToIngredientName.set(imgId, name.toLowerCase());
+      }
+    });
+
+    const ingredientNameToJsonIndex = new Map<string, number>();
+    const lowerIngredients = ingredients.map(t => t.toLowerCase());
+    for (const [, name] of imageIdToIngredientName) {
+      if (ingredientNameToJsonIndex.has(name)) continue;
+      const idx = lowerIngredients.findIndex(text => text.includes(name));
+      if (idx !== -1) {
+        ingredientNameToJsonIndex.set(name, idx);
+      }
+    }
+
+    const ingredientStepMapping: { [ingredientIndex: number]: number[] } = {};
+    $('.recipe-step-list__container').each((stepIndex, el) => {
+      $(el).find('.recipe-step-list__head img').each((_, img) => {
+        const src = $(img).attr('data-src');
+        if (!src) return;
+        const imgId = extractImageId(src);
+        if (!imgId) return;
+        const ingName = imageIdToIngredientName.get(imgId);
+        if (!ingName) return;
+        const ingIndex = ingredientNameToJsonIndex.get(ingName);
+        if (ingIndex === undefined) return;
+        if (!ingredientStepMapping[ingIndex]) {
+          ingredientStepMapping[ingIndex] = [];
+        }
+        if (!ingredientStepMapping[ingIndex].includes(stepIndex)) {
+          ingredientStepMapping[ingIndex].push(stepIndex);
+        }
+      });
+    });
+
     const parsedRecipe: ParsedRecipe = {
       title: recipeData.name || 'Untitled Recipe',
       description: recipeData.description || '',
@@ -258,6 +311,7 @@ router.post('/import/marmiton', async (req: Request, res: Response) => {
       matchedIngredients,
       imageUrl,
       sourceUrl: normalizedUrl,
+      ingredientStepMapping,
     };
 
     return res.json(parsedRecipe);

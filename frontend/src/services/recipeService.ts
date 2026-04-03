@@ -235,6 +235,7 @@ export interface ParsedMarmitonRecipe {
   matchedIngredients: MatchedIngredient[];
   imageUrl: string | null;
   sourceUrl: string;
+  ingredientStepMapping?: { [ingredientIndex: number]: number[] };
 }
 
 export const useRecipeService = () => {

@@ -5,12 +5,42 @@ import { Item } from '@/services/itemService';
 import { getUnitDisplayName, getUnitsForCategory } from '@/utils/unitSystem';
 import { useTranslation } from 'react-i18next';
 import { UnitConversionPopover } from './UnitConversionPopover';
+import { Unit } from '@/types/enums';
 
 const COOKING_UNIT_ML: Record<string, number> = {
   tbsp: 15,
   tsp: 5,
   cup: 240,
 };
+
+const WEIGHT_UNITS: string[] = [Unit.GRAM, Unit.KILOGRAM];
+
+const CATEGORY_DENSITY: Record<string, number> = {
+  grains: 0.5,
+  spices: 1.2,
+  condiments: 0.85,
+  vegetables: 0.6,
+  fruits: 0.7,
+  meat: 0.9,
+  snacks: 0.4,
+  canned: 0.8,
+  frozen: 0.8,
+  dairy: 0.9,
+  other: 0.7,
+};
+
+function getCookingUnitHint(cookingUnit: string, item: Item): string {
+  const mlValue = COOKING_UNIT_ML[cookingUnit];
+  if (!mlValue) return '';
+
+  if (WEIGHT_UNITS.includes(item.defaultUnit)) {
+    const density = CATEGORY_DENSITY[item.category] ?? 0.7;
+    const grams = Math.round(mlValue * density);
+    return `~${grams} g`;
+  }
+
+  return `${mlValue} ml`;
+}
 
 interface QuantitySelectorProps {
   item: Item;
@@ -96,7 +126,7 @@ export const QuantitySelector = ({
               {t(`units.${getUnitDisplayName(availableUnit)}`)}
               {context === 'recipe' && COOKING_UNIT_ML[availableUnit] && (
                 <span className="text-muted-foreground ml-1">
-                  ({COOKING_UNIT_ML[availableUnit]} ml)
+                  ({getCookingUnitHint(availableUnit, item)})
                 </span>
               )}
             </SelectItem>

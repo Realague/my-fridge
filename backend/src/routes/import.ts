@@ -73,8 +73,18 @@ function mapDifficulty(difficulty: string | undefined): 'Easy' | 'Medium' | 'Har
 }
 
 function extractImageId(url: string): string | null {
-  const match = url.match(/\/(\d+)_w\d+/);
-  return match?.[1] ?? null;
+  if (!url) return null;
+  // Typical Marmiton resize URLs: .../12345_w600h400...
+  const wMatch = url.match(/\/(\d+)_w\d+/);
+  if (wMatch?.[1]) return wMatch[1];
+  // Fallback: long numeric id in path before extension
+  const fileMatch = url.match(/\/(\d{4,})\.(?:jpe?g|png|webp)(?:\?|$)/i);
+  if (fileMatch?.[1]) return fileMatch[1];
+  return null;
+}
+
+function imgDataOrSrc($img: cheerio.Cheerio<any>): string | undefined {
+  return $img.attr('data-src') || $img.attr('src') || undefined;
 }
 
 function isAllowedMarmitonUrl(rawUrl: string): boolean {
@@ -257,38 +267,50 @@ router.post('/import/marmiton', async (req: Request, res: Response) => {
     // Steps (.recipe-step-list__container) show the same images to indicate
     // which ingredients are used; matching by image ID lets us pre-fill
     // the usedInSteps relationship.
-    const imageIdToIngredientName = new Map<string, string>();
+    //
+    // Map each image ID to a JSON-LD ingredient index. We must not collapse
+    // by ingredient name: duplicate names (e.g. two "tomates" lines) need
+    // distinct indices, so we assign lines greedily in card DOM order (first
+    // unused ingredient line whose text includes data-name).
+    const lowerIngredients = ingredients.map(t => t.toLowerCase());
+    const usedIngredientIndices = new Set<number>();
+    const imageIdToJsonIndex = new Map<string, number>();
+
     $('.card-ingredient').each((_, el) => {
-      const name = $(el).attr('data-name');
+      const name = $(el).attr('data-name')?.trim().toLowerCase();
       if (!name) return;
-      const imgSrc = $(el).find('.card-ingredient-image img').attr('data-src');
+      const $img = $(el).find('.card-ingredient-image img').first();
+      const imgSrc = imgDataOrSrc($img);
       if (!imgSrc) return;
       const imgId = extractImageId(imgSrc);
-      if (imgId) {
-        imageIdToIngredientName.set(imgId, name.toLowerCase());
-      }
-    });
+      if (!imgId) return;
 
-    const ingredientNameToJsonIndex = new Map<string, number>();
-    const lowerIngredients = ingredients.map(t => t.toLowerCase());
-    for (const [, name] of imageIdToIngredientName) {
-      if (ingredientNameToJsonIndex.has(name)) continue;
-      const idx = lowerIngredients.findIndex(text => text.includes(name));
-      if (idx !== -1) {
-        ingredientNameToJsonIndex.set(name, idx);
+      let idx = lowerIngredients.findIndex(
+        (text, i) => !usedIngredientIndices.has(i) && text.includes(name)
+      );
+      if (idx === -1) {
+        const parts = name.split(/\s+/).filter(Boolean);
+        const token = parts.find(p => p.length >= 3) ?? parts[0];
+        if (token && token.length >= 3) {
+          idx = lowerIngredients.findIndex(
+            (text, i) => !usedIngredientIndices.has(i) && text.includes(token)
+          );
+        }
       }
-    }
+      if (idx === -1) return;
+
+      usedIngredientIndices.add(idx);
+      imageIdToJsonIndex.set(imgId, idx);
+    });
 
     const ingredientStepMapping: { [ingredientIndex: number]: number[] } = {};
     $('.recipe-step-list__container').each((stepIndex, el) => {
       $(el).find('.recipe-step-list__head img').each((_, img) => {
-        const src = $(img).attr('data-src');
+        const src = imgDataOrSrc($(img));
         if (!src) return;
         const imgId = extractImageId(src);
         if (!imgId) return;
-        const ingName = imageIdToIngredientName.get(imgId);
-        if (!ingName) return;
-        const ingIndex = ingredientNameToJsonIndex.get(ingName);
+        const ingIndex = imageIdToJsonIndex.get(imgId);
         if (ingIndex === undefined) return;
         if (!ingredientStepMapping[ingIndex]) {
           ingredientStepMapping[ingIndex] = [];

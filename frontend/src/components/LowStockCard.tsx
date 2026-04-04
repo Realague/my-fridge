@@ -8,6 +8,8 @@ import { useItemMinimumStore } from '@/stores/itemMinimumStore';
 import { useShoppingStore } from '@/stores/shoppingStore';
 import { toast } from 'sonner';
 import { useCallback, useMemo } from 'react';
+import { getItemDisplayName } from '@/utils/itemUtils';
+import { getTranslatedUnitLabel } from '@/utils/unitSystem';
 
 export const LowStockCard = () => {
   const { t } = useTranslation();
@@ -81,12 +83,16 @@ export const LowStockCard = () => {
             >
               <div className="flex-1">
                 <div className="font-medium text-foreground">
-                  {lowStockItem.itemMinimum.item?.name}
+                  {getItemDisplayName(lowStockItem.itemMinimum.item, t)}
                 </div>
                 <div className="text-sm text-muted-foreground">
                   {t('itemMinimum.quantityNeeded', {
                     quantity: lowStockItem.quantityNeeded,
-                    unit: lowStockItem.itemMinimum.minimumUnit
+                    unit: getTranslatedUnitLabel(
+                      lowStockItem.itemMinimum.minimumUnit,
+                      lowStockItem.quantityNeeded,
+                      t
+                    ),
                   })}
                 </div>
               </div>

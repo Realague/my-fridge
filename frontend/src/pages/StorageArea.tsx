@@ -43,6 +43,40 @@ function getFreezerBadgeClassName(daysFrozen: number, recommendedDays: number): 
   return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
 }
 
+/** Show X/Y congélation + tooltip whenever the row is in a freezer zone or has a frozenDate. */
+function getFreezerProgressDisplay(
+  storageItem: {
+    frozenDate?: string | null;
+    daysFrozen?: number | null;
+    recommendedFreezerDays?: number | null;
+    createdAt: string;
+  },
+  areaType: StorageAreaType
+): { current: number; total: number } | null {
+  const total = storageItem.recommendedFreezerDays ?? 180;
+  const inFreezer = areaType === StorageAreaType.FREEZER;
+  const hasFrozenDate = Boolean(storageItem.frozenDate);
+  if (!inFreezer && !hasFrozenDate) return null;
+
+  let current = storageItem.daysFrozen;
+  if (current == null || current === undefined) {
+    if (hasFrozenDate && storageItem.frozenDate) {
+      current = Math.max(
+        0,
+        Math.floor((Date.now() - new Date(storageItem.frozenDate).getTime()) / 86_400_000)
+      );
+    } else if (inFreezer) {
+      current = Math.max(
+        0,
+        Math.floor((Date.now() - new Date(storageItem.createdAt).getTime()) / 86_400_000)
+      );
+    } else {
+      current = 0;
+    }
+  }
+  return { current, total };
+}
+
 const StorageArea = () => {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
@@ -236,6 +270,11 @@ const StorageArea = () => {
       );
     }
 
+    const freezerProgress = getFreezerProgressDisplay(storageItem, area.type);
+    const freezerOverRecommended =
+      freezerProgress != null && freezerProgress.current > freezerProgress.total;
+    const showFreezerWarning = Boolean(storageItem.isFrozenTooLong || freezerOverRecommended);
+
     const handleSave = async () => {
       if (!selectedHouseholdId) return;
       
@@ -296,20 +335,17 @@ const StorageArea = () => {
                     {t('storedItems.opened')}
                   </Badge>
                 )}
-                {storageItem.frozenDate && (
+                {freezerProgress && (
                   <Badge
-                    variant={storageItem.isFrozenTooLong ? 'destructive' : 'secondary'}
+                    variant={showFreezerWarning ? 'destructive' : 'secondary'}
                     className={cn(
                       'text-xs',
-                      !storageItem.isFrozenTooLong &&
-                        getFreezerBadgeClassName(
-                          storageItem.daysFrozen ?? 0,
-                          storageItem.recommendedFreezerDays ?? 180
-                        )
+                      !showFreezerWarning &&
+                        getFreezerBadgeClassName(freezerProgress.current, freezerProgress.total)
                     )}
                   >
                     <Snowflake className="h-3 w-3 mr-1" />
-                    {storageItem.isFrozenTooLong ? t('storedItems.freezerWarning') : t('storedItems.frozen')}
+                    {showFreezerWarning ? t('storedItems.freezerWarning') : t('storedItems.frozen')}
                   </Badge>
                 )}
                 {getExpirationBadge(storageItem.effectiveExpirationDate || storageItem.expirationDate)}
@@ -397,27 +433,25 @@ const StorageArea = () => {
                       <Calendar className="h-3 w-3 shrink-0 mt-0.5" />
                       <span>
                         {t('storageArea.added')} {formatDate(new Date(storageItem.createdAt), 'MMM d')}
-                        {storageItem.frozenDate && (
+                        {freezerProgress && (
                           <>
                             {' '}
-                            <Tooltip>
+                            <Tooltip delayDuration={200}>
                               <TooltipTrigger asChild>
-                                <span
+                                <button
+                                  type="button"
                                   className={cn(
-                                    'cursor-help font-medium underline decoration-dotted decoration-current underline-offset-2',
-                                    getFreezerColorClass(
-                                      storageItem.daysFrozen ?? 0,
-                                      storageItem.recommendedFreezerDays ?? 180
-                                    )
+                                    'inline cursor-help border-0 bg-transparent p-0 text-left font-medium underline decoration-dotted decoration-current underline-offset-2',
+                                    getFreezerColorClass(freezerProgress.current, freezerProgress.total)
                                   )}
                                 >
                                   [
                                   {t('storedItems.frozenProgress', {
-                                    current: storageItem.daysFrozen ?? 0,
-                                    total: storageItem.recommendedFreezerDays ?? 180,
+                                    current: freezerProgress.current,
+                                    total: freezerProgress.total,
                                   })}
                                   ]
-                                </span>
+                                </button>
                               </TooltipTrigger>
                               <TooltipContent side="top" className="max-w-xs">
                                 <p>
@@ -425,7 +459,7 @@ const StorageArea = () => {
                                     category: t(`items.categories.${item.category}`),
                                     months: Math.max(
                                       1,
-                                      Math.round((storageItem.recommendedFreezerDays ?? 180) / 30)
+                                      Math.round(freezerProgress.total / 30)
                                     ),
                                   })}
                                 </p>

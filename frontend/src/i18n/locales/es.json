@@ -336,7 +336,7 @@
       "viewAll": "Ver todo",
       "itemMinimums": "Mínimos de artículos",
       "itemsTracked_one": "{{count}} artículo rastreado",
-      "itemsTracked_other": "{{count}} artículos rastreados"
+      "itemsTracked_other": "{{count}} artículos rastreados",
       "loyaltyCards": "Tarjetas de fidelidad",
       "loyaltyCardsDesc": "Tus tarjetas de tiendas"
     },

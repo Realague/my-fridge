@@ -361,7 +361,7 @@
       "viewAll": "View all",
       "itemMinimums": "Item minimums",
       "itemsTracked_one": "{{count}} item tracked",
-      "itemsTracked_other": "{{count}} items tracked"
+      "itemsTracked_other": "{{count}} items tracked",
       "loyaltyCards": "Loyalty cards",
       "loyaltyCardsDesc": "Your store cards"
     },

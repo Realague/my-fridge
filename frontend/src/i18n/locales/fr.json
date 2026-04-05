@@ -340,7 +340,7 @@
       "viewAll": "Voir tout",
       "itemMinimums": "Minimums d'articles",
       "itemsTracked_one": "{{count}} article suivi",
-      "itemsTracked_other": "{{count}} articles suivis"
+      "itemsTracked_other": "{{count}} articles suivis",
       "loyaltyCards": "Cartes de fidélité",
       "loyaltyCardsDesc": "Vos cartes en magasin"
     },

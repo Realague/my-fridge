@@ -192,9 +192,16 @@ export const useShoppingStore = create<ShoppingStore>()(
           
           if (result.success && result.data) {
             const newItem = result.data;
-            set(state => ({ 
-              items: [...state.items, newItem] 
-            }));
+            set(state => {
+              const existingIndex = state.items.findIndex(item => item.id === newItem.id);
+              if (existingIndex !== -1) {
+                // Backend merged into an existing item — replace it in place
+                const updated = [...state.items];
+                updated[existingIndex] = newItem;
+                return { items: updated };
+              }
+              return { items: [...state.items, newItem] };
+            });
             return newItem;
           } else {
             throw new Error(result.error || 'Failed to create shopping item');

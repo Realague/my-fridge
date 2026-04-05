@@ -10,6 +10,11 @@ const ingredientMatchingService = new IngredientMatchingService();
 // Apply authentication middleware to all routes
 router.use(authenticateGoogleToken);
 
+interface RecipeStep {
+  text: string;
+  duration?: number | null;
+}
+
 interface ParsedRecipe {
   title: string;
   description: string;
@@ -17,11 +22,12 @@ interface ParsedRecipe {
   cookTime: number;
   servings: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
-  instructions: string[];
+  instructions: RecipeStep[];
   ingredients: string[];
   matchedIngredients: MatchedIngredient[];
   imageUrl: string | null;
   sourceUrl: string;
+  ingredientStepMapping: { [ingredientIndex: number]: number[] };
 }
 
 // Parse ISO 8601 duration (e.g., "PT30M", "PT1H30M") to minutes
@@ -37,6 +43,21 @@ function parseDuration(duration: string | undefined): number {
   return hours * 60 + minutes;
 }
 
+// Parse ISO 8601 duration to seconds (for per-step durations)
+function parseDurationToSeconds(duration: string | undefined): number | null {
+  if (!duration) return null;
+
+  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!match) return null;
+
+  const hours = parseInt(match[1] || '0', 10);
+  const minutes = parseInt(match[2] || '0', 10);
+  const seconds = parseInt(match[3] || '0', 10);
+
+  const total = hours * 3600 + minutes * 60 + seconds;
+  return total > 0 ? total : null;
+}
+
 // Map Marmiton difficulty to our difficulty levels
 function mapDifficulty(difficulty: string | undefined): 'Easy' | 'Medium' | 'Hard' {
   if (!difficulty) return 'Medium';
@@ -49,6 +70,21 @@ function mapDifficulty(difficulty: string | undefined): 'Easy' | 'Medium' | 'Har
     return 'Hard';
   }
   return 'Medium';
+}
+
+function extractImageId(url: string): string | null {
+  if (!url) return null;
+  // Typical Marmiton resize URLs: .../12345_w600h400...
+  const wMatch = url.match(/\/(\d+)_w\d+/);
+  if (wMatch?.[1]) return wMatch[1];
+  // Fallback: long numeric id in path before extension
+  const fileMatch = url.match(/\/(\d{4,})\.(?:jpe?g|png|webp)(?:\?|$)/i);
+  if (fileMatch?.[1]) return fileMatch[1];
+  return null;
+}
+
+function imgDataOrSrc($img: cheerio.Cheerio<any>): string | undefined {
+  return $img.attr('data-src') || $img.attr('src') || undefined;
 }
 
 function isAllowedMarmitonUrl(rawUrl: string): boolean {
@@ -139,20 +175,25 @@ router.post('/import/marmiton', async (req: Request, res: Response) => {
       }
     }
 
-    // Parse instructions
-    const instructions: string[] = [];
+    // Parse instructions into RecipeStep objects with optional durations
+    const instructions: RecipeStep[] = [];
     if (Array.isArray(recipeData.recipeInstructions)) {
       for (const inst of recipeData.recipeInstructions) {
         if (typeof inst === 'string') {
-          instructions.push(inst.trim());
+          instructions.push({ text: inst.trim(), duration: null });
         } else if (inst && typeof inst === 'object') {
-          // HowToStep or HowToSection
           if (inst.text) {
-            instructions.push(inst.text.trim());
+            instructions.push({
+              text: inst.text.trim(),
+              duration: parseDurationToSeconds(inst.performTime),
+            });
           } else if (inst.itemListElement && Array.isArray(inst.itemListElement)) {
             for (const step of inst.itemListElement) {
               if (step.text) {
-                instructions.push(step.text.trim());
+                instructions.push({
+                  text: step.text.trim(),
+                  duration: parseDurationToSeconds(step.performTime),
+                });
               }
             }
           }
@@ -221,6 +262,65 @@ router.post('/import/marmiton', async (req: Request, res: Response) => {
       householdId
     );
 
+    // Build step-ingredient mapping from DOM ingredient images.
+    // Each .card-ingredient has a data-name and an image with a unique ID.
+    // Steps (.recipe-step-list__container) show the same images to indicate
+    // which ingredients are used; matching by image ID lets us pre-fill
+    // the usedInSteps relationship.
+    //
+    // Map each image ID to a JSON-LD ingredient index. We must not collapse
+    // by ingredient name: duplicate names (e.g. two "tomates" lines) need
+    // distinct indices, so we assign lines greedily in card DOM order (first
+    // unused ingredient line whose text includes data-name).
+    const lowerIngredients = ingredients.map(t => t.toLowerCase());
+    const usedIngredientIndices = new Set<number>();
+    const imageIdToJsonIndex = new Map<string, number>();
+
+    $('.card-ingredient').each((_, el) => {
+      const name = $(el).attr('data-name')?.trim().toLowerCase();
+      if (!name) return;
+      const $img = $(el).find('.card-ingredient-image img').first();
+      const imgSrc = imgDataOrSrc($img);
+      if (!imgSrc) return;
+      const imgId = extractImageId(imgSrc);
+      if (!imgId) return;
+
+      let idx = lowerIngredients.findIndex(
+        (text, i) => !usedIngredientIndices.has(i) && text.includes(name)
+      );
+      if (idx === -1) {
+        const parts = name.split(/\s+/).filter(Boolean);
+        const token = parts.find(p => p.length >= 3) ?? parts[0];
+        if (token && token.length >= 3) {
+          idx = lowerIngredients.findIndex(
+            (text, i) => !usedIngredientIndices.has(i) && text.includes(token)
+          );
+        }
+      }
+      if (idx === -1) return;
+
+      usedIngredientIndices.add(idx);
+      imageIdToJsonIndex.set(imgId, idx);
+    });
+
+    const ingredientStepMapping: { [ingredientIndex: number]: number[] } = {};
+    $('.recipe-step-list__container').each((stepIndex, el) => {
+      $(el).find('.recipe-step-list__head img').each((_, img) => {
+        const src = imgDataOrSrc($(img));
+        if (!src) return;
+        const imgId = extractImageId(src);
+        if (!imgId) return;
+        const ingIndex = imageIdToJsonIndex.get(imgId);
+        if (ingIndex === undefined) return;
+        if (!ingredientStepMapping[ingIndex]) {
+          ingredientStepMapping[ingIndex] = [];
+        }
+        if (!ingredientStepMapping[ingIndex].includes(stepIndex)) {
+          ingredientStepMapping[ingIndex].push(stepIndex);
+        }
+      });
+    });
+
     const parsedRecipe: ParsedRecipe = {
       title: recipeData.name || 'Untitled Recipe',
       description: recipeData.description || '',
@@ -233,6 +333,7 @@ router.post('/import/marmiton', async (req: Request, res: Response) => {
       matchedIngredients,
       imageUrl,
       sourceUrl: normalizedUrl,
+      ingredientStepMapping,
     };
 
     return res.json(parsedRecipe);

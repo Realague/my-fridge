@@ -1,6 +1,11 @@
 import { Unit } from './enums';
 import { RecipeDifficulty } from '../models/Recipe';
 
+export interface RecipeStep {
+  text: string;
+  duration?: number | null;
+}
+
 export interface RecipeIngredientDto {
   id: string;
   itemId: string;
@@ -33,7 +38,7 @@ export interface CreateRecipeDto {
   cookTime: number;
   servings: number;
   difficulty: RecipeDifficulty;
-  instructions: string[];
+  instructions: RecipeStep[];
   tags: string[];
   imageUrl?: string;
   sourceUrl?: string;
@@ -49,7 +54,7 @@ export interface UpdateRecipeDto {
   cookTime?: number;
   servings?: number;
   difficulty?: RecipeDifficulty;
-  instructions?: string[];
+  instructions?: RecipeStep[];
   tags?: string[];
   imageUrl?: string;
   sourceUrl?: string;
@@ -66,7 +71,7 @@ export interface RecipeDto {
   totalTime: number;
   servings: number;
   difficulty: RecipeDifficulty;
-  instructions: string[];
+  instructions: RecipeStep[];
   tags: string[];
   imageUrl: string | null;
   sourceUrl: string | null;

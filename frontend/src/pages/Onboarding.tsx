@@ -33,8 +33,6 @@ const Onboarding = () => {
     }
   }, [isLoading, isAuthenticated, navigate]);
 
-  // Check URL parameters and set initial step
-  // IMPORTANT: This must be called before any early returns to follow Rules of Hooks
   useEffect(() => {
     const stepParam = searchParams.get('step');
     if (stepParam) {
@@ -43,7 +41,7 @@ const Onboarding = () => {
         setStep(stepNumber);
       }
     }
-  }, [searchParams, step]);
+  }, [searchParams]);
 
   // Show loading spinner while auth is loading
   if (isLoading) {

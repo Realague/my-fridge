@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
+import { RecipeStep } from '@/services/recipeService';
 
 export interface RecipeIngredient {
   id: string;
@@ -18,7 +19,7 @@ export interface Recipe {
   servings: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   ingredients: RecipeIngredient[];
-  instructions: string[];
+  instructions: RecipeStep[];
   tags: string[];
   image?: string;
   isFavorite: boolean;

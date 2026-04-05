@@ -8,6 +8,7 @@ import {
 } from '../models';
 import sequelize from '../config/database';
 import { deleteImageFromCloudinary } from '../utils/imageUploader';
+import { RecipeStep } from '../types/RecipeDto';
 
 export class ItemCascadeDeletionService {
   
@@ -142,29 +143,26 @@ export class ItemCascadeDeletionService {
   /**
    * Remove ingredient references from recipe instructions
    */
-  private removeIngredientFromInstructions(instructions: string[], ingredients: RecipeIngredient[]): string[] {
-    return instructions.map((instruction, stepIndex) => {
-      let updatedInstruction = instruction;
+  private removeIngredientFromInstructions(instructions: RecipeStep[], ingredients: RecipeIngredient[]): RecipeStep[] {
+    return instructions.map((step, stepIndex) => {
+      let updatedText = step.text;
       
-      // For each ingredient that was used in this step, remove references
       for (const ingredient of ingredients) {
         if (ingredient.usedInSteps.includes(stepIndex)) {
-          // Remove the ingredient name from the instruction
-          // This is a simple approach - you might want to make it more sophisticated
           const ingredientName = ingredient.item?.name || 'ingredient';
           const patterns = [
             new RegExp(`\\b${ingredientName}\\b`, 'gi'),
-            new RegExp(`\\b${ingredientName}s\\b`, 'gi'), // plural form
-            new RegExp(`\\b${ingredientName}es\\b`, 'gi'), // plural form with 'es'
+            new RegExp(`\\b${ingredientName}s\\b`, 'gi'),
+            new RegExp(`\\b${ingredientName}es\\b`, 'gi'),
           ];
           
           for (const pattern of patterns) {
-            updatedInstruction = updatedInstruction.replace(pattern, '[removed ingredient]');
+            updatedText = updatedText.replace(pattern, '[removed ingredient]');
           }
         }
       }
       
-      return updatedInstruction;
+      return { ...step, text: updatedText };
     });
   }
 

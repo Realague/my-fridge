@@ -175,6 +175,24 @@ export class ShoppingItemRepository {
     }
   }
 
+  async findByItemAndHousehold(itemId: string, householdId: string, completed: boolean, excludeId?: string): Promise<ShoppingItem | null> {
+    const whereClause: any = {
+      itemId,
+      householdId,
+      completed,
+    };
+
+    if (excludeId) {
+      whereClause.id = {
+        [Op.ne]: excludeId
+      };
+    }
+
+    return await ShoppingItem.findOne({
+      where: whereClause
+    });
+  }
+
   async getDuplicateShoppingItem(itemId: string, householdId: string, unit: string, completed: boolean, excludeId?: string): Promise<ShoppingItem | null> {
     const whereClause: any = {
       itemId,

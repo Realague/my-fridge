@@ -12,6 +12,7 @@ import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { getTranslatedUnitLabel } from '@/utils/unitSystem';
 import { toast } from '@/hooks/use-toast';
 
 const ItemMinimums = () => {
@@ -196,7 +197,11 @@ const ItemMinimums = () => {
                             <div className="text-orange-600 dark:text-orange-400">
                               {t('itemMinimum.quantityNeeded', {
                                 quantity: (minimum.minimumQuantity - currentStock).toFixed(1),
-                                unit: minimum.minimumUnit
+                                unit: getTranslatedUnitLabel(
+                                  minimum.minimumUnit,
+                                  minimum.minimumQuantity - currentStock,
+                                  t
+                                ),
                               })}
                             </div>
                           )}

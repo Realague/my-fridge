@@ -9,9 +9,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, Plus, X } from 'lucide-react';
+import { ArrowLeft, Plus, X, Clock } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
-import { UpdateRecipeDto } from '@/services/recipeService';
+import { UpdateRecipeDto, RecipeStep } from '@/services/recipeService';
 import { StructuredIngredientInput, StructuredIngredient } from '@/components/StructuredIngredientInput';
 import { useToast } from '@/hooks/use-toast';
 import { useItemService } from '@/services/itemService';
@@ -55,7 +55,7 @@ const EditRecipe = () => {
     ...ingredient,
     item: ingredient.item as StructuredIngredient['item']
   })) || []);
-  const [instructions, setInstructions] = useState(recipe?.instructions || []);
+  const [instructions, setInstructions] = useState<RecipeStep[]>(recipe?.instructions || []);
   const [tags, setTags] = useState<string[]>(recipe?.tags || []);
   const [newTag, setNewTag] = useState('');
   const [ingredientStepMap, setIngredientStepMap] = useState<{[ingredientKey: string]: number[]}>({});
@@ -138,14 +138,13 @@ const EditRecipe = () => {
   }
 
   const addInstruction = () => {
-    setInstructions([...instructions, '']);
+    setInstructions([...instructions, { text: '', duration: null }]);
   };
 
   const removeInstruction = (index: number) => {
     const newInstructions = instructions.filter((_, i) => i !== index);
     setInstructions(newInstructions);
     
-    // Update ingredient-step mappings when removing a step
     const updatedMap = { ...ingredientStepMap };
     Object.keys(updatedMap).forEach(ingredientId => {
       updatedMap[ingredientId] = updatedMap[ingredientId]
@@ -155,9 +154,15 @@ const EditRecipe = () => {
     setIngredientStepMap(updatedMap);
   };
 
-  const updateInstruction = (index: number, value: string) => {
+  const updateInstructionText = (index: number, value: string) => {
     const updated = [...instructions];
-    updated[index] = value;
+    updated[index] = { ...updated[index], text: value };
+    setInstructions(updated);
+  };
+
+  const updateInstructionDuration = (index: number, minutes: number | null) => {
+    const updated = [...instructions];
+    updated[index] = { ...updated[index], duration: minutes != null ? minutes * 60 : null };
     setInstructions(updated);
   };
 
@@ -201,7 +206,7 @@ const EditRecipe = () => {
     }
 
     const validIngredients = ingredients.filter(ing => ing.itemId && ing.quantity > 0);
-    const filteredInstructions = instructions.filter(inst => inst.trim() !== '');
+    const filteredInstructions = instructions.filter(inst => inst.text.trim() !== '');
     
     if (validIngredients.length === 0) {
       toast({
@@ -482,12 +487,29 @@ const EditRecipe = () => {
                       <div className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium mt-2">
                         {index + 1}
                       </div>
-                      <Textarea
-                        placeholder={`Step ${index + 1} instructions...`}
-                        value={instruction}
-                        onChange={(e) => updateInstruction(index, e.target.value)}
-                        className="flex-1 min-h-[60px]"
-                      />
+                      <div className="flex-1 space-y-2">
+                        <Textarea
+                          placeholder={`Step ${index + 1} instructions...`}
+                          value={instruction.text}
+                          onChange={(e) => updateInstructionText(index, e.target.value)}
+                          className="min-h-[60px]"
+                        />
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                          <Input
+                            type="number"
+                            min="0"
+                            placeholder={t('pages.recipes.durationPlaceholder')}
+                            value={instruction.duration != null ? instruction.duration / 60 : ''}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              updateInstructionDuration(index, val === '' ? null : parseFloat(val) || 0);
+                            }}
+                            className="w-24 h-7 text-xs"
+                          />
+                          <span className="text-xs text-muted-foreground">min</span>
+                        </div>
+                      </div>
                       {instructions.length > 1 && (
                         <Button
                           type="button"
@@ -501,8 +523,7 @@ const EditRecipe = () => {
                       )}
                     </div>
                     
-                    {/* Ingredient mapping for this step */}
-                    {ingredients.length > 0 && instruction.trim() && (
+                    {ingredients.length > 0 && instruction.text.trim() && (
                       <div className="ml-8 p-3 bg-muted rounded-lg">
                         <h4 className="text-sm font-medium text-foreground mb-2">
                           {t('pages.recipes.ingredientsUsedInThisStep')}

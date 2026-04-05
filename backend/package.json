@@ -25,7 +25,7 @@
     "dev:manual": "NODE_ENV=manual nodemon src/index.ts",
     "db:create:script": "ts-node src/scripts/createDatabase.ts",
     "seed:items": "ts-node src/scripts/seedItemsFromCSV.ts",
-    "seed:items:custom": "ts-node src/scripts/seedItemsFromCSV.ts"
+    "seed:items:staging": "ts-node src/scripts/seedItemsFromCSV.ts my_fridge_db_staging 5433"
   },
   "keywords": [
     "express",

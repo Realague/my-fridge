@@ -6,7 +6,10 @@ import {
   UpdateRecipeDto, 
   RecipeSearchParams,
   RecipeStats,
-  IngredientStats
+  IngredientStats,
+  ConsumePreviewResult,
+  ConsumeDeduction,
+  ConsumeResult,
 } from '@/services/recipeService';
 import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 import { useHouseholdStore } from './householdStore';
@@ -65,9 +68,11 @@ interface RecipeState {
   tags: string[];
   stats: RecipeStats | null;
   ingredientStats: IngredientStats[];
+  consumePreview: ConsumePreviewResult | null;
   
   // Meta
   loading: boolean;
+  consumeLoading: boolean;
   error: string | null;
   hasMore: boolean;
   total: number;
@@ -87,6 +92,9 @@ interface RecipeState {
   fetchStats: () => Promise<void>;
   fetchIngredientStats: () => Promise<void>;
   getRecipesByUser: (userId: string) => Promise<RecipeListDto[]>;
+  fetchConsumePreview: (recipeId: string, servings?: number) => Promise<ConsumePreviewResult>;
+  consumeIngredients: (recipeId: string, deductions: ConsumeDeduction[]) => Promise<ConsumeResult>;
+  clearConsumePreview: () => void;
   setSearchParams: (params: RecipeSearchParams) => void;
   clearCurrentRecipe: () => void;
   clearError: () => void;
@@ -100,7 +108,9 @@ const initialState = {
   tags: [],
   stats: null,
   ingredientStats: [],
+  consumePreview: null,
   loading: false,
+  consumeLoading: false,
   error: null,
   hasMore: false,
   total: 0,
@@ -452,6 +462,60 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
       throw error;
     }
   },
+
+  fetchConsumePreview: async (recipeId: string, servings?: number) => {
+    set({ consumeLoading: true, error: null });
+
+    try {
+      const householdId = getHouseholdId();
+      if (!householdId) {
+        throw new Error('No household available');
+      }
+
+      const params = servings !== undefined ? `?servings=${servings}` : '';
+      const response = await apiService.get(
+        `/api/households/${householdId}/recipes/${recipeId}/consume-preview${params}`
+      );
+      const responseData = await response.json();
+      const preview = responseData.data || responseData;
+      set({ consumePreview: preview, consumeLoading: false });
+      return preview;
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Failed to fetch consume preview',
+        consumeLoading: false,
+      });
+      throw error;
+    }
+  },
+
+  consumeIngredients: async (recipeId: string, deductions: ConsumeDeduction[]) => {
+    set({ consumeLoading: true, error: null });
+
+    try {
+      const householdId = getHouseholdId();
+      if (!householdId) {
+        throw new Error('No household available');
+      }
+
+      const response = await apiService.post(
+        `/api/households/${householdId}/recipes/${recipeId}/consume`,
+        { deductions }
+      );
+      const responseData = await response.json();
+      const result = responseData.data || responseData;
+      set({ consumeLoading: false, consumePreview: null });
+      return result;
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Failed to consume ingredients',
+        consumeLoading: false,
+      });
+      throw error;
+    }
+  },
+
+  clearConsumePreview: () => set({ consumePreview: null }),
 
   setSearchParams: (params: RecipeSearchParams) => {
     set({ searchParams: params });

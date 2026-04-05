@@ -8,11 +8,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, Plus, X } from 'lucide-react';
+import { ArrowLeft, Plus, X, Clock } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
-import { CreateRecipeIngredientDto, RecipeDifficulty, ParsedMarmitonRecipe } from '@/services/recipeService';
+import { CreateRecipeIngredientDto, RecipeDifficulty, ParsedMarmitonRecipe, RecipeStep } from '@/services/recipeService';
 import { useToast } from '@/hooks/use-toast';
 import { StructuredIngredientInput } from '@/components/StructuredIngredientInput';
 import { useTranslation } from 'react-i18next';
@@ -35,7 +35,7 @@ interface RecipeFormData {
   servings: number;
   difficulty: RecipeDifficulty;
   ingredients: RecipeIngredientWithId[];
-  instructions: string[];
+  instructions: RecipeStep[];
   tags: string[];
 }
 
@@ -57,10 +57,13 @@ const AddRecipe = () => {
       itemName: string | null;
       translatedName: string | null;
       availableUnits: string[];
+      originalIndex?: number;
     }>;
+    ingredientStepMapping?: { [ingredientIndex: number]: number[] };
   };
   const importedRecipe = locationState?.importedRecipe;
   const selectedIngredients = locationState?.selectedIngredients;
+  const ingredientStepMapping = locationState?.ingredientStepMapping;
 
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
@@ -77,7 +80,7 @@ const AddRecipe = () => {
       servings: importedRecipe?.servings ?? 4,
       difficulty: importedRecipe?.difficulty ?? 'Easy',
       ingredients: [],
-      instructions: importedRecipe?.instructions ?? [''],
+      instructions: importedRecipe?.instructions ?? [{ text: '', duration: null }],
       tags: [],
     },
   });
@@ -106,10 +109,24 @@ const AddRecipe = () => {
   }, []);
 
   const [ingredients, setIngredients] = React.useState<RecipeIngredientWithId[]>(initialIngredients);
-  const [instructions, setInstructions] = React.useState(importedRecipe?.instructions || ['']);
+  const [instructions, setInstructions] = React.useState<RecipeStep[]>(importedRecipe?.instructions || [{ text: '', duration: null }]);
   const [tags, setTags] = React.useState<string[]>([]);
   const [newTag, setNewTag] = React.useState('');
-  const [ingredientStepMap, setIngredientStepMap] = React.useState<{[ingredientId: string]: number[]}>({});
+  const initialStepMap = React.useMemo(() => {
+    if (!ingredientStepMapping || !selectedIngredients || initialIngredients.length === 0) return {};
+    const map: { [ingredientId: string]: number[] } = {};
+    const filtered = selectedIngredients.filter(ing => ing.itemId !== null);
+    filtered.forEach((ing, i) => {
+      const origIdx = ing.originalIndex;
+      if (origIdx === undefined) return;
+      const steps = ingredientStepMapping[origIdx];
+      if (steps && steps.length > 0 && initialIngredients[i]) {
+        map[initialIngredients[i].id] = steps;
+      }
+    });
+    return map;
+  }, []);
+  const [ingredientStepMap, setIngredientStepMap] = React.useState<{[ingredientId: string]: number[]}>(initialStepMap);
   const [imageUrl, setImageUrl] = React.useState<string | null>(importedRecipe?.imageUrl || null);
   const [selectedImageFile, setSelectedImageFile] = React.useState<File | null>(null);
   const [sourceUrl] = React.useState<string | undefined>(importedRecipe?.sourceUrl);
@@ -125,14 +142,13 @@ const AddRecipe = () => {
   }, [clearError]);
 
   const addInstruction = () => {
-    setInstructions([...instructions, '']);
+    setInstructions([...instructions, { text: '', duration: null }]);
   };
 
   const removeInstruction = (index: number) => {
     const newInstructions = instructions.filter((_, i) => i !== index);
     setInstructions(newInstructions);
     
-    // Update ingredient-step mappings when removing a step
     const updatedMap = { ...ingredientStepMap };
     Object.keys(updatedMap).forEach(ingredientId => {
       updatedMap[ingredientId] = updatedMap[ingredientId]
@@ -142,9 +158,15 @@ const AddRecipe = () => {
     setIngredientStepMap(updatedMap);
   };
 
-  const updateInstruction = (index: number, value: string) => {
+  const updateInstructionText = (index: number, value: string) => {
     const updated = [...instructions];
-    updated[index] = value;
+    updated[index] = { ...updated[index], text: value };
+    setInstructions(updated);
+  };
+
+  const updateInstructionDuration = (index: number, minutes: number | null) => {
+    const updated = [...instructions];
+    updated[index] = { ...updated[index], duration: minutes != null ? minutes * 60 : null };
     setInstructions(updated);
   };
 
@@ -187,7 +209,7 @@ const AddRecipe = () => {
     }
 
     const validIngredients = ingredients.filter(ing => ing.itemId && ing.quantity > 0);
-    const filteredInstructions = instructions.filter(inst => inst.trim() !== '');
+    const filteredInstructions = instructions.filter(inst => inst.text.trim() !== '');
     
     if (validIngredients.length === 0) {
       toast({
@@ -519,12 +541,29 @@ const AddRecipe = () => {
                       <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-foreground rounded-full flex items-center justify-center text-sm font-medium mt-2">
                         {index + 1}
                       </div>
-                      <Textarea
-                        placeholder={t('pages.recipes.stepInstructionsPlaceholder', { step: index + 1 })}
-                        value={instruction}
-                        onChange={(e) => updateInstruction(index, e.target.value)}
-                        className="flex-1 min-h-[60px]"
-                      />
+                      <div className="flex-1 space-y-2">
+                        <Textarea
+                          placeholder={t('pages.recipes.stepInstructionsPlaceholder', { step: index + 1 })}
+                          value={instruction.text}
+                          onChange={(e) => updateInstructionText(index, e.target.value)}
+                          className="min-h-[60px]"
+                        />
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                          <Input
+                            type="number"
+                            min="0"
+                            placeholder={t('pages.recipes.durationPlaceholder')}
+                            value={instruction.duration != null ? instruction.duration / 60 : ''}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              updateInstructionDuration(index, val === '' ? null : parseFloat(val) || 0);
+                            }}
+                            className="w-24 h-7 text-xs"
+                          />
+                          <span className="text-xs text-muted-foreground">min</span>
+                        </div>
+                      </div>
                       {instructions.length > 1 && (
                         <Button
                           type="button"
@@ -538,8 +577,7 @@ const AddRecipe = () => {
                       )}
                     </div>
                     
-                    {/* Ingredient mapping for this step */}
-                    {ingredients.length > 0 && instruction.trim() && (
+                    {ingredients.length > 0 && instruction.text.trim() && (
                       <div className="ml-8 p-3 bg-muted rounded-lg">
                         <h4 className="text-sm font-medium text-foreground mb-2">
                           {t('pages.recipes.ingredientsUsedInThisStep')}

@@ -111,6 +111,15 @@ export class StoredItem extends Model<StoredItemAttributes, StoredItemCreationAt
     if (daysFrozen === null) return false;
     return daysFrozen > recommendedDays;
   }
+
+  public getDaysRemainingInFreezer(): number | null {
+    if (!this.frozenDate) return null;
+    const recommendedDays = this.getRecommendedFreezerStorageDays();
+    if (recommendedDays === null) return null;
+    const daysFrozen = this.getDaysFrozen();
+    if (daysFrozen === null) return null;
+    return recommendedDays - daysFrozen;
+  }
 }
 
 StoredItem.init(

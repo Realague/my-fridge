@@ -146,6 +146,8 @@ export interface StoredItemDto {
   effectiveExpirationDate?: string | null;
   daysFrozen?: number | null;
   isFrozenTooLong?: boolean;
+  daysRemainingInFreezer?: number | null;
+  recommendedFreezerDays?: number | null;
 }
 
 export interface GetStoredItemsQueryDto {

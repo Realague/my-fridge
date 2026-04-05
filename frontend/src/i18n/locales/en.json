@@ -148,7 +148,11 @@
     "frozenDate": "Frozen on",
     "frozen": "FROZEN",
     "frozenTooLong": "Frozen for {{days}} days",
+    "frozenProgress": "Frozen {{current}}/{{total}} days",
+    "freezerRecommendation": "{{category}} products can be stored ~{{months}} months in the freezer.",
     "freezerWarning": "Frozen longer than recommended",
+    "freezerDaysRemaining": "{{days}}d remaining",
+    "freezerExpiredDays": "Exceeded by {{days}}d",
     "openedDate": "Opening date",
     "consumeWithinDays": "To be consumed within {{days}} days after opening"
   },
@@ -175,7 +179,9 @@
     "itemMinimums_other": "{{count}} minimum stock settings",
     "shoppingItems_one": "{{count}} shopping list item",
     "shoppingItems_other": "{{count}} shopping list items",
-    "noReferencesFound": "No stored items, minimums, or shopping list entries will be affected.",
+    "recipes_one": "used in {{count}} recipe",
+    "recipes_other": "used in {{count}} recipes",
+    "noReferencesFound": "No stored items, minimums, shopping list entries, or recipes will be affected.",
     "deletionImpactSummary": "This will also remove: {{impacts}}."
   },
   "ingredientInput": {
@@ -341,15 +347,21 @@
       "members": "members",
       "loading": "Loading...",
       "today": "Today",
-      "itemsPending": "{{count}} items pending",
+      "itemsPending_one": "{{count}} item pending",
+      "itemsPending_other": "{{count}} items pending",
       "planThisWeek": "Plan this week",
-      "savedRecipes": "{{count}} saved recipes",
+      "savedRecipes_one": "{{count}} saved recipe",
+      "savedRecipes_other": "{{count}} saved recipes",
       "lowStockItems": "Low stock items",
-      "itemsNeedRestock": "{{count}} items need restocking",
+      "itemsNeedRestock_one": "{{count}} item needs restocking",
+      "itemsNeedRestock_other": "{{count}} items need restocking",
       "noLowStockItems": "All items are well stocked",
+      "alreadyInShoppingList": "In shopping list",
+      "addedToShoppingList": "Added to shopping list",
       "viewAll": "View all",
       "itemMinimums": "Item minimums",
-      "itemsTracked": "{{count}} items tracked"
+      "itemsTracked_one": "{{count}} item tracked",
+      "itemsTracked_other": "{{count}} items tracked"
     },
     "shopping": {
       "title": "Shopping List",
@@ -480,6 +492,12 @@
       "complete": "Complete",
       "currentStepCount": "Step {{currentStep}} of {{instructionsLength}}",
       "quickTimers": "Quick timers:",
+      "noActiveTimer": "No active timer",
+      "customTimer": "Custom timer",
+      "startTimer": "Start",
+      "timerComplete": "Time's up!",
+      "startStepTimer": "Start {{duration}} timer",
+      "durationPlaceholder": "Duration",
       "step": "Step {{step}}",
       "ingredientsForThisStep": "Ingredients for this step:",
       "allIngredients": "All ingredients",
@@ -494,7 +512,26 @@
       "addToMealPlan": "Add to meal plan",
       "deleteRecipe": "Delete recipe",
       "deleteWarning": "This action cannot be undone.",
-      "addNewRecipe": "Add new recipe"
+      "addNewRecipe": "Add new recipe",
+      "consume": {
+        "button": "Consume ingredients",
+        "title": "Consume ingredients from stock",
+        "servings": "Servings",
+        "required": "Required",
+        "available": "available",
+        "sufficient": "Sufficient",
+        "partial": "Partial",
+        "notInStock": "Not in stock",
+        "incompatibleUnits": "Incompatible units",
+        "expired": "Expired",
+        "expiringSoon": "Expiring soon",
+        "confirm": "Confirm consumption",
+        "noDeductions": "No deductions selected",
+        "noIngredients": "This recipe has no ingredients",
+        "success": "Ingredients consumed",
+        "successDescription": "{{count}} item(s) deducted from your stock",
+        "failed": "Failed to consume ingredients"
+      }
     },
     "importRecipe": {
       "title": "Import Recipe",
@@ -672,6 +709,15 @@
     "dozen": "dozen",
     "serving": "serving",
     "other": "other"
+  },
+  "unitConversion": {
+    "title": "Equivalences",
+    "tsp_ml": "1 teaspoon = 5 ml",
+    "tsp_g": "1 teaspoon ≈ 5 g",
+    "tbsp_ml": "1 tablespoon = 15 ml",
+    "tbsp_g": "1 tablespoon ≈ 15 g",
+    "cup_ml": "1 cup = 240 ml",
+    "cup_g": "1 cup ≈ 240 g"
   },
   "items": {
     "categories": {

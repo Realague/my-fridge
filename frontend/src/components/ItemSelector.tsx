@@ -284,19 +284,20 @@ export const ItemSelector = ({
     setIsOpen(false);
   };
 
-  const confirmDeleteItem = (item: Item, e: React.MouseEvent) => {
+  const confirmDeleteItem = async (item: Item, e: React.MouseEvent) => {
     e.stopPropagation();
     setDeleteItem(item);
-    // Get the impact summary for this item with translations
-    const impact = ItemDeletionService.getDeletionImpactSummary(item.id, {
+    setIsOpen(false);
+    const recipeCount = await itemService.getRecipeCount(item.id);
+    const impact = ItemDeletionService.getDeletionImpactSummary(item.id, recipeCount, {
       storedItems: (count: number) => t('itemSelector.storedItems', { count }),
       itemMinimums: (count: number) => t('itemSelector.itemMinimums', { count }),
       shoppingItems: (count: number) => t('itemSelector.shoppingItems', { count }),
+      recipes: (count: number) => t('itemSelector.recipes', { count }),
       noReferencesFound: t('itemSelector.noReferencesFound'),
       deletionImpactSummary: (impacts: string) => t('itemSelector.deletionImpactSummary', { impacts })
     });
     setDeletionImpact(impact);
-    setIsOpen(false);
   };
 
   const handleDeleteItem = async (item: Item) => {

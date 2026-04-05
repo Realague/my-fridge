@@ -126,6 +126,7 @@ export const AddMealPlanDialog = ({
     instructions: [],
     tags: Array.isArray(recipe.tags) ? recipe.tags : [],
     imageUrl: recipe.imageUrl,
+    sourceUrl: recipe.sourceUrl,
     isFavorite: recipe.isFavorite,
     householdId: '',
     createdBy: recipe.createdBy,

@@ -3,6 +3,7 @@ import sequelize from '../config/database';
 import { User } from './User';
 import { Household } from './Household';
 import { RecipeIngredient } from './RecipeIngredient';
+import { RecipeStep } from '../types/RecipeDto';
 
 export type RecipeDifficulty = 'Easy' | 'Medium' | 'Hard';
 
@@ -15,7 +16,7 @@ interface RecipeAttributes {
   cookTime: number;
   servings: number;
   difficulty: RecipeDifficulty;
-  instructions: string[];
+  instructions: RecipeStep[];
   tags: string[];
   imageUrl: string | null;
   sourceUrl: string | null;
@@ -37,7 +38,7 @@ export class Recipe extends Model<RecipeAttributes, RecipeCreationAttributes> im
   public cookTime!: number;
   public servings!: number;
   public difficulty!: RecipeDifficulty;
-  public instructions!: string[];
+  public instructions!: RecipeStep[];
   public tags!: string[];
   public isFavorite!: boolean;
   public imageUrl!: string | null;

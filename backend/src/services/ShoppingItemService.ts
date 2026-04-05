@@ -6,7 +6,7 @@ import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto,
 import { ApiResponse } from '../types/ApiResponse';
 import { ShoppingItem } from '../models/ShoppingItem';
 import { STORAGE_UNITS, Unit } from '../types/enums';
-import { convertToStorageUnit } from '../utils/unitConversion';
+import { convertToStorageUnit, canConvertUnits, normalizeToBaseUnit, getBestDisplayUnit } from '../utils/unitConversion';
 import { Item } from '../models/Item';
 
 export class ShoppingItemService {
@@ -56,7 +56,7 @@ export class ShoppingItemService {
       }
 
       // Check for duplicate item with same unit in the household
-      const existingShoppingItem = await this.shoppingItemRepository.getDuplicateShoppingItem(
+      let existingShoppingItem = await this.shoppingItemRepository.getDuplicateShoppingItem(
         data.itemId,
         data.householdId,
         data.unit,
@@ -65,6 +65,23 @@ export class ShoppingItemService {
 
       if (existingShoppingItem) {
         data.quantity += existingShoppingItem.quantity;
+      } else {
+        // Check for an existing item with a compatible unit (e.g., kg + g, l + ml)
+        const compatibleItem = await this.shoppingItemRepository.findByItemAndHousehold(
+          data.itemId,
+          data.householdId,
+          false
+        );
+
+        if (compatibleItem && canConvertUnits(data.unit, compatibleItem.unit)) {
+          const newNormalized = normalizeToBaseUnit(data.quantity, data.unit);
+          const existingNormalized = normalizeToBaseUnit(compatibleItem.quantity, compatibleItem.unit);
+          const totalBase = newNormalized.quantity + existingNormalized.quantity;
+          const best = getBestDisplayUnit(totalBase, newNormalized.unit, true);
+          data.quantity = best.quantity;
+          data.unit = best.unit;
+          existingShoppingItem = compatibleItem;
+        }
       }
 
       const shoppingItem = existingShoppingItem ? await this.shoppingItemRepository.update(existingShoppingItem.id, data) : await this.shoppingItemRepository.create(data);
@@ -264,7 +281,7 @@ export class ShoppingItemService {
       const wasCompleted = shoppingItem.completed;
       const willBeCompleted = !wasCompleted;
 
-      const duplicateShoppingItem = await this.shoppingItemRepository.getDuplicateShoppingItem(
+      let duplicateShoppingItem = await this.shoppingItemRepository.getDuplicateShoppingItem(
         shoppingItem.itemId,
         shoppingItem.householdId,
         shoppingItem.unit,
@@ -272,10 +289,37 @@ export class ShoppingItemService {
         id
       );
 
+      let mergedQuantity: number | undefined;
+      let mergedUnit: string | undefined;
+
+      if (duplicateShoppingItem) {
+        mergedQuantity = duplicateShoppingItem.quantity + shoppingItem.quantity;
+      } else {
+        // Check for compatible unit (e.g., kg + g)
+        const compatibleItem = await this.shoppingItemRepository.findByItemAndHousehold(
+          shoppingItem.itemId,
+          shoppingItem.householdId,
+          willBeCompleted,
+          id
+        );
+
+        if (compatibleItem && canConvertUnits(shoppingItem.unit, compatibleItem.unit)) {
+          duplicateShoppingItem = compatibleItem;
+          const currentNormalized = normalizeToBaseUnit(shoppingItem.quantity, shoppingItem.unit);
+          const existingNormalized = normalizeToBaseUnit(compatibleItem.quantity, compatibleItem.unit);
+          const totalBase = currentNormalized.quantity + existingNormalized.quantity;
+          const best = getBestDisplayUnit(totalBase, currentNormalized.unit, true);
+          mergedQuantity = best.quantity;
+          mergedUnit = best.unit;
+        }
+      }
+
       let updatedShoppingItem: ShoppingItem | null = null;
       if (duplicateShoppingItem) {
         await this.deleteShoppingItem(duplicateShoppingItem.id);
-        updatedShoppingItem = await this.shoppingItemRepository.update(id, {quantity: duplicateShoppingItem.quantity + shoppingItem.quantity, completed: willBeCompleted });
+        const updateData: any = { quantity: mergedQuantity, completed: willBeCompleted };
+        if (mergedUnit) updateData.unit = mergedUnit;
+        updatedShoppingItem = await this.shoppingItemRepository.update(id, updateData);
       } else {
         updatedShoppingItem = await this.shoppingItemRepository.update(id, { completed: willBeCompleted });
       }

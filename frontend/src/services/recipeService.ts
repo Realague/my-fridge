@@ -3,6 +3,11 @@ import { useApiWithAuth } from '@/hooks/useApiWithAuth';
 
 export type RecipeDifficulty = 'Easy' | 'Medium' | 'Hard';
 
+export interface RecipeStep {
+  text: string;
+  duration?: number | null;
+}
+
 export interface RecipeIngredientDto {
   id: string;
   itemId: string;
@@ -35,7 +40,7 @@ export interface CreateRecipeDto {
   cookTime: number;
   servings: number;
   difficulty: RecipeDifficulty;
-  instructions: string[];
+  instructions: RecipeStep[];
   tags: string[];
   imageUrl?: string;
   sourceUrl?: string;
@@ -49,7 +54,7 @@ export interface UpdateRecipeDto {
   cookTime?: number;
   servings?: number;
   difficulty?: RecipeDifficulty;
-  instructions?: string[];
+  instructions?: RecipeStep[];
   tags?: string[];
   imageUrl?: string;
   sourceUrl?: string;
@@ -66,7 +71,7 @@ export interface RecipeDto {
   totalTime: number;
   servings: number;
   difficulty: RecipeDifficulty;
-  instructions: string[];
+  instructions: RecipeStep[];
   tags: string[];
   imageUrl: string | null;
   sourceUrl: string | null;
@@ -154,6 +159,70 @@ export interface MatchedIngredient {
   bestMatch: IngredientMatch | null;
 }
 
+export interface ConsumePreviewStoredItem {
+  storedItemId: string;
+  storageAreaId: string;
+  storageAreaName: string;
+  storageAreaEmoji: string | null;
+  quantity: number;
+  unit: string;
+  normalizedQuantity: number;
+  normalizedUnit: string;
+  expirationDate: string | null;
+  isExpired: boolean;
+  isExpiringSoon: boolean;
+}
+
+export interface SuggestedDeduction {
+  storedItemId: string;
+  quantity: number;
+  unit: string;
+}
+
+export interface ConsumePreviewIngredient {
+  recipeIngredientId: string;
+  itemId: string;
+  itemName: string;
+  itemCategory: string;
+  requiredQuantity: number;
+  requiredUnit: string;
+  originalQuantity: number;
+  originalUnit: string;
+  availableStoredItems: ConsumePreviewStoredItem[];
+  totalAvailable: number;
+  totalAvailableUnit: string;
+  hasEnough: boolean;
+  canCompare: boolean;
+  suggestedDeductions: SuggestedDeduction[];
+}
+
+export interface ConsumePreviewResult {
+  recipeId: string;
+  recipeTitle: string;
+  recipeServings: number;
+  requestedServings: number;
+  ingredients: ConsumePreviewIngredient[];
+}
+
+export interface ConsumeDeduction {
+  storedItemId: string;
+  quantity: number;
+  unit: string;
+}
+
+export interface ConsumeResultItem {
+  storedItemId: string;
+  itemName: string;
+  quantityDeducted: number;
+  unit: string;
+  remainingQuantity: number | null;
+  deleted: boolean;
+}
+
+export interface ConsumeResult {
+  consumed: ConsumeResultItem[];
+}
+
 export interface ParsedMarmitonRecipe {
   title: string;
   description: string;
@@ -161,11 +230,12 @@ export interface ParsedMarmitonRecipe {
   cookTime: number;
   servings: number;
   difficulty: RecipeDifficulty;
-  instructions: string[];
+  instructions: RecipeStep[];
   ingredients: string[];
   matchedIngredients: MatchedIngredient[];
   imageUrl: string | null;
   sourceUrl: string;
+  ingredientStepMapping?: { [ingredientIndex: number]: number[] };
 }
 
 export const useRecipeService = () => {
@@ -274,6 +344,37 @@ export const useRecipeService = () => {
     return response.json();
   };
 
+  const getConsumePreview = async (
+    householdId: string,
+    recipeId: string,
+    servings?: number
+  ): Promise<ConsumePreviewResult> => {
+    const params = servings !== undefined ? `?servings=${servings}` : '';
+    const response = await makeApiCall(
+      `/api/recipes/${householdId}/recipes/${recipeId}/consume-preview${params}`,
+      { method: 'GET' }
+    );
+    const data = await response.json();
+    return data.data || data;
+  };
+
+  const consumeIngredients = async (
+    householdId: string,
+    recipeId: string,
+    deductions: ConsumeDeduction[]
+  ): Promise<ConsumeResult> => {
+    const response = await makeApiCall(
+      `/api/recipes/${householdId}/recipes/${recipeId}/consume`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deductions }),
+      }
+    );
+    const data = await response.json();
+    return data.data || data;
+  };
+
   const importFromMarmiton = async (url: string): Promise<ParsedMarmitonRecipe> => {
     const response = await makeApiCall('/api/import/marmiton', {
       method: 'POST',
@@ -304,5 +405,7 @@ export const useRecipeService = () => {
     getIngredientStats,
     getRecipesByUser,
     importFromMarmiton,
+    getConsumePreview,
+    consumeIngredients,
   };
 };

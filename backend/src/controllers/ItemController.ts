@@ -192,6 +192,17 @@ export class ItemController {
     }
   }
 
+  async getRecipeCount(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const count = await this.itemService.getRecipeCount(id as string);
+      res.json({ success: true, data: { count } });
+    } catch (error) {
+      console.error('Error in getRecipeCount:', error);
+      res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+  }
+
   async deleteItem(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;

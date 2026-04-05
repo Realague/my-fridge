@@ -153,6 +153,24 @@ export const getUnitDisplayName = (unit: string): string => {
   return displayNames[unit] || unit;
 };
 
+/** Localized unit with singular/plural for units that have both keys (piece/pieces, cup/cups). */
+export const getTranslatedUnitLabel = (
+  unit: string,
+  quantity: number | string,
+  t: (key: string) => string
+): string => {
+  const key = getUnitDisplayName(unit);
+  const q = typeof quantity === 'string' ? parseFloat(quantity) : quantity;
+  const singular = Number.isFinite(q) && Math.abs(q - 1) < 1e-9;
+  if (key === 'piece') {
+    return t(singular ? 'units.piece' : 'units.pieces');
+  }
+  if (key === 'cup') {
+    return t(singular ? 'units.cup' : 'units.cups');
+  }
+  return t(`units.${key}`);
+};
+
 // Validation functions
 export const isValidUnit = (unit: string): boolean => {
   return UNITS.includes(unit as Unit);

@@ -2,6 +2,7 @@ import { ItemRepository } from '../repositories/ItemRepository';
 import { CreateItemDto, UpdateItemDto, GetItemsQueryDto, ItemDto } from '../types/ItemDto';
 import { ApiResponse } from '../types/ApiResponse';
 import { Item } from '../models';
+import { RecipeIngredient } from '../models/RecipeIngredient';
 import { ItemCascadeDeletionService } from './ItemCascadeDeletionService';
 
 export class ItemService {
@@ -215,6 +216,15 @@ export class ItemService {
         error: 'Failed to delete item',
       };
     }
+  }
+
+  async getRecipeCount(itemId: string): Promise<number> {
+    const count = await RecipeIngredient.count({
+      where: { itemId },
+      distinct: true,
+      col: 'recipeId',
+    });
+    return count;
   }
 
   private formatItemResponse(item: Item): ItemDto {

@@ -1,39 +1,69 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, ArrowRight, Play, Pause, RotateCcw, Clock, ChefHat, Badge, Eye, EyeOff, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock, ChefHat, Eye, EyeOff, ExternalLink, UtensilsCrossed, Minus, Plus } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
+import { useTimerStore } from '@/stores/timerStore';
+import { useTimerTick } from '@/hooks/useTimerTick';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
-import { useTranslation } from 'react-i18next'; 
+import { useTranslation } from 'react-i18next';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { Item } from '@/services/itemService';
+import { ConsumeIngredientsDialog } from '@/components/ConsumeIngredientsDialog';
+import { FloatingTimerBar } from '@/components/cooking/FloatingTimerBar';
+import { requestNotificationPermission } from '@/utils/timerNotifications';
+
+const TIME_PATTERN = /(\d+)\s*(minutes?|mins?|seconds?|secs?|hours?|hrs?|heures?|min)\b/i;
+
+function parseTimeFromText(text: string): number | null {
+  const match = text.match(TIME_PATTERN);
+  if (!match) return null;
+  const value = parseInt(match[1], 10);
+  const unit = match[2].toLowerCase();
+  if (unit.startsWith('h')) return value * 3600;
+  if (unit.startsWith('s')) return value;
+  return value * 60;
+}
 
 const RecipeCookingMode = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { t } = useTranslation();
-  
-  // Protected route hook handles auth and household checks
-  const { selectedHouseholdId } = useProtectedRoute();
-  
-  const { currentRecipe: recipe, fetchRecipeById, loading, error } = useRecipeStore();
 
-  // Fetch the recipe when component mounts
+  const { selectedHouseholdId } = useProtectedRoute();
+  const { currentRecipe: recipe, fetchRecipeById, loading, error } = useRecipeStore();
+  const timerStore = useTimerStore();
+
+  // Drive the interval that calls tick()
+  useTimerTick();
+
+  const servingsParam = searchParams.get('servings');
+  const [cookingServings, setCookingServings] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (recipe && cookingServings === null) {
+      const fromUrl = servingsParam ? parseInt(servingsParam, 10) : NaN;
+      setCookingServings(isNaN(fromUrl) || fromUrl < 1 ? recipe.servings : fromUrl);
+    }
+  }, [recipe, cookingServings, servingsParam]);
+
+  const scale = recipe ? (cookingServings ?? recipe.servings) / recipe.servings : 1;
+
   useEffect(() => {
     if (selectedHouseholdId && id && (!recipe || recipe.id !== id)) {
       fetchRecipeById(id);
     }
   }, [selectedHouseholdId, id, recipe, fetchRecipeById]);
-  
+
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<boolean[]>([]);
   const [checkedIngredients, setCheckedIngredients] = useState<boolean[]>([]);
-  const [timer, setTimer] = useState(0);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [showIngredients, setShowIngredients] = useState(true);
+  const [showConsumeDialog, setShowConsumeDialog] = useState(false);
 
   useEffect(() => {
     if (recipe) {
@@ -42,19 +72,11 @@ const RecipeCookingMode = () => {
     }
   }, [recipe]);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isTimerRunning && timer > 0) {
-      interval = setInterval(() => {
-        setTimer(timer - 1);
-      }, 1000);
-    } else if (timer === 0) {
-      setIsTimerRunning(false);
-    }
-    return () => clearInterval(interval);
-  }, [isTimerRunning, timer]);
+  const scaleQty = (qty: number) => {
+    const scaled = qty * scale;
+    return Math.round(scaled * 100) / 100;
+  };
 
-  // Show loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -66,7 +88,6 @@ const RecipeCookingMode = () => {
     );
   }
 
-  // Show error or not found state
   if (!recipe || error) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -85,26 +106,6 @@ const RecipeCookingMode = () => {
   }
 
   const progress = ((currentStep + 1) / recipe.instructions.length) * 100;
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const startTimer = (minutes: number) => {
-    setTimer(minutes * 60);
-    setIsTimerRunning(true);
-  };
-
-  const toggleTimer = () => {
-    setIsTimerRunning(!isTimerRunning);
-  };
-
-  const resetTimer = () => {
-    setTimer(0);
-    setIsTimerRunning(false);
-  };
 
   const nextStep = () => {
     if (currentStep < recipe.instructions.length - 1) {
@@ -130,41 +131,63 @@ const RecipeCookingMode = () => {
     setCheckedIngredients(newChecked);
   };
 
-  // Function to get relevant ingredients for current step - now uses explicit mappings
   const getRelevantIngredients = (stepIndex: number) => {
     const relevantIngredients: number[] = [];
-    
+
     recipe.ingredients.forEach((ingredient, index) => {
-      // First check if there's explicit step mapping
       if (ingredient.usedInSteps && ingredient.usedInSteps.includes(stepIndex)) {
         relevantIngredients.push(index);
         return;
       }
-      
-      // Fallback to text matching if no explicit mapping
+
       if (!ingredient.usedInSteps || ingredient.usedInSteps.length === 0) {
-        const stepText = recipe.instructions[stepIndex].toLowerCase();
-        
-        // Also check ingredient notes for matches
+        const stepText = recipe.instructions[stepIndex]?.text?.toLowerCase() ?? '';
         if (ingredient.notes && stepText.includes(ingredient.notes.toLowerCase())) {
           relevantIngredients.push(index);
         }
       }
     });
-    
+
     return relevantIngredients;
   };
 
   const relevantIngredients = getRelevantIngredients(currentStep);
 
+  // Determine the suggested timer for the current step
+  const currentInstruction = recipe.instructions[currentStep];
+  const explicitDuration = currentInstruction?.duration;
+  const detectedDuration = explicitDuration == null ? parseTimeFromText(currentInstruction?.text ?? '') : null;
+  const suggestedSeconds = explicitDuration ?? detectedDuration;
+  const isExplicit = explicitDuration != null && explicitDuration > 0;
+
+  const handleStartStepTimer = (seconds: number) => {
+    requestNotificationPermission();
+    timerStore.start(seconds, {
+      label: t('pages.recipes.step', { step: currentStep + 1 }),
+      recipeId: recipe.id,
+      stepIndex: currentStep,
+    });
+  };
+
+  const formatSuggestion = (seconds: number) => {
+    if (seconds >= 3600) {
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      return m > 0 ? `${h}h${m}m` : `${h}h`;
+    }
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return s > 0 ? `${m}m${s}s` : `${m}m`;
+  };
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-28">
       {/* Header */}
       <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               onClick={() => navigate(`/recipes/${recipe.id}`)}
               className="text-muted-foreground"
             >
@@ -173,15 +196,15 @@ const RecipeCookingMode = () => {
             </Button>
             <div className="flex items-center gap-2">
               {recipe.sourceUrl && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => window.open(recipe.sourceUrl, '_blank', 'noopener,noreferrer')}
-                className="w-full md:w-fit"
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                {t('pages.importRecipe.viewOriginal')}
-              </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => window.open(recipe.sourceUrl, '_blank', 'noopener,noreferrer')}
+                  className="w-full md:w-fit"
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  {t('pages.importRecipe.viewOriginal')}
+                </Button>
               )}
               <ChefHat className="h-5 w-5 text-primary" />
               <span className="font-medium text-foreground">{t('pages.recipes.cookingMode')}</span>
@@ -205,48 +228,6 @@ const RecipeCookingMode = () => {
           </CardContent>
         </Card>
 
-        {/* Timer Controls */}
-        {timer > 0 && (
-          <Card className="bg-accent/50 border-accent mb-6">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-accent-foreground" />
-                  <span className="text-2xl font-bold text-accent-foreground">{formatTime(timer)}</span>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={toggleTimer}>
-                    {isTimerRunning ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={resetTimer}>
-                    <RotateCcw className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Quick Timer Buttons */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg mb-6">
-          <CardContent className="p-4">
-            <div className="flex flex-wrap gap-2">
-              <span className="text-sm font-medium text-muted-foreground mr-2">{t('pages.recipes.quickTimers')}</span>
-              {[1, 5, 10, 15, 20, 30].map((mins) => (
-                <Button
-                  key={mins}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => startTimer(mins)}
-                  className="text-xs"
-                >
-                  {mins}m
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Current Step */}
           <div className="lg:col-span-2">
@@ -264,10 +245,25 @@ const RecipeCookingMode = () => {
                     <span className="text-sm text-muted-foreground">{t('pages.recipes.complete')}</span>
                   </div>
                 </div>
-                
+
                 <p className="text-lg leading-relaxed text-foreground mb-6">
-                  {recipe.instructions[currentStep]}
+                  {currentInstruction?.text}
                 </p>
+
+                {/* Step Timer Suggestion */}
+                {suggestedSeconds != null && suggestedSeconds > 0 && (
+                  <div className="mb-6">
+                    <Button
+                      variant={isExplicit ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => handleStartStepTimer(suggestedSeconds)}
+                      className={isExplicit ? '' : 'border-dashed'}
+                    >
+                      <Clock className="h-4 w-4 mr-2" />
+                      {t('pages.recipes.startStepTimer', { duration: formatSuggestion(suggestedSeconds) })}
+                    </Button>
+                  </div>
+                )}
 
                 {/* Ingredients needed for this step */}
                 {relevantIngredients.length > 0 && (
@@ -282,7 +278,7 @@ const RecipeCookingMode = () => {
                           <div key={ingredient.id} className="flex items-center gap-2 text-sm">
                             <span className="w-2 h-2 bg-primary rounded-full"></span>
                             <span className="font-medium text-foreground">
-                              {ingredient.quantity} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient?.item as Item, t)}
+                              {scaleQty(ingredient.quantity)} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient?.item as Item, t)}
                             </span>
                             {ingredient.notes && (
                               <span className="text-muted-foreground italic">({ingredient.notes})</span>
@@ -297,26 +293,24 @@ const RecipeCookingMode = () => {
                 {/* Navigation */}
                 <div className="flex justify-between">
                   {currentStep > 0 && (
-                  <Button
-                    variant="outline"
-                    onClick={prevStep}
-                    disabled={currentStep === 0}
-                    size="lg"
-                  >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    {t('common.previous')}
-                  </Button>
+                    <Button
+                      variant="outline"
+                      onClick={prevStep}
+                      size="lg"
+                    >
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      {t('common.previous')}
+                    </Button>
                   )}
-                  
+
                   {currentStep < recipe.instructions.length - 1 && (
-                  <Button
-                    onClick={nextStep}
-                    disabled={currentStep === recipe.instructions.length - 1}
-                    size="lg"
-                  >
-                    {t('common.next')}
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
+                    <Button
+                      onClick={nextStep}
+                      size="lg"
+                    >
+                      {t('common.next')}
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
                   )}
                 </div>
               </CardContent>
@@ -337,14 +331,14 @@ const RecipeCookingMode = () => {
                     {showIngredients ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                   </Button>
                 </div>
-                
+
                 {showIngredients && (
                   <div className="space-y-3">
                     {recipe.ingredients.map((ingredient, index) => {
                       const isRelevant = relevantIngredients.includes(index);
                       return (
-                        <div 
-                          key={ingredient.id} 
+                        <div
+                          key={ingredient.id}
                           className={`flex items-start gap-2 p-2 rounded ${
                             isRelevant ? 'bg-primary/10 border border-primary/20' : ''
                           }`}
@@ -356,7 +350,7 @@ const RecipeCookingMode = () => {
                           />
                           <div className={`flex-1 text-sm ${checkedIngredients[index] ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
                             <div className={`font-medium ${isRelevant ? 'text-primary' : ''}`}>
-                              {ingredient.quantity} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient?.item as Item, t)}
+                              {scaleQty(ingredient.quantity)} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient?.item as Item, t)}
                             </div>
                             {ingredient.notes && (
                               <div className={`text-xs ${isRelevant ? 'text-primary' : 'text-muted-foreground'}`}>
@@ -385,9 +379,24 @@ const RecipeCookingMode = () => {
                     <span className="text-muted-foreground">{t('pages.recipes.cookTime')}:</span>
                     <span className="font-medium">{recipe.cookTime}m</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">{t('pages.recipes.servings')}:</span>
-                    <span className="font-medium">{recipe.servings}</span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        className="h-6 w-6 rounded flex items-center justify-center hover:bg-muted transition-colors"
+                        onClick={() => setCookingServings(Math.max(1, (cookingServings ?? recipe.servings) - 1))}
+                        disabled={(cookingServings ?? recipe.servings) <= 1}
+                      >
+                        <Minus className="h-3 w-3" />
+                      </button>
+                      <span className="font-medium w-6 text-center tabular-nums">{cookingServings ?? recipe.servings}</span>
+                      <button
+                        className="h-6 w-6 rounded flex items-center justify-center hover:bg-muted transition-colors"
+                        onClick={() => setCookingServings((cookingServings ?? recipe.servings) + 1)}
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
+                    </div>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{t('pages.recipes.difficulty')}:</span>
@@ -406,16 +415,36 @@ const RecipeCookingMode = () => {
               <ChefHat className="h-12 w-12 text-primary mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-foreground mb-2">{t('pages.recipes.congratulations')}</h2>
               <p className="text-muted-foreground mb-4">{t('pages.recipes.congratulationsDescription', { recipeTitle: recipe.title })}</p>
-              <Button variant="green" onClick={() => navigate(`/recipes/${recipe.id}`)}>
-                {t('pages.recipes.backToRecipes')}
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button variant="outline" onClick={() => setShowConsumeDialog(true)}>
+                  <UtensilsCrossed className="h-4 w-4 mr-2" />
+                  {t('pages.recipes.consume.button')}
+                </Button>
+                <Button variant="green" onClick={() => navigate(`/recipes/${recipe.id}`)}>
+                  {t('pages.recipes.backToRecipes')}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
+
+        {/* Consume Ingredients Dialog */}
+        <ConsumeIngredientsDialog
+          isOpen={showConsumeDialog}
+          onClose={() => setShowConsumeDialog(false)}
+          recipe={recipe}
+          initialServings={cookingServings ?? undefined}
+        />
+      </div>
+
+      {/* Floating Timer Bar */}
+      <div className="fixed bottom-0 left-0 right-0 px-4 pb-4 z-50 pointer-events-none">
+        <div className="container mx-auto max-w-4xl pointer-events-auto">
+          <FloatingTimerBar />
+        </div>
       </div>
     </div>
   );
 };
 
 export default RecipeCookingMode;
-

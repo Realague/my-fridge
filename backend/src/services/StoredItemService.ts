@@ -112,6 +112,8 @@ export class StoredItemService {
       effectiveExpirationDate: effectiveExpirationDate ? effectiveExpirationDate.toISOString().split('T')[0] : null,
       daysFrozen: storedItem.getDaysFrozen(),
       isFrozenTooLong: storedItem.isFrozenTooLong(),
+      daysRemainingInFreezer: storedItem.getDaysRemainingInFreezer(),
+      recommendedFreezerDays: storedItem.getRecommendedFreezerStorageDays(),
     };
 
     // Add related data if loaded

@@ -9,14 +9,14 @@ dotenv.config();
 // CSV format: nameKey, frenchName, image, category, englishName, spanishName
 const CSV_PATH = process.env.CSV_PATH || path.join(__dirname, 'output_with_categories_and_en_v4_slug_from_col5_camel.csv');
 
-// Get database name from command line argument or environment variable
+// CLI: ts-node seedItemsFromCSV.ts [dbName] [port]
 const DB_NAME = process.argv[2] || process.env.DB_NAME || 'my_fridge_db';
+const DB_PORT = parseInt(process.argv[3] || process.env.DB_PORT || '5432');
 
-// Create a custom Sequelize instance with the specified database
 const sequelize = new Sequelize({
   dialect: 'postgres',
   host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432'),
+  port: DB_PORT,
   username: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   database: DB_NAME,
@@ -237,7 +237,7 @@ function buildImageUrl(nameKey: string, hasImage: boolean): string | null {
 async function seedItems() {
   try {
     console.log('Starting item seeding from CSV...\n');
-    console.log(`Target database: ${DB_NAME}\n`);
+    console.log(`Target database: ${DB_NAME} (port ${DB_PORT})\n`);
     
     // Check if CSV file exists
     if (!fs.existsSync(CSV_PATH)) {

@@ -156,11 +156,15 @@ const ImportRecipe = () => {
   const handleCreateRecipe = () => {
     if (!parsedRecipe) return;
     
-    // Navigate to add-recipe with the parsed data and selected ingredients
+    const filteredWithIndex = selectedIngredients
+      .map((ing, originalIndex) => ({ ...ing, originalIndex }))
+      .filter(ing => ing.itemId !== null);
+
     navigate('/add-recipe', { 
       state: { 
         importedRecipe: parsedRecipe,
-        selectedIngredients: selectedIngredients.filter(ing => ing.itemId !== null)
+        selectedIngredients: filteredWithIndex,
+        ingredientStepMapping: parsedRecipe.ingredientStepMapping,
       } 
     });
   };
@@ -329,7 +333,7 @@ const ImportRecipe = () => {
                         <span className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
                           {index + 1}
                         </span>
-                        <span className="text-muted-foreground">{instruction}</span>
+                        <span className="text-muted-foreground">{instruction.text}</span>
                       </li>
                     ))}
                   </ol>

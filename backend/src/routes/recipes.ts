@@ -20,6 +20,10 @@ router.put('/households/:householdId/recipes/:id', recipeController.updateRecipe
 router.delete('/households/:householdId/recipes/:id', recipeController.deleteRecipe);
 router.post('/households/:householdId/recipes/:id/favorite', recipeController.toggleFavorite);
 
+// Consume ingredients
+router.get('/households/:householdId/recipes/:id/consume-preview', recipeController.getConsumePreview);
+router.post('/households/:householdId/recipes/:id/consume', recipeController.consumeIngredients);
+
 // User-specific recipe routes
 router.get('/households/:householdId/users/:userId/recipes', recipeController.getRecipesByUser);
 

@@ -326,7 +326,10 @@
       "itemsNeedRestock": "{{count}} artículos necesitan reabastecimiento",
       "viewAll": "Ver todo",
       "itemMinimums": "Mínimos de artículos",
-      "itemsTracked": "{{count}} artículos rastreados"
+      "itemsTracked_one": "{{count}} artículo rastreado",
+      "itemsTracked_other": "{{count}} artículos rastreados"
+      "loyaltyCards": "Tarjetas de fidelidad",
+      "loyaltyCardsDesc": "Tus tarjetas de tiendas"
     },
     "shopping": {
       "title": "Lista de Compras",
@@ -3275,6 +3278,46 @@
     "minimumUpdated": "Mínimo actualizado exitosamente",
     "minimumSet": "Mínimo establecido exitosamente",
     "minimumSetFailed": "Error al establecer el mínimo"
+  },
+  "loyaltyCards": {
+    "title": "Tarjetas de fidelidad",
+    "empty": {
+      "title": "Sin tarjetas de fidelidad",
+      "description": "Agrega tus tarjetas para tenerlas siempre contigo",
+      "addFirst": "Agregar una tarjeta"
+    },
+    "messages": {
+      "created": "Tarjeta agregada con éxito",
+      "deleted": "Tarjeta eliminada",
+      "deleteFailed": "Error al eliminar la tarjeta"
+    },
+    "deleteConfirm": {
+      "title": "¿Eliminar esta tarjeta?",
+      "description": "La tarjeta de {{store}} se eliminará permanentemente."
+    },
+    "form": {
+      "title": "Agregar una tarjeta",
+      "addBarcode": "Agregar código de barras para {{store}}",
+      "scanBarcode": "Escanear código de barras",
+      "manualEntry": "Ingresar manualmente",
+      "cardNumber": "Número de tarjeta",
+      "cardNumberPlaceholder": "Ej: 1234 5678 9012",
+      "notes": "Notas",
+      "notesPlaceholder": "Notas opcionales..."
+    },
+    "storeSelector": {
+      "title": "Elegir una tienda",
+      "search": "Buscar una tienda...",
+      "other": "Otra tienda",
+      "customStore": "Tienda personalizada",
+      "enterStoreName": "Nombre de la tienda"
+    },
+    "scanner": {
+      "title": "Escanear código de barras",
+      "starting": "Iniciando cámara...",
+      "cameraError": "No se puede acceder a la cámara",
+      "hint": "Coloca el código de barras en el marco"
+    }
   },
   "common": {
     "returnToHome": "Volver al inicio",

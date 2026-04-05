@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { syncHouseholdStoreWithAuth } from '@/stores/householdStore';
 import { useApiWithAuth } from '@/hooks/useApiWithAuth';
 import { initializeItemMinimumStore } from '@/stores/itemMinimumStore';
+import { initializeLoyaltyCardStore } from '@/stores/loyaltyCardStore';
 
 interface StoreProviderProps {
   children: React.ReactNode;
@@ -21,6 +22,9 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
           
           // Initialize item minimum store with API instance
           initializeItemMinimumStore(api);
+
+          // Initialize loyalty card store with API instance
+          initializeLoyaltyCardStore(api);
           
           initialized.current = true;
         } catch (error) {

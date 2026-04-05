@@ -10,6 +10,7 @@ import { validateRequest } from '../middleware/validation';
 import storageAreaRoutes from './storageAreas';
 import shoppingRoutes from './shopping';
 import itemMinimumRoutes from './itemMinimums';
+import loyaltyCardRoutes from './loyaltyCards';
 
 // Validation schemas for the middleware
 const CreateHouseholdSchema = { name: 'CreateHouseholdDto' };
@@ -73,5 +74,8 @@ router.use('/:householdId/shopping', shoppingRoutes);
 
 // Nested routes for item minimums
 router.use('/:householdId/item-minimums', itemMinimumRoutes);
+
+// Nested routes for loyalty cards
+router.use('/:householdId/loyalty-cards', loyaltyCardRoutes);
 
 export default router;

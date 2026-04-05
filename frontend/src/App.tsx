@@ -34,6 +34,7 @@ import Demo from "./pages/Demo";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import ItemMinimums from "./pages/ItemMinimums";
+import LoyaltyCards from "./pages/LoyaltyCards";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +77,7 @@ function App() {
                       <Route path="/household/:id" element={<HouseholdDetails />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="/item-minimums" element={<ItemMinimums />} />
+                      <Route path="/loyalty-cards" element={<LoyaltyCards />} />
                       <Route path="/demo" element={<Demo />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>

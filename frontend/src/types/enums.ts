@@ -60,4 +60,15 @@ export enum ShoppingItemStatus {
   PENDING = 'pending',
   COMPLETED = 'completed',
   CANCELLED = 'cancelled'
-} 
+}
+
+export enum BarcodeFormat {
+  EAN13 = 'ean13',
+  EAN8 = 'ean8',
+  CODE128 = 'code128',
+  CODE39 = 'code39',
+  QR = 'qr',
+  OTHER = 'other'
+}
+
+export const BARCODE_FORMATS = Object.values(BarcodeFormat); 

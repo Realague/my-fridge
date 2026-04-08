@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Explicit network so backend always shares DNS with db (avoids ENOTFOUND db on some hosts).
 networks:
   staging:

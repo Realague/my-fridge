@@ -361,7 +361,9 @@
       "viewAll": "View all",
       "itemMinimums": "Item minimums",
       "itemsTracked_one": "{{count}} item tracked",
-      "itemsTracked_other": "{{count}} items tracked"
+      "itemsTracked_other": "{{count}} items tracked",
+      "loyaltyCards": "Loyalty cards",
+      "loyaltyCardsDesc": "Your store cards"
     },
     "shopping": {
       "title": "Shopping List",
@@ -3345,6 +3347,46 @@
     "minimumUpdated": "Minimum updated successfully",
     "minimumSet": "Minimum set successfully",
     "minimumSetFailed": "Failed to set minimum"
+  },
+  "loyaltyCards": {
+    "title": "Loyalty Cards",
+    "empty": {
+      "title": "No loyalty cards",
+      "description": "Add your cards to always have them with you",
+      "addFirst": "Add a card"
+    },
+    "messages": {
+      "created": "Card added successfully",
+      "deleted": "Card deleted",
+      "deleteFailed": "Failed to delete card"
+    },
+    "deleteConfirm": {
+      "title": "Delete this card?",
+      "description": "The {{store}} card will be permanently deleted."
+    },
+    "form": {
+      "title": "Add a card",
+      "addBarcode": "Add barcode for {{store}}",
+      "scanBarcode": "Scan barcode",
+      "manualEntry": "Enter manually",
+      "cardNumber": "Card number",
+      "cardNumberPlaceholder": "e.g. 1234 5678 9012",
+      "notes": "Notes",
+      "notesPlaceholder": "Optional notes..."
+    },
+    "storeSelector": {
+      "title": "Choose a store",
+      "search": "Search for a store...",
+      "other": "Other store",
+      "customStore": "Custom store",
+      "enterStoreName": "Store name"
+    },
+    "scanner": {
+      "title": "Scan barcode",
+      "starting": "Starting camera...",
+      "cameraError": "Unable to access camera",
+      "hint": "Place the barcode in the frame"
+    }
   },
   "common": {
     "returnToHome": "Return to home",

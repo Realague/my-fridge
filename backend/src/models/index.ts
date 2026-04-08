@@ -10,6 +10,7 @@ import { Recipe } from './Recipe';
 import { RecipeIngredient } from './RecipeIngredient';
 import { MealPlan } from './MealPlan';
 import { ItemMinimum } from './ItemMinimum';
+import { LoyaltyCard } from './LoyaltyCard';
 
 // Define associations
 User.hasMany(Household, { foreignKey: 'createdBy', as: 'createdHouseholds' });
@@ -102,6 +103,13 @@ ItemMinimum.belongsTo(Household, { foreignKey: 'householdId', as: 'household' })
 User.hasMany(ItemMinimum, { foreignKey: 'createdBy', as: 'createdItemMinimums' });
 ItemMinimum.belongsTo(User, { foreignKey: 'createdBy', as: 'creator' });
 
+// Loyalty Card associations
+Household.hasMany(LoyaltyCard, { foreignKey: 'householdId', as: 'loyaltyCards' });
+LoyaltyCard.belongsTo(Household, { foreignKey: 'householdId', as: 'household' });
+
+User.hasMany(LoyaltyCard, { foreignKey: 'createdBy', as: 'createdLoyaltyCards' });
+LoyaltyCard.belongsTo(User, { foreignKey: 'createdBy', as: 'creator' });
+
 // Export models
 export {
   sequelize,
@@ -115,5 +123,6 @@ export {
   Recipe,
   RecipeIngredient,
   MealPlan,
-  ItemMinimum
+  ItemMinimum,
+  LoyaltyCard
 };

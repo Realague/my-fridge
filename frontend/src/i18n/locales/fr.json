@@ -340,7 +340,9 @@
       "viewAll": "Voir tout",
       "itemMinimums": "Minimums d'articles",
       "itemsTracked_one": "{{count}} article suivi",
-      "itemsTracked_other": "{{count}} articles suivis"
+      "itemsTracked_other": "{{count}} articles suivis",
+      "loyaltyCards": "Cartes de fidélité",
+      "loyaltyCardsDesc": "Vos cartes en magasin"
     },
     "shopping": {
       "title": "Liste de Courses",
@@ -3325,6 +3327,46 @@
     "minimumSetFailed": "Erreur lors de la définition du minimum",
     "minimumDeleted": "Minimum supprimé avec succès",
     "minimumDeletedFailed": "Erreur lors de la suppression du minimum"
+  },
+  "loyaltyCards": {
+    "title": "Cartes de fidélité",
+    "empty": {
+      "title": "Aucune carte de fidélité",
+      "description": "Ajoutez vos cartes pour les avoir toujours sur vous",
+      "addFirst": "Ajouter une carte"
+    },
+    "messages": {
+      "created": "Carte ajoutée avec succès",
+      "deleted": "Carte supprimée",
+      "deleteFailed": "Erreur lors de la suppression"
+    },
+    "deleteConfirm": {
+      "title": "Supprimer cette carte ?",
+      "description": "La carte {{store}} sera définitivement supprimée."
+    },
+    "form": {
+      "title": "Ajouter une carte",
+      "addBarcode": "Ajouter le code-barres pour {{store}}",
+      "scanBarcode": "Scanner le code-barres",
+      "manualEntry": "Saisir manuellement",
+      "cardNumber": "Numéro de carte",
+      "cardNumberPlaceholder": "Ex: 1234 5678 9012",
+      "notes": "Notes",
+      "notesPlaceholder": "Notes optionnelles..."
+    },
+    "storeSelector": {
+      "title": "Choisir une enseigne",
+      "search": "Rechercher une enseigne...",
+      "other": "Autre enseigne",
+      "customStore": "Enseigne personnalisée",
+      "enterStoreName": "Nom de l'enseigne"
+    },
+    "scanner": {
+      "title": "Scanner le code-barres",
+      "starting": "Démarrage de la caméra...",
+      "cameraError": "Impossible d'accéder à la caméra",
+      "hint": "Placez le code-barres dans le cadre"
+    }
   },
   "common": {
     "returnToHome": "Retour à l'accueil",

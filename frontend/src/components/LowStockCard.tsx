@@ -105,11 +105,17 @@ export const LowStockCard = () => {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => handleAddToShopping(
-                    lowStockItem.itemMinimum.itemId,
-                    lowStockItem.quantityNeeded,
-                    lowStockItem.itemMinimum.minimumUnit
-                  )}
+                  onClick={() => {
+                    const addQuantity =
+                      lowStockItem.itemMinimum.shoppingQuantity > 0
+                        ? lowStockItem.itemMinimum.shoppingQuantity
+                        : lowStockItem.quantityNeeded;
+                    handleAddToShopping(
+                      lowStockItem.itemMinimum.itemId,
+                      addQuantity,
+                      lowStockItem.itemMinimum.minimumUnit
+                    );
+                  }}
                   className="ml-2"
                 >
                   <Plus className="h-4 w-4 mr-1" />

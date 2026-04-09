@@ -242,6 +242,7 @@
       "householdCreatedDescription": "{{name}} a été créé avec succès avec {{count}} zones de stockage.",
       "householdJoined": "Foyer rejoint !",
       "householdJoinedDescription": "Vous avez rejoint le foyer avec succès.",
+      "householdRenamed": "Foyer renommé !",
       "itemDeletedDescription": "{{item}} à été supprimé de toutes les zones de stockage, listes de courses et plans de repas."
     },
     "error": {
@@ -644,6 +645,9 @@
       "joinHouseholdDescription": "Entrez le code d'invitation partagé par votre membre du foyer",
       "joiningHousehold": "Rejoindre le foyer…",
       "inviteCodePlaceholder": "Entrez le code à 8 caractères",
+      "renameHousehold": "Renommer le foyer",
+      "renameHouseholdDescription": "Choisissez un nouveau nom pour votre foyer.",
+      "newName": "Nouveau nom",
       "role": {
         "admin": "Administrateur",
         "member": "Membre"

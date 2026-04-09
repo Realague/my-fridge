@@ -402,7 +402,7 @@ export const ConsumeIngredientsDialog = ({
           <Button
             onClick={handleConfirm}
             disabled={!hasAnyDeduction || consumeLoading}
-            variant="default"
+            variant="green"
           >
             {consumeLoading
               ? t('common.loading')

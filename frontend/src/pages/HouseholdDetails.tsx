@@ -3,14 +3,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { UserPlus, Trash2, ArrowLeft, LogOut } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { UserPlus, Trash2, ArrowLeft, LogOut, Pencil } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
 import StorageAreaManager from '@/components/StorageAreaManager';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { getAppUrl } from '@/utils/apiHeaders';
@@ -31,9 +33,13 @@ const HouseholdDetails = () => {
   const removeMember = useHouseholdStore(state => state.removeMember);
   const leaveHousehold = useHouseholdStore(state => state.leaveHousehold);
   const deleteHousehold = useHouseholdStore(state => state.deleteHousehold);
+  const updateHousehold = useHouseholdStore(state => state.updateHousehold);
   
   // Compute household details from stable reference
   const householdDetails = id ? householdDetailsMap[id] || null : null;
+
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [newName, setNewName] = useState('');
 
   // Load household details when component mounts
   useEffect(() => {
@@ -51,6 +57,20 @@ const HouseholdDetails = () => {
     } catch (error) {
       console.error('Error leaving household:', error);
       // The useHouseholds hook already handles toast notifications for errors
+    }
+  };
+
+  const handleRenameHousehold = async () => {
+    if (!id || !newName.trim()) return;
+    
+    try {
+      await updateHousehold(id, newName.trim());
+      setRenameDialogOpen(false);
+      toast({
+        title: t('messages.success.householdRenamed'),
+      });
+    } catch (error) {
+      console.error('Error renaming household:', error);
     }
   };
 
@@ -151,7 +171,42 @@ const HouseholdDetails = () => {
       <div className="container mx-auto px-4 py-6 space-y-6 pb-24">
         <Card className="bg-card/90 backdrop-blur-sm border border-border/50 shadow-lg">
           <CardHeader>
-            <CardTitle>{householdDetails?.name}</CardTitle>
+            <div className="flex items-center gap-1">
+              <CardTitle>{householdDetails?.name}</CardTitle>
+              {isAdmin && (
+                <Dialog open={renameDialogOpen} onOpenChange={(open) => {
+                  setRenameDialogOpen(open);
+                  if (open) setNewName(householdDetails?.name || '');
+                }}>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>{t('pages.household.renameHousehold')}</DialogTitle>
+                      <DialogDescription>{t('pages.household.renameHouseholdDescription')}</DialogDescription>
+                    </DialogHeader>
+                    <Input
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      placeholder={t('pages.household.namePlaceholder')}
+                      onKeyDown={(e) => { if (e.key === 'Enter') handleRenameHousehold(); }}
+                      autoFocus
+                    />
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setRenameDialogOpen(false)}>
+                        {t('buttons.cancel')}
+                      </Button>
+                      <Button variant="green" onClick={handleRenameHousehold} disabled={!newName.trim() || newName.trim() === householdDetails?.name}>
+                        {t('buttons.save')}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              )}
+            </div>
             <CardDescription>{members.length} {t('pages.household.members')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">

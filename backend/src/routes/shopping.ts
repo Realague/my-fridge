@@ -41,6 +41,11 @@ router.patch('/:id/toggle',
   shoppingItemController.toggleShoppingItemCompleted.bind(shoppingItemController)
 );
 
+// POST /api/households/:householdId/shopping/bulk-to-storage
+router.post('/bulk-to-storage',
+  shoppingItemController.bulkTransferToStorage.bind(shoppingItemController)
+);
+
 // PUT /api/households/:householdId/shopping/bulk-update
 router.put('/bulk-update', 
   shoppingItemController.bulkUpdateCompleted.bind(shoppingItemController)

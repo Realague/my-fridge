@@ -35,6 +35,11 @@ router.post('/',
   storageAreaController.createStorageArea.bind(storageAreaController)
 );
 
+// PUT /api/households/:householdId/storage-areas/reorder
+router.put('/reorder',
+  storageAreaController.reorderStorageAreas.bind(storageAreaController)
+);
+
 // GET /api/households/:householdId/storage-areas/:id
 router.get('/:id', 
   storageAreaController.getStorageAreaById.bind(storageAreaController)

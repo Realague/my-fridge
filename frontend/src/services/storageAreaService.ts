@@ -6,6 +6,8 @@ export interface StorageArea {
   name: string;
   emoji: string;
   type: StorageAreaType;
+  defaultCategories: string[];
+  sortOrder: number;
   householdId: string;
   createdAt: string;
   updatedAt: string;
@@ -15,12 +17,14 @@ export interface CreateStorageAreaData {
   name: string;
   emoji?: string;
   type?: StorageAreaType;
+  defaultCategories?: string[];
 }
 
 export interface UpdateStorageAreaData {
   name?: string;
   emoji?: string;
   type?: StorageAreaType;
+  defaultCategories?: string[];
 }
 
 interface ApiResponse<T = any> {
@@ -98,11 +102,27 @@ export const createStorageAreaApiService = () => {
     }
   };
 
+  const reorderStorageAreas = async (householdId: string, items: Array<{ id: string; sortOrder: number }>): Promise<StorageArea[]> => {
+    const response = await makeApiCall(`/api/households/${householdId}/storage-areas/reorder`, {
+      method: 'PUT',
+      body: { items },
+    });
+
+    const result: ApiResponse<StorageArea[]> = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to reorder storage areas');
+    }
+
+    return result.data;
+  };
+
   return {
     getStorageAreas,
     createStorageArea,
     updateStorageArea,
     deleteStorageArea,
+    reorderStorageAreas,
   };
 };
 

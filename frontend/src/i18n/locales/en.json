@@ -240,7 +240,8 @@
       "householdCreated": "Household created!",
       "householdCreatedDescription": "{{name}} has been created successfully with {{count}} storage areas.",
       "householdJoined": "Household joined!",
-      "householdJoinedDescription": "You have successfully joined the household."
+      "householdJoinedDescription": "You have successfully joined the household.",
+      "householdRenamed": "Household renamed!"
     },
     "itemMinimum": {
       "title": "Item minimums",
@@ -649,6 +650,9 @@
       "joinHouseholdDescription": "Enter the invite code shared by your household member",
       "joiningHousehold": "Joining household…",
       "inviteCodePlaceholder": "Enter the 8 characters long code",
+      "renameHousehold": "Rename household",
+      "renameHouseholdDescription": "Choose a new name for your household.",
+      "newName": "New name",
       "role": {
         "admin": "Admin",
         "member": "Member"

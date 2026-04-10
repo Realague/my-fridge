@@ -3396,6 +3396,8 @@
     "description": "Partagez ce message avec les membres de votre foyer pour les inviter.",
     "previous": "Précédent",
     "next": "Suivant",
-    "optional": "Facultatif"
+    "optional": "Facultatif",
+    "addedBy": "Ajouté par {{name}}",
+    "you": "vous"
   }
 }

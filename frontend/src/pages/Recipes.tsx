@@ -14,6 +14,7 @@ import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { RecipeListDto } from '@/services/recipeService';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
+import { useAuthStore } from '@/stores/authStore';
 
 const Recipes = () => {
   const { t } = useTranslation();
@@ -184,6 +185,7 @@ interface RecipeGridProps {
 const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const currentUser = useAuthStore((state) => state.user);
 
   // Handle undefined or null recipes
   if (!recipes || recipes.length === 0) {
@@ -247,6 +249,16 @@ const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGri
                 <span>{recipe.servings || 0}</span>
               </div>
             </div>
+
+            {recipe.creator && (
+              <p className="text-xs text-muted-foreground mb-3">
+                {t('common.addedBy', {
+                  name: recipe.creator.id === currentUser?.id
+                    ? t('common.you')
+                    : recipe.creator.displayName,
+                })}
+              </p>
+            )}
 
             <div className="flex items-center justify-between">
               <div className="flex flex-wrap gap-1">

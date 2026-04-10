@@ -450,7 +450,7 @@ export class ShoppingItemService {
       };
     }
 
-    return {
+    const dto: ShoppingItemDto = {
       id: shoppingItem.id,
       item: itemData,
       householdId: shoppingItem.householdId,
@@ -463,5 +463,14 @@ export class ShoppingItemService {
       createdAt: shoppingItem.createdAt.toISOString(),
       updatedAt: shoppingItem.updatedAt.toISOString(),
     };
+
+    if (shoppingItem.creator) {
+      dto.creator = {
+        id: shoppingItem.creator.id,
+        displayName: `${shoppingItem.creator.firstName} ${shoppingItem.creator.lastName}`,
+      };
+    }
+
+    return dto;
   }
 } 

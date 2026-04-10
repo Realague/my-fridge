@@ -47,6 +47,8 @@
   "storageArea": {
     "item": "artículo",
     "items": "artículos",
+    "itemCount_one": "{{count}} artículo",
+    "itemCount_other": "{{count}} artículos",
     "low": "bajo",
     "addArea": "Agregar área",
     "addStorageArea": "Agregar área de almacenamiento",

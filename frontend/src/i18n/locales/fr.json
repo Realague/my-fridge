@@ -47,6 +47,8 @@
   "storageArea": {
     "item": "article",
     "items": "articles",
+    "itemCount_one": "{{count}} article",
+    "itemCount_other": "{{count}} articles",
     "low": "faible",
     "addArea": "Ajouter une zone",
     "addStorageArea": "Ajouter une zone de stockage",

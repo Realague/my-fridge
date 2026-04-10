@@ -209,7 +209,7 @@ export const AddMealPlanDialog = ({
               <SelectContent>
                 {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
                   <SelectItem key={num} value={num.toString()}>
-                    {num} {num === 1 ? t('pages.mealPlans.serving') : t('pages.mealPlans.servings')}
+                    {t('pages.mealPlans.servingCount', { count: num })}
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -545,7 +545,7 @@ const StorageArea = () => {
                   <h1 className="text-xl font-bold text-foreground">{area.name}</h1>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {storageItems.length} {t('storageArea.items')}
+                  {t('storageArea.itemCount', { count: storageItems.length })}
                 </p>
               </div>
             </div>

@@ -47,6 +47,8 @@
   "storageArea": {
     "item": "item",
     "items": "items",
+    "itemCount_one": "{{count}} item",
+    "itemCount_other": "{{count}} items",
     "low": "low",
     "addArea": "Add area",
     "addStorageArea": "Add storage area",

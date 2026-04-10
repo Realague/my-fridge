@@ -279,7 +279,7 @@ const RecipeDetails = () => {
               </div>
               <div className="flex items-center gap-1 text-muted-foreground">
                 <Users className="h-4 w-4" />
-                <span className="text-sm">{recipe.servings} {t('pages.recipes.servings')}</span>
+                <span className="text-sm">{t('pages.recipes.servingCount', { count: recipe.servings })}</span>
               </div>
               <Badge className={getDifficultyColor(recipe.difficulty)}>
                 {t(`pages.recipes.difficultyOptions.${recipe.difficulty.toLowerCase()}`)}

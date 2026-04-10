@@ -316,7 +316,7 @@ const ImportRecipe = () => {
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Users className="h-4 w-4" />
-                    <span>{parsedRecipe.servings} {t('pages.recipes.servings')}</span>
+                    <span>{t('pages.recipes.servingCount', { count: parsedRecipe.servings })}</span>
                   </div>
                   <Badge className={getDifficultyColor(parsedRecipe.difficulty)}>
                     <ChefHat className="h-3 w-3 mr-1" />
@@ -608,7 +608,7 @@ const ImportRecipe = () => {
                 onClick={handleCreateRecipe}
                 className="flex-1"
               >
-                {t('pages.importRecipe.createRecipe')} ({matchedCount} {t('pages.recipes.ingredients').toLowerCase()})
+                {t('pages.importRecipe.createRecipe')} ({t('pages.recipes.ingredientCount', { count: matchedCount })})
               </Button>
             </div>
           </>

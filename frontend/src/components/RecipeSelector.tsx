@@ -194,7 +194,7 @@ export const RecipeSelector = ({
                           {t(`pages.recipes.difficultyOptions.${recipe.difficulty.toLowerCase()}`)}
                         </Badge>
                         <span className="text-xs text-gray-500">
-                          {recipe.prepTime + recipe.cookTime} min • {recipe.servings} {t('pages.recipes.servings')}
+                          {recipe.prepTime + recipe.cookTime} min • {t('pages.recipes.servingCount', { count: recipe.servings })}
                         </span>
                       </div>
                     </div>

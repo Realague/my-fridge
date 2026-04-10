@@ -142,7 +142,7 @@ const Dashboard = () => {
                   <div className="flex items-center gap-2">
                     <div>
                        <h1 className="text-xl font-bold text-foreground">{getCurrentHousehold()?.name || t('common.loading')}</h1>
-                       <p className="text-sm text-muted-foreground">{getCurrentHousehold()?.memberCount || 0} {t('pages.dashboard.members')}</p>
+                       <p className="text-sm text-muted-foreground">{t('pages.dashboard.members', { count: getCurrentHousehold()?.memberCount || 0 })}</p>
                     </div>
                     <ChevronDown className="h-4 w-4 text-muted-foreground" />
                   </div>

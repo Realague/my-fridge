@@ -448,7 +448,7 @@ const StorageArea = () => {
                                   [
                                   {t('storedItems.frozenProgress', {
                                     current: freezerProgress.current,
-                                    total: freezerProgress.total,
+                                    count: freezerProgress.total,
                                   })}
                                   ]
                                 </button>
@@ -457,7 +457,7 @@ const StorageArea = () => {
                                 <p>
                                   {t('storedItems.freezerRecommendation', {
                                     category: t(`items.categories.${item.category}`),
-                                    months: Math.max(
+                                    count: Math.max(
                                       1,
                                       Math.round(freezerProgress.total / 30)
                                     ),

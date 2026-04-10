@@ -26,6 +26,10 @@ export interface ShoppingItem {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
+  creator?: {
+    id: string;
+    displayName: string;
+  };
 }
 
 export interface CreateShoppingItemRequest {

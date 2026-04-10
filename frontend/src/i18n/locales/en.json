@@ -3433,6 +3433,8 @@
     "description": "Share this message with your household members to invite them.",
     "previous": "Previous",
     "next": "Next",
-    "optional": "Optional"
+    "optional": "Optional",
+    "addedBy": "Added by {{name}}",
+    "you": "you"
   }
 }

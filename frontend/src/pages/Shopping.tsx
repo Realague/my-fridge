@@ -26,11 +26,13 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useAuthStore } from '@/stores/authStore';
 
 const Shopping = () => {
   const { t } = useTranslation();
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
+  const currentUser = useAuthStore((state) => state.user);
   
   const { getStorageAreasForHousehold, fetchStorageAreas } = useStorageAreaStore();
   const { createStoredItem } = useStoredItemStore();
@@ -478,8 +480,18 @@ const Shopping = () => {
               ) : (
                 <div className="flex items-center gap-2">
                   <span>{shoppingItem.quantity} {shoppingItem.unit !== 'piece' ? shoppingItem.unit : ''}</span>
-                  <span>•</span>
-                  <span>{t('pages.shopping.addedBy')}</span>
+                  {shoppingItem.creator && (
+                    <>
+                      <span>•</span>
+                      <span>
+                        {t('common.addedBy', {
+                          name: shoppingItem.creator.id === currentUser?.id
+                            ? t('common.you')
+                            : shoppingItem.creator.displayName,
+                        })}
+                      </span>
+                    </>
+                  )}
                 </div>
               )}
             </div>

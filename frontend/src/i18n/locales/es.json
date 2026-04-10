@@ -3386,6 +3386,8 @@
     "description": "Comparte este mensaje con los miembros de tu hogar para invitarlos.",
     "previous": "Anterior",
     "next": "Siguiente",
-    "optional": "Opcional"
+    "optional": "Opcional",
+    "addedBy": "Agregado por {{name}}",
+    "you": "ti"
   }
 }

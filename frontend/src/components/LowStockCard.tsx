@@ -106,9 +106,10 @@ export const LowStockCard = () => {
                   size="sm"
                   variant="outline"
                   onClick={() => {
+                    const shoppingQty = lowStockItem.itemMinimum.shoppingQuantity;
                     const addQuantity =
-                      lowStockItem.itemMinimum.shoppingQuantity > 0
-                        ? lowStockItem.itemMinimum.shoppingQuantity
+                      shoppingQty > 0
+                        ? Math.ceil(lowStockItem.quantityNeeded / shoppingQty) * shoppingQty
                         : lowStockItem.quantityNeeded;
                     handleAddToShopping(
                       lowStockItem.itemMinimum.itemId,

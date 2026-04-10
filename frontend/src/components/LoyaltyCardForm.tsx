@@ -158,10 +158,7 @@ const LoyaltyCardForm = ({ open, onOpenChange, onSubmit }: LoyaltyCardFormProps)
               <Input
                 id="cardNumber"
                 value={cardNumber}
-                onChange={(e) => {
-                  setCardNumber(e.target.value);
-                  if (!barcodeData) setBarcodeData(e.target.value);
-                }}
+                onChange={(e) => setCardNumber(e.target.value)}
                 placeholder={t('loyaltyCards.form.cardNumberPlaceholder')}
                 autoFocus={!barcodeData}
               />

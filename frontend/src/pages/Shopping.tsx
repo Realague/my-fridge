@@ -517,7 +517,7 @@ const Shopping = () => {
               <h1 className="text-xl font-bold text-foreground">{t('pages.shopping.title')}</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-sm text-muted-foreground">
-                  {t('pages.shopping.itemsCompleted', { completed: completedCount, total: totalItems })}
+                  {t('pages.shopping.itemsCompleted', { completed: completedCount, count: totalItems })}
                 </p>
                 <div className="flex items-center gap-1">
                   <Users className="h-4 w-4 text-green-600" />

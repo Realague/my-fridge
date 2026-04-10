@@ -97,7 +97,7 @@ export const OpenedStatusToggle = ({
                     </span>
                   </p>
                   <p className="mt-1">
-                    {t('storedItems.consumeWithinDays', { days: daysAfterOpening })}
+                    {t('storedItems.consumeWithinDays', { count: daysAfterOpening })}
                   </p>
                 </div>
               </div>

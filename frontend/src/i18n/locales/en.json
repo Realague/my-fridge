@@ -149,14 +149,18 @@
     "openedStatus": "Opened/Sealed",
     "frozenDate": "Frozen on",
     "frozen": "FROZEN",
-    "frozenTooLong": "Frozen for {{days}} days",
-    "frozenProgress": "Frozen {{current}}/{{total}} days",
-    "freezerRecommendation": "{{category}} products can be stored ~{{months}} months in the freezer.",
+    "frozenTooLong_one": "Frozen for {{count}} day",
+    "frozenTooLong_other": "Frozen for {{count}} days",
+    "frozenProgress_one": "Frozen {{current}}/{{count}} day",
+    "frozenProgress_other": "Frozen {{current}}/{{count}} days",
+    "freezerRecommendation_one": "{{category}} products can be stored ~{{count}} month in the freezer.",
+    "freezerRecommendation_other": "{{category}} products can be stored ~{{count}} months in the freezer.",
     "freezerWarning": "Frozen longer than recommended",
     "freezerDaysRemaining": "{{days}}d remaining",
     "freezerExpiredDays": "Exceeded by {{days}}d",
     "openedDate": "Opening date",
-    "consumeWithinDays": "To be consumed within {{days}} days after opening"
+    "consumeWithinDays_one": "To be consumed within {{count}} day after opening",
+    "consumeWithinDays_other": "To be consumed within {{count}} days after opening"
   },
   "itemSelector": {
     "itemImage": "Item Image",
@@ -330,7 +334,8 @@
     "inviteMessageWithLink": "🏠 Join my household \"{{householdName}}\" on MyFridge!\n\nClick the link below to sign in and join automatically:\n{{inviteLink}}\n\nMyFridge helps manage your shared kitchen inventory, plan meals together, and reduce food waste.",
     "mealPlanDescription": "Your meal plan has been saved.",
     "mealPlanDeletedDescription": "The meal plan has been removed.",
-    "shoppingListGeneratedDescription": "Added {{count}} items to your shopping list for {{dateRange}}",
+    "shoppingListGeneratedDescription_one": "Added {{count}} item to your shopping list for {{dateRange}}",
+    "shoppingListGeneratedDescription_other": "Added {{count}} items to your shopping list for {{dateRange}}",
     "googleTokenCopied": "Google token has been copied to clipboard for API testing."
   },
   "pages": {
@@ -347,7 +352,8 @@
       "noStorageAreas": "No storage areas yet",
       "addFirstStorageArea": "Add Your First Storage Area",
       "manage": "Manage",
-      "members": "members",
+      "members_one": "{{count}} member",
+      "members_other": "{{count}} members",
       "loading": "Loading...",
       "today": "Today",
       "itemsPending_one": "{{count}} item pending",
@@ -388,7 +394,8 @@
       "deleteCompleted": "Delete completed",
       "filterByCategory": "Filter by category",
       "allCategories": "All categories",
-      "itemsCompleted": "{{completed}} of {{total}} items completed",
+      "itemsCompleted_one": "{{completed}} of {{count}} item completed",
+      "itemsCompleted_other": "{{completed}} of {{count}} items completed",
       "synced": "Synced",
       "complete": "Complete",
       "searchPlaceholder": "Search or add item...",
@@ -460,13 +467,19 @@
         "selectEndDate": "Select end date"
       },
       "serving": "serving",
-      "servings": "servings"
+      "servings": "servings",
+      "servingCount_one": "{{count}} serving",
+      "servingCount_other": "{{count}} servings"
     },
     "recipes": {
       "title": "Recipes",
       "addRecipe": "Add recipe",
       "noRecipes": "No recipes found",
       "ingredients": "Ingredients",
+      "ingredientCount_one": "{{count}} ingredient",
+      "ingredientCount_other": "{{count}} ingredients",
+      "servingCount_one": "{{count}} serving",
+      "servingCount_other": "{{count}} servings",
       "instructions": "Instructions",
       "instructionsDescription": "Step-by-step cooking instructions",
       "servings": "Servings",
@@ -474,7 +487,8 @@
       "search": "Search recipes, ingredients, or tags...",
       "allRecipes": "All recipes",
       "favorites": "Favorites",
-      "recipeSaved": "{{count}} recipes saved",
+      "recipeSaved_one": "{{count}} recipe saved",
+      "recipeSaved_other": "{{count}} recipes saved",
       "difficulty": "Difficulty",
       "tags": "Tags",
       "tagsDescription": "Add tags to categorize your recipe",
@@ -549,7 +563,8 @@
         "noDeductions": "No deductions selected",
         "noIngredients": "This recipe has no ingredients",
         "success": "Ingredients consumed",
-        "successDescription": "{{count}} item(s) deducted from your stock",
+        "successDescription_one": "{{count}} item deducted from your stock",
+        "successDescription_other": "{{count}} items deducted from your stock",
         "failed": "Failed to consume ingredients"
       }
     },

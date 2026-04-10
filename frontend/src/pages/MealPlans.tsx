@@ -292,7 +292,7 @@ const MealPlans = () => {
                                         {t(`pages.mealPlans.mealTypes.${mealPlan.mealType}`)}
                                       </Badge>
                                       <span className="text-sm text-muted-foreground">
-                                        {mealPlan.servings} {t('pages.mealPlans.servings')}
+                                        {t('pages.mealPlans.servingCount', { count: mealPlan.servings })}
                                       </span>
                                     </div>
                                     {mealPlan.recipe && (

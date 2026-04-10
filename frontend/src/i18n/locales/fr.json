@@ -150,13 +150,17 @@
     "openedDate": "Date d'ouverture",
     "frozenDate": "Congelé le",
     "frozen": "CONGELÉ",
-    "frozenTooLong": "Congelé pour {{days}} jours",
-    "frozenProgress": "Congelé pour {{current}}/{{total}} jours",
-    "freezerRecommendation": "Les produits type {{category}} sont conservables ~{{months}} mois au congélateur.",
+    "frozenTooLong_one": "Congelé depuis {{count}} jour",
+    "frozenTooLong_other": "Congelé depuis {{count}} jours",
+    "frozenProgress_one": "Congelé depuis {{current}}/{{count}} jour",
+    "frozenProgress_other": "Congelé depuis {{current}}/{{count}} jours",
+    "freezerRecommendation_one": "Les produits type {{category}} sont conservables ~{{count}} mois au congélateur.",
+    "freezerRecommendation_other": "Les produits type {{category}} sont conservables ~{{count}} mois au congélateur.",
     "freezerWarning": "Congelé plus longtemps que recommandé",
     "freezerDaysRemaining": "{{days}}j restants",
     "freezerExpiredDays": "Dépassé de {{days}}j",
-    "consumeWithinDays": "À consommer dans les {{days}} jours après ouverture"
+    "consumeWithinDays_one": "À consommer dans la journée après ouverture",
+    "consumeWithinDays_other": "À consommer dans les {{count}} jours après ouverture"
   },
   "itemSelector": {
     "itemImage": "Image de l'article",
@@ -310,7 +314,8 @@
     "inviteMessageWithLink": "🏠 Rejoins mon foyer \"{{householdName}}\" sur MyFridge !\n\nClique sur le lien ci-dessous pour te connecter et rejoindre automatiquement :\n{{inviteLink}}\n\nMyFridge aide à gérer l'inventaire partagé de votre cuisine, planifier les repas ensemble et réduire le gaspillage alimentaire.",
     "mealPlanDescription": "Votre plan de repas a été sauvegardé.",
     "mealPlanDeletedDescription": "Le plan de repas a été supprimé.",
-    "shoppingListGeneratedDescription": "{{count}} articles ajoutés à votre liste de courses pour {{dateRange}}",
+    "shoppingListGeneratedDescription_one": "{{count}} article ajouté à votre liste de courses pour {{dateRange}}",
+    "shoppingListGeneratedDescription_other": "{{count}} articles ajoutés à votre liste de courses pour {{dateRange}}",
     "googleTokenCopied": "Le jeton Google a été copié dans le presse-papiers pour les tests d'API."
   },
   "pages": {
@@ -327,7 +332,8 @@
       "noStorageAreas": "Aucune zone de stockage pour le moment",
       "addFirstStorageArea": "Ajoutez votre première zone de stockage",
       "manage": "Gérer",
-      "members": "membres",
+      "members_one": "{{count}} membre",
+      "members_other": "{{count}} membres",
       "loading": "Chargement...",
       "today": "Aujourd'hui",
       "itemsPending_one": "{{count}} article en attente",
@@ -367,7 +373,8 @@
       "deleteCompleted": "Supprimer terminés",
       "filterByCategory": "Filtrer par catégorie",
       "allCategories": "Toutes les catégories",
-      "itemsCompleted": "{{completed}} sur {{total}} articles terminés",
+      "itemsCompleted_one": "{{completed}} sur {{count}} article terminé",
+      "itemsCompleted_other": "{{completed}} sur {{count}} articles terminés",
       "synced": "Synchronisé",
       "complete": "Terminé",
       "searchPlaceholder": "Rechercher ou ajouter un article...",
@@ -439,13 +446,19 @@
         "selectEndDate": "Sélectionner la date de fin"
       },
       "serving": "portion",
-      "servings": "portions"
+      "servings": "portions",
+      "servingCount_one": "{{count}} portion",
+      "servingCount_other": "{{count}} portions"
     },
     "recipes": {
       "title": "Recettes",
       "addRecipe": "Ajouter une recette",
       "noRecipes": "Aucune recette trouvée",
       "ingredients": "Ingrédients",
+      "ingredientCount_one": "{{count}} ingrédient",
+      "ingredientCount_other": "{{count}} ingrédients",
+      "servingCount_one": "{{count}} portion",
+      "servingCount_other": "{{count}} portions",
       "instructions": "Instructions",
       "instructionsDescription": "Instructions de cuisine étape par étape",
       "servings": "Portions",
@@ -453,7 +466,8 @@
       "search": "Rechercher recettes, ingrédients ou étiquettes...",
       "allRecipes": "Toutes les recettes",
       "favorites": "Favoris",
-      "recipeSaved": "{{count}} recettes sauvegardées",
+      "recipeSaved_one": "{{count}} recette sauvegardée",
+      "recipeSaved_other": "{{count}} recettes sauvegardées",
       "difficulty": "Difficulté",
       "tags": "Étiquettes",
       "tagsDescription": "Ajoutez des étiquettes pour catégoriser votre recette",
@@ -527,7 +541,8 @@
         "noDeductions": "Aucune d\u00e9duction s\u00e9lectionn\u00e9e",
         "noIngredients": "Cette recette n'a pas d'ingr\u00e9dients",
         "success": "Ingr\u00e9dients consomm\u00e9s",
-        "successDescription": "{{count}} article(s) d\u00e9duit(s) de votre stock",
+        "successDescription_one": "{{count}} article déduit de votre stock",
+        "successDescription_other": "{{count}} articles déduits de votre stock",
         "failed": "\u00c9chec de la consommation des ingr\u00e9dients"
       }
     },

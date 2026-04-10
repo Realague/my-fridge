@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { Item } from '@/services/itemService';
+import { useAuthStore } from '@/stores/authStore';
 
 const RecipeDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,6 +31,7 @@ const RecipeDetails = () => {
     clearCurrentRecipe,
     clearError
   } = useRecipeStore();
+  const currentUser = useAuthStore((state) => state.user);
   
   const [showMealPlanDialog, setShowMealPlanDialog] = useState(false);
   const [showConsumeDialog, setShowConsumeDialog] = useState(false);
@@ -268,6 +270,15 @@ const RecipeDetails = () => {
               <CardDescription className="text-base">
                 {recipe.description}
               </CardDescription>
+              {recipe.creator && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  {t('common.addedBy', {
+                    name: recipe.creator.id === currentUser?.id
+                      ? t('common.you')
+                      : recipe.creator.displayName,
+                  })}
+                </p>
+              )}
             </div>
             
             <div className="flex flex-wrap items-center gap-4 pt-4">

@@ -25,6 +25,7 @@ import { OpenedStatusToggle } from '@/components/OpenedStatusToggle';
 import { ItemImage } from '@/components/ItemImage';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/stores/authStore';
 
 /** Text/badge color by share of recommended freezer time used (<70% blue, 70–90% orange, >90% red). */
 function getFreezerColorClass(daysFrozen: number, recommendedDays: number): string {
@@ -94,6 +95,7 @@ const StorageArea = () => {
     loading: storedItemsLoading
   } = useStoredItemStore();
   const { selectedHouseholdId } = useProtectedRoute();
+  const currentUser = useAuthStore((state) => state.user);
   
   // Local state
   const [showAddForm, setShowAddForm] = useState(false);
@@ -428,6 +430,16 @@ const StorageArea = () => {
                     )}
                   </div>
                   
+                  {storageItem.creator && (
+                    <p className="text-xs text-muted-foreground">
+                      {t('common.addedBy', {
+                        name: storageItem.creator.id === currentUser?.id
+                          ? t('common.you')
+                          : storageItem.creator.displayName,
+                      })}
+                    </p>
+                  )}
+
                   <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
                     <div className="flex items-start gap-1 min-w-0">
                       <Calendar className="h-3 w-3 shrink-0 mt-0.5" />

@@ -9,7 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, Plus, X, Clock } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ArrowLeft, Plus, X, Clock, ChevronDown } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { UpdateRecipeDto, RecipeStep } from '@/services/recipeService';
 import { StructuredIngredientInput, StructuredIngredient } from '@/components/StructuredIngredientInput';
@@ -524,31 +525,42 @@ const EditRecipe = () => {
                     </div>
                     
                     {ingredients.length > 0 && instruction.text.trim() && (
-                      <div className="ml-8 p-3 bg-muted rounded-lg">
-                        <h4 className="text-sm font-medium text-foreground mb-2">
-                          {t('pages.recipes.ingredientsUsedInThisStep')}
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                          {ingredients.map((ingredient, ingredientIndex) => {
-                            const item = getItemById(ingredient.itemId);
-                            if (!item) return null;
-                            
-                            const ingredientKey = getIngredientKey(ingredient, ingredientIndex);
-                            const isLinked = (ingredientStepMap[ingredientKey] || []).includes(index);
-                            
-                            return (
-                              <div key={ingredientKey} className="flex items-center space-x-2">
-                                <Checkbox
-                                  checked={isLinked}
-                                  onCheckedChange={() => toggleIngredientForStep(ingredient, ingredientIndex, index)}
-                                />
-                                <span className="text-sm text-muted-foreground">
-                                  {getItemDisplayName(ingredient?.item, t)} {ingredient.quantity} {ingredient.unit !== 'piece' ? ingredient.unit : ''}
-                                </span>
+                      <div className="ml-8">
+                        <Collapsible defaultOpen={false}>
+                          <CollapsibleTrigger asChild>
+                            <button
+                              type="button"
+                              className="group flex w-full items-center justify-between gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2 text-left text-sm font-medium text-foreground hover:bg-muted data-[state=open]:bg-muted"
+                            >
+                              <span>{t('pages.recipes.ingredientsUsedInThisStep')}</span>
+                              <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+                            </button>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <div className="mt-2 rounded-lg border border-border/50 bg-muted p-3">
+                              <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                                {ingredients.map((ingredient, ingredientIndex) => {
+                                  const item = getItemById(ingredient.itemId);
+                                  if (!item) return null;
+                                  const ingredientKey = getIngredientKey(ingredient, ingredientIndex);
+                                  const isLinked = (ingredientStepMap[ingredientKey] || []).includes(index);
+                                  return (
+                                    <div key={ingredientKey} className="flex items-center space-x-2">
+                                      <Checkbox
+                                        checked={isLinked}
+                                        onCheckedChange={() => toggleIngredientForStep(ingredient, ingredientIndex, index)}
+                                      />
+                                      <span className="text-sm text-muted-foreground">
+                                        {getItemDisplayName(ingredient?.item, t)} {ingredient.quantity}{' '}
+                                        {ingredient.unit !== 'piece' ? ingredient.unit : ''}
+                                      </span>
+                                    </div>
+                                  );
+                                })}
                               </div>
-                            );
-                          })}
-                        </div>
+                            </div>
+                          </CollapsibleContent>
+                        </Collapsible>
                       </div>
                     )}
                   </div>
@@ -571,7 +583,16 @@ const EditRecipe = () => {
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                     className="flex-1"
                   />
-                  <Button variant="outline" type="button" onClick={addTag}>{t('pages.recipes.addTag')}</Button>
+                  <Button
+                    variant="outline"
+                    type="button"
+                    onClick={addTag}
+                    className="shrink-0"
+                    aria-label={t('pages.recipes.addTag')}
+                  >
+                    <Plus className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">{t('pages.recipes.addTag')}</span>
+                  </Button>
                 </div>
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">

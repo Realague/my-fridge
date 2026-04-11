@@ -66,7 +66,7 @@ const StorageAreaManager = () => {
       });
 
       toast.success(t("messages.success.storageAreaUpdated"), {
-        description: t("messages.success.storageAreaUpdatedDescription"),
+        description: t("messages.success.storageAreaUpdatedDescription", { name: data.name }),
       });
 
       setEditingArea(null);
@@ -84,7 +84,7 @@ const StorageAreaManager = () => {
       await deleteStorageArea(area.id);
 
       toast.success(t("messages.success.storageAreaDeleted"), {
-        description: t("messages.success.storageAreaDeletedDescription"),
+        description: t("messages.success.storageAreaDeletedDescription", { name: area.name }),
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : t("messages.error.failedToDeleteStorageArea");

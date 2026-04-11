@@ -95,14 +95,14 @@ const StorageAreaManager = () => {
   return (
     <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
+        <CardTitle className="flex items-center justify-between gap-2">
           <span>{t('storageAreaManager.title')}</span>
           <Button 
-            className="bg-green-600 hover:bg-green-700 text-white"
+            className="bg-green-600 hover:bg-green-700 text-white shrink-0"
             onClick={() => setIsAddDialogOpen(true)}
           >
-            <Plus className="h-4 w-4 mr-2" />
-            {t('storageAreaManager.addStorage')}
+            <Plus className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">{t('storageAreaManager.addStorage')}</span>
           </Button>
         </CardTitle>
       </CardHeader>

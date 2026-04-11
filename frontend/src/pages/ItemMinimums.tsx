@@ -7,6 +7,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { ArrowLeft, Plus, Edit, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemMinimumDialog } from '@/components/ItemMinimumDialog';
+import { ItemImage } from '@/components/ItemImage';
 import { useItemMinimumStore } from '@/stores/itemMinimumStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
@@ -87,18 +88,18 @@ const ItemMinimums = () => {
       {/* Header */}
       <div className="bg-card/80 backdrop-blur-sm border-b border-border/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate(-1)}
-                className="p-1"
+                className="p-1 shrink-0"
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
-              <div>
-                <h1 className="text-xl font-bold text-foreground">{t('itemMinimum.title')}</h1>
+              <div className="min-w-0">
+                <h1 className="text-xl font-bold text-foreground truncate">{t('itemMinimum.title')}</h1>
                 <p className="text-sm text-muted-foreground">
                   {t('itemMinimum.description')}
                 </p>
@@ -109,11 +110,11 @@ const ItemMinimums = () => {
                 setEditingMinimumId(null);
                 setShowDialog(true);
               }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 shrink-0"
               variant="green"
             >
-              <Plus className="h-4 w-4" />
-              {t('buttons.add')}
+              <Plus className="h-4 w-4 sm:mr-0" />
+              <span className="hidden sm:inline">{t('buttons.add')}</span>
             </Button>
           </div>
         </div>
@@ -152,79 +153,87 @@ const ItemMinimums = () => {
 
               return (
                 <Card key={minimum.id} className="bg-card backdrop-blur-sm border-0 shadow-lg">
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
+                  <CardContent className="p-3 sm:p-4">
+                    <div className="flex items-start gap-3">
+                      <ItemImage
+                        src={item.imageUrl}
+                        alt={getItemDisplayName(item, t)}
+                        containerClassName="w-10 h-10 sm:w-12 sm:h-12 rounded-lg shrink-0"
+                        fallbackIconSize={32}
+                      />
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-medium text-foreground">
-                            {getItemDisplayName(item, t)}
-                          </h3>
-                          {lowStock ? (
-                            <Badge variant="destructive" className="text-xs">
-                              <AlertCircle className="h-3 w-3 mr-1" />
-                              {t('itemMinimum.lowStock')}
-                            </Badge>
-                          ) : (
-                            <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              {t('itemMinimum.inStock')}
-                            </Badge>
-                          )}
-                        </div>
-                        
-                        <div className="space-y-1 text-sm text-muted-foreground">
-                          <div>
-                            <span className="font-medium text-foreground">
-                              {t('itemMinimum.currentStock')}:
-                            </span>{' '}
-                            {currentStock} {minimum.minimumUnit}
-                          </div>
-                          <div>
-                            <span className="font-medium text-foreground">
-                              {t('itemMinimum.minimum')}:
-                            </span>{' '}
-                            {minimum.minimumQuantity} {minimum.minimumUnit}
-                          </div>
-                          {minimum.shoppingQuantity && (
-                            <div>
-                              <span className="font-medium text-foreground">
-                                {t('itemMinimum.shoppingQuantity')}:
-                              </span>{' '}
-                              {minimum.shoppingQuantity} {minimum.minimumUnit}
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                              <h3 className="font-medium text-foreground">
+                                {getItemDisplayName(item, t)}
+                              </h3>
+                              {lowStock ? (
+                                <Badge variant="destructive" className="text-xs">
+                                  <AlertCircle className="h-3 w-3 mr-1" />
+                                  {t('itemMinimum.lowStock')}
+                                </Badge>
+                              ) : (
+                                <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                  <CheckCircle className="h-3 w-3 mr-1" />
+                                  {t('itemMinimum.inStock')}
+                                </Badge>
+                              )}
                             </div>
-                          )}
-                          {lowStock && (
-                            <div className="text-orange-600 dark:text-orange-400">
-                              {t('itemMinimum.quantityNeeded', {
-                                quantity: (minimum.minimumQuantity - currentStock).toFixed(1),
-                                unit: getTranslatedUnitLabel(
-                                  minimum.minimumUnit,
-                                  minimum.minimumQuantity - currentStock,
-                                  t
-                                ),
-                              })}
+                            <div className="space-y-1 text-sm text-muted-foreground">
+                              <div>
+                                <span className="font-medium text-foreground">
+                                  {t('itemMinimum.currentStock')}:
+                                </span>{' '}
+                                {currentStock} {minimum.minimumUnit}
+                              </div>
+                              <div>
+                                <span className="font-medium text-foreground">
+                                  {t('itemMinimum.minimum')}:
+                                </span>{' '}
+                                {minimum.minimumQuantity} {minimum.minimumUnit}
+                              </div>
+                              {minimum.shoppingQuantity && (
+                                <div>
+                                  <span className="font-medium text-foreground">
+                                    {t('itemMinimum.shoppingQuantity')}:
+                                  </span>{' '}
+                                  {minimum.shoppingQuantity} {minimum.minimumUnit}
+                                </div>
+                              )}
+                              {lowStock && (
+                                <div className="text-orange-600 dark:text-orange-400">
+                                  {t('itemMinimum.quantityNeeded', {
+                                    quantity: (minimum.minimumQuantity - currentStock).toFixed(1),
+                                    unit: getTranslatedUnitLabel(
+                                      minimum.minimumUnit,
+                                      minimum.minimumQuantity - currentStock,
+                                      t
+                                    ),
+                                  })}
+                                </div>
+                              )}
                             </div>
-                          )}
+                          </div>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEdit(minimum.id)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="deleteTrash"
+                              size="sm"
+                              onClick={() => setDeleteConfirmId(minimum.id)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2 ml-4">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEdit(minimum.id)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="deleteTrash"
-                          size="sm"
-                          onClick={() => setDeleteConfirmId(minimum.id)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
                       </div>
                     </div>
                   </CardContent>

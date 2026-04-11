@@ -97,29 +97,29 @@ const Recipes = () => {
       {/* Header */}
       <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-center justify-between gap-2">
+            <div className="min-w-0">
               <h1 className="text-xl font-bold text-foreground">{t('pages.recipes.title')}</h1>
               <p className="text-sm text-muted-foreground">
                 {loading ? t('common.loading') : t('pages.recipes.recipeSaved', { count: total || 0 })}
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 shrink-0">
               <Button
                 variant="outline"
                 className="touch-friendly"
                 onClick={() => navigate('/import-recipe')}
               >
-                <Download className="h-4 w-4 mr-2" />
-                {t('pages.importRecipe.import')}
+                <Download className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{t('pages.importRecipe.import')}</span>
               </Button>
               <Button
                 variant="green"
                 className="touch-friendly"
                 onClick={() => navigate('/add-recipe')}
               >
-                <Plus className="h-4 w-4 mr-2" />
-                {t('pages.recipes.addRecipe')}
+                <Plus className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{t('pages.recipes.addRecipe')}</span>
               </Button>
             </div>
           </div>

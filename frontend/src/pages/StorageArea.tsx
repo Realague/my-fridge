@@ -529,20 +529,20 @@ const StorageArea = () => {
       {/* Header */}
       <div className="bg-card/80 backdrop-blur-sm border-b border-border/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/dashboard')}
-                className="p-1"
+                className="p-1 shrink-0"
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
-              <div>
+              <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl">{area.emoji}</span>
-                  <h1 className="text-xl font-bold text-foreground">{area.name}</h1>
+                  <span className="text-2xl shrink-0">{area.emoji}</span>
+                  <h1 className="text-xl font-bold text-foreground truncate">{area.name}</h1>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {storageItems.length} {t('storageArea.items')}
@@ -551,11 +551,11 @@ const StorageArea = () => {
             </div>
             <Button
               onClick={() => setShowAddForm(!showAddForm)}
-              className="flex items-center gap-2 touch-friendly"
+              className="flex items-center gap-2 touch-friendly shrink-0"
               variant="green"
             >
-              <Plus className="h-4 w-4" />
-              {t('storageArea.addItem')}
+              <Plus className="h-4 w-4 sm:mr-0" />
+              <span className="hidden sm:inline">{t('storageArea.addItem')}</span>
             </Button>
           </div>
         </div>

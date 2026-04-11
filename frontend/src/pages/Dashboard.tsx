@@ -211,17 +211,17 @@ const Dashboard = () => {
 
         {/* Storage Areas */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-foreground">{t('pages.dashboard.storageAreas')}</h2>
-            <div className="flex gap-2">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-xl font-bold text-foreground shrink-0">{t('pages.dashboard.storageAreas')}</h2>
+            <div className="flex gap-2 shrink-0">
               <AddStorageAreaDialog />
               <Button
                 variant="green"
                 size="sm"
                 onClick={() => navigate(`/household/${getCurrentHousehold()?.id}`)}
               >
-                <List className="h-4 w-4 mr-2" />
-                {t('pages.dashboard.manage')}
+                <List className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{t('pages.dashboard.manage')}</span>
               </Button>
             </div>
           </div>

@@ -88,8 +88,8 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
             variant="green"
             size="sm"
           >
-            <Plus className="h-4 w-4 mr-2" />
-            {t('storageArea.addArea')}
+            <Plus className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">{t('storageArea.addArea')}</span>
           </Button>
         )}
       </DialogTrigger>

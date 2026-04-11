@@ -29,7 +29,9 @@ const BottomNavigation = ({ currentPage }: BottomNavigationProps) => {
             return (
               <button
                 key={item.id}
+                type="button"
                 onClick={() => navigate(item.route)}
+                aria-label={item.label}
                 className={cn(
                   "flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-all duration-200",
                   isActive
@@ -37,8 +39,8 @@ const BottomNavigation = ({ currentPage }: BottomNavigationProps) => {
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )}
               >
-                <Icon className="h-5 w-5 mb-1" />
-                <span className="text-xs font-medium">{item.label}</span>
+                <Icon className="h-5 w-5 sm:mb-1" />
+                <span className="hidden text-xs font-medium sm:block">{item.label}</span>
               </button>
             );
           })}

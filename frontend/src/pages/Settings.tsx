@@ -124,10 +124,16 @@ const Settings = () => {
       {/* Content */}
       <div className="container mx-auto px-4 py-6 space-y-6">
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-muted rounded-lg p-1 h-auto">
-             <TabsTrigger value="profile">{t('pages.settings.tabs.profile')}</TabsTrigger>
-             <TabsTrigger value="notifications">{t('pages.settings.tabs.notifications')}</TabsTrigger>
-             <TabsTrigger value="appearance">{t('pages.settings.tabs.appearance')}</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 gap-1 bg-muted rounded-lg p-1 h-auto">
+             <TabsTrigger value="profile" className="min-h-10 w-full">
+               {t('pages.settings.tabs.profile')}
+             </TabsTrigger>
+             <TabsTrigger value="notifications" className="min-h-10 w-full">
+               {t('pages.settings.tabs.notifications')}
+             </TabsTrigger>
+             <TabsTrigger value="appearance" className="min-h-10 w-full">
+               {t('pages.settings.tabs.appearance')}
+             </TabsTrigger>
           </TabsList>
           
           <TabsContent value="profile" className="mt-4">

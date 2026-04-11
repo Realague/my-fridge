@@ -15,6 +15,8 @@ import { RecipeListDto } from '@/services/recipeService';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/stores/authStore';
+import { motion, useReducedMotion } from 'framer-motion';
+import { scrollRevealFadeUp } from '@/lib/motion';
 
 const Recipes = () => {
   const { t } = useTranslation();
@@ -97,29 +99,29 @@ const Recipes = () => {
       {/* Header */}
       <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-center justify-between gap-2">
+            <div className="min-w-0">
               <h1 className="text-xl font-bold text-foreground">{t('pages.recipes.title')}</h1>
               <p className="text-sm text-muted-foreground">
                 {loading ? t('common.loading') : t('pages.recipes.recipeSaved', { count: total || 0 })}
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 shrink-0">
               <Button
                 variant="outline"
                 className="touch-friendly"
                 onClick={() => navigate('/import-recipe')}
               >
-                <Download className="h-4 w-4 mr-2" />
-                {t('pages.importRecipe.import')}
+                <Download className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{t('pages.importRecipe.import')}</span>
               </Button>
               <Button
                 variant="green"
                 className="touch-friendly"
                 onClick={() => navigate('/add-recipe')}
               >
-                <Plus className="h-4 w-4 mr-2" />
-                {t('pages.recipes.addRecipe')}
+                <Plus className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{t('pages.recipes.addRecipe')}</span>
               </Button>
             </div>
           </div>
@@ -150,6 +152,7 @@ const Recipes = () => {
               <RecipeGridSkeleton />
             ) : (
               <RecipeGrid 
+                activeTab={activeTab}
                 recipes={filteredRecipes} 
                 onToggleFavorite={handleToggleFavorite} 
                 getDifficultyColor={getDifficultyColor} 
@@ -162,6 +165,7 @@ const Recipes = () => {
               <RecipeGridSkeleton />
             ) : (
               <RecipeGrid 
+                activeTab={activeTab}
                 recipes={filteredRecipes} 
                 onToggleFavorite={handleToggleFavorite} 
                 getDifficultyColor={getDifficultyColor} 
@@ -177,15 +181,17 @@ const Recipes = () => {
 };
 
 interface RecipeGridProps {
+  activeTab: string;
   recipes: RecipeListDto[];
   onToggleFavorite: (id: string) => void;
   getDifficultyColor: (difficulty: string) => string;
 }
 
-const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGridProps) => {
+const RecipeGrid = ({ activeTab, recipes, onToggleFavorite, getDifficultyColor }: RecipeGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const currentUser = useAuthStore((state) => state.user);
+  const prefersReducedMotion = useReducedMotion() ?? false;
 
   // Handle undefined or null recipes
   if (!recipes || recipes.length === 0) {
@@ -198,82 +204,83 @@ const RecipeGrid = ({ recipes, onToggleFavorite, getDifficultyColor }: RecipeGri
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div key={activeTab} className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {recipes.map((recipe) => (
-        <Card
-          key={recipe.id}
-          className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden"
-          onClick={() => navigate(`/recipes/${recipe.id}`)}
-        >
-          {recipe.imageUrl && (
-            <div className="w-full h-40 overflow-hidden bg-muted">
-              <img
-                src={recipe.imageUrl}
-                alt={recipe.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
-          <CardHeader className="pb-3">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <CardTitle className="text-lg">{recipe.title}</CardTitle>
-                <CardDescription className="text-sm mt-1">
-                  {recipe.description}
-                </CardDescription>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onToggleFavorite(recipe.id);
-                }}
-                className="ml-2"
-              >
-                <Heart 
-                  className={`h-4 w-4 ${recipe.isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
+        <motion.div key={recipe.id} {...scrollRevealFadeUp(prefersReducedMotion)}>
+          <Card
+            className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden"
+            onClick={() => navigate(`/recipes/${recipe.id}`)}
+          >
+            {recipe.imageUrl && (
+              <div className="w-full h-40 overflow-hidden bg-muted">
+                <img
+                  src={recipe.imageUrl}
+                  alt={recipe.title}
+                  className="w-full h-full object-cover"
                 />
-              </Button>
-            </div>
-          </CardHeader>
-
-          <CardContent className="pt-0">
-            <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
-              <div className="flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                <span>{(recipe.prepTime || 0) + (recipe.cookTime || 0)}m</span>
               </div>
-              <div className="flex items-center gap-1">
-                <Users className="h-3 w-3" />
-                <span>{recipe.servings || 0}</span>
-              </div>
-            </div>
-
-            {recipe.creator && (
-              <p className="text-xs text-muted-foreground mb-3">
-                {t('common.addedBy', {
-                  name: recipe.creator.id === currentUser?.id
-                    ? t('common.you')
-                    : recipe.creator.displayName,
-                })}
-              </p>
             )}
-
-            <div className="flex items-center justify-between">
-              <div className="flex flex-wrap gap-1">
-                <Badge className={getDifficultyColor(recipe.difficulty)}>
-                  {t(`pages.recipes.difficultyOptions.${recipe.difficulty.toLowerCase()}`)}
-                </Badge>
-                {(recipe.tags || []).slice(0, 2).map((tag, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
-                    {tag}
-                  </Badge>
-                ))}
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <CardTitle className="text-lg">{recipe.title}</CardTitle>
+                  <CardDescription className="text-sm mt-1">
+                    {recipe.description}
+                  </CardDescription>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleFavorite(recipe.id);
+                  }}
+                  className="ml-2"
+                >
+                  <Heart 
+                    className={`h-4 w-4 ${recipe.isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
+                  />
+                </Button>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardHeader>
+
+            <CardContent className="pt-0">
+              <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
+                <div className="flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  <span>{(recipe.prepTime || 0) + (recipe.cookTime || 0)}m</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Users className="h-3 w-3" />
+                  <span>{recipe.servings || 0}</span>
+                </div>
+              </div>
+
+              {recipe.creator && (
+                <p className="text-xs text-muted-foreground mb-3">
+                  {t('common.addedBy', {
+                    name: recipe.creator.id === currentUser?.id
+                      ? t('common.you')
+                      : recipe.creator.displayName,
+                  })}
+                </p>
+              )}
+
+              <div className="flex items-center justify-between">
+                <div className="flex flex-wrap gap-1">
+                  <Badge className={getDifficultyColor(recipe.difficulty)}>
+                    {t(`pages.recipes.difficultyOptions.${recipe.difficulty.toLowerCase()}`)}
+                  </Badge>
+                  {(recipe.tags || []).slice(0, 2).map((tag, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       ))}
     </div>
   );

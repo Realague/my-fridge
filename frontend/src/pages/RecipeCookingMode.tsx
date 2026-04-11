@@ -185,29 +185,30 @@ const RecipeCookingMode = () => {
       {/* Header */}
       <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <Button
               variant="ghost"
               onClick={() => navigate(`/recipes/${recipe.id}`)}
-              className="text-muted-foreground"
+              className="text-muted-foreground shrink-0"
+              size="sm"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('pages.recipes.exitCooking')}
+              <ArrowLeft className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">{t('pages.recipes.exitCooking')}</span>
             </Button>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               {recipe.sourceUrl && (
                 <Button
                   type="button"
                   variant="outline"
+                  size="sm"
                   onClick={() => window.open(recipe.sourceUrl, '_blank', 'noopener,noreferrer')}
-                  className="w-full md:w-fit"
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   {t('pages.importRecipe.viewOriginal')}
                 </Button>
               )}
               <ChefHat className="h-5 w-5 text-primary" />
-              <span className="font-medium text-foreground">{t('pages.recipes.cookingMode')}</span>
+              <span className="font-medium text-foreground hidden sm:inline">{t('pages.recipes.cookingMode')}</span>
             </div>
           </div>
         </div>

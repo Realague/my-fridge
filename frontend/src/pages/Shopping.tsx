@@ -27,9 +27,12 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useAuthStore } from '@/stores/authStore';
+import { motion, useReducedMotion } from 'framer-motion';
+import { scrollRevealFadeUp } from '@/lib/motion';
 
 const Shopping = () => {
   const { t } = useTranslation();
+  const prefersReducedMotion = useReducedMotion() ?? false;
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
   const currentUser = useAuthStore((state) => state.user);
@@ -410,13 +413,13 @@ const Shopping = () => {
     return (
       <div className="space-y-0">
         <div
-          className={`flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors cursor-move ${
+          className={`flex items-start gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg hover:bg-accent transition-colors cursor-move ${
             isCompleted ? 'bg-accent opacity-75' : isQuickStoring ? 'bg-green-50 dark:bg-green-950/20 rounded-b-none' : 'bg-muted'
           }`}
         >
           <button
             onClick={() => toggleItemComplete(shoppingItem.id)}
-            className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
+            className={`flex-shrink-0 w-6 h-6 mt-1 rounded-full flex items-center justify-center transition-colors ${
               isCompleted 
                 ? 'bg-green-500' 
                 : 'border-2 border-border hover:border-green-500 bg-primary/10'
@@ -428,62 +431,87 @@ const Shopping = () => {
           <ItemImage
             src={shoppingItem.item?.imageUrl}
             alt={getItemName(shoppingItem)}
-            containerClassName="w-10 h-10 rounded-md"
+            containerClassName="w-10 h-10 rounded-md shrink-0 mt-0.5"
             fallbackIconSize={40}
           />
           
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 justify-between">
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <span className={`font-medium ${isCompleted ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <span className={`font-medium line-clamp-2 sm:line-clamp-1 ${isCompleted ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
                   {getItemName(shoppingItem)}
                 </span>
-                <Badge className={getCategoryColor(shoppingItem.item?.category)}>
-                  {getItemCategory(shoppingItem)}
-                </Badge>
+                <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                  <Badge className={getCategoryColor(shoppingItem.item?.category)}>
+                    {getItemCategory(shoppingItem)}
+                  </Badge>
+                </div>
               </div>
-              {isEditing && (
-                <div className="flex gap-1 flex-shrink-0 md:hidden">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSave}
-                    className="h-8 px-2"
-                  >
-                    <Save className="h-3 w-3"/>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCancel}
-                    className="h-8 px-2"
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                </div>
-              )}
+              <div className="flex items-center gap-1 shrink-0">
+                {isEditing ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSave}
+                      className="h-8 px-2"
+                    >
+                      <Save className="h-3 w-3"/>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCancel}
+                      className="h-8 px-2"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    {!isCompleted && !isQuickStoring && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => startEditingItem(shoppingItem.id)}
+                        className="h-8 w-8 p-0 opacity-70 hover:opacity-100 transition-opacity hover:bg-primary/10"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    )}
+                    {!isEditing && !isQuickStoring && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteItemHandler(shoppingItem.id)}
+                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 hover:bg-primary/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground mt-1">
               {isEditing ? (
-                <div className="mt-1">
-                  <QuantitySelector
-                    item={itemData}
-                    initialQuantity={editQuantity}
-                    initialUnit={editUnit}
-                    onQuantityChange={(quantity, unit) => {
-                      setEditQuantity(quantity);
-                      setEditUnit(unit);
-                    }}
-                    className="w-full"
-                  />
-                </div>
+                <QuantitySelector
+                  item={itemData}
+                  initialQuantity={editQuantity}
+                  initialUnit={editUnit}
+                  onQuantityChange={(quantity, unit) => {
+                    setEditQuantity(quantity);
+                    setEditUnit(unit);
+                  }}
+                  className="w-full"
+                />
               ) : (
                 <div className="flex items-center gap-2">
                   <span>{shoppingItem.quantity} {shoppingItem.unit !== 'piece' ? shoppingItem.unit : ''}</span>
                   {shoppingItem.creator && (
                     <>
                       <span>•</span>
-                      <span>
+                      <span className="truncate">
                         {t('common.addedBy', {
                           name: shoppingItem.creator.id === currentUser?.id
                             ? t('common.you')
@@ -496,52 +524,8 @@ const Shopping = () => {
               )}
             </div>
           </div>
-          
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {isEditing && (
-              <div className="hidden md:flex gap-1">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleSave}
-                  className="h-8 px-2"
-                >
-                  <Save className="h-3 w-3" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleCancel}
-                  className="h-8 px-2"
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-              </div>
-            )}
-            {!isCompleted && !isEditing && !isQuickStoring && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => startEditingItem(shoppingItem.id)}
-                className="h-8 w-8 p-0 opacity-70 hover:opacity-100 transition-opacity hover:bg-primary/10"
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-            )}
-            {!isEditing && !isQuickStoring && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => deleteItemHandler(shoppingItem.id)}
-                className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 hover:bg-primary/10"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
         </div>
 
-        {/* Inline quick-store prompt */}
         {isQuickStoring && (
           <div className="bg-green-50 dark:bg-green-950/20 border border-t-0 border-green-200 dark:border-green-800 rounded-b-lg px-3 pb-3 pt-1">
             <div className="flex items-center gap-2 flex-wrap">
@@ -835,7 +819,12 @@ const Shopping = () => {
           <CardContent>
             <div className="space-y-3">
               {pendingItems.map((shoppingItem) => (
-                <ShoppingItemRow key={shoppingItem.id} shoppingItem={shoppingItem} />
+                <motion.div
+                  key={shoppingItem.id}
+                  {...scrollRevealFadeUp(prefersReducedMotion)}
+                >
+                  <ShoppingItemRow shoppingItem={shoppingItem} />
+                </motion.div>
               ))}
               
               {pendingItems.length === 0 && (
@@ -888,11 +877,15 @@ const Shopping = () => {
             ) : (
               <div className="space-y-3">
                 {completedItems.map((shoppingItem) => (
-                  <ShoppingItemRow 
-                    key={shoppingItem.id} 
-                    shoppingItem={shoppingItem} 
-                    isCompleted={true} 
-                  />
+                  <motion.div
+                    key={shoppingItem.id}
+                    {...scrollRevealFadeUp(prefersReducedMotion)}
+                  >
+                    <ShoppingItemRow
+                      shoppingItem={shoppingItem}
+                      isCompleted={true}
+                    />
+                  </motion.div>
                 ))}
                 {completedItems.length === 0 && completedItemsLoaded && (
                   <div className="text-center py-8 text-muted-foreground">

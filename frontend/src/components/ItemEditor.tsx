@@ -226,44 +226,42 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
           </div>
         </div>
         
-        <div className="flex justify-between pt-4 border-t">
-          <div>
-            {item.id && item.householdId && isCurrentUserAdmin() && onDelete && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="delete" size="sm">
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    {t('buttons.delete')}
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>{t('itemSelector.deleteItem')}</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {t('itemSelector.deleteItemConfirmation', { item: getItemDisplayName(item, t) })}
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>{t('buttons.cancel')}</AlertDialogCancel>
-                    <AlertDialogAction 
-                      onClick={handleDelete}
-                      className="bg-red-600 hover:bg-red-700 text-white"
-                    >
-                      {t('buttons.delete')}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
-          </div>
+        <div className="pt-4 border-t space-y-3">
           <div className="flex gap-2">
-            <Button variant="outline" onClick={onCancel}>
+            <Button variant="outline" onClick={onCancel} className="flex-1">
               {t('buttons.cancel')}
             </Button>
-            <Button variant="green" onClick={handleSave} disabled={!name.trim()}>
+            <Button variant="green" onClick={handleSave} disabled={!name.trim()} className="flex-1">
               {item.id ? t('buttons.update') : t('buttons.create')}
             </Button>
           </div>
+          {item.id && item.householdId && isCurrentUserAdmin() && onDelete && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="delete" size="sm" className="w-full">
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  {t('buttons.delete')}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t('itemSelector.deleteItem')}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {t('itemSelector.deleteItemConfirmation', { item: getItemDisplayName(item, t) })}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{t('buttons.cancel')}</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    {t('buttons.delete')}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </div>
       </DialogContent>
     </Dialog>

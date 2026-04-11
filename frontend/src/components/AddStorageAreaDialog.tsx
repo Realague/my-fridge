@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
 import { useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -53,8 +52,8 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
           size="sm"
           onClick={() => setOpen(true)}
         >
-          <Plus className="h-4 w-4 mr-2" />
-          {t('storageArea.addArea')}
+          <Plus className="h-4 w-4 sm:mr-2" />
+          <span className="hidden sm:inline">{t('storageArea.addArea')}</span>
         </Button>
       )}
 

@@ -14,7 +14,7 @@ const buttonVariants = cva(
         outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         green: "bg-green-600 hover:bg-green-700 text-white",
         delete: "border border-red-600 bg-card/90 hover:bg-red-700 hover:text-white text-red-700",
-        deleteTrash: "hover:bg-red-700 hover:text-white transition-opacity text-red-500",
+        deleteTrash: "bg-transparent hover:bg-red-700 hover:text-white transition-opacity text-red-500",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         editIconButton: "hover:text-accent-foreground hover:bg-primary/10 transition-opacity",

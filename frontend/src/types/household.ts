@@ -5,6 +5,7 @@ export interface StorageArea {
   description?: string;
   emoji: string;
   type: StorageAreaType;
+  defaultCategories?: string[];
 }
 
 export interface CreateHouseholdRequest {

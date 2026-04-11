@@ -10,9 +10,12 @@ import { toast } from 'sonner';
 import { useCallback, useMemo } from 'react';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { getTranslatedUnitLabel } from '@/utils/unitSystem';
+import { motion, useReducedMotion } from 'framer-motion';
+import { scrollRevealFadeUp } from '@/lib/motion';
 
 export const LowStockCard = () => {
   const { t } = useTranslation();
+  const prefersReducedMotion = useReducedMotion() ?? false;
   const navigate = useNavigate();
   const { getLowStockItemsForHousehold } = useItemMinimumStore();
   const { createShoppingItem, items: shoppingItems } = useShoppingStore();
@@ -52,14 +55,14 @@ export const LowStockCard = () => {
 
   return (
     <Card className="bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-950/20 dark:to-yellow-950/20 border-orange-200 dark:border-orange-800">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
+      <CardHeader className="px-4 sm:px-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="min-w-0">
             <CardTitle className="flex items-center gap-2 text-orange-900 dark:text-orange-100">
-              <AlertCircle className="h-5 w-5" />
-              {t('pages.dashboard.lowStockItems')}
+              <AlertCircle className="h-5 w-5 shrink-0" />
+              <span className="truncate">{t('pages.dashboard.lowStockItems')}</span>
             </CardTitle>
-            <CardDescription className="text-orange-700 dark:text-orange-300">
+            <CardDescription className="text-orange-700 dark:text-orange-300 mt-1">
               {t('pages.dashboard.itemsNeedRestock', { count: lowStockItems.length })}
             </CardDescription>
           </div>
@@ -67,22 +70,23 @@ export const LowStockCard = () => {
             variant="outline"
             size="sm"
             onClick={() => navigate('/item-minimums')}
-            className="border-orange-300 text-orange-700 hover:bg-orange-100 dark:border-orange-700 dark:text-orange-300 dark:hover:bg-orange-900/20"
+            className="border-orange-300 text-orange-700 hover:bg-orange-100 dark:border-orange-700 dark:text-orange-300 dark:hover:bg-orange-900/20 shrink-0 w-full sm:w-auto"
           >
             <Settings className="h-4 w-4 mr-2" />
             {t('itemMinimum.manageMinimums')}
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 sm:px-6">
         <div className="space-y-3">
           {lowStockItems.slice(0, 3).map((lowStockItem) => (
-            <div
+            <motion.div
               key={lowStockItem.itemMinimum.id}
-              className="flex items-center justify-between p-3 bg-white dark:bg-gray-900 rounded-lg border border-orange-200 dark:border-orange-800"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-white dark:bg-gray-900 rounded-lg border border-orange-200 dark:border-orange-800"
+              {...scrollRevealFadeUp(prefersReducedMotion)}
             >
-              <div className="flex-1">
-                <div className="font-medium text-foreground">
+              <div className="min-w-0 flex-1">
+                <div className="font-medium text-foreground truncate">
                   {getItemDisplayName(lowStockItem.itemMinimum.item, t)}
                 </div>
                 <div className="text-sm text-muted-foreground">
@@ -97,9 +101,9 @@ export const LowStockCard = () => {
                 </div>
               </div>
               {isInShoppingList(lowStockItem.itemMinimum.itemId) ? (
-                <Badge variant="secondary" className="ml-2 flex items-center gap-1">
+                <Badge variant="secondary" className="flex items-center gap-1 self-start sm:self-auto shrink-0">
                   <ShoppingCart className="h-3 w-3" />
-                  {t('pages.dashboard.alreadyInShoppingList')}
+                  <span className="truncate">{t('pages.dashboard.alreadyInShoppingList')}</span>
                 </Badge>
               ) : (
                 <Button
@@ -117,13 +121,13 @@ export const LowStockCard = () => {
                       lowStockItem.itemMinimum.minimumUnit
                     );
                   }}
-                  className="ml-2"
+                  className="self-start sm:self-auto shrink-0"
                 >
                   <Plus className="h-4 w-4 mr-1" />
                   {t('buttons.add')}
                 </Button>
               )}
-            </div>
+            </motion.div>
           ))}
           {lowStockItems.length > 3 && (
             <Button

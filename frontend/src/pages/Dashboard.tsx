@@ -27,10 +27,13 @@ import { useRecipeStore } from '@/stores/recipeStore';
 import { useItemMinimumStore } from '@/stores/itemMinimumStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next';
+import { motion, useReducedMotion } from 'framer-motion';
+import { scrollRevealFadeUp, scrollRevealSlideRight } from '@/lib/motion';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const prefersReducedMotion = useReducedMotion() ?? false;
   
   // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
   const [showNotifications, setShowNotifications] = useState(false);
@@ -191,18 +194,19 @@ const Dashboard = () => {
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Quick Actions */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {quickActions.map((action, index) => (
-            <Card
-              key={index}
-              className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
-              onClick={() => navigate(action.route)}
-            >
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl mb-2">{action.emoji}</div>
-                <div className="font-medium text-sm text-foreground">{action.title}</div>
-                <div className="text-xs text-muted-foreground">{action.description}</div>
-              </CardContent>
-            </Card>
+          {quickActions.map((action) => (
+            <motion.div key={action.route} {...scrollRevealFadeUp(prefersReducedMotion)}>
+              <Card
+                className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+                onClick={() => navigate(action.route)}
+              >
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl mb-2">{action.emoji}</div>
+                  <div className="font-medium text-sm text-foreground">{action.title}</div>
+                  <div className="text-xs text-muted-foreground">{action.description}</div>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
 
@@ -240,11 +244,12 @@ const Dashboard = () => {
               </div>
             ) : (
               storageAreasWithStats.map((area) => (
-                <StorageAreaCard
-                  key={area.id}
-                  area={area}
-                  onClick={() => navigate(`/storage/${area.id}`)}
-                />
+                <motion.div key={area.id} {...scrollRevealSlideRight(prefersReducedMotion)}>
+                  <StorageAreaCard
+                    area={area}
+                    onClick={() => navigate(`/storage/${area.id}`)}
+                  />
+                </motion.div>
               ))
             )}
           </div>

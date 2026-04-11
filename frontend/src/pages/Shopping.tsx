@@ -21,9 +21,12 @@ import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
 import { StorageAreaType } from '@/types/enums';
 import { ItemImage } from '@/components/ItemImage';
 import { useAuthStore } from '@/stores/authStore';
+import { motion, useReducedMotion } from 'framer-motion';
+import { scrollRevealFadeUp } from '@/lib/motion';
 
 const Shopping = () => {
   const { t } = useTranslation();
+  const prefersReducedMotion = useReducedMotion() ?? false;
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
   const currentUser = useAuthStore((state) => state.user);
@@ -601,7 +604,12 @@ const Shopping = () => {
           <CardContent>
             <div className="space-y-3">
               {pendingItems.map((shoppingItem) => (
-                <ShoppingItemRow key={shoppingItem.id} shoppingItem={shoppingItem} />
+                <motion.div
+                  key={shoppingItem.id}
+                  {...scrollRevealFadeUp(prefersReducedMotion)}
+                >
+                  <ShoppingItemRow shoppingItem={shoppingItem} />
+                </motion.div>
               ))}
               
               {pendingItems.length === 0 && (
@@ -654,11 +662,15 @@ const Shopping = () => {
             ) : (
               <div className="space-y-3">
                 {completedItems.map((shoppingItem) => (
-                  <ShoppingItemRow 
-                    key={shoppingItem.id} 
-                    shoppingItem={shoppingItem} 
-                    isCompleted={true} 
-                  />
+                  <motion.div
+                    key={shoppingItem.id}
+                    {...scrollRevealFadeUp(prefersReducedMotion)}
+                  >
+                    <ShoppingItemRow
+                      shoppingItem={shoppingItem}
+                      isCompleted={true}
+                    />
+                  </motion.div>
                 ))}
                 {completedItems.length === 0 && completedItemsLoaded && (
                   <div className="text-center py-8 text-muted-foreground">

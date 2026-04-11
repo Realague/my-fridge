@@ -26,6 +26,8 @@ import { ItemImage } from '@/components/ItemImage';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/authStore';
+import { motion, useReducedMotion } from 'framer-motion';
+import { scrollRevealFadeUp } from '@/lib/motion';
 
 /** Text/badge color by share of recommended freezer time used (<70% blue, 70–90% orange, >90% red). */
 function getFreezerColorClass(daysFrozen: number, recommendedDays: number): string {
@@ -96,7 +98,8 @@ const StorageArea = () => {
   } = useStoredItemStore();
   const { selectedHouseholdId } = useProtectedRoute();
   const currentUser = useAuthStore((state) => state.user);
-  
+  const prefersReducedMotion = useReducedMotion() ?? false;
+
   // Local state
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
@@ -702,7 +705,12 @@ const StorageArea = () => {
             </Card>
           ) : storageItems.length > 0 ? (
             storageItems.map((storageItem) => (
-              <StorageItemCard key={storageItem.id} storageItem={storageItem} />
+              <motion.div
+                key={storageItem.id}
+                {...scrollRevealFadeUp(prefersReducedMotion)}
+              >
+                <StorageItemCard storageItem={storageItem} />
+              </motion.div>
             ))
           ) : (
             <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">

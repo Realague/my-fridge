@@ -15,10 +15,13 @@ import { useTranslation } from 'react-i18next';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { getTranslatedUnitLabel } from '@/utils/unitSystem';
 import { toast } from '@/hooks/use-toast';
+import { motion, useReducedMotion } from 'framer-motion';
+import { scrollRevealFadeUp } from '@/lib/motion';
 
 const ItemMinimums = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const prefersReducedMotion = useReducedMotion() ?? false;
   const { selectedHouseholdId } = useProtectedRoute();
   
   const { 
@@ -152,7 +155,11 @@ const ItemMinimums = () => {
               const lowStock = isLowStock(item.id, minimum.minimumQuantity, minimum.minimumUnit);
 
               return (
-                <Card key={minimum.id} className="bg-card backdrop-blur-sm border-0 shadow-lg">
+                <motion.div
+                  key={minimum.id}
+                  {...scrollRevealFadeUp(prefersReducedMotion)}
+                >
+                <Card className="bg-card backdrop-blur-sm border-0 shadow-lg">
                   <CardContent className="p-3 sm:p-4">
                     <div className="flex items-start gap-3">
                       <ItemImage
@@ -238,6 +245,7 @@ const ItemMinimums = () => {
                     </div>
                   </CardContent>
                 </Card>
+                </motion.div>
               );
             })}
           </div>

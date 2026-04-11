@@ -10,9 +10,12 @@ import { toast } from 'sonner';
 import { useCallback, useMemo } from 'react';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { getTranslatedUnitLabel } from '@/utils/unitSystem';
+import { motion, useReducedMotion } from 'framer-motion';
+import { scrollRevealFadeUp } from '@/lib/motion';
 
 export const LowStockCard = () => {
   const { t } = useTranslation();
+  const prefersReducedMotion = useReducedMotion() ?? false;
   const navigate = useNavigate();
   const { getLowStockItemsForHousehold } = useItemMinimumStore();
   const { createShoppingItem, items: shoppingItems } = useShoppingStore();
@@ -77,9 +80,10 @@ export const LowStockCard = () => {
       <CardContent className="px-4 sm:px-6">
         <div className="space-y-3">
           {lowStockItems.slice(0, 3).map((lowStockItem) => (
-            <div
+            <motion.div
               key={lowStockItem.itemMinimum.id}
               className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-white dark:bg-gray-900 rounded-lg border border-orange-200 dark:border-orange-800"
+              {...scrollRevealFadeUp(prefersReducedMotion)}
             >
               <div className="min-w-0 flex-1">
                 <div className="font-medium text-foreground truncate">
@@ -122,7 +126,7 @@ export const LowStockCard = () => {
                   {t('buttons.add')}
                 </Button>
               )}
-            </div>
+            </motion.div>
           ))}
           {lowStockItems.length > 3 && (
             <Button

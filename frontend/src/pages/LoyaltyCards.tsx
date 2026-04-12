@@ -8,6 +8,7 @@ import BarcodeDisplay from '@/components/BarcodeDisplay';
 import LoyaltyCardForm from '@/components/LoyaltyCardForm';
 import { StoreLogo } from '@/components/StoreSelector';
 import { useLoyaltyCardStore } from '@/stores/loyaltyCardStore';
+import { useHouseholdStore } from '@/stores/householdStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
@@ -41,13 +42,27 @@ const LoyaltyCards = () => {
     loading,
   } = useLoyaltyCardStore();
 
+  const selectedHouseholdId = useHouseholdStore((s) => s.selectedHouseholdId);
+  const households = useHouseholdStore((s) => s.households);
+  const fetchHouseholds = useHouseholdStore((s) => s.fetchHouseholds);
+
+  const householdId =
+    selectedHouseholdId ?? (households.length > 0 ? households[0].id : null);
+
   const [showForm, setShowForm] = useState(false);
   const [selectedCard, setSelectedCard] = useState<LoyaltyCard | null>(null);
   const [cardToDelete, setCardToDelete] = useState<LoyaltyCard | null>(null);
 
   useEffect(() => {
-    fetchLoyaltyCards();
-  }, []);
+    if (households.length === 0) {
+      void fetchHouseholds();
+    }
+  }, [fetchHouseholds, households.length]);
+
+  useEffect(() => {
+    if (!householdId) return;
+    void fetchLoyaltyCards();
+  }, [householdId, fetchLoyaltyCards]);
 
   const loyaltyCards = getLoyaltyCardsForHousehold();
 

@@ -24,6 +24,7 @@ const mapHtml5Format = (format: string): BarcodeFormat => {
 const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
   const { t } = useTranslation();
   const scannerRef = useRef<Html5Qrcode | null>(null);
+  const stopAlreadyRequestedRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [isStarting, setIsStarting] = useState(true);
@@ -31,6 +32,16 @@ const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
   useEffect(() => {
     const readerId = 'barcode-reader';
     let mounted = true;
+
+    const safeStop = () => {
+      if (stopAlreadyRequestedRef.current || !scannerRef.current) return;
+      stopAlreadyRequestedRef.current = true;
+      try {
+        void Promise.resolve(scannerRef.current.stop()).catch(() => {});
+      } catch {
+        // html5-qrcode can throw synchronously if already stopped
+      }
+    };
 
     const startScanner = async () => {
       try {
@@ -45,8 +56,9 @@ const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
           },
           (decodedText, decodedResult) => {
             if (!mounted) return;
-            const format = mapHtml5Format(decodedResult.result.format?.formatName || '');
-            scanner.stop().catch(() => {});
+            const rawFormatName = decodedResult?.result?.format?.formatName;
+            const format = mapHtml5Format(rawFormatName || '');
+            safeStop();
             onScan(decodedText, format);
           },
           () => {}
@@ -65,14 +77,12 @@ const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
 
     return () => {
       mounted = false;
-      if (scannerRef.current) {
-        scannerRef.current.stop().catch(() => {});
-      }
+      safeStop();
     };
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col">
+    <div className="fixed inset-0 z-[100] bg-black flex flex-col">
       <div className="flex items-center justify-between p-4">
         <h2 className="text-white font-semibold flex items-center gap-2">
           <Camera className="h-5 w-5" />

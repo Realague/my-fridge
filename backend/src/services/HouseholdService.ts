@@ -285,6 +285,7 @@ export class HouseholdService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      lowStockAlertsEnabled: user.lowStockAlertsEnabled !== false,
       googleId: user.googleId,
       selectedHouseholdId: user.selectedHouseholdId,
       createdAt: user.createdAt,

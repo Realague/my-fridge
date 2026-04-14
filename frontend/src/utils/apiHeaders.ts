@@ -45,11 +45,13 @@ export const getCommonHeaders = (): Record<string, string> => {
 };
 
 /**
- * Gets headers for authenticated API requests
+ * Gets headers for authenticated API requests.
+ * Includes Content-Type so JSON bodies (e.g. PUT /auth/me) are parsed by Express.
  */
 export const getAuthHeaders = (token: string): Record<string, string> => {
   return {
-    'Authorization': `Bearer ${token}`,
+    ...getCommonHeaders(),
+    Authorization: `Bearer ${token}`,
   };
 };
 

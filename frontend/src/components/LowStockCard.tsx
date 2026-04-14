@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useItemMinimumStore } from '@/stores/itemMinimumStore';
 import { useShoppingStore } from '@/stores/shoppingStore';
+import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
 import { useCallback, useMemo } from 'react';
 import { getItemDisplayName } from '@/utils/itemUtils';
@@ -17,6 +18,7 @@ export const LowStockCard = () => {
   const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion() ?? false;
   const navigate = useNavigate();
+  const lowStockAlertsEnabled = useAuthStore((s) => s.user?.lowStockAlertsEnabled !== false);
   const { getLowStockItemsForHousehold } = useItemMinimumStore();
   const { createShoppingItem, items: shoppingItems } = useShoppingStore();
   const lowStockItems = getLowStockItemsForHousehold();
@@ -49,7 +51,7 @@ export const LowStockCard = () => {
     }
   };
 
-  if (lowStockItems.length === 0) {
+  if (!lowStockAlertsEnabled || lowStockItems.length === 0) {
     return null;
   }
 

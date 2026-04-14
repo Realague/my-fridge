@@ -13,28 +13,28 @@ export class UserRepository {
   
   async findById(id: string): Promise<any> {
     return await User.findByPk(id, {
-      attributes: ['id', 'firstName', 'lastName', 'email', 'googleId', 'selectedHouseholdId', 'refreshToken', 'refreshTokenExpiresAt', 'createdAt', 'updatedAt']
+      attributes: ['id', 'firstName', 'lastName', 'email', 'lowStockAlertsEnabled', 'googleId', 'selectedHouseholdId', 'refreshToken', 'refreshTokenExpiresAt', 'createdAt', 'updatedAt']
     });
   }
 
   async findByEmail(email: string): Promise<any> {
     return await User.findOne({
       where: { email },
-      attributes: ['id', 'firstName', 'lastName', 'email', 'googleId', 'selectedHouseholdId','createdAt', 'updatedAt']
+      attributes: ['id', 'firstName', 'lastName', 'email', 'lowStockAlertsEnabled', 'googleId', 'selectedHouseholdId','createdAt', 'updatedAt']
     });
   }
 
   async findByGoogleId(googleId: string): Promise<any> {
     return await User.findOne({
       where: { googleId },
-      attributes: ['id', 'firstName', 'lastName', 'email', 'googleId', 'selectedHouseholdId', 'refreshToken', 'refreshTokenExpiresAt', 'createdAt', 'updatedAt']
+      attributes: ['id', 'firstName', 'lastName', 'email', 'lowStockAlertsEnabled', 'googleId', 'selectedHouseholdId', 'refreshToken', 'refreshTokenExpiresAt', 'createdAt', 'updatedAt']
     });
   }
 
   async findByRefreshToken(refreshToken: string): Promise<any> {
     return await User.findOne({
       where: { refreshToken },
-      attributes: ['id', 'firstName', 'lastName', 'email', 'googleId', 'selectedHouseholdId', 'refreshToken', 'refreshTokenExpiresAt', 'createdAt', 'updatedAt']
+      attributes: ['id', 'firstName', 'lastName', 'email', 'lowStockAlertsEnabled', 'googleId', 'selectedHouseholdId', 'refreshToken', 'refreshTokenExpiresAt', 'createdAt', 'updatedAt']
     });
   }
 
@@ -52,7 +52,7 @@ export class UserRepository {
 
     return await User.findAll({
       where: whereClause,
-      attributes: ['id', 'firstName', 'lastName', 'email', 'googleId', 'selectedHouseholdId','createdAt', 'updatedAt'],
+      attributes: ['id', 'firstName', 'lastName', 'email', 'lowStockAlertsEnabled', 'googleId', 'selectedHouseholdId','createdAt', 'updatedAt'],
       limit: options.limit,
       offset: options.offset,
       order: options.sortBy ? [[options.sortBy, options.sortOrder || 'DESC']] : undefined
@@ -71,6 +71,7 @@ export class UserRepository {
   async update(id: string, data: Partial<{
     firstName: string;
     lastName: string;
+    lowStockAlertsEnabled: boolean;
     selectedHouseholdId: string;
   }>): Promise<[number]> {
     return await User.update(data, {

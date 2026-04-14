@@ -244,14 +244,14 @@ export const OnboardingStorageSelector = ({
             {t('storageArea.addCustomStorageArea')}
           </Button>
         </SheetTrigger>
-        <SheetContent side="bottom" className="h-[90vh]">
-          <SheetHeader>
+        <SheetContent side="bottom" className="h-[90vh] max-h-[90dvh] flex flex-col gap-0 overflow-hidden">
+          <SheetHeader className="shrink-0 pr-10 text-left">
             <SheetTitle>
               {editingArea !== null ? t('storageArea.editStorageArea') : t('storageArea.addStorageArea')}
             </SheetTitle>
           </SheetHeader>
-          
-          <div className="space-y-6 mt-6">
+
+          <div className="mt-6 min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain pr-1 pb-2">
             {/* Storage Type Selection */}
             <div className="space-y-3">
               <Label>{t('storageArea.type')}</Label>

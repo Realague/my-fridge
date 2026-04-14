@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { Button } from '@/components/ui/button';
 import { Camera, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -10,13 +10,32 @@ interface BarcodeScannerProps {
   onClose: () => void;
 }
 
+const FORMATS_TO_SUPPORT = [
+  Html5QrcodeSupportedFormats.QR_CODE,
+  Html5QrcodeSupportedFormats.AZTEC,
+  Html5QrcodeSupportedFormats.CODABAR,
+  Html5QrcodeSupportedFormats.CODE_39,
+  Html5QrcodeSupportedFormats.CODE_93,
+  Html5QrcodeSupportedFormats.CODE_128,
+  Html5QrcodeSupportedFormats.DATA_MATRIX,
+  Html5QrcodeSupportedFormats.EAN_13,
+  Html5QrcodeSupportedFormats.EAN_8,
+  Html5QrcodeSupportedFormats.ITF,
+  Html5QrcodeSupportedFormats.PDF_417,
+  Html5QrcodeSupportedFormats.UPC_A,
+  Html5QrcodeSupportedFormats.UPC_E,
+];
+
 const mapHtml5Format = (format: string): BarcodeFormat => {
   const formatMap: Record<string, BarcodeFormat> = {
-    'EAN_13': BarcodeFormat.EAN13,
-    'EAN_8': BarcodeFormat.EAN8,
-    'CODE_128': BarcodeFormat.CODE128,
-    'CODE_39': BarcodeFormat.CODE39,
-    'QR_CODE': BarcodeFormat.QR,
+    EAN_13: BarcodeFormat.EAN13,
+    EAN_8: BarcodeFormat.EAN8,
+    CODE_128: BarcodeFormat.CODE128,
+    CODE_39: BarcodeFormat.CODE39,
+    QR_CODE: BarcodeFormat.QR,
+    DATA_MATRIX: BarcodeFormat.DATA_MATRIX,
+    PDF_417: BarcodeFormat.PDF417,
+    AZTEC: BarcodeFormat.AZTEC,
   };
   return formatMap[format] || BarcodeFormat.OTHER;
 };
@@ -45,14 +64,18 @@ const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
 
     const startScanner = async () => {
       try {
-        const scanner = new Html5Qrcode(readerId);
+        const scanner = new Html5Qrcode(readerId, { formatsToSupport: FORMATS_TO_SUPPORT });
         scannerRef.current = scanner;
 
         await scanner.start(
           { facingMode: 'environment' },
           {
             fps: 10,
-            qrbox: { width: 250, height: 150 },
+            qrbox: (viewfinderWidth, viewfinderHeight) => {
+              const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+              const box = Math.floor(minEdge * 0.72);
+              return { width: box, height: box };
+            },
           },
           (decodedText, decodedResult) => {
             if (!mounted) return;

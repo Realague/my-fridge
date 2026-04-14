@@ -92,6 +92,9 @@ export enum BarcodeFormat {
   CODE128 = 'code128',
   CODE39 = 'code39',
   QR = 'qr',
+  DATA_MATRIX = 'data_matrix',
+  PDF417 = 'pdf417',
+  AZTEC = 'aztec',
   OTHER = 'other'
 }
 

@@ -3389,8 +3389,13 @@
       "manualEntry": "Saisir manuellement",
       "cardNumber": "Numéro de carte",
       "cardNumberPlaceholder": "Ex: 1234 5678 9012",
+      "generateAs2D": "Afficher comme code 2D (QR)",
+      "generateAs2DHint": "À cocher si la carte utilise un QR code au lieu d’un code-barres linéaire.",
       "notes": "Notes",
       "notesPlaceholder": "Notes optionnelles..."
+    },
+    "barcodeDisplay": {
+      "renderUnavailable": "Impossible d’afficher ce code sous forme de code-barres. Utilisez le numéro ou scannez la carte physique."
     },
     "storeSelector": {
       "title": "Choisir une enseigne",
@@ -3403,7 +3408,7 @@
       "title": "Scanner le code-barres",
       "starting": "Démarrage de la caméra...",
       "cameraError": "Impossible d'accéder à la caméra",
-      "hint": "Placez le code-barres dans le cadre"
+      "hint": "Placez le code (1D ou 2D) dans le cadre"
     }
   },
   "common": {

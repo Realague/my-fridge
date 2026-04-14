@@ -3409,8 +3409,13 @@
       "manualEntry": "Enter manually",
       "cardNumber": "Card number",
       "cardNumberPlaceholder": "e.g. 1234 5678 9012",
+      "generateAs2D": "Show as 2D code (QR)",
+      "generateAs2DHint": "Check this if the card uses a QR code instead of a linear barcode.",
       "notes": "Notes",
       "notesPlaceholder": "Optional notes..."
+    },
+    "barcodeDisplay": {
+      "renderUnavailable": "This value can’t be shown as a barcode here. Use the number or scan the physical card."
     },
     "storeSelector": {
       "title": "Choose a store",
@@ -3423,7 +3428,7 @@
       "title": "Scan barcode",
       "starting": "Starting camera...",
       "cameraError": "Unable to access camera",
-      "hint": "Place the barcode in the frame"
+      "hint": "Place the code (1D or 2D) in the frame"
     }
   },
   "common": {

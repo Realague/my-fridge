@@ -77,10 +77,11 @@ const Dashboard = () => {
       fetchShoppingItems();
       // Fetch recipes for the dashboard count
       fetchRecipes();
-      // Fetch low stock items for the LowStockCard
-      fetchLowStockItems();
+      if (currentUser?.lowStockAlertsEnabled !== false) {
+        fetchLowStockItems();
+      }
     }
-  }, [selectedHouseholdId, authLoading, hasHousehold]); // Remove function dependencies to prevent infinite loops
+  }, [selectedHouseholdId, authLoading, hasHousehold, currentUser?.lowStockAlertsEnabled]); // Remove function dependencies to prevent infinite loops
 
   // Don't render dashboard content until we have a household
   // This prevents rendering before redirect to onboarding

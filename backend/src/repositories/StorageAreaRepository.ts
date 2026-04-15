@@ -1,5 +1,5 @@
 import { StorageArea, Household } from '../models';
-import { StorageAreaType } from '../types/enums';
+import { StorageAreaType, ItemCategory } from '../types/enums';
 
 export interface FindOptions {
   limit?: number;
@@ -13,6 +13,8 @@ export interface CreateStorageAreaData {
   name: string;
   emoji?: string;
   type?: StorageAreaType;
+  defaultCategories?: ItemCategory[];
+  sortOrder?: number;
 }
 
 export class StorageAreaRepository {
@@ -41,7 +43,7 @@ export class StorageAreaRepository {
       ],
       limit: options.limit,
       offset: options.offset,
-      order: options.sortBy ? [[options.sortBy, options.sortOrder || 'ASC']] : [['name', 'ASC']],
+      order: options.sortBy ? [[options.sortBy, options.sortOrder || 'ASC']] : [['sort_order', 'ASC'], ['name', 'ASC']],
     });
   }
 
@@ -51,6 +53,8 @@ export class StorageAreaRepository {
       name: data.name,
       emoji: data.emoji || '📦',
       type: data.type || StorageAreaType.OTHER,
+      defaultCategories: data.defaultCategories || [],
+      sortOrder: data.sortOrder ?? 0,
     });
   }
 
@@ -77,5 +81,13 @@ export class StorageAreaRepository {
       where: { id, householdId }
     });
     return !!storageArea;
+  }
+
+  async bulkUpdateSortOrder(items: Array<{ id: string; sortOrder: number }>): Promise<void> {
+    await Promise.all(
+      items.map(item =>
+        StorageArea.update({ sortOrder: item.sortOrder }, { where: { id: item.id } })
+      )
+    );
   }
 } 

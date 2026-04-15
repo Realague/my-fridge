@@ -134,6 +134,10 @@ function validateSchema(data: any, schema: any): string[] {
         errors.push('Invalid email format');
       }
     }
+
+    if (data.lowStockAlertsEnabled !== undefined && typeof data.lowStockAlertsEnabled !== 'boolean') {
+      errors.push('lowStockAlertsEnabled must be a boolean');
+    }
   }
    
   // Meal Plan validation schemas

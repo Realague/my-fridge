@@ -47,6 +47,8 @@
   "storageArea": {
     "item": "item",
     "items": "items",
+    "itemCount_one": "{{count}} item",
+    "itemCount_other": "{{count}} items",
     "low": "low",
     "addArea": "Add area",
     "addStorageArea": "Add storage area",
@@ -55,6 +57,8 @@
     "namePlaceholder": "e.g., Main Fridge, Walk-in Pantry",
     "type": "Type",
     "selectType": "Select storage type",
+    "defaultCategories": "Default categories",
+    "selectCategories": "Select item categories this area stores by default",
     "emoji": "Emoji (optional)",
     "creating": "Creating...",
     "createArea": "Create area",
@@ -411,7 +415,22 @@
       "loadingCompletedItems": "Loading completed items...",
       "noCompletedItemsYet": "No completed items yet",
       "completedItemsWillAppear": "Items you mark as complete will appear here",
-      "addedQuantity": "Added {{quantity}} {{unit}} of {{item}} to shopping list"
+      "addedQuantity": "Added {{quantity}} {{unit}} of {{item}} to shopping list",
+      "bulkStorage": "Store all",
+      "bulkStorageTitle": "Store groceries",
+      "storeAll": "Store all",
+      "storeCount": "Store ({{count}})",
+      "itemAddedQuick": "{{item}} added to {{area}}",
+      "modify": "Edit",
+      "skip": "Skip",
+      "validate": "Confirm",
+      "expirationDate": "Expiry",
+      "suggestedArea": "→ {{area}}",
+      "bulkStorageSuccess": "{{count}} items stored successfully",
+      "bulkStorageError": "Failed to store items",
+      "noStorageAreas": "No storage areas configured",
+      "selectAll": "Select all",
+      "deselectAll": "Deselect all"
     },
     "mealPlans": {
       "title": "Meal plans",
@@ -3390,8 +3409,13 @@
       "manualEntry": "Enter manually",
       "cardNumber": "Card number",
       "cardNumberPlaceholder": "e.g. 1234 5678 9012",
+      "generateAs2D": "Show as 2D code (QR)",
+      "generateAs2DHint": "Check this if the card uses a QR code instead of a linear barcode.",
       "notes": "Notes",
       "notesPlaceholder": "Optional notes..."
+    },
+    "barcodeDisplay": {
+      "renderUnavailable": "This value can’t be shown as a barcode here. Use the number or scan the physical card."
     },
     "storeSelector": {
       "title": "Choose a store",
@@ -3404,7 +3428,7 @@
       "title": "Scan barcode",
       "starting": "Starting camera...",
       "cameraError": "Unable to access camera",
-      "hint": "Place the barcode in the frame"
+      "hint": "Place the code (1D or 2D) in the frame"
     }
   },
   "common": {

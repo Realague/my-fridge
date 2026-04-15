@@ -10,6 +10,7 @@ export interface User {
   firstName: string;
   lastName: string;
   selectedHouseholdId: string | null;
+  lowStockAlertsEnabled?: boolean;
 }
 
 interface TokenInfo {
@@ -32,7 +33,11 @@ interface AuthState {
   signInWithGoogle: () => void;
   signOut: () => void;
   refreshTokens: () => Promise<boolean>;
-  updateUser: (firstName: string, lastName: string) => Promise<void>;
+  updateUser: (payload: {
+    firstName?: string;
+    lastName?: string;
+    lowStockAlertsEnabled?: boolean;
+  }) => Promise<void>;
   initializeGoogleAuth: () => void;
   checkStoredAuth: () => Promise<void>;
   isTokenExpired: (token: string) => boolean;
@@ -241,16 +246,27 @@ export const useAuthStore = create<AuthState>()(
         return state.tokens.accessToken;
       },
 
-      updateUser: async (firstName: string, lastName: string) => {
+      updateUser: async (payload: {
+        firstName?: string;
+        lastName?: string;
+        lowStockAlertsEnabled?: boolean;
+      }) => {
         const token = await get().getValidAccessToken();
         if (!token) {
           throw new Error('No valid authentication token found');
         }
 
+        const body: Record<string, string | boolean> = {};
+        if (payload.firstName !== undefined) body.firstName = payload.firstName;
+        if (payload.lastName !== undefined) body.lastName = payload.lastName;
+        if (payload.lowStockAlertsEnabled !== undefined) {
+          body.lowStockAlertsEnabled = payload.lowStockAlertsEnabled;
+        }
+
         const response = await fetch(`${getAuthBaseUrl()}/auth/me`, {
           method: 'PUT',
           headers: getAuthHeaders(token),
-          body: JSON.stringify({ firstName, lastName }),
+          body: JSON.stringify(body),
         });
 
         if (response.ok) {

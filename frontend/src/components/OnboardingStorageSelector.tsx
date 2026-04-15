@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { StorageArea } from '@/types/household';
 import { useTranslation } from 'react-i18next';
-import { StorageAreaType } from '@/types/enums';
+import { StorageAreaType, ITEM_CATEGORIES } from '@/types/enums';
+import { getCategoryColor } from '@/utils/itemUtils';
 
 interface OnboardingStorageSelectorProps {
   selectedAreas: StorageArea[];
@@ -38,6 +39,13 @@ export const OnboardingStorageSelector = ({
   const [areaName, setAreaName] = useState('');
   const [areaDescription, setAreaDescription] = useState('');
   const [selectedEmoji, setSelectedEmoji] = useState('🥬');
+  const [defaultCategories, setDefaultCategories] = useState<string[]>([]);
+
+  const toggleCategory = (category: string) => {
+    setDefaultCategories((prev) =>
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
+    );
+  };
 
   const storageTypeOptions: StorageTypeOption[] = [
     { 
@@ -82,6 +90,7 @@ export const OnboardingStorageSelector = ({
     setAreaDescription('');
     setSelectedEmoji('🥬');
     setSelectedType(StorageAreaType.FRIDGE);
+    setDefaultCategories([]);
   };
 
   const handleAddArea = () => {
@@ -91,7 +100,8 @@ export const OnboardingStorageSelector = ({
       name: areaName.trim(),
       description: areaDescription.trim() || undefined,
       emoji: selectedEmoji,
-      type: selectedType
+      type: selectedType,
+      ...(defaultCategories.length > 0 ? { defaultCategories } : {}),
     };
 
     if (editingArea !== null) {
@@ -113,6 +123,7 @@ export const OnboardingStorageSelector = ({
     setAreaDescription(area.description || '');
     setSelectedEmoji(area.emoji);
     setSelectedType(area.type);
+    setDefaultCategories(area.defaultCategories ?? []);
     setEditingArea(index);
     setIsAddingArea(true);
   };
@@ -130,6 +141,7 @@ export const OnboardingStorageSelector = ({
     setAreaName(suggestedName);
     setAreaDescription(typeOption.description);
     setSelectedEmoji(typeOption.emoji);
+    setDefaultCategories([]);
     setIsAddingArea(true);
   };
 
@@ -179,6 +191,18 @@ export const OnboardingStorageSelector = ({
                     {area.description && (
                       <div className="text-xs text-muted-foreground">{area.description}</div>
                     )}
+                    {area.defaultCategories && area.defaultCategories.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1.5">
+                        {area.defaultCategories.map((cat) => (
+                          <Badge
+                            key={cat}
+                            className={`text-[10px] px-1.5 py-0 ${getCategoryColor(cat)}`}
+                          >
+                            {t(`items.categories.${cat}`)}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -220,14 +244,14 @@ export const OnboardingStorageSelector = ({
             {t('storageArea.addCustomStorageArea')}
           </Button>
         </SheetTrigger>
-        <SheetContent side="bottom" className="h-[90vh]">
-          <SheetHeader>
+        <SheetContent side="bottom" className="h-[90vh] max-h-[90dvh] flex flex-col gap-0 overflow-hidden">
+          <SheetHeader className="shrink-0 pr-10 text-left">
             <SheetTitle>
               {editingArea !== null ? t('storageArea.editStorageArea') : t('storageArea.addStorageArea')}
             </SheetTitle>
           </SheetHeader>
-          
-          <div className="space-y-6 mt-6">
+
+          <div className="mt-6 min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain pr-1 pb-2">
             {/* Storage Type Selection */}
             <div className="space-y-3">
               <Label>{t('storageArea.type')}</Label>
@@ -296,6 +320,34 @@ export const OnboardingStorageSelector = ({
                     {emoji}
                   </Button>
                 ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t('storageArea.defaultCategories')}</Label>
+              <p className="text-xs text-muted-foreground">{t('storageArea.selectCategories')}</p>
+              <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto pr-1">
+                {ITEM_CATEGORIES.map((category) => {
+                  const isSelected = defaultCategories.includes(category);
+                  return (
+                    <button
+                      key={category}
+                      type="button"
+                      onClick={() => toggleCategory(category)}
+                      className="transition-all"
+                    >
+                      <Badge
+                        className={`cursor-pointer transition-all text-xs ${
+                          isSelected
+                            ? getCategoryColor(category)
+                            : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                        }`}
+                      >
+                        {t(`items.categories.${category}`)}
+                      </Badge>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 

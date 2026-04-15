@@ -3,6 +3,7 @@ import { UserRepository } from '../repositories/UserRepository';
 import { CreateHouseholdDto, UpdateHouseholdDto, JoinHouseholdDto, HouseholdQueryDto, HouseholdResponseDto, HouseholdDetailResponseDto, SetSelectedHouseholdDto } from '../types/HouseholdDto';
 import { UserResponseDto } from '../types/AuthDto';
 import { ValidationError, NotFoundError, UnauthorizedError } from '../errors/CustomErrors';
+import { ItemCategory, ITEM_CATEGORIES } from '../types/enums';
 import { StorageAreaRepository } from '../repositories/StorageAreaRepository';
 import { CascadeDeletionService } from './CascadeDeletionService';
 
@@ -50,11 +51,15 @@ export class HouseholdService {
     if (createDto.storageAreas && createDto.storageAreas.length > 0) {
       try {
         for (const customArea of createDto.storageAreas) {
+          const defaultCategories = (customArea.defaultCategories || []).filter((c): c is ItemCategory =>
+            (ITEM_CATEGORIES as string[]).includes(c)
+          );
           await this.storageAreaRepository.create({
             householdId: household.id,
             name: customArea.name,
             emoji: customArea.emoji,
-            type: customArea.type as any
+            type: customArea.type as any,
+            defaultCategories
           });
         }
       } catch (error) {
@@ -280,6 +285,7 @@ export class HouseholdService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      lowStockAlertsEnabled: user.lowStockAlertsEnabled !== false,
       googleId: user.googleId,
       selectedHouseholdId: user.selectedHouseholdId,
       createdAt: user.createdAt,

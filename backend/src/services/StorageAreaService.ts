@@ -1,8 +1,8 @@
 import { StorageAreaRepository } from '../repositories/StorageAreaRepository';
 import { HouseholdRepository } from '../repositories/HouseholdRepository';
-import { CreateStorageAreaDto, UpdateStorageAreaDto, StorageAreaResponseDto } from '../types/StorageAreaDto';
+import { CreateStorageAreaDto, UpdateStorageAreaDto, StorageAreaResponseDto, ReorderStorageAreasDto } from '../types/StorageAreaDto';
 import { ValidationError, NotFoundError, UnauthorizedError } from '../errors/CustomErrors';
-import { StorageAreaType } from '../types/enums';
+import { StorageAreaType, ItemCategory, ITEM_CATEGORIES } from '../types/enums';
 
 export interface StorageAreaQueryDto {
   limit?: number;
@@ -26,7 +26,7 @@ export class StorageAreaService {
     const storageAreas = await this.storageAreaRepository.findByHouseholdId(householdId, {
       limit: query?.limit || 50,
       offset: query?.offset || 0,
-      sortBy: query?.sortBy || 'name',
+      sortBy: query?.sortBy || 'sort_order',
       sortOrder: query?.sortOrder || 'ASC'
     });
 
@@ -51,11 +51,15 @@ export class StorageAreaService {
       throw new ValidationError('Maximum storage area limit reached for this household');
     }
 
-    // Create storage area
+    // Assign sortOrder = current count so new areas are appended at the end
+    const sortOrder = createDto.sortOrder ?? existingCount;
+
     const storageArea = await this.storageAreaRepository.create({
       name: createDto.name.trim(),
       emoji: createDto.emoji || '📦',
       type: createDto.type || StorageAreaType.OTHER,
+      defaultCategories: createDto.defaultCategories || [],
+      sortOrder,
       householdId: householdId
     });
 
@@ -103,12 +107,38 @@ export class StorageAreaService {
     if (updateDto.type !== undefined) {
       updateData.type = updateDto.type;
     }
+    if (updateDto.defaultCategories !== undefined) {
+      updateData.defaultCategories = updateDto.defaultCategories;
+    }
+    if (updateDto.sortOrder !== undefined) {
+      updateData.sortOrder = updateDto.sortOrder;
+    }
 
     await this.storageAreaRepository.update(storageAreaId, updateData);
 
     // Return updated storage area
     const updatedStorageArea = await this.storageAreaRepository.findById(storageAreaId);
     return updatedStorageArea;
+  }
+
+  async reorderStorageAreas(householdId: string, userId: string, reorderDto: ReorderStorageAreasDto): Promise<StorageAreaResponseDto[]> {
+    await this.validateHouseholdAdminAccess(householdId, userId);
+
+    if (!reorderDto.items || !Array.isArray(reorderDto.items) || reorderDto.items.length === 0) {
+      throw new ValidationError('Items array is required and must not be empty');
+    }
+
+    for (const item of reorderDto.items) {
+      const exists = await this.storageAreaRepository.exists(item.id, householdId);
+      if (!exists) {
+        throw new NotFoundError(`Storage area ${item.id} not found in this household`);
+      }
+    }
+
+    await this.storageAreaRepository.bulkUpdateSortOrder(reorderDto.items);
+
+    const storageAreas = await this.storageAreaRepository.findByHouseholdId(householdId);
+    return storageAreas.map(StorageAreaService.transformToResponseDto);
   }
 
   async deleteStorageArea(householdId: string, storageAreaId: string, userId: string): Promise<void> {
@@ -168,6 +198,8 @@ export class StorageAreaService {
     if (dto.type && !Object.values(StorageAreaType).includes(dto.type)) {
       throw new ValidationError('Invalid storage area type');
     }
+
+    this.validateDefaultCategories(dto.defaultCategories);
   }
 
   private validateUpdateStorageAreaDto(dto: UpdateStorageAreaDto): void {
@@ -188,6 +220,20 @@ export class StorageAreaService {
     if (dto.type && !Object.values(StorageAreaType).includes(dto.type)) {
       throw new ValidationError('Invalid storage area type');
     }
+
+    this.validateDefaultCategories(dto.defaultCategories);
+  }
+
+  private validateDefaultCategories(categories?: ItemCategory[]): void {
+    if (!categories) return;
+    if (!Array.isArray(categories)) {
+      throw new ValidationError('Default categories must be an array');
+    }
+    for (const cat of categories) {
+      if (!ITEM_CATEGORIES.includes(cat)) {
+        throw new ValidationError(`Invalid category: ${cat}`);
+      }
+    }
   }
 
   static transformToResponseDto(storageArea: any): StorageAreaResponseDto {
@@ -196,6 +242,8 @@ export class StorageAreaService {
       name: storageArea.name,
       emoji: storageArea.emoji,
       type: storageArea.type,
+      defaultCategories: storageArea.defaultCategories || [],
+      sortOrder: storageArea.sortOrder ?? 0,
       householdId: storageArea.householdId,
       createdAt: storageArea.createdAt,
       updatedAt: storageArea.updatedAt,

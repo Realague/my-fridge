@@ -46,7 +46,7 @@ const Dashboard = () => {
   const { getPendingItems, fetchShoppingItems } = useShoppingStore();
   const { fetchStoredItems } = useStoredItemStore();
   const { recipes, fetchRecipes } = useRecipeStore();
-  const { getItemMinimumsForHousehold, fetchLowStockItems } = useItemMinimumStore();
+  const { getItemMinimumsForHousehold, fetchItemMinimums, fetchLowStockItems } = useItemMinimumStore();
   
   // Household store - only re-renders when these specific values change
   const households = useHouseholdStore(state => state.households);
@@ -77,6 +77,9 @@ const Dashboard = () => {
       fetchShoppingItems();
       // Fetch recipes for the dashboard count
       fetchRecipes();
+      // Full item minimums list for the quick-action count (low-stock endpoint alone does not populate it)
+      fetchItemMinimums();
+      // Fetch low stock items for the LowStockCard
       if (currentUser?.lowStockAlertsEnabled !== false) {
         fetchLowStockItems();
       }

@@ -64,7 +64,7 @@ export interface CreateStoredItemRequest {
 export interface UpdateStoredItemRequest {
   quantity?: number;
   unit?: Unit;
-  expirationDate?: string;
+  expirationDate?: string | null;
   location?: string;
   isOpened?: boolean;
   openedDate?: string;

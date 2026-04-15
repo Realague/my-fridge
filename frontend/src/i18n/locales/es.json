@@ -65,6 +65,7 @@
     "fresh": "Fresco ({{days}}d)",
     "quantity": "Cantidad",
     "location": "Ubicación",
+    "moveToStorage": "Zona de almacenamiento",
     "expirationDate": "Fecha de vencimiento",
     "addItem": "Agregar artículo",
     "addItemTo": "Agregar artículo a {{name}}",

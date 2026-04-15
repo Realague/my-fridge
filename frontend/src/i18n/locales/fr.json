@@ -67,6 +67,7 @@
     "fresh": "Frais ({{days}}j)",
     "quantity": "Quantité",
     "location": "Emplacement",
+    "moveToStorage": "Zone de stockage",
     "expirationDate": "Date de péremption",
     "addItem": "Ajouter un article",
     "addItemTo": "Ajouter un article à {{name}}",

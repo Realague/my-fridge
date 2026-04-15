@@ -63,6 +63,15 @@ export class StoredItemRepository {
       };
     }
 
+    const storageAreaInclude: Record<string, unknown> = {
+      model: StorageArea,
+      as: 'storageArea',
+    };
+    if (isExpired === true || isExpiringSoon === true) {
+      storageAreaInclude.where = { type: { [Op.ne]: StorageAreaType.FREEZER } };
+      storageAreaInclude.required = true;
+    }
+
     const includeConditions: any[] = [
       {
         model: Item,
@@ -75,10 +84,7 @@ export class StoredItemRepository {
           },
         }),
       },
-      {
-        model: StorageArea,
-        as: 'storageArea',
-      },
+      storageAreaInclude,
       {
         model: User,
         as: 'creator',
@@ -104,6 +110,10 @@ export class StoredItemRepository {
         {
           model: Item,
           as: 'item',
+        },
+        {
+          model: StorageArea,
+          as: 'storageArea',
         },
         {
           model: User,
@@ -134,6 +144,8 @@ export class StoredItemRepository {
         {
           model: StorageArea,
           as: 'storageArea',
+          where: { type: { [Op.ne]: StorageAreaType.FREEZER } },
+          required: true,
         },
       ],
       order: [['expirationDate', 'ASC']],
@@ -156,6 +168,8 @@ export class StoredItemRepository {
         {
           model: StorageArea,
           as: 'storageArea',
+          where: { type: { [Op.ne]: StorageAreaType.FREEZER } },
+          required: true,
         },
       ],
       order: [['expirationDate', 'ASC']],

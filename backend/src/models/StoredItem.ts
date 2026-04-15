@@ -1,6 +1,6 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
-import { Unit, UNITS, STORAGE_UNITS } from '../types/enums';
+import { Unit, UNITS, STORAGE_UNITS, StorageAreaType } from '../types/enums';
 import { User } from './User';
 import { Item } from './Item';
 import { StorageArea } from './StorageArea';
@@ -50,6 +50,9 @@ export class StoredItem extends Model<StoredItemAttributes, StoredItemCreationAt
 
   // Helper method to get effective expiration date
   public getEffectiveExpirationDate(): Date | null {
+    if (this.storageArea?.type === StorageAreaType.FREEZER) {
+      return null;
+    }
     // If item is opened and has daysAfterOpening set
     if (this.isOpened && this.openedDate && this.item?.daysAfterOpening) {
       const openedDate = new Date(this.openedDate);

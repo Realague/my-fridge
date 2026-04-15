@@ -211,7 +211,9 @@ export class StoredItemController {
 
       res.json(response);
     } catch (error) {
-      res.status(error instanceof NotFoundError ? 404 : 500).json({
+      const status =
+        error instanceof NotFoundError ? 404 : error instanceof BadRequestError ? 400 : 500;
+      res.status(status).json({
         success: false,
         message: error instanceof Error ? error.message : 'Failed to update stored item',
       });

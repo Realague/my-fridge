@@ -5,6 +5,7 @@ export interface GoogleOAuthExchangeDto {
 export interface UpdateUserDto {
   firstName?: string;
   lastName?: string;
+  lowStockAlertsEnabled?: boolean;
 }
 
 export interface UserResponseDto {
@@ -12,6 +13,7 @@ export interface UserResponseDto {
   email: string;
   firstName: string;
   lastName: string;
+  lowStockAlertsEnabled: boolean;
   googleId?: string;
   selectedHouseholdId?: string | null;
   createdAt: Date;

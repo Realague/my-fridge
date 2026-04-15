@@ -163,4 +163,17 @@ export interface GetStoredItemsQueryDto {
   isExpiringSoon?: boolean;
   limit?: number;
   offset?: number;
+}
+
+export interface BulkTransferToStorageItemDto {
+  shoppingItemId: string;
+  storageAreaId: string;
+  expirationDate?: string;
+  location?: string;
+}
+
+export interface BulkTransferToStorageDto {
+  items: BulkTransferToStorageItemDto[];
+  householdId: string;
+  createdBy: string;
 } 

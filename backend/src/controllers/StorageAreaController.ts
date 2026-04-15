@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { StorageAreaService, StorageAreaQueryDto } from '../services/StorageAreaService';
 import { NotFoundError } from '../errors/CustomErrors';
 import { ApiResponse } from '../types/ApiResponse';
-import { CreateStorageAreaDto, UpdateStorageAreaDto } from '../types/StorageAreaDto';
+import { CreateStorageAreaDto, UpdateStorageAreaDto, ReorderStorageAreasDto } from '../types/StorageAreaDto';
 
 export class StorageAreaController {
   constructor(private storageAreaService: StorageAreaService) {}
@@ -118,6 +118,30 @@ export class StorageAreaController {
         message: 'Storage area updated successfully'
       };
       
+      res.json(response);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  }
+
+  async reorderStorageAreas(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req.user as any).id;
+      const householdId = req.params.householdId;
+      const reorderDto: ReorderStorageAreasDto = req.body;
+
+      if (!householdId) {
+        throw new NotFoundError('Household not found');
+      }
+
+      const storageAreas = await this.storageAreaService.reorderStorageAreas(householdId, userId, reorderDto);
+
+      const response: ApiResponse = {
+        success: true,
+        data: storageAreas,
+        message: 'Storage areas reordered successfully'
+      };
+
       res.json(response);
     } catch (error) {
       this.handleError(res, error);

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Plus, Edit3, Trash2, Edit } from 'lucide-react';
+import { Plus, Edit3, Trash2, Edit, ChevronUp, ChevronDown } from 'lucide-react';
 import { useStorageAreasWithStats, useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
@@ -17,19 +17,21 @@ const StorageAreaManager = () => {
   const { 
     createStorageArea, 
     updateStorageArea, 
-    deleteStorageArea
+    deleteStorageArea,
+    reorderStorageAreas,
   } = useCurrentHouseholdStorageAreas(user?.selectedHouseholdId);
   
   const [editingArea, setEditingArea] = useState<any>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  const handleAddArea = async (data: { name: string; emoji: string; type: StorageAreaType }) => {
+  const handleAddArea = async (data: { name: string; emoji: string; type: StorageAreaType; defaultCategories: string[] }) => {
     try {
       await createStorageArea({
         name: data.name,
         emoji: data.emoji,
-        type: data.type
+        type: data.type,
+        defaultCategories: data.defaultCategories,
       });
 
       toast.success(t("messages.success.storageAreaCreated"), {
@@ -50,7 +52,7 @@ const StorageAreaManager = () => {
     setIsEditDialogOpen(true);
   };
 
-  const handleUpdateArea = async (data: { name: string; emoji: string; type: StorageAreaType }) => {
+  const handleUpdateArea = async (data: { name: string; emoji: string; type: StorageAreaType; defaultCategories: string[] }) => {
     if (!editingArea) {
       return;
     }
@@ -59,11 +61,12 @@ const StorageAreaManager = () => {
       await updateStorageArea(editingArea.id, {
         name: data.name,
         emoji: data.emoji,
-        type: data.type
+        type: data.type,
+        defaultCategories: data.defaultCategories,
       });
 
       toast.success(t("messages.success.storageAreaUpdated"), {
-        description: t("messages.success.storageAreaUpdatedDescription"),
+        description: t("messages.success.storageAreaUpdatedDescription", { name: data.name }),
       });
 
       setEditingArea(null);
@@ -81,7 +84,7 @@ const StorageAreaManager = () => {
       await deleteStorageArea(area.id);
 
       toast.success(t("messages.success.storageAreaDeleted"), {
-        description: t("messages.success.storageAreaDeletedDescription"),
+        description: t("messages.success.storageAreaDeletedDescription", { name: area.name }),
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : t("messages.error.failedToDeleteStorageArea");
@@ -91,6 +94,21 @@ const StorageAreaManager = () => {
     }
   };
 
+  const handleMoveArea = async (index: number, direction: 'up' | 'down') => {
+    const swapIndex = direction === 'up' ? index - 1 : index + 1;
+    if (swapIndex < 0 || swapIndex >= storageAreas.length) return;
+
+    const reordered = [...storageAreas];
+    [reordered[index], reordered[swapIndex]] = [reordered[swapIndex], reordered[index]];
+
+    const items = reordered.map((area, i) => ({ id: area.id, sortOrder: i }));
+    try {
+      await reorderStorageAreas(items);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t("messages.error.updateFailed");
+      toast.error(message);
+    }
+  };
 
   return (
     <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
@@ -107,9 +125,29 @@ const StorageAreaManager = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        {storageAreas.map((area) => (
+        {storageAreas.map((area, index) => (
           <div key={area.id} className="flex items-center justify-between p-4 bg-primary/10 rounded-xl shadow-sm border">
             <div className="flex items-center gap-3">
+              <div className="flex flex-col gap-0.5">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 p-0"
+                  disabled={index === 0}
+                  onClick={() => handleMoveArea(index, 'up')}
+                >
+                  <ChevronUp className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 p-0"
+                  disabled={index === storageAreas.length - 1}
+                  onClick={() => handleMoveArea(index, 'down')}
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </div>
               <span className="text-2xl">{area.emoji}</span>
               <div>
                 <p className="font-semibold">{area.name}</p>

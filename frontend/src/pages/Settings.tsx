@@ -29,6 +29,7 @@ const Settings = () => {
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isUpdatingLowStockAlerts, setIsUpdatingLowStockAlerts] = useState(false);
   const { user, updateUser, signOut, tokens } = useAuthStore();
 
   const languages = [
@@ -84,7 +85,7 @@ const Settings = () => {
 
     setIsUpdating(true);
     try {
-      await updateUser(firstName.trim(), lastName.trim());
+      await updateUser({ firstName: firstName.trim(), lastName: lastName.trim() });
       toast({
         title: t('messages.success.settingsSaved'),
         description: t('messages.success.profileUpdated'),
@@ -104,6 +105,27 @@ const Settings = () => {
   const handleSignOut = () => {
     signOut();
     navigate('/auth');
+  };
+
+  const lowStockAlertsEnabled = user?.lowStockAlertsEnabled !== false;
+
+  const handleLowStockAlertsChange = async (enabled: boolean) => {
+    setIsUpdatingLowStockAlerts(true);
+    try {
+      await updateUser({ lowStockAlertsEnabled: enabled });
+      toast({
+        title: t('messages.success.settingsSaved'),
+      });
+    } catch (error) {
+      console.error('Error updating low stock alerts preference:', error);
+      toast({
+        title: t('messages.error.updateFailed'),
+        description: error instanceof Error ? error.message : t('messages.error.failedToUpdateProfile'),
+        variant: 'destructive',
+      });
+    } finally {
+      setIsUpdatingLowStockAlerts(false);
+    }
   };
 
   return (
@@ -201,7 +223,12 @@ const Settings = () => {
                        {t('pages.settings.notificationSettings.lowStockDescription')}
                      </span>
                   </Label>
-                  <Switch id="low-stock-alerts" defaultChecked />
+                  <Switch
+                    id="low-stock-alerts"
+                    checked={lowStockAlertsEnabled}
+                    disabled={isUpdatingLowStockAlerts}
+                    onCheckedChange={handleLowStockAlertsChange}
+                  />
                 </div>
               </CardContent>
             </Card>

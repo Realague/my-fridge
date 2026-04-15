@@ -1,143 +1,170 @@
 export interface StoreCatalogEntry {
   slug: string;
   name: string;
+  /** Primary: full-color brand mark (Clearbit company logo by domain). */
   logoUrl: string;
+  /** Secondary: monochrome Simple Icons mark if primary fails to load. */
+  logoFallbackUrl?: string;
   color: string;
   country: 'fr' | 'be' | 'both';
 }
 
+/** Full-color logos from registered domain (falls back via component if unavailable). */
+const brandLogo = (domain: string) =>
+  `https://logo.clearbit.com/${encodeURIComponent(domain)}`;
+
 const siIcon = (slug: string, color: string) =>
   `https://cdn.simpleicons.org/${slug}/${color.replace('#', '')}`;
 
-const favicon = (domain: string) =>
-  `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+/** Larger favicon when Simple Icons has no good match for a brand. */
+const faviconHi = (domain: string) =>
+  `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=256`;
 
+/** Brand tints for cards / initials — aligned with public signage & chartes when distinct from generic “hyper red”. */
 export const storeCatalog: StoreCatalogEntry[] = [
   // France
   {
     slug: 'carrefour',
     name: 'Carrefour',
-    logoUrl: siIcon('carrefour', '#004E9F'),
-    color: '#004E9F',
+    logoUrl: brandLogo('carrefour.com'),
+    logoFallbackUrl: siIcon('carrefour', '#00529B'),
+    color: '#00529B',
     country: 'both',
   },
   {
     slug: 'leclerc',
     name: 'E.Leclerc',
-    logoUrl: siIcon('edotleclerc', '#005BAA'),
-    color: '#005BAA',
+    logoUrl: brandLogo('leclerc.fr'),
+    logoFallbackUrl: siIcon('edotleclerc', '#004F9F'),
+    color: '#004F9F',
     country: 'fr',
   },
   {
     slug: 'auchan',
     name: 'Auchan',
-    logoUrl: siIcon('auchan', '#E00034'),
-    color: '#E00034',
+    logoUrl: brandLogo('auchan.fr'),
+    logoFallbackUrl: siIcon('auchan', '#E2001A'),
+    color: '#E2001A',
     country: 'fr',
   },
   {
     slug: 'intermarche',
     name: 'Intermarché',
-    logoUrl: siIcon('intermarche', '#E31E25'),
-    color: '#E31E25',
+    logoUrl: brandLogo('intermarche.com'),
+    logoFallbackUrl: siIcon('intermarche', '#E30613'),
+    color: '#E30613',
     country: 'fr',
   },
   {
     slug: 'lidl',
     name: 'Lidl',
-    logoUrl: siIcon('lidl', '#0050AA'),
+    logoUrl: brandLogo('lidl.fr'),
+    logoFallbackUrl: siIcon('lidl', '#0050AA'),
     color: '#0050AA',
     country: 'both',
   },
   {
     slug: 'aldi',
     name: 'Aldi',
-    logoUrl: siIcon('aldinord', '#00005F'),
-    color: '#00005F',
+    logoUrl: brandLogo('aldi.fr'),
+    logoFallbackUrl: siIcon('aldinord', '#00457C'),
+    color: '#00457C',
     country: 'both',
   },
   {
     slug: 'casino',
     name: 'Casino',
-    logoUrl: favicon('casino.fr'),
-    color: '#E30613',
+    logoUrl: brandLogo('casino.fr'),
+    logoFallbackUrl: faviconHi('casino.fr'),
+    color: '#009639',
     country: 'fr',
   },
   {
     slug: 'monoprix',
     name: 'Monoprix',
-    logoUrl: siIcon('monoprix', '#E4002B'),
-    color: '#E4002B',
+    logoUrl: brandLogo('monoprix.fr'),
+    logoFallbackUrl: siIcon('monoprix', '#E2007A'),
+    color: '#E2007A',
     country: 'fr',
   },
   {
     slug: 'franprix',
     name: 'Franprix',
-    logoUrl: siIcon('franprix', '#ED1C24'),
-    color: '#ED1C24',
+    logoUrl: brandLogo('franprix.fr'),
+    logoFallbackUrl: siIcon('franprix', '#F47920'),
+    color: '#F47920',
     country: 'fr',
   },
   {
     slug: 'picard',
     name: 'Picard',
-    logoUrl: siIcon('picardsurgeles', '#003DA5'),
-    color: '#003DA5',
+    logoUrl: brandLogo('picard.fr'),
+    logoFallbackUrl: siIcon('picardsurgeles', '#001489'),
+    color: '#001489',
     country: 'fr',
   },
   {
     slug: 'grand-frais',
     name: 'Grand Frais',
-    logoUrl: siIcon('grandfrais', '#6BAE42'),
-    color: '#6BAE42',
+    logoUrl: brandLogo('grandfrais.com'),
+    logoFallbackUrl: siIcon('grandfrais', '#76B82A'),
+    color: '#76B82A',
     country: 'fr',
   },
   {
     slug: 'biocoop',
     name: 'Biocoop',
-    logoUrl: favicon('biocoop.fr'),
-    color: '#8DC63F',
+    logoUrl: brandLogo('biocoop.fr'),
+    logoFallbackUrl: faviconHi('biocoop.fr'),
+    color: '#7CB518',
     country: 'fr',
   },
   {
     slug: 'naturalia',
     name: 'Naturalia',
-    logoUrl: favicon('naturalia.fr'),
-    color: '#6B8E23',
+    logoUrl: brandLogo('naturalia.fr'),
+    logoFallbackUrl: faviconHi('naturalia.fr'),
+    color: '#558B2F',
     country: 'fr',
   },
   {
     slug: 'cora',
     name: 'Cora',
-    logoUrl: siIcon('cora', '#E30613'),
-    color: '#E30613',
+    logoUrl: brandLogo('cora.fr'),
+    logoFallbackUrl: siIcon('cora', '#0055A4'),
+    color: '#0055A4',
     country: 'both',
   },
   {
     slug: 'systeme-u',
     name: 'Système U',
-    logoUrl: favicon('magasins-u.com'),
-    color: '#E30613',
+    logoUrl: brandLogo('magasins-u.com'),
+    logoFallbackUrl: faviconHi('magasins-u.com'),
+    color: '#004F9F',
     country: 'fr',
   },
   {
     slug: 'match',
     name: 'Match',
-    logoUrl: favicon('supermarchesmatch.fr'),
-    color: '#ED1C24',
+    logoUrl: brandLogo('supermarchesmatch.fr'),
+    logoFallbackUrl: faviconHi('supermarchesmatch.fr'),
+    color: '#E30613',
     country: 'both',
   },
   {
     slug: 'netto',
     name: 'Netto',
-    logoUrl: siIcon('netto', '#FFD700'),
-    color: '#FFD700',
+    logoUrl: brandLogo('netto.fr'),
+    logoFallbackUrl: siIcon('netto', '#E30613'),
+    color: '#E30613',
     country: 'fr',
   },
   {
     slug: 'leader-price',
     name: 'Leader Price',
-    logoUrl: siIcon('leaderprice', '#003DA5'),
-    color: '#003DA5',
+    logoUrl: brandLogo('leaderprice.fr'),
+    logoFallbackUrl: siIcon('leaderprice', '#004F9F'),
+    color: '#004F9F',
     country: 'fr',
   },
 
@@ -145,36 +172,41 @@ export const storeCatalog: StoreCatalogEntry[] = [
   {
     slug: 'colruyt',
     name: 'Colruyt',
-    logoUrl: favicon('colruyt.be'),
-    color: '#E30613',
+    logoUrl: brandLogo('colruyt.be'),
+    logoFallbackUrl: siIcon('colruyt', '#F39200'),
+    color: '#F39200',
     country: 'be',
   },
   {
     slug: 'delhaize',
     name: 'Delhaize',
-    logoUrl: favicon('delhaize.be'),
-    color: '#E30613',
+    logoUrl: brandLogo('delhaize.be'),
+    logoFallbackUrl: siIcon('delhaize', '#E2001A'),
+    color: '#E2001A',
     country: 'be',
   },
   {
     slug: 'albert-heijn',
     name: 'Albert Heijn',
-    logoUrl: siIcon('albertheijn', '#00A0E2'),
-    color: '#00A0E2',
+    logoUrl: brandLogo('ah.nl'),
+    logoFallbackUrl: siIcon('albertheijn', '#00ADE6'),
+    color: '#00ADE6',
     country: 'be',
   },
   {
     slug: 'proxy-delhaize',
     name: 'Proxy Delhaize',
-    logoUrl: favicon('delhaize.be'),
-    color: '#E30613',
+    logoUrl: brandLogo('delhaize.be'),
+    logoFallbackUrl: siIcon('delhaize', '#E2001A'),
+    color: '#E2001A',
     country: 'be',
   },
   {
     slug: 'spar',
     name: 'Spar',
-    logoUrl: favicon('spar.be'),
-    color: '#00843D',
+    logoUrl: brandLogo('spar.be'),
+    logoFallbackUrl: siIcon('spar', '#008C45'),
+    color: '#008C45',
     country: 'be',
   },
 ];

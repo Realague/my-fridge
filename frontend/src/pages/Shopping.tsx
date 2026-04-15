@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Check, GripVertical, Trash2, Users, Edit, Save, X, Filter, Package } from 'lucide-react';
+import { Check, Trash2, Users, Edit, Save, X, Filter, Package, PackageCheck, CalendarIcon } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { AddItemCard } from '@/components/AddItemCard';
 import { QuantitySelector } from '@/components/QuantitySelector';
@@ -20,6 +20,12 @@ import { useTranslation } from 'react-i18next';
 import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
 import { StorageAreaType } from '@/types/enums';
 import { ItemImage } from '@/components/ItemImage';
+import { BulkStorageDialog } from '@/components/BulkStorageDialog';
+import { getSuggestedStorageAreaId } from '@/utils/categoryStorageMapping';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import { useAuthStore } from '@/stores/authStore';
 import { motion, useReducedMotion } from 'framer-motion';
 import { scrollRevealFadeUp } from '@/lib/motion';
@@ -43,6 +49,7 @@ const Shopping = () => {
     updateShoppingItem,
     deleteShoppingItem,
     toggleShoppingItemCompleted,
+    bulkTransferToStorage,
     getPendingItems,
     getCompletedItems,
     getTotalItems,
@@ -95,12 +102,19 @@ const Shopping = () => {
     await fetchCompletedItems();
   };
 
-  // New state for storage dialog
+  // Inline quick-store prompt state
+  const [quickStoreItemId, setQuickStoreItemId] = useState<string | null>(null);
+  const [quickStoreDate, setQuickStoreDate] = useState('');
+  
+  // Fallback full storage dialog (used from "Modifier" toast action)
   const [showStorageDialog, setShowStorageDialog] = useState(false);
   const [itemToStore, setItemToStore] = useState<ShoppingItem | null>(null);
   const [selectedStorageArea, setSelectedStorageArea] = useState('');
   const [storageLocation, setStorageLocation] = useState('');
   const [storageExpirationDate, setStorageExpirationDate] = useState('');
+
+  // Bulk storage dialog state
+  const [showBulkDialog, setShowBulkDialog] = useState(false);
 
   const handleAddItem = async (item: Item, quantity: string, unit: string) => {
     if (!selectedHouseholdId) {
@@ -120,22 +134,99 @@ const Shopping = () => {
     if (!item || !selectedHouseholdId) return;
 
     if (!item.completed) {
-      // Item is being marked as completed - show storage dialog
-      setItemToStore(item);
-      setSelectedStorageArea('');
-      setStorageLocation('');
-      setStorageExpirationDate('');
-      setShowStorageDialog(true);
+      if (storageAreas.length === 0) {
+        // No storage areas -- fallback to old dialog
+        setItemToStore(item);
+        setSelectedStorageArea('');
+        setStorageLocation('');
+        setStorageExpirationDate('');
+        setShowStorageDialog(true);
+        return;
+      }
+
+      // Show inline quick-store prompt for this item
+      setQuickStoreItemId(id);
+      setQuickStoreDate('');
     } else {
       // Item is being unchecked - toggle via API
       const success = await toggleShoppingItemCompleted(id);
       
-      // If the item was successfully toggled and we're showing completed items,
-      // refresh to ensure we have the latest state
       if (success && completedItemsLoaded) {
         await refreshShoppingItems();
       }
     }
+  };
+
+  const handleQuickStore = async (id: string) => {
+    const item = items.find(i => i.id === id);
+    if (!item || !selectedHouseholdId) return;
+
+    const suggestedAreaId = getSuggestedStorageAreaId(item.item?.category, storageAreas);
+    if (!suggestedAreaId) return;
+
+    const suggestedArea = storageAreas.find(a => a.id === suggestedAreaId);
+
+    try {
+      const createdStoredItem = await createStoredItem({
+        itemId: item.item?.id,
+        storageAreaId: suggestedAreaId,
+        quantity: parseFloat(item.quantity),
+        unit: item.unit as any,
+        expirationDate: quickStoreDate || undefined,
+      });
+
+      const updateSuccess = await updateShoppingItem(item.id, {
+        storedItemId: createdStoredItem.id,
+        completed: true,
+      });
+
+      if (updateSuccess) {
+        const itemName = item.item ? getItemDisplayName(item.item, t) : '';
+        const areaName = suggestedArea ? `${suggestedArea.emoji} ${suggestedArea.name}` : '';
+
+        toast.success(t('pages.shopping.itemAddedQuick', { item: itemName, area: areaName }), {
+          action: {
+            label: t('pages.shopping.modify'),
+            onClick: () => {
+              setItemToStore(item);
+              setSelectedStorageArea(suggestedAreaId);
+              setStorageLocation('');
+              setStorageExpirationDate(quickStoreDate);
+              setShowStorageDialog(true);
+            },
+          },
+        });
+        await refreshShoppingItems();
+      }
+    } catch (error) {
+      console.error('Error in quick store:', error);
+      toast.error(t('messages.error.failedToAddToStorage'));
+    }
+
+    setQuickStoreItemId(null);
+    setQuickStoreDate('');
+  };
+
+  const handleSkipQuickStore = async (id: string) => {
+    if (!selectedHouseholdId) return;
+
+    try {
+      const success = await toggleShoppingItemCompleted(id);
+      if (success) {
+        toast.success(t('messages.success.itemMarkedCompleted'));
+        await refreshShoppingItems();
+      }
+    } catch (error) {
+      console.error('Error skipping storage:', error);
+    }
+
+    setQuickStoreItemId(null);
+    setQuickStoreDate('');
+  };
+
+  const handleCancelQuickStore = () => {
+    setQuickStoreItemId(null);
+    setQuickStoreDate('');
   };
 
   const handleAddToStorage = async () => {
@@ -196,6 +287,20 @@ const Shopping = () => {
     // Close dialog and reset state
     setShowStorageDialog(false);
     setItemToStore(null);
+  };
+
+  const handleBulkTransfer = async (items: Array<{ shoppingItemId: string; storageAreaId: string; expirationDate?: string }>) => {
+    const success = await bulkTransferToStorage({ items });
+    if (success) {
+      toast.success(t('pages.shopping.bulkStorageSuccess', { count: items.length }));
+      await refreshShoppingItems();
+    } else {
+      toast.error(t('pages.shopping.bulkStorageError'));
+    }
+  };
+
+  const handleBulkSkipAll = async () => {
+    // Just close the dialog without doing anything
   };
 
   const deleteItemHandler = async (id: string) => {
@@ -284,7 +389,12 @@ const Shopping = () => {
     const [editQuantity, setEditQuantity] = useState(shoppingItem.quantity);
     const [editUnit, setEditUnit] = useState(shoppingItem.unit);
     const isEditing = editingItem === shoppingItem.id;
+    const isQuickStoring = quickStoreItemId === shoppingItem.id;
     const itemData = getItemData(shoppingItem);
+
+    const suggestedAreaId = getSuggestedStorageAreaId(shoppingItem.item?.category, storageAreas);
+    const suggestedArea = storageAreas.find(a => a.id === suggestedAreaId);
+    const isFreezerArea = suggestedArea?.type === StorageAreaType.FREEZER;
 
     const handleSave = () => {
       saveItemEdit(shoppingItem.id, editQuantity, editUnit);
@@ -297,120 +407,187 @@ const Shopping = () => {
     };
 
     if (!itemData) {
-      return null; // Skip items that can't be resolved
+      return null;
     }
 
     return (
-      <div
-        className={`flex items-start gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg hover:bg-accent transition-colors cursor-move ${
-          isCompleted ? 'bg-accent opacity-75' : 'bg-muted'
-        }`}
-      >
-        <button
-          onClick={() => toggleItemComplete(shoppingItem.id)}
-          className={`flex-shrink-0 w-6 h-6 mt-1 rounded-full flex items-center justify-center transition-colors ${
-            isCompleted 
-              ? 'bg-green-500' 
-              : 'border-2 border-border hover:border-green-500 bg-primary/10'
+      <div className="space-y-0">
+        <div
+          className={`flex items-start gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg hover:bg-accent transition-colors cursor-move ${
+            isCompleted ? 'bg-accent opacity-75' : isQuickStoring ? 'bg-green-50 dark:bg-green-950/20 rounded-b-none' : 'bg-muted'
           }`}
         >
-          {isCompleted && <Check className="h-4 w-4 text-white" />}
-        </button>
+          <button
+            onClick={() => toggleItemComplete(shoppingItem.id)}
+            className={`flex-shrink-0 w-6 h-6 mt-1 rounded-full flex items-center justify-center transition-colors ${
+              isCompleted 
+                ? 'bg-green-500' 
+                : 'border-2 border-border hover:border-green-500 bg-primary/10'
+            }`}
+          >
+            {isCompleted && <Check className="h-4 w-4 text-white" />}
+          </button>
 
-        <ItemImage
-          src={shoppingItem.item?.imageUrl}
-          alt={getItemName(shoppingItem)}
-          containerClassName="w-10 h-10 rounded-md shrink-0 mt-0.5"
-          fallbackIconSize={40}
-        />
-        
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0 flex-1">
-              <span className={`font-medium line-clamp-2 sm:line-clamp-1 ${isCompleted ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
-                {getItemName(shoppingItem)}
-              </span>
-              <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                <Badge className={getCategoryColor(shoppingItem.item?.category)}>
-                  {getItemCategory(shoppingItem)}
-                </Badge>
+          <ItemImage
+            src={shoppingItem.item?.imageUrl}
+            alt={getItemName(shoppingItem)}
+            containerClassName="w-10 h-10 rounded-md shrink-0 mt-0.5"
+            fallbackIconSize={40}
+          />
+          
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <span className={`font-medium line-clamp-2 sm:line-clamp-1 ${isCompleted ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+                  {getItemName(shoppingItem)}
+                </span>
+                <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                  <Badge className={getCategoryColor(shoppingItem.item?.category)}>
+                    {getItemCategory(shoppingItem)}
+                  </Badge>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-1 shrink-0">
-              {isEditing ? (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSave}
-                    className="h-8 px-2"
-                  >
-                    <Save className="h-3 w-3"/>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCancel}
-                    className="h-8 px-2"
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                </>
-              ) : (
-                <>
-                  {!isCompleted && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => startEditingItem(shoppingItem.id)}
-                      className="h-8 w-8 p-0 opacity-70 hover:opacity-100 transition-opacity hover:bg-primary/10"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => deleteItemHandler(shoppingItem.id)}
-                    className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 hover:bg-primary/10"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-          <div className="text-sm text-muted-foreground mt-1">
-            {isEditing ? (
-              <QuantitySelector
-                item={itemData}
-                initialQuantity={editQuantity}
-                initialUnit={editUnit}
-                onQuantityChange={(quantity, unit) => {
-                  setEditQuantity(quantity);
-                  setEditUnit(unit);
-                }}
-                className="w-full"
-              />
-            ) : (
-              <div className="flex items-center gap-2">
-                <span>{shoppingItem.quantity} {shoppingItem.unit !== 'piece' ? shoppingItem.unit : ''}</span>
-                {shoppingItem.creator && (
+              <div className="flex items-center gap-1 shrink-0">
+                {isEditing ? (
                   <>
-                    <span>•</span>
-                    <span className="truncate">
-                      {t('common.addedBy', {
-                        name: shoppingItem.creator.id === currentUser?.id
-                          ? t('common.you')
-                          : shoppingItem.creator.displayName,
-                      })}
-                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSave}
+                      className="h-8 px-2"
+                    >
+                      <Save className="h-3 w-3"/>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCancel}
+                      className="h-8 px-2"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    {!isCompleted && !isQuickStoring && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => startEditingItem(shoppingItem.id)}
+                        className="h-8 w-8 p-0 opacity-70 hover:opacity-100 transition-opacity hover:bg-primary/10"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    )}
+                    {!isEditing && !isQuickStoring && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteItemHandler(shoppingItem.id)}
+                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 hover:bg-primary/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
                   </>
                 )}
               </div>
-            )}
+            </div>
+            <div className="text-sm text-muted-foreground mt-1">
+              {isEditing ? (
+                <QuantitySelector
+                  item={itemData}
+                  initialQuantity={editQuantity}
+                  initialUnit={editUnit}
+                  onQuantityChange={(quantity, unit) => {
+                    setEditQuantity(quantity);
+                    setEditUnit(unit);
+                  }}
+                  className="w-full"
+                />
+              ) : (
+                <div className="flex items-center gap-2">
+                  <span>{shoppingItem.quantity} {shoppingItem.unit !== 'piece' ? shoppingItem.unit : ''}</span>
+                  {shoppingItem.creator && (
+                    <>
+                      <span>•</span>
+                      <span className="truncate">
+                        {t('common.addedBy', {
+                          name: shoppingItem.creator.id === currentUser?.id
+                            ? t('common.you')
+                            : shoppingItem.creator.displayName,
+                        })}
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
+
+        {isQuickStoring && (
+          <div className="bg-green-50 dark:bg-green-950/20 border border-t-0 border-green-200 dark:border-green-800 rounded-b-lg px-3 pb-3 pt-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              {suggestedArea && (
+                <span className="text-xs font-medium text-green-700 dark:text-green-400">
+                  {t('pages.shopping.suggestedArea', { area: `${suggestedArea.emoji} ${suggestedArea.name}` })}
+                </span>
+              )}
+              {!isFreezerArea && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs gap-1.5 bg-white dark:bg-background font-normal"
+                    >
+                      <CalendarIcon className="h-3 w-3" />
+                      {quickStoreDate
+                        ? format(new Date(quickStoreDate), 'dd/MM/yyyy', { locale: fr })
+                        : t('pages.shopping.expirationDate')}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={quickStoreDate ? new Date(quickStoreDate) : undefined}
+                      onSelect={(date) => setQuickStoreDate(date ? format(date, 'yyyy-MM-dd') : '')}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              )}
+              <div className="flex gap-1 ml-auto">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleSkipQuickStore(shoppingItem.id)}
+                  className="h-7 px-2 text-xs text-muted-foreground"
+                >
+                  {t('pages.shopping.skip')}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCancelQuickStore}
+                  className="h-7 px-2 text-xs"
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+                <Button
+                  variant="green"
+                  size="sm"
+                  onClick={() => handleQuickStore(shoppingItem.id)}
+                  className="h-7 px-2 text-xs"
+                >
+                  <Check className="h-3 w-3 mr-1" />
+                  {t('pages.shopping.validate')}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -473,12 +650,27 @@ const Shopping = () => {
               {storageAreas.find((a) => a.id === selectedStorageArea)?.type !== StorageAreaType.FREEZER && (
                 <div>
                   <Label className="text-sm">{t('pages.shopping.expirationDateOptional')}</Label>
-                  <Input
-                    type="date"
-                    value={storageExpirationDate}
-                    onChange={(e) => setStorageExpirationDate(e.target.value)}
-                    className="mt-1"
-                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full mt-1 justify-start font-normal"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {storageExpirationDate
+                          ? format(new Date(storageExpirationDate), 'dd MMMM yyyy', { locale: fr })
+                          : t('pages.shopping.expirationDateOptional')}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={storageExpirationDate ? new Date(storageExpirationDate) : undefined}
+                        onSelect={(date) => setStorageExpirationDate(date ? format(date, 'yyyy-MM-dd') : '')}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
               )}
               
@@ -503,6 +695,16 @@ const Shopping = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Bulk Storage Dialog */}
+      <BulkStorageDialog
+        open={showBulkDialog}
+        onOpenChange={setShowBulkDialog}
+        pendingItems={getPendingItems()}
+        storageAreas={storageAreas}
+        onConfirm={handleBulkTransfer}
+        onSkipAll={handleBulkSkipAll}
+      />
 
       {/* Header */}
       <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
@@ -592,14 +794,27 @@ const Shopping = () => {
         {/* Pending Items */}
         <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
-            <CardTitle className="text-lg">
-              {t('pages.shopping.toBuy')} ({pendingItems.length})
-              {categoryFilter !== 'all' && (
-                <span className="text-sm font-normal text-muted-foreground ml-2">
-                  • {t(`storageArea.types.${categoryFilter}`)}
-                </span>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">
+                {t('pages.shopping.toBuy')} ({pendingItems.length})
+                {categoryFilter !== 'all' && (
+                  <span className="text-sm font-normal text-muted-foreground ml-2">
+                    • {t(`storageArea.types.${categoryFilter}`)}
+                  </span>
+                )}
+              </CardTitle>
+              {pendingItems.length > 0 && storageAreas.length > 0 && (
+                <Button
+                  variant="green"
+                  size="sm"
+                  onClick={() => setShowBulkDialog(true)}
+                  className="gap-1.5"
+                >
+                  <PackageCheck className="h-4 w-4" />
+                  {t('pages.shopping.bulkStorage')}
+                </Button>
               )}
-            </CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">

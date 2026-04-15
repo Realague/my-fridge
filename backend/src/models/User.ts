@@ -7,6 +7,7 @@ interface UserAttributes {
   email: string;
   firstName: string;
   lastName: string;
+  lowStockAlertsEnabled: boolean;
   googleId?: string;
   selectedHouseholdId?: string;
   refreshToken?: string;
@@ -16,13 +17,14 @@ interface UserAttributes {
 }
 
 // Some attributes are optional in `User.build()` and `User.create()`
-interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'createdAt' | 'updatedAt' > {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'createdAt' | 'updatedAt' | 'lowStockAlertsEnabled' > {}
 
 export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public id!: string;
   public email!: string;
   public firstName!: string;
   public lastName!: string;
+  public lowStockAlertsEnabled!: boolean;
   public googleId?: string;
   public selectedHouseholdId?: string;
   public refreshToken?: string;
@@ -63,6 +65,11 @@ User.init(
     lastName: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    lowStockAlertsEnabled: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     },
     googleId: {
       type: DataTypes.STRING,

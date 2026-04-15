@@ -207,7 +207,7 @@ const HouseholdDetails = () => {
                 </Dialog>
               )}
             </div>
-            <CardDescription>{members.length} {t('pages.household.members')}</CardDescription>
+            <CardDescription>{t('pages.dashboard.members', { count: members.length })}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <Button 

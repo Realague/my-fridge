@@ -47,6 +47,8 @@
   "storageArea": {
     "item": "artículo",
     "items": "artículos",
+    "itemCount_one": "{{count}} artículo",
+    "itemCount_other": "{{count}} artículos",
     "low": "bajo",
     "addArea": "Agregar área",
     "addStorageArea": "Agregar área de almacenamiento",
@@ -3360,8 +3362,13 @@
       "manualEntry": "Ingresar manualmente",
       "cardNumber": "Número de tarjeta",
       "cardNumberPlaceholder": "Ej: 1234 5678 9012",
+      "generateAs2D": "Mostrar como código 2D (QR)",
+      "generateAs2DHint": "Marque si la tarjeta usa un código QR en lugar de un código de barras lineal.",
       "notes": "Notas",
       "notesPlaceholder": "Notas opcionales..."
+    },
+    "barcodeDisplay": {
+      "renderUnavailable": "No se puede mostrar este valor como código de barras. Use el número o escanee la tarjeta física."
     },
     "storeSelector": {
       "title": "Elegir una tienda",
@@ -3374,7 +3381,7 @@
       "title": "Escanear código de barras",
       "starting": "Iniciando cámara...",
       "cameraError": "No se puede acceder a la cámara",
-      "hint": "Coloca el código de barras en el marco"
+      "hint": "Coloca el código (1D o 2D) en el marco"
     }
   },
   "common": {

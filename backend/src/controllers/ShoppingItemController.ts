@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { ShoppingItemService } from '../services/ShoppingItemService';
 import { StoredItemService } from '../services/StoredItemService';
-import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto } from '../types/ItemDto';
+import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto, BulkTransferToStorageDto } from '../types/ItemDto';
 
 export class ShoppingItemController {
   private shoppingItemService: ShoppingItemService;
@@ -237,6 +237,54 @@ export class ShoppingItemController {
         success: false,
         error: 'Internal server error',
       });
+    }
+  }
+
+  async bulkTransferToStorage(req: Request, res: Response): Promise<void> {
+    try {
+      const { householdId } = req.params;
+      const user = (req as any).user;
+
+      if (!user) {
+        res.status(401).json({ success: false, error: 'User not authenticated' });
+        return;
+      }
+
+      if (!householdId) {
+        res.status(400).json({ success: false, error: 'Household ID is required' });
+        return;
+      }
+
+      const { items } = req.body;
+
+      if (!Array.isArray(items) || items.length === 0) {
+        res.status(400).json({ success: false, error: 'Items array is required and must not be empty' });
+        return;
+      }
+
+      for (const item of items) {
+        if (!item.shoppingItemId || !item.storageAreaId) {
+          res.status(400).json({ success: false, error: 'Each item must have shoppingItemId and storageAreaId' });
+          return;
+        }
+      }
+
+      const data: BulkTransferToStorageDto = {
+        items,
+        householdId,
+        createdBy: user.id,
+      };
+
+      const result = await this.shoppingItemService.bulkTransferToStorage(data);
+
+      if (result.success) {
+        res.status(200).json(result);
+      } else {
+        res.status(400).json(result);
+      }
+    } catch (error) {
+      console.error('Error in bulkTransferToStorage:', error);
+      res.status(500).json({ success: false, error: 'Internal server error' });
     }
   }
 

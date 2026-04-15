@@ -6,6 +6,7 @@ export interface CreateHouseholdDto {
     description?: string;
     emoji: string;
     type: 'fridge' | 'freezer' | 'pantry' | 'kitchen_cupboard' | 'other';
+    defaultCategories?: string[];
   }>;
 }
 

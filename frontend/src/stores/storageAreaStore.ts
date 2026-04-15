@@ -30,6 +30,7 @@ interface StorageAreaStore {
   createStorageArea: (data: CreateStorageAreaData) => Promise<StorageArea>;
   updateStorageArea: (storageAreaId: string, data: UpdateStorageAreaData) => Promise<void>;
   deleteStorageArea: (storageAreaId: string) => Promise<void>;
+  reorderStorageAreas: (items: Array<{ id: string; sortOrder: number }>) => Promise<void>;
   
   // Internal actions
   setLoading: (loading: boolean) => void;
@@ -188,6 +189,23 @@ export const useStorageAreaStore = create<StorageAreaStore>()(
         }
       },
 
+      reorderStorageAreas: async (items: Array<{ id: string; sortOrder: number }>) => {
+        const householdId = getHouseholdId();
+        if (!householdId) {
+          throw new Error('No household ID provided');
+        }
+
+        try {
+          const updatedAreas = await apiService.reorderStorageAreas(householdId, items);
+          const store = get();
+          store.setStorageAreasForHousehold(updatedAreas);
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Failed to reorder storage areas';
+          set({ error: message });
+          throw error;
+        }
+      },
+
       // Computed getters
       getStorageAreasForHousehold: () => {
         const householdId = getHouseholdId();
@@ -254,6 +272,7 @@ export const useCurrentHouseholdStorageAreas = (currentHouseholdId: string | nul
   const createStorageArea = useStorageAreaStore(state => state.createStorageArea);
   const updateStorageArea = useStorageAreaStore(state => state.updateStorageArea);
   const deleteStorageArea = useStorageAreaStore(state => state.deleteStorageArea);
+  const reorderStorageAreas = useStorageAreaStore(state => state.reorderStorageAreas);
 
   return {
     loading,
@@ -264,6 +283,8 @@ export const useCurrentHouseholdStorageAreas = (currentHouseholdId: string | nul
       currentHouseholdId ? updateStorageArea(storageAreaId, data) : Promise.reject(new Error('No household selected')),
     deleteStorageArea: (storageAreaId: string) =>
       currentHouseholdId ? deleteStorageArea(storageAreaId) : Promise.reject(new Error('No household selected')),
+    reorderStorageAreas: (items: Array<{ id: string; sortOrder: number }>) =>
+      currentHouseholdId ? reorderStorageAreas(items) : Promise.reject(new Error('No household selected')),
   };
 };
 

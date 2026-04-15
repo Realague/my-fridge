@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, Store } from 'lucide-react';
@@ -10,12 +10,21 @@ interface StoreSelectorProps {
 }
 
 const StoreLogo = ({ store, size = 'md' }: { store: StoreCatalogEntry; size?: 'sm' | 'md' }) => {
-  const [imgError, setImgError] = useState(false);
+  const [srcIndex, setSrcIndex] = useState(0);
   const sizeClass = size === 'sm' ? 'w-8 h-8' : 'w-12 h-12';
-  const padClass = size === 'sm' ? 'p-1' : 'p-2';
+  const padClass = size === 'sm' ? 'p-1' : 'p-1.5';
   const textSize = size === 'sm' ? 'text-sm' : 'text-lg';
 
-  if (imgError || !store.logoUrl) {
+  const sources = [store.logoUrl, store.logoFallbackUrl].filter((u): u is string => Boolean(u));
+
+  useEffect(() => {
+    setSrcIndex(0);
+  }, [store.slug]);
+
+  const currentSrc = sources[srcIndex];
+  const showInitial = srcIndex >= sources.length || !currentSrc;
+
+  if (showInitial) {
     return (
       <div
         className={`${sizeClass} rounded-full flex items-center justify-center text-white font-bold ${textSize} shrink-0`}
@@ -27,12 +36,14 @@ const StoreLogo = ({ store, size = 'md' }: { store: StoreCatalogEntry; size?: 's
   }
 
   return (
-    <div className={`${sizeClass} rounded-full bg-white flex items-center justify-center ${padClass} shrink-0`}>
+    <div
+      className={`${sizeClass} rounded-xl bg-white flex items-center justify-center ${padClass} shrink-0 shadow-sm ring-1 ring-black/5 dark:ring-white/10`}
+    >
       <img
-        src={store.logoUrl}
-        alt={store.name}
+        src={currentSrc}
+        alt=""
         className="w-full h-full object-contain"
-        onError={() => setImgError(true)}
+        onError={() => setSrcIndex((i) => i + 1)}
       />
     </div>
   );

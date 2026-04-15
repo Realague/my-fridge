@@ -135,8 +135,16 @@ export class AuthService {
       throw new NotFoundError('User not found');
     }
 
-    // Update user
-    await this.userRepository.update(userId, updateDto);
+    const payload: Partial<UpdateUserDto> = {};
+    if (updateDto.firstName !== undefined) payload.firstName = updateDto.firstName;
+    if (updateDto.lastName !== undefined) payload.lastName = updateDto.lastName;
+    if (updateDto.lowStockAlertsEnabled !== undefined) {
+      payload.lowStockAlertsEnabled = updateDto.lowStockAlertsEnabled;
+    }
+
+    if (Object.keys(payload).length > 0) {
+      await this.userRepository.update(userId, payload);
+    }
 
     // Return updated user
     const updatedUser = await this.userRepository.findById(userId);
@@ -240,6 +248,10 @@ export class AuthService {
     if (dto.lastName && dto.lastName.length > 50) {
       throw new ValidationError('Last name must be 50 characters or less');
     }
+
+    if (dto.lowStockAlertsEnabled !== undefined && typeof dto.lowStockAlertsEnabled !== 'boolean') {
+      throw new ValidationError('lowStockAlertsEnabled must be a boolean');
+    }
   }
 
   private transformToUserResponseDto(user: any): UserResponseDto {
@@ -248,6 +260,7 @@ export class AuthService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      lowStockAlertsEnabled: user.lowStockAlertsEnabled !== false,
       googleId: user.googleId,
       selectedHouseholdId: user.selectedHouseholdId,
       createdAt: user.createdAt,

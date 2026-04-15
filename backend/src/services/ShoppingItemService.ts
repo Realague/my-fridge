@@ -2,12 +2,14 @@ import { ShoppingItemRepository } from '../repositories/ShoppingItemRepository';
 import { ItemRepository } from '../repositories/ItemRepository';
 import { HouseholdRepository } from '../repositories/HouseholdRepository';
 import { StoredItemService } from './StoredItemService';
-import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto, ShoppingItemDto } from '../types/ItemDto';
+import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto, ShoppingItemDto, BulkTransferToStorageDto, CreateStoredItemDto } from '../types/ItemDto';
 import { ApiResponse } from '../types/ApiResponse';
 import { ShoppingItem } from '../models/ShoppingItem';
-import { STORAGE_UNITS, Unit } from '../types/enums';
+import { STORAGE_UNITS, Unit, StorageAreaType } from '../types/enums';
 import { convertToStorageUnit, canConvertUnits, normalizeToBaseUnit, getBestDisplayUnit } from '../utils/unitConversion';
 import { Item } from '../models/Item';
+import { StorageArea } from '../models/StorageArea';
+import sequelize from '../config/database';
 
 export class ShoppingItemService {
   private shoppingItemRepository: ShoppingItemRepository;
@@ -417,6 +419,63 @@ export class ShoppingItemService {
         success: false,
         error: 'Failed to reorder shopping items',
       };
+    }
+  }
+
+  async bulkTransferToStorage(data: BulkTransferToStorageDto): Promise<ApiResponse<ShoppingItemDto[]>> {
+    const transaction = await sequelize.transaction();
+
+    try {
+      const results: ShoppingItemDto[] = [];
+
+      for (const transferItem of data.items) {
+        const shoppingItem = await this.shoppingItemRepository.findById(transferItem.shoppingItemId);
+        if (!shoppingItem) {
+          await transaction.rollback();
+          return { success: false, error: `Shopping item ${transferItem.shoppingItemId} not found` };
+        }
+
+        if (shoppingItem.householdId !== data.householdId) {
+          await transaction.rollback();
+          return { success: false, error: 'Shopping item does not belong to this household' };
+        }
+
+        const storageArea = await StorageArea.findByPk(transferItem.storageAreaId, { transaction });
+        if (!storageArea) {
+          await transaction.rollback();
+          return { success: false, error: `Storage area ${transferItem.storageAreaId} not found` };
+        }
+
+        const createStoredItemData: CreateStoredItemDto = {
+          itemId: shoppingItem.itemId,
+          storageAreaId: transferItem.storageAreaId,
+          quantity: shoppingItem.quantity,
+          unit: shoppingItem.unit as Unit,
+          expirationDate: transferItem.expirationDate,
+          location: transferItem.location,
+          householdId: data.householdId,
+          createdBy: data.createdBy,
+        };
+
+        const storedItem = await this.storedItemService.createStoredItem(createStoredItemData);
+
+        const updatedShoppingItem = await this.shoppingItemRepository.update(
+          shoppingItem.id,
+          { storedItemId: storedItem.id, completed: true }
+        );
+
+        if (updatedShoppingItem) {
+          results.push(this.formatShoppingItemResponse(updatedShoppingItem));
+        }
+      }
+
+      await transaction.commit();
+
+      return { success: true, data: results };
+    } catch (error) {
+      await transaction.rollback();
+      console.error('Error in bulkTransferToStorage:', error);
+      return { success: false, error: 'Failed to bulk transfer items to storage' };
     }
   }
 

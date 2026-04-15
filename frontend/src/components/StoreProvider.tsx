@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { syncHouseholdStoreWithAuth } from '@/stores/householdStore';
 import { useApiWithAuth } from '@/hooks/useApiWithAuth';
 import { initializeItemMinimumStore } from '@/stores/itemMinimumStore';
@@ -9,32 +9,21 @@ interface StoreProviderProps {
 }
 
 export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
-  const initialized = useRef(false);
   const api = useApiWithAuth();
 
+  // Initialize during render so module-level `getApi()` is ready before any child
+  // runs useEffect. (React runs child useEffects before parent useEffect, so
+  // deferring init to useEffect + setTimeout caused loyalty/item fetches to no-op.)
+  initializeItemMinimumStore(api);
+  initializeLoyaltyCardStore(api);
+
   useEffect(() => {
-    // Use a timeout to ensure Router context is fully established
-    const timer = setTimeout(() => {
-      if (!initialized.current) {
-        try {
-          // Sync household store with auth store
-          syncHouseholdStoreWithAuth();
-          
-          // Initialize item minimum store with API instance
-          initializeItemMinimumStore(api);
-
-          // Initialize loyalty card store with API instance
-          initializeLoyaltyCardStore(api);
-          
-          initialized.current = true;
-        } catch (error) {
-          console.error('StoreProvider: Failed to sync stores:', error);
-        }
-      }
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, [api]);
+    try {
+      syncHouseholdStoreWithAuth();
+    } catch (error) {
+      console.error('StoreProvider: Failed to sync stores:', error);
+    }
+  }, []);
 
   return <>{children}</>;
 }; 

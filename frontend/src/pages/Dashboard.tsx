@@ -80,9 +80,11 @@ const Dashboard = () => {
       // Full item minimums list for the quick-action count (low-stock endpoint alone does not populate it)
       fetchItemMinimums();
       // Fetch low stock items for the LowStockCard
-      fetchLowStockItems();
+      if (currentUser?.lowStockAlertsEnabled !== false) {
+        fetchLowStockItems();
+      }
     }
-  }, [selectedHouseholdId, authLoading, hasHousehold]); // Remove function dependencies to prevent infinite loops
+  }, [selectedHouseholdId, authLoading, hasHousehold, currentUser?.lowStockAlertsEnabled]); // Remove function dependencies to prevent infinite loops
 
   // Don't render dashboard content until we have a household
   // This prevents rendering before redirect to onboarding

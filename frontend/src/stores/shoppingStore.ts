@@ -47,6 +47,17 @@ export interface UpdateShoppingItemRequest {
   storedItemId?: string;
 }
 
+export interface BulkTransferToStorageItem {
+  shoppingItemId: string;
+  storageAreaId: string;
+  expirationDate?: string;
+  location?: string;
+}
+
+export interface BulkTransferToStorageRequest {
+  items: BulkTransferToStorageItem[];
+}
+
 interface ShoppingStore {
   // State
   items: ShoppingItem[];
@@ -60,6 +71,7 @@ interface ShoppingStore {
   deleteShoppingItem: (id: string) => Promise<boolean>;
   toggleShoppingItemCompleted: (id: string) => Promise<boolean>;
   bulkUpdateCompleted: (ids: string[], completed: boolean) => Promise<boolean>;
+  bulkTransferToStorage: (request: BulkTransferToStorageRequest) => Promise<boolean>;
   clearCompleted: () => Promise<boolean>;
   reorderItems: (itemPriorities: Array<{ id: string; priority: number }>) => Promise<boolean>;
   
@@ -334,6 +346,45 @@ export const useShoppingStore = create<ShoppingStore>()(
           const message = error instanceof Error ? error.message : 'Failed to bulk update shopping items';
           set({ error: message });
           console.error('bulkUpdateCompleted: Error:', error);
+          return false;
+        }
+      },
+
+      bulkTransferToStorage: async (request: BulkTransferToStorageRequest) => {
+        set({ error: null });
+
+        try {
+          const householdId = getHouseholdId();
+          if (!householdId) {
+            throw new Error('No household available');
+          }
+
+          const response = await apiService.post(
+            `/api/households/${householdId}/shopping/bulk-to-storage`,
+            request
+          );
+          const result = await response.json();
+
+          if (result.success && result.data) {
+            const updatedItems: ShoppingItem[] = result.data;
+            set(state => {
+              const updatedIds = new Set(updatedItems.map((i: ShoppingItem) => i.id));
+              return {
+                items: state.items.map(item =>
+                  updatedIds.has(item.id)
+                    ? updatedItems.find((u: ShoppingItem) => u.id === item.id) || item
+                    : item
+                ),
+              };
+            });
+            return true;
+          } else {
+            throw new Error(result.error || 'Failed to bulk transfer to storage');
+          }
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Failed to bulk transfer to storage';
+          set({ error: message });
+          console.error('bulkTransferToStorage: Error:', error);
           return false;
         }
       },

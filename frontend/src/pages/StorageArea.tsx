@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, ArrowLeft, Calendar, MapPin, AlertTriangle, Edit, Trash2, Save, X, PackageOpen, Snowflake } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
@@ -87,7 +88,8 @@ const StorageArea = () => {
   const navigate = useNavigate();
   
   // Store hooks
-  const { getStorageAreaById, fetchStorageAreas } = useStorageAreaStore();
+  const { getStorageAreaById, fetchStorageAreas, getStorageAreasForHousehold } = useStorageAreaStore();
+  const storageAreasList = getStorageAreasForHousehold();
   const {
     getStoredItemsByStorageArea, 
     createStoredItem, 
@@ -251,7 +253,13 @@ const StorageArea = () => {
     return badges[status];
   };
 
-  const StorageItemCard = ({ storageItem }: { storageItem: typeof storageItems[0] }) => {
+  const StorageItemCard = ({
+    storageItem,
+    storageAreas,
+  }: {
+    storageItem: typeof storageItems[0];
+    storageAreas: ReturnType<typeof getStorageAreasForHousehold>;
+  }) => {
     const item = items[storageItem.itemId];
     const isEditing = editingItem === storageItem.id;
     const [editQuantity, setEditQuantity] = useState(storageItem.quantity.toString());
@@ -264,6 +272,29 @@ const StorageArea = () => {
     const [editOpenedDate, setEditOpenedDate] = useState(
       storageItem.openedDate ? format(new Date(storageItem.openedDate), 'yyyy-MM-dd') : ''
     );
+    const [editStorageAreaId, setEditStorageAreaId] = useState(storageItem.storageAreaId);
+    const wasEditingRef = useRef(false);
+
+    useEffect(() => {
+      if (isEditing && !wasEditingRef.current) {
+        setEditQuantity(storageItem.quantity.toString());
+        setEditUnit(storageItem.unit);
+        setEditLocation(storageItem.location || '');
+        setEditExpiration(
+          storageItem.expirationDate ? format(new Date(storageItem.expirationDate), 'yyyy-MM-dd') : ''
+        );
+        setEditIsOpened(storageItem.isOpened);
+        setEditOpenedDate(
+          storageItem.openedDate ? format(new Date(storageItem.openedDate), 'yyyy-MM-dd') : ''
+        );
+        setEditStorageAreaId(storageItem.storageAreaId);
+      }
+      wasEditingRef.current = isEditing;
+    }, [isEditing, storageItem]);
+
+    const sortedStorageAreas = [...storageAreas].sort((a, b) => a.sortOrder - b.sortOrder);
+    const editTargetArea = sortedStorageAreas.find((a) => a.id === editStorageAreaId);
+    const showExpirationInEdit = editTargetArea?.type !== StorageAreaType.FREEZER;
 
     if (!item) {
       return (
@@ -284,13 +315,18 @@ const StorageArea = () => {
       if (!selectedHouseholdId) return;
       
       try {
+        const expirationPayload =
+          editTargetArea?.type === StorageAreaType.FREEZER
+            ? null
+            : editExpiration || undefined;
         await updateStoredItem(storageItem.id, {
           quantity: parseFloat(editQuantity),
           unit: editUnit as Unit,
           location: editLocation.trim() || undefined,
-          expirationDate: editExpiration || undefined,
+          expirationDate: expirationPayload,
           isOpened: editIsOpened,
           openedDate: editIsOpened && editOpenedDate ? editOpenedDate : undefined,
+          storageAreaId: editStorageAreaId,
         });
         setEditingItem(null);
       } catch (error) {
@@ -305,6 +341,7 @@ const StorageArea = () => {
       setEditExpiration(storageItem.expirationDate ? format(new Date(storageItem.expirationDate), 'yyyy-MM-dd') : '');
       setEditIsOpened(storageItem.isOpened);
       setEditOpenedDate(storageItem.openedDate ? format(new Date(storageItem.openedDate), 'yyyy-MM-dd') : '');
+      setEditStorageAreaId(storageItem.storageAreaId);
       setEditingItem(null);
     };
 
@@ -353,11 +390,31 @@ const StorageArea = () => {
                     {showFreezerWarning ? t('storedItems.freezerWarning') : t('storedItems.frozen')}
                   </Badge>
                 )}
-                {getExpirationBadge(storageItem.effectiveExpirationDate || storageItem.expirationDate)}
+                {area.type !== StorageAreaType.FREEZER &&
+                  getExpirationBadge(storageItem.effectiveExpirationDate || storageItem.expirationDate)}
               </div>
               
               {isEditing ? (
                 <div className="space-y-3">
+                  <div>
+                    <Label className="text-sm">{t('storageArea.moveToStorage')}</Label>
+                    <Select value={editStorageAreaId} onValueChange={setEditStorageAreaId}>
+                      <SelectTrigger className="mt-1 w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {sortedStorageAreas.map((sa) => (
+                          <SelectItem key={sa.id} value={sa.id}>
+                            <span className="flex items-center gap-2">
+                              <span aria-hidden>{sa.emoji}</span>
+                              <span>{sa.name}</span>
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   <div>
                     <Label className="text-sm">{t('storageArea.quantity')}</Label>
                     <QuantitySelector
@@ -382,7 +439,7 @@ const StorageArea = () => {
                     />
                   </div>
                   
-                  {area.type !== StorageAreaType.FREEZER && (
+                  {showExpirationInEdit && (
                     <div>
                       <Label className="text-sm">{t('storageArea.expirationDate')}</Label>
                       <Input
@@ -484,7 +541,8 @@ const StorageArea = () => {
                         )}
                       </span>
                     </div>
-                    {(storageItem.effectiveExpirationDate || storageItem.expirationDate) && (
+                    {area.type !== StorageAreaType.FREEZER &&
+                      (storageItem.effectiveExpirationDate || storageItem.expirationDate) && (
                       <div className="flex items-center gap-1">
                         <AlertTriangle className="h-3 w-3" />
                         <span>{t('storageArea.expiresIn', { days: getDaysUntilExpiration(storageItem.effectiveExpirationDate || storageItem.expirationDate) })}</span>
@@ -709,7 +767,7 @@ const StorageArea = () => {
                 key={storageItem.id}
                 {...scrollRevealFadeUp(prefersReducedMotion)}
               >
-                <StorageItemCard storageItem={storageItem} />
+                <StorageItemCard storageItem={storageItem} storageAreas={storageAreasList} />
               </motion.div>
             ))
           ) : (

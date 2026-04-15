@@ -110,7 +110,7 @@ export interface CreateStoredItemDto {
 export interface UpdateStoredItemDto {
   quantity?: number;
   unit?: Unit;
-  expirationDate?: string; // ISO date string
+  expirationDate?: string | null; // ISO date string; null clears (e.g. when moving to freezer)
   location?: string;
   isOpened?: boolean;
   openedDate?: string; // ISO date string

@@ -68,6 +68,7 @@
     "fresh": "Fresh ({{days}}d)",
     "quantity": "Quantity",
     "location": "Location",
+    "moveToStorage": "Storage location",
     "expirationDate": "Expiration date",
     "addItem": "Add item",
     "addItemTo": "Add item to {{name}}",

@@ -1,4 +1,4 @@
-name: Cleanup PR image
+name: Cleanup PR images
 
 on:
   pull_request:
@@ -7,13 +7,16 @@ on:
 jobs:
   cleanup:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [backend, frontend]
     steps:
-      - name: Delete PR image from GHCR
+      - name: Delete PR image from GHCR (${{ matrix.image }})
         uses: snok/container-retention-policy@v3.0.0
         with:
           account: ${{ github.repository_owner }}
           token: ${{ secrets.GHCR_CLEANUP_TOKEN }}
-          image-names: ${{ github.event.repository.name }}
+          image-names: ${{ github.event.repository.name }}/${{ matrix.image }}
           image-tags: pr-${{ github.event.pull_request.number }}
           tag-selection: tagged
           cut-off: 1s
@@ -21,8 +24,9 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          echo "### Cleanup PR #${{ github.event.pull_request.number }}" >> $GITHUB_STEP_SUMMARY
+          echo "### Cleanup PR #${{ github.event.pull_request.number }} – ${{ matrix.image }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Tag supprimé :** \`pr-${{ github.event.pull_request.number }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image :** \`${{ matrix.image }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **PR :** ${{ github.event.pull_request.title }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Merged :** ${{ github.event.pull_request.merged }}" >> $GITHUB_STEP_SUMMARY

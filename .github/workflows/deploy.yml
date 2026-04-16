@@ -31,11 +31,11 @@ jobs:
           git checkout "${{ github.ref_name }}"
           git pull --ff-only origin "${{ github.ref_name }}"
 
-      - name: Pull image
+      - name: Pull images
         working-directory: /home/pi/mon-app
         env:
           APP_VERSION: ${{ inputs.version }}
-        run: docker compose pull
+        run: docker compose pull backend frontend
 
       # ---- RELEASE (tag SemVer) ----
       - name: Deploy (release)
@@ -45,19 +45,26 @@ jobs:
           APP_VERSION: ${{ inputs.version }}
         run: |
           echo "🚀 Déploiement RELEASE ${APP_VERSION}"
-          docker compose -f docker-compose.yml -p my-fridge_prod up -d --remove-orphans
-          # Tag local pour rollback rapide
-          docker tag ghcr.io/${{ github.repository }}:${APP_VERSION} \
-                     ghcr.io/${{ github.repository }}:last-stable-local
+          docker compose -f docker-compose.yml --profile prod \
+            -p my-fridge_prod up -d --remove-orphans
+          docker tag ghcr.io/${{ github.repository }}/backend:${APP_VERSION} \
+                     ghcr.io/${{ github.repository }}/backend:last-stable-local
+          docker tag ghcr.io/${{ github.repository }}/frontend:${APP_VERSION} \
+                     ghcr.io/${{ github.repository }}/frontend:last-stable-local
 
       # ---- PR (preview) ----
       - name: Deploy (PR preview)
         if: steps.type.outputs.kind == 'pr'
-        working-directory: /home/pi/mon-app
+        working-directory: home/realague/my-fridge
         env:
           APP_VERSION: ${{ inputs.version }}
+          DB_NAME: my_fridge_db_staging
+          DB_PORT: "5433"
+          BACKEND_PORT: "3001"
+          FRONTEND_PORT: "8081"
+          FRONTEND_URL: http://my-fridge.multiplus.ovh:8081
         run: |
-          echo "🧪 Déploiement SATGING ${APP_VERSION}"
+          echo "🧪 Déploiement STAGING ${APP_VERSION}"
           docker compose -f docker-compose.yml -p my-fridge_staging \
             up -d --remove-orphans
 
@@ -65,7 +72,7 @@ jobs:
         run: docker image prune -f
 
       - name: Status
-        working-directory: /home/pi/mon-app
+        working-directory: home/realague/my-fridge
         env:
           APP_VERSION: ${{ inputs.version }}
         run: docker compose ps

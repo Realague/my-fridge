@@ -1,0 +1,79 @@
+name: Deploy to Raspberry Pi
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version à déployer (ex: 1.2.3, pr-42)'
+        required: true
+        default: 'latest'
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Detect deploy type
+        id: type
+        run: |
+          VERSION="${{ inputs.version }}"
+          if [[ "$VERSION" =~ ^[0-9]+(\.[0-9]+){0,2}(-.+)?$ ]]; then
+            KIND="release"
+          else
+            KIND="pr"
+          fi
+          echo "kind=$KIND" >> $GITHUB_OUTPUT
+          echo "Detected kind: $KIND (version: $VERSION)"
+
+      - name: Git pull & checkout
+        working-directory: /home/pi/mon-app
+        run: |
+          git fetch --all --prune
+          git checkout "${{ github.ref_name }}"
+          git pull --ff-only origin "${{ github.ref_name }}"
+
+      - name: Pull image
+        working-directory: /home/pi/mon-app
+        env:
+          APP_VERSION: ${{ inputs.version }}
+        run: docker compose pull
+
+      # ---- RELEASE (tag SemVer) ----
+      - name: Deploy (release)
+        if: steps.type.outputs.kind == 'release'
+        working-directory: /home/pi/mon-app
+        env:
+          APP_VERSION: ${{ inputs.version }}
+        run: |
+          echo "🚀 Déploiement RELEASE ${APP_VERSION}"
+          docker compose -f docker-compose.yml -p my-fridge_prod up -d --remove-orphans
+          # Tag local pour rollback rapide
+          docker tag ghcr.io/${{ github.repository }}:${APP_VERSION} \
+                     ghcr.io/${{ github.repository }}:last-stable-local
+
+      # ---- PR (preview) ----
+      - name: Deploy (PR preview)
+        if: steps.type.outputs.kind == 'pr'
+        working-directory: /home/pi/mon-app
+        env:
+          APP_VERSION: ${{ inputs.version }}
+        run: |
+          echo "🧪 Déploiement SATGING ${APP_VERSION}"
+          docker compose -f docker-compose.yml -p my-fridge_staging \
+            up -d --remove-orphans
+
+      - name: Cleanup old images
+        run: docker image prune -f
+
+      - name: Status
+        working-directory: /home/pi/mon-app
+        env:
+          APP_VERSION: ${{ inputs.version }}
+        run: docker compose ps
+
+      - name: Summary
+        run: |
+          echo "### Déploiement terminé" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Type :** \`${{ steps.type.outputs.kind }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version :** \`${{ inputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branche (compose) :** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY

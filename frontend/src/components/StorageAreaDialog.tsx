@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
-import { StorageAreaType, ItemCategory, ITEM_CATEGORIES } from '@/types/enums';
+import { StorageAreaType, ITEM_CATEGORIES } from '@/types/enums';
 import { getCategoryColor } from '@/utils/itemUtils';
+import { getDefaultCategoriesForStorageType } from '@/utils/categoryStorageMapping';
 
 interface StorageAreaDialogProps {
   isOpen: boolean;
@@ -33,15 +34,24 @@ const StorageAreaDialog = ({ isOpen, onClose, onSubmit, mode, initialData }: Sto
         setName(initialData.name);
         setEmoji(initialData.emoji);
         setType(initialData.type);
-        setDefaultCategories(initialData.defaultCategories || []);
+        setDefaultCategories(
+          initialData.defaultCategories?.length
+            ? initialData.defaultCategories
+            : getDefaultCategoriesForStorageType(initialData.type)
+        );
       } else {
         setName('');
         setEmoji('📦');
         setType(StorageAreaType.OTHER);
-        setDefaultCategories([]);
       }
     }
   }, [isOpen, mode, initialData]);
+
+  useEffect(() => {
+    if (isOpen && mode === 'add') {
+      setDefaultCategories(getDefaultCategoriesForStorageType(type));
+    }
+  }, [type, isOpen, mode]);
 
   const toggleCategory = (category: string) => {
     setDefaultCategories(prev =>
@@ -107,6 +117,7 @@ const StorageAreaDialog = ({ isOpen, onClose, onSubmit, mode, initialData }: Sto
               <option value={StorageAreaType.FRIDGE}>{t('storageArea.types.fridge')}</option>
               <option value={StorageAreaType.FREEZER}>{t('storageArea.types.freezer')}</option>
               <option value={StorageAreaType.PANTRY}>{t('storageArea.types.pantry')}</option>
+              <option value={StorageAreaType.KITCHEN_CUPBOARD}>{t('storageArea.types.kitchen_cupboard')}</option>
               <option value={StorageAreaType.OTHER}>{t('storageArea.types.other')}</option>
             </select>
           </div>

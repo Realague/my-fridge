@@ -186,8 +186,13 @@ const LoyaltyCards = () => {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="text-xl font-bold text-foreground">{t('loyaltyCards.title')}</h1>
-            <Button variant="ghost" size="icon" onClick={() => setShowForm(true)}>
-              <Plus className="h-5 w-5" />
+            <Button
+              variant="green"
+              className="touch-friendly shrink-0 flex items-center gap-2"
+              onClick={() => setShowForm(true)}
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">{t('buttons.add')}</span>
             </Button>
           </div>
         </div>

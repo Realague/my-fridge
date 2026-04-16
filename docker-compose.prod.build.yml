@@ -1,3 +1,11 @@
+# Production: images construites sur la machine (pas de pull GHCR, pas de tag d’image).
+# Exemple : docker compose -f docker-compose.prod.build.yml --profile prod up --build -d
+#
+# Variables utiles (fichier .env à la racine du repo) :
+#   VITE_API_URL            — origine publique du site (ex. https://my-fridge.multiplus.ovh), sans /api
+#   VITE_GOOGLE_CLIENT_ID   — optionnel, auth Google côté client
+# Les autres variables restent les mêmes que docker-compose.yml (DB_*, CLOUDINARY_*, FRONTEND_URL, etc.)
+
 services:
   caddy:
     image: caddy:latest
@@ -16,7 +24,6 @@ services:
       - caddy_data:/data
       - caddy_config:/config
 
-  # PostgreSQL Database
   db:
     image: postgres:15
     restart: always
@@ -34,9 +41,10 @@ services:
       timeout: 10s
       retries: 5
 
-  # Backend API
   backend:
-    image: ghcr.io/realague/my-fridge/backend:${APP_VERSION:-latest}
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     restart: always
     environment:
       NODE_ENV: production
@@ -56,9 +64,13 @@ services:
       db:
         condition: service_healthy
 
-  # Frontend React App
   frontend:
-    image: ghcr.io/realague/my-fridge/frontend:${APP_VERSION:-latest}
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-https://my-fridge.multiplus.ovh}
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
     restart: unless-stopped
     ports:
       - "${FRONTEND_PORT:-80}:80"

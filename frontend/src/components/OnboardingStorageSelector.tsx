@@ -10,6 +10,7 @@ import { StorageArea } from '@/types/household';
 import { useTranslation } from 'react-i18next';
 import { StorageAreaType, ITEM_CATEGORIES } from '@/types/enums';
 import { getCategoryColor } from '@/utils/itemUtils';
+import { getDefaultCategoriesForStorageType } from '@/utils/categoryStorageMapping';
 
 interface OnboardingStorageSelectorProps {
   selectedAreas: StorageArea[];
@@ -90,7 +91,7 @@ export const OnboardingStorageSelector = ({
     setAreaDescription('');
     setSelectedEmoji('🥬');
     setSelectedType(StorageAreaType.FRIDGE);
-    setDefaultCategories([]);
+    setDefaultCategories(getDefaultCategoriesForStorageType(StorageAreaType.FRIDGE));
   };
 
   const handleAddArea = () => {
@@ -123,7 +124,9 @@ export const OnboardingStorageSelector = ({
     setAreaDescription(area.description || '');
     setSelectedEmoji(area.emoji);
     setSelectedType(area.type);
-    setDefaultCategories(area.defaultCategories ?? []);
+    setDefaultCategories(
+      area.defaultCategories?.length ? area.defaultCategories : getDefaultCategoriesForStorageType(area.type)
+    );
     setEditingArea(index);
     setIsAddingArea(true);
   };
@@ -141,7 +144,7 @@ export const OnboardingStorageSelector = ({
     setAreaName(suggestedName);
     setAreaDescription(typeOption.description);
     setSelectedEmoji(typeOption.emoji);
-    setDefaultCategories([]);
+    setDefaultCategories(getDefaultCategoriesForStorageType(typeOption.id));
     setIsAddingArea(true);
   };
 
@@ -264,6 +267,7 @@ export const OnboardingStorageSelector = ({
                     onClick={() => {
                       setSelectedType(type.id);
                       setSelectedEmoji(type.emoji);
+                      setDefaultCategories(getDefaultCategoriesForStorageType(type.id));
                       if (!areaName) {
                         const existingCount = selectedAreas.filter(area => area.type === type.id).length;
                         setAreaName(type.suggestedNames[existingCount] || `${type.name} ${existingCount + 1}`);

@@ -1,4 +1,4 @@
-import { StorageAreaType } from '@/types/enums';
+import { ITEM_CATEGORIES, StorageAreaType } from '@/types/enums';
 
 interface StorageAreaLike {
   id: string;
@@ -26,6 +26,11 @@ const CATEGORY_TO_STORAGE_TYPE: Record<string, StorageAreaType> = {
 
 export function getSuggestedStorageType(category: string): StorageAreaType {
   return CATEGORY_TO_STORAGE_TYPE[category] ?? StorageAreaType.PANTRY;
+}
+
+/** Categories whose default suggested placement matches this storage type (aligned with getSuggestedStorageAreaId fallback). */
+export function getDefaultCategoriesForStorageType(type: StorageAreaType): string[] {
+  return ITEM_CATEGORIES.filter((cat) => CATEGORY_TO_STORAGE_TYPE[cat] === type);
 }
 
 export function getSuggestedStorageAreaId(

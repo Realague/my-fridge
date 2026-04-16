@@ -1,5 +1,5 @@
-# Stage 1 – Build
-FROM node:24-alpine AS build
+# Stage 1 – Build (runs natively on the CI runner, no QEMU)
+FROM --platform=$BUILDPLATFORM node:24-alpine AS build
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
 
 RUN npm run build
 
-# Stage 2 – Serve
+# Stage 2 – Serve (arm64 image, just static files)
 FROM nginx:stable-alpine
 
 COPY --from=build /app/dist /usr/share/nginx/html

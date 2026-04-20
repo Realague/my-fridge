@@ -410,7 +410,25 @@
       "bulkStorageError": "Erreur lors du rangement des articles",
       "noStorageAreas": "Aucune zone de stockage configurée",
       "selectAll": "Tout sélectionner",
-      "deselectAll": "Tout désélectionner"
+      "deselectAll": "Tout désélectionner",
+      "viewMode": {
+        "label": "Mode d'affichage",
+        "byAisle": "Par rayon",
+        "alphabetical": "A-Z"
+      },
+      "aisles": {
+        "produce": "Fruits et légumes",
+        "butcher": "Boucherie et poissonnerie",
+        "dairy": "Crèmerie et frais",
+        "grocery": "Épicerie",
+        "spices": "Épices",
+        "frozen": "Surgelés",
+        "beveragesSnacks": "Boissons et snacks",
+        "other": "Entretien et autre",
+        "itemCount_one": "{{completed}}/{{count}} article",
+        "itemCount_other": "{{completed}}/{{count}} articles",
+        "dragHandleLabel": "Réordonner le rayon {{name}}"
+      }
     },
     "mealPlans": {
       "title": "Plans de repas",

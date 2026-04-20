@@ -1,0 +1,320 @@
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
+import {
+  CalendarIcon,
+  Check,
+  Edit,
+  Save,
+  Trash2,
+  X,
+} from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { ItemImage } from '@/components/ItemImage';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { QuantitySelector } from '@/components/QuantitySelector';
+
+import { Item } from '@/services/itemService';
+import { StorageArea } from '@/services/storageAreaService';
+import { ShoppingItem } from '@/stores/shoppingStore';
+import { StorageAreaType } from '@/types/enums';
+import { CategoryIcon } from '@/utils/categoryIcons';
+import { getSuggestedStorageAreaId } from '@/utils/categoryStorageMapping';
+import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
+
+export interface ShoppingItemRowProps {
+  shoppingItem: ShoppingItem;
+  isCompleted?: boolean;
+  currentUserId?: string;
+  storageAreas: StorageArea[];
+  editingItemId: string | null;
+  quickStoreItemId: string | null;
+  quickStoreDate: string;
+  onToggleComplete: (id: string) => void;
+  onStartEdit: (id: string) => void;
+  onCancelEdit: () => void;
+  onSaveEdit: (id: string, quantity: string, unit: string) => void;
+  onDelete: (id: string) => void;
+  onQuickStore: (id: string) => void;
+  onSkipQuickStore: (id: string) => void;
+  onCancelQuickStore: () => void;
+  onQuickStoreDateChange: (date: string) => void;
+}
+
+export const ShoppingItemRow = ({
+  shoppingItem,
+  isCompleted = false,
+  currentUserId,
+  storageAreas,
+  editingItemId,
+  quickStoreItemId,
+  quickStoreDate,
+  onToggleComplete,
+  onStartEdit,
+  onCancelEdit,
+  onSaveEdit,
+  onDelete,
+  onQuickStore,
+  onSkipQuickStore,
+  onCancelQuickStore,
+  onQuickStoreDateChange,
+}: ShoppingItemRowProps) => {
+  const { t } = useTranslation();
+
+  const [editQuantity, setEditQuantity] = useState(shoppingItem.quantity);
+  const [editUnit, setEditUnit] = useState(shoppingItem.unit);
+
+  const isEditing = editingItemId === shoppingItem.id;
+  const isQuickStoring = quickStoreItemId === shoppingItem.id;
+  const itemData = (shoppingItem.item || null) as Item | null;
+
+  const suggestedAreaId = getSuggestedStorageAreaId(
+    shoppingItem.item?.category,
+    storageAreas
+  );
+  const suggestedArea = storageAreas.find((a) => a.id === suggestedAreaId);
+  const isFreezerArea = suggestedArea?.type === StorageAreaType.FREEZER;
+
+  const handleSave = () => {
+    onSaveEdit(shoppingItem.id, editQuantity, editUnit);
+  };
+
+  const handleCancel = () => {
+    setEditQuantity(shoppingItem.quantity);
+    setEditUnit(shoppingItem.unit);
+    onCancelEdit();
+  };
+
+  const itemName = itemData ? getItemDisplayName(itemData, t) : 'Unknown Item';
+  const categoryLabel =
+    t(`items.categories.${shoppingItem.item?.category}`) ||
+    t('items.categories.other');
+
+  if (!itemData) {
+    return null;
+  }
+
+  return (
+    <div className="space-y-0">
+      <div
+        className={`flex items-start gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg hover:bg-accent transition-colors ${
+          isCompleted
+            ? 'bg-accent opacity-75'
+            : isQuickStoring
+              ? 'bg-green-50 dark:bg-green-950/20 rounded-b-none'
+              : 'bg-muted'
+        }`}
+      >
+        <button
+          onClick={() => onToggleComplete(shoppingItem.id)}
+          className={`flex-shrink-0 w-6 h-6 mt-1 rounded-full flex items-center justify-center transition-colors ${
+            isCompleted
+              ? 'bg-green-500'
+              : 'border-2 border-border hover:border-green-500 bg-primary/10'
+          }`}
+        >
+          {isCompleted && <Check className="h-4 w-4 text-white" />}
+        </button>
+
+        <ItemImage
+          src={shoppingItem.item?.imageUrl}
+          alt={itemName}
+          containerClassName="w-10 h-10 rounded-md shrink-0 mt-0.5"
+          fallbackIconSize={40}
+          category={shoppingItem.item?.category}
+        />
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0 flex-1">
+              <span
+                className={`font-medium line-clamp-2 sm:line-clamp-1 ${
+                  isCompleted
+                    ? 'text-muted-foreground line-through'
+                    : 'text-foreground'
+                }`}
+              >
+                {itemName}
+              </span>
+              <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                <Badge
+                  className={`${getCategoryColor(
+                    shoppingItem.item?.category
+                  )} inline-flex items-center gap-1`}
+                >
+                  <CategoryIcon
+                    category={shoppingItem.item?.category}
+                    className="h-3.5 w-3.5"
+                  />
+                  {categoryLabel}
+                </Badge>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 shrink-0">
+              {isEditing ? (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSave}
+                    className="h-8 px-2"
+                  >
+                    <Save className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCancel}
+                    className="h-8 px-2"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </>
+              ) : (
+                <>
+                  {!isCompleted && !isQuickStoring && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onStartEdit(shoppingItem.id)}
+                      className="h-8 w-8 p-0 opacity-70 hover:opacity-100 transition-opacity hover:bg-primary/10"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  )}
+                  {!isEditing && !isQuickStoring && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onDelete(shoppingItem.id)}
+                      className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 hover:bg-primary/10"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+          <div className="text-sm text-muted-foreground mt-1">
+            {isEditing ? (
+              <QuantitySelector
+                item={itemData}
+                initialQuantity={editQuantity}
+                initialUnit={editUnit}
+                onQuantityChange={(quantity, unit) => {
+                  setEditQuantity(quantity);
+                  setEditUnit(unit);
+                }}
+                className="w-full"
+              />
+            ) : (
+              <div className="flex items-center gap-2">
+                <span>
+                  {shoppingItem.quantity}{' '}
+                  {shoppingItem.unit !== 'piece' ? shoppingItem.unit : ''}
+                </span>
+                {shoppingItem.creator && (
+                  <>
+                    <span>•</span>
+                    <span className="truncate">
+                      {t('common.addedBy', {
+                        name:
+                          shoppingItem.creator.id === currentUserId
+                            ? t('common.you')
+                            : shoppingItem.creator.displayName,
+                      })}
+                    </span>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {isQuickStoring && (
+        <div className="bg-green-50 dark:bg-green-950/20 border border-t-0 border-green-200 dark:border-green-800 rounded-b-lg px-3 pb-3 pt-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            {suggestedArea && (
+              <span className="text-xs font-medium text-green-700 dark:text-green-400">
+                {t('pages.shopping.suggestedArea', {
+                  area: `${suggestedArea.emoji} ${suggestedArea.name}`,
+                })}
+              </span>
+            )}
+            {!isFreezerArea && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 text-xs gap-1.5 bg-white dark:bg-background font-normal"
+                  >
+                    <CalendarIcon className="h-3 w-3" />
+                    {quickStoreDate
+                      ? format(new Date(quickStoreDate), 'dd/MM/yyyy', {
+                          locale: fr,
+                        })
+                      : t('pages.shopping.expirationDate')}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={
+                      quickStoreDate ? new Date(quickStoreDate) : undefined
+                    }
+                    onSelect={(date) =>
+                      onQuickStoreDateChange(
+                        date ? format(date, 'yyyy-MM-dd') : ''
+                      )
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            )}
+            <div className="flex gap-1 ml-auto">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onSkipQuickStore(shoppingItem.id)}
+                className="h-7 px-2 text-xs text-muted-foreground"
+              >
+                {t('pages.shopping.skip')}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onCancelQuickStore}
+                className="h-7 px-2 text-xs"
+              >
+                <X className="h-3 w-3" />
+              </Button>
+              <Button
+                variant="green"
+                size="sm"
+                onClick={() => onQuickStore(shoppingItem.id)}
+                className="h-7 px-2 text-xs"
+              >
+                <Check className="h-3 w-3 mr-1" />
+                {t('pages.shopping.validate')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ShoppingItemRow;

@@ -431,7 +431,25 @@
       "bulkStorageError": "Failed to store items",
       "noStorageAreas": "No storage areas configured",
       "selectAll": "Select all",
-      "deselectAll": "Deselect all"
+      "deselectAll": "Deselect all",
+      "viewMode": {
+        "label": "View mode",
+        "byAisle": "By aisle",
+        "alphabetical": "A-Z"
+      },
+      "aisles": {
+        "produce": "Produce",
+        "butcher": "Meat & seafood",
+        "dairy": "Dairy & chilled",
+        "grocery": "Grocery",
+        "spices": "Spices",
+        "frozen": "Frozen",
+        "beveragesSnacks": "Drinks & snacks",
+        "other": "Household & other",
+        "itemCount_one": "{{completed}}/{{count}} item",
+        "itemCount_other": "{{completed}}/{{count}} items",
+        "dragHandleLabel": "Reorder {{name}} aisle"
+      }
     },
     "mealPlans": {
       "title": "Meal plans",

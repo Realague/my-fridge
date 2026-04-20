@@ -12,6 +12,8 @@ export enum ItemCategory {
   VEGETABLES = 'vegetables',
   FRUITS = 'fruits',
   MEAT = 'meat',
+  FISH = 'fish',
+  SEAFOOD = 'seafood',
   DAIRY = 'dairy',
   GRAINS = 'grains',
   SPICES = 'spices',

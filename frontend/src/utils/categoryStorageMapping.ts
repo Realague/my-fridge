@@ -10,6 +10,8 @@ const CATEGORY_TO_STORAGE_TYPE: Record<string, StorageAreaType> = {
   vegetables: StorageAreaType.FRIDGE,
   fruits: StorageAreaType.FRIDGE,
   meat: StorageAreaType.FRIDGE,
+  fish: StorageAreaType.FRIDGE,
+  seafood: StorageAreaType.FRIDGE,
   dairy: StorageAreaType.FRIDGE,
   grains: StorageAreaType.PANTRY,
   spices: StorageAreaType.KITCHEN_CUPBOARD,

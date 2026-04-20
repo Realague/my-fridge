@@ -50,6 +50,16 @@ export const UNIT_CATEGORIES: Record<string, UnitCategory> = {
     defaultUnit: Unit.KILOGRAM,
     availableUnits: [Unit.KILOGRAM, Unit.GRAM, Unit.PIECE, Unit.PACK]
   },
+  [ItemCategory.FISH]: {
+    name: 'Fish',
+    defaultUnit: Unit.KILOGRAM,
+    availableUnits: [Unit.KILOGRAM, Unit.GRAM, Unit.PIECE, Unit.PACK]
+  },
+  [ItemCategory.SEAFOOD]: {
+    name: 'Seafood',
+    defaultUnit: Unit.KILOGRAM,
+    availableUnits: [Unit.KILOGRAM, Unit.GRAM, Unit.PIECE, Unit.PACK]
+  },
   [ItemCategory.GRAINS]: {
     name: 'Grains',
     defaultUnit: Unit.KILOGRAM,

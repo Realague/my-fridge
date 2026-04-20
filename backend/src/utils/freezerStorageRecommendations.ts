@@ -10,6 +10,8 @@ export function getRecommendedFreezerDays(category: ItemCategory): number {
   // Convert months to days (using average month length of 30 days)
   const recommendations: Record<ItemCategory, number> = {
     [ItemCategory.MEAT]: 120, // 3-4 months, using 4 months (120 days)
+    [ItemCategory.FISH]: 90, // 2-3 months, using 3 months (90 days)
+    [ItemCategory.SEAFOOD]: 90, // 2-3 months, using 3 months (90 days)
     [ItemCategory.DAIRY]: 90, // 1-3 months, using 3 months (90 days)
     [ItemCategory.VEGETABLES]: 300, // 8-12 months, using 10 months (300 days)
     [ItemCategory.FRUITS]: 300, // 8-12 months, using 10 months (300 days)

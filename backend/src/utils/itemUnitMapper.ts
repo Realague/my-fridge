@@ -26,6 +26,18 @@ export function getUnitsForCategory(category: ItemCategory): {
         availableUnits: [Unit.KILOGRAM, Unit.GRAM, Unit.PIECE],
       };
 
+    case ItemCategory.FISH:
+      return {
+        defaultUnit: Unit.KILOGRAM,
+        availableUnits: [Unit.KILOGRAM, Unit.GRAM, Unit.PIECE],
+      };
+
+    case ItemCategory.SEAFOOD:
+      return {
+        defaultUnit: Unit.KILOGRAM,
+        availableUnits: [Unit.KILOGRAM, Unit.GRAM, Unit.PIECE],
+      };
+
     case ItemCategory.DAIRY:
       // Most dairy items are measured by weight, but liquids like milk use volume
       // We'll default to GRAM, but this can be overridden for specific items
@@ -113,6 +125,8 @@ export function mapCategoryStringToEnum(categoryString: string): ItemCategory {
     'vegetables': ItemCategory.VEGETABLES,
     'fruits': ItemCategory.FRUITS,
     'meat': ItemCategory.MEAT,
+    'fish': ItemCategory.FISH,
+    'seafood': ItemCategory.SEAFOOD,
     'dairy': ItemCategory.DAIRY,
     'grains': ItemCategory.GRAINS,
     'spices': ItemCategory.SPICES,

@@ -166,6 +166,7 @@ export function BulkStorageDialog({
                     alt={getItemDisplayName(itemData, t)}
                     containerClassName="w-8 h-8 rounded-md"
                     fallbackIconSize={32}
+                    category={itemData.category}
                   />
                   <div className="flex-1 min-w-0">
                     <span className="font-medium text-sm truncate block">

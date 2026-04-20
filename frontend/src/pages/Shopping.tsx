@@ -18,6 +18,7 @@ import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
+import { CategoryIcon } from '@/utils/categoryIcons';
 import { StorageAreaType } from '@/types/enums';
 import { ItemImage } from '@/components/ItemImage';
 import { BulkStorageDialog } from '@/components/BulkStorageDialog';
@@ -433,6 +434,7 @@ const Shopping = () => {
             alt={getItemName(shoppingItem)}
             containerClassName="w-10 h-10 rounded-md shrink-0 mt-0.5"
             fallbackIconSize={40}
+            category={shoppingItem.item?.category}
           />
           
           <div className="flex-1 min-w-0">
@@ -442,7 +444,8 @@ const Shopping = () => {
                   {getItemName(shoppingItem)}
                 </span>
                 <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                  <Badge className={getCategoryColor(shoppingItem.item?.category)}>
+                  <Badge className={`${getCategoryColor(shoppingItem.item?.category)} inline-flex items-center gap-1`}>
+                    <CategoryIcon category={shoppingItem.item?.category} className="h-3.5 w-3.5" />
                     {getItemCategory(shoppingItem)}
                   </Badge>
                 </div>
@@ -609,7 +612,8 @@ const Shopping = () => {
               <div className="bg-muted p-3 rounded-lg">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-medium">{getItemName(itemToStore)}</span>
-                  <Badge className={getCategoryColor(getItemCategory(itemToStore))}>
+                  <Badge className={`${getCategoryColor(itemToStore.item?.category)} inline-flex items-center gap-1`}>
+                    <CategoryIcon category={itemToStore.item?.category} className="h-3.5 w-3.5" />
                     {getItemCategory(itemToStore)}
                   </Badge>
                 </div>
@@ -772,7 +776,12 @@ const Shopping = () => {
                 <SelectContent>
                   {categories.map((category) => (
                     <SelectItem key={category} value={category}>
-                      {t(`items.categories.${category}`)}
+                      <span className="inline-flex items-center gap-2">
+                        {category !== 'all' && (
+                          <CategoryIcon category={category} className="h-4 w-4" />
+                        )}
+                        {t(`items.categories.${category}`)}
+                      </span>
                     </SelectItem>
                   ))}
                 </SelectContent>

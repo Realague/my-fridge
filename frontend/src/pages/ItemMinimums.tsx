@@ -167,6 +167,7 @@ const ItemMinimums = () => {
                         alt={getItemDisplayName(item, t)}
                         containerClassName="w-10 h-10 sm:w-12 sm:h-12 rounded-lg shrink-0"
                         fallbackIconSize={32}
+                        category={item.category}
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">

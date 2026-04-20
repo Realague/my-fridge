@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
 import { StorageAreaType, ITEM_CATEGORIES } from '@/types/enums';
 import { getCategoryColor } from '@/utils/itemUtils';
+import { CategoryIcon } from '@/utils/categoryIcons';
 import { getDefaultCategoriesForStorageType } from '@/utils/categoryStorageMapping';
 
 interface StorageAreaDialogProps {
@@ -135,12 +136,13 @@ const StorageAreaDialog = ({ isOpen, onClose, onSubmit, mode, initialData }: Sto
                     className="transition-all"
                   >
                     <Badge
-                      className={`cursor-pointer transition-all ${
+                      className={`cursor-pointer transition-all inline-flex items-center gap-1 ${
                         isSelected
                           ? getCategoryColor(category)
                           : 'bg-muted text-muted-foreground hover:bg-muted/80'
                       }`}
                     >
+                      <CategoryIcon category={category} className="h-3.5 w-3.5" />
                       {t(`items.categories.${category}`)}
                     </Badge>
                   </button>

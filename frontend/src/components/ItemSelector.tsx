@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
+import { CategoryIcon } from '@/utils/categoryIcons';
 import { ItemImage } from '@/components/ItemImage';
 import { ItemCategory } from '@/types/enums';
 import { uploadImageWithSignature } from '@/services/imageUploadService';
@@ -560,11 +561,13 @@ export const ItemSelector = ({
                       alt={getItemDisplayName(item, t)}
                       containerClassName="w-10 h-10 rounded-md"
                       fallbackIconSize={40}
+                      category={item.category}
                     />
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm truncate">{getItemDisplayName(item, t)}</div>
                       <div className="flex items-center gap-2">
-                        <Badge className={getCategoryColor(item.category)}>
+                        <Badge className={`${getCategoryColor(item.category)} inline-flex items-center gap-1`}>
+                          <CategoryIcon category={item.category} className="h-3.5 w-3.5" />
                           {t(`items.categories.${item.category}`) }
                         </Badge>
                         <span className="text-xs text-muted-foreground">

@@ -22,6 +22,7 @@ import { useDateFormat } from '@/utils/dateFormatting';
 import { toast } from 'sonner';
 import { SelectedItemPreview } from '@/components/SelectedItemPreview';
 import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
+import { CategoryIcon } from '@/utils/categoryIcons';
 import { OpenedStatusToggle } from '@/components/OpenedStatusToggle';
 import { ItemImage } from '@/components/ItemImage';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -364,11 +365,13 @@ const StorageArea = () => {
               alt={getItemDisplayName(item, t)}
               containerClassName="w-16 h-16 rounded-lg"
               fallbackIconSize={48}
+              category={item.category}
             />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <h3 className="font-medium text-foreground">{getItemDisplayName(item, t)}</h3>
-                <Badge variant="outline" className={getCategoryColor(item.category)}>
+                <Badge variant="outline" className={`${getCategoryColor(item.category)} inline-flex items-center gap-1`}>
+                  <CategoryIcon category={item.category} className="h-3.5 w-3.5" />
                   { t(`items.categories.${item.category}`) }
                 </Badge>
                 {storageItem.isOpened && (

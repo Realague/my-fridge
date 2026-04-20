@@ -15,6 +15,7 @@ import { useHouseholdStore } from '@/stores/householdStore';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { CategoryIcon } from '@/utils/categoryIcons';
 import { ImageUpload } from '@/components/ImageUpload';
 
 interface ItemEditorProps {
@@ -146,7 +147,10 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
               <SelectContent>
                 {ITEM_CATEGORIES.map((itemCategory) => (
                   <SelectItem key={itemCategory} value={itemCategory}>
-                    {t(`items.categories.${itemCategory}`)}
+                    <span className="inline-flex items-center gap-2">
+                      <CategoryIcon category={itemCategory} className="h-4 w-4" />
+                      {t(`items.categories.${itemCategory}`)}
+                    </span>
                   </SelectItem>
                 ))}
               </SelectContent>

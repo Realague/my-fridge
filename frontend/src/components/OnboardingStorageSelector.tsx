@@ -10,6 +10,7 @@ import { StorageArea } from '@/types/household';
 import { useTranslation } from 'react-i18next';
 import { StorageAreaType, ITEM_CATEGORIES } from '@/types/enums';
 import { getCategoryColor } from '@/utils/itemUtils';
+import { CategoryIcon } from '@/utils/categoryIcons';
 import { getDefaultCategoriesForStorageType } from '@/utils/categoryStorageMapping';
 
 interface OnboardingStorageSelectorProps {
@@ -199,8 +200,9 @@ export const OnboardingStorageSelector = ({
                         {area.defaultCategories.map((cat) => (
                           <Badge
                             key={cat}
-                            className={`text-[10px] px-1.5 py-0 ${getCategoryColor(cat)}`}
+                            className={`text-[10px] px-1.5 py-0 inline-flex items-center gap-1 ${getCategoryColor(cat)}`}
                           >
+                            <CategoryIcon category={cat} className="h-3 w-3" />
                             {t(`items.categories.${cat}`)}
                           </Badge>
                         ))}
@@ -341,12 +343,13 @@ export const OnboardingStorageSelector = ({
                       className="transition-all"
                     >
                       <Badge
-                        className={`cursor-pointer transition-all text-xs ${
+                        className={`cursor-pointer transition-all text-xs inline-flex items-center gap-1 ${
                           isSelected
                             ? getCategoryColor(category)
                             : 'bg-muted text-muted-foreground hover:bg-muted/80'
                         }`}
                       >
+                        <CategoryIcon category={category} className="h-3.5 w-3.5" />
                         {t(`items.categories.${category}`)}
                       </Badge>
                     </button>

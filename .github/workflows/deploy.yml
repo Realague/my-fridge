@@ -67,14 +67,13 @@ jobs:
           BACKEND_PORT: "3001"
           FRONTEND_PORT: "8081"
           FRONTEND_URL: http://my-fridge.multiplus.ovh:8081
-          VITE_API_URL: http://my-fridge.multiplus.ovh:3001
         run: |
           echo "🧪 Déploiement STAGING ${APP_VERSION}"
           docker compose -f docker-compose.yml -p my-fridge_staging \
             up -d --remove-orphans
 
       - name: Cleanup old images
-        run: sudo -E docker image prune -f
+        run: docker image prune -f
 
       - name: Status
         working-directory: /home/realague/my-fridge

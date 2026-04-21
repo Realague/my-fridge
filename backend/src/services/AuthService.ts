@@ -13,8 +13,8 @@ export class AuthService {
 
   constructor(private userRepository: UserRepository) {
     this.googleClient = new OAuth2Client(
-      process.env.GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_CLIENT_SECRET
+      process.env.VITE_GOOGLE_CLIENT_ID,
+      process.env.VITE_GOOGLE_CLIENT_SECRET
     );
   }
 
@@ -38,7 +38,7 @@ export class AuthService {
       // Verify the ID token
       const ticket = await this.googleClient.verifyIdToken({
         idToken: tokens.id_token,
-        audience: process.env.GOOGLE_CLIENT_ID,
+        audience: process.env.VITE_GOOGLE_CLIENT_ID,
       });
 
       const payload = ticket.getPayload();
@@ -88,7 +88,7 @@ export class AuthService {
       // Verify Google ID token
       const ticket = await this.googleClient.verifyIdToken({
         idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
+        audience: process.env.VITE_GOOGLE_CLIENT_ID,
       });
 
       const payload = ticket.getPayload();

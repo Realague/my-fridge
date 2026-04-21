@@ -175,7 +175,7 @@ PORT=3000
 NODE_ENV=development
 
 # Frontend
-VITE_API_URL=http://localhost:3000
+VITE_BACKEND_URL=http://localhost:3000
 ```
 
 ## Production Deployment

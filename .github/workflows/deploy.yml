@@ -24,15 +24,19 @@ jobs:
           echo "kind=$KIND" >> $GITHUB_OUTPUT
           echo "Detected kind: $KIND (version: $VERSION)"
 
+      - name: Fix repo ownership (self-hosted)
+        working-directory: /home/realague/my-fridge
+        run: sudo chown -R "$USER":"$USER" .
+
       - name: Git pull & checkout
-        working-directory: /home/pi/mon-app
+        working-directory: /home/realague/my-fridge
         run: |
           git fetch --all --prune
           git checkout "${{ github.ref_name }}"
           git pull --ff-only origin "${{ github.ref_name }}"
 
       - name: Pull images
-        working-directory: /home/pi/mon-app
+        working-directory: /home/realague/my-fridge
         env:
           APP_VERSION: ${{ inputs.version }}
         run: docker compose pull backend frontend
@@ -40,7 +44,7 @@ jobs:
       # ---- RELEASE (tag SemVer) ----
       - name: Deploy (release)
         if: steps.type.outputs.kind == 'release'
-        working-directory: /home/pi/mon-app
+        working-directory: /home/realague/my-fridge
         env:
           APP_VERSION: ${{ inputs.version }}
         run: |
@@ -55,7 +59,7 @@ jobs:
       # ---- PR (preview) ----
       - name: Deploy (PR preview)
         if: steps.type.outputs.kind == 'pr'
-        working-directory: home/realague/my-fridge
+        working-directory: /home/realague/my-fridge
         env:
           APP_VERSION: ${{ inputs.version }}
           DB_NAME: my_fridge_db_staging
@@ -63,16 +67,17 @@ jobs:
           BACKEND_PORT: "3001"
           FRONTEND_PORT: "8081"
           FRONTEND_URL: http://my-fridge.multiplus.ovh:8081
+          VITE_API_URL: http://my-fridge.multiplus.ovh:3001
         run: |
           echo "🧪 Déploiement STAGING ${APP_VERSION}"
           docker compose -f docker-compose.yml -p my-fridge_staging \
             up -d --remove-orphans
 
       - name: Cleanup old images
-        run: docker image prune -f
+        run: sudo -E docker image prune -f
 
       - name: Status
-        working-directory: home/realague/my-fridge
+        working-directory: /home/realague/my-fridge
         env:
           APP_VERSION: ${{ inputs.version }}
         run: docker compose ps

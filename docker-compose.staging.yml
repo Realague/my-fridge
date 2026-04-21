@@ -64,7 +64,7 @@ services:
       dockerfile: Dockerfile.staging
     restart: always
     environment:
-      VITE_API_URL: http://my-fridge.multiplus.ovh:3001
+      VITE_BACKEND_URL: http://my-fridge.multiplus.ovh:3001
       VITE_PORT: 8081
     ports:
       - "8081:8081"

@@ -70,7 +70,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      VITE_API_URL: https://my-fridge.multiplus.ovh
+      VITE_BACKEND_URL: https://my-fridge.multiplus.ovh
     volumes:
       - ./frontend:/app
       - /app/node_modules

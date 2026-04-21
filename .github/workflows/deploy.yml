@@ -67,7 +67,8 @@ jobs:
           BACKEND_PORT: "3001"
           FRONTEND_PORT: "8081"
           FRONTEND_URL: http://my-fridge.multiplus.ovh:8081
-          VITE_API_URL: http://my-fridge.multiplus.ovh:3001
+          VITE_GOOGLE_CLIENT_ID: ${{ vars.VITE_GOOGLE_CLIENT_ID }}
+          VITE_GOOGLE_CLIENT_SECRET: ${{ vars.VITE_GOOGLE_CLIENT_SECRET }}
         run: |
           echo "🧪 Déploiement STAGING ${APP_VERSION}"
           docker compose -f docker-compose.yml -p my-fridge_staging \

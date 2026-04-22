@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
-import { ItemCategory, Unit, ITEM_CATEGORIES, UNITS, STORAGE_UNITS } from '../types/enums';
+import { ItemCategory, Unit, ITEM_CATEGORIES, UNITS, isCatalogStorageUnitForCategory } from '../types/enums';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -93,12 +93,13 @@ ItemModel.init(
           if (value.length === 0) {
             throw new Error('Available units array cannot be empty');
           }
+          const category = (this as ItemModel).get('category') as ItemCategory;
           for (const unit of value) {
             if (!UNITS.includes(unit)) {
               throw new Error(`Invalid unit: ${unit}`);
             }
-            if (!STORAGE_UNITS.includes(unit)) {
-              throw new Error(`Unit ${unit} is only available for recipes, not for storage items`);
+            if (!isCatalogStorageUnitForCategory(unit, category)) {
+              throw new Error(`Unit ${unit} is not available for this item category (catalog storage)`);
             }
           }
         },
@@ -183,16 +184,18 @@ function parseCSVLine(line: string): string[] {
   return result;
 }
 
-// Get appropriate available units for a category
-// Note: Only STORAGE_UNITS are allowed (CUP, TABLESPOON, TEASPOON are recipe-only units)
+// Get appropriate available units for a category.
+// Only catalog base storage + `serving` for `meal` (see isCatalogStorageUnitForCategory).
 function getAvailableUnits(category: ItemCategory): Unit[] {
   switch (category) {
+    case ItemCategory.MEAL:
+      return [Unit.PIECE, Unit.SERVING];
     case ItemCategory.VEGETABLES:
     case ItemCategory.FRUITS:
     case ItemCategory.MEAT:
     case ItemCategory.FISH:
     case ItemCategory.SEAFOOD:
-      return [Unit.PIECE, Unit.GRAM, Unit.KILOGRAM, Unit.BUNCH];
+      return [Unit.PIECE, Unit.GRAM, Unit.KILOGRAM];
     case ItemCategory.DAIRY:
       return [Unit.MILLILITER, Unit.LITER, Unit.PIECE, Unit.GRAM];
     case ItemCategory.GRAINS:
@@ -204,7 +207,7 @@ function getAvailableUnits(category: ItemCategory): Unit[] {
     case ItemCategory.SNACKS:
     case ItemCategory.FROZEN:
     case ItemCategory.CANNED:
-      return [Unit.PIECE, Unit.GRAM, Unit.KILOGRAM, Unit.PACK];
+      return [Unit.PIECE, Unit.GRAM, Unit.KILOGRAM];
     case ItemCategory.CONDIMENTS:
       return [Unit.MILLILITER, Unit.LITER, Unit.GRAM, Unit.PIECE];
     default:

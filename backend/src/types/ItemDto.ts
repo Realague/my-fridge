@@ -5,6 +5,7 @@ export interface CreateItemDto {
   category: ItemCategory;
   defaultUnit?: Unit;
   availableUnits?: Unit[];
+  pieceAlias?: string | null;
   daysAfterOpening?: number;
   imageUrl?: string;
   createdBy: string | null;
@@ -17,6 +18,7 @@ export interface UpdateItemDto {
   emoji?: string;
   defaultUnit?: Unit;
   availableUnits?: Unit[];
+  pieceAlias?: string | null;
   daysAfterOpening?: number;
   imageUrl?: string;
 }
@@ -27,6 +29,7 @@ export interface ItemDto {
   category: ItemCategory;
   defaultUnit: Unit;
   availableUnits: Unit[];
+  pieceAlias: string | null;
   daysAfterOpening?: number;
   imageUrl: string | null;
   createdBy: string | null;

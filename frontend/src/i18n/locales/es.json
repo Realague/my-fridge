@@ -133,6 +133,9 @@
     "defaultUnit": "Unidad predeterminada",
     "availableUnits": "Unidades disponibles",
     "addUnit": "Agregar unidad",
+    "pieceAlias": "Nombre de la pieza",
+    "pieceAliasPlaceholder": "ej. diente, rebanada, rama…",
+    "pieceAliasHint": "Nombre a mostrar en lugar de «pieza» para este artículo (ej. «diente» para el ajo).",
     "daysAfterOpening": "Conservación después de abrir",
     "daysAfterOpeningPlaceholder": "Número de días",
     "daysAfterOpeningHint": "¿Cuántos días se puede consumir este artículo después de abrirlo? (ej: 3 días para la leche, 7 días para la mermelada)"
@@ -454,6 +457,7 @@
       "addRecipe": "Agregar receta",
       "noRecipes": "No se encontraron recetas",
       "ingredients": "Ingredientes",
+      "freeQuantity": "Al gusto",
       "ingredientCount_one": "{{count}} ingrediente",
       "ingredientCount_other": "{{count}} ingredientes",
       "servingCount_one": "{{count}} porción",
@@ -712,15 +716,17 @@
     "l": "l",
     "cl": "cl",
     "ml": "ml",
-    "cup": "taza",
-    "cups": "tazas",
     "tbsp": "cucharada",
     "tsp": "cucharadita",
-    "pack": "pack",
-    "bunch": "bunch",
-    "serving": "serving",
-    "dozen": "dozen",
-    "other": "other"
+    "serving": "ración",
+    "pinch": "pizca",
+    "drizzle": "chorrito",
+    "knob": "nuez",
+    "freeQuantity": {
+      "pinch": "una pizca de",
+      "drizzle": "un chorrito de",
+      "knob": "una nuez de"
+    }
   },
   "unitConversion": {
     "title": "Equivalencias",

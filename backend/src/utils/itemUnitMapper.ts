@@ -17,7 +17,7 @@ export function getUnitsForCategory(category: ItemCategory): {
     case ItemCategory.VEGETABLES:
       return {
         defaultUnit: Unit.PIECE,
-        availableUnits: [Unit.PIECE, Unit.KILOGRAM, Unit.GRAM, Unit.BUNCH],
+        availableUnits: [Unit.PIECE, Unit.KILOGRAM, Unit.GRAM],
       };
 
     case ItemCategory.MEAT:
@@ -91,7 +91,7 @@ export function getUnitsForCategory(category: ItemCategory): {
     case ItemCategory.MEAL:
       return {
         defaultUnit: Unit.PIECE,
-        availableUnits: [Unit.PIECE, Unit.GRAM, Unit.KILOGRAM],
+        availableUnits: [Unit.PIECE, Unit.SERVING, Unit.GRAM, Unit.KILOGRAM],
       };
 
     case ItemCategory.PREPARATION:

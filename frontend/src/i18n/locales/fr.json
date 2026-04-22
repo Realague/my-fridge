@@ -135,6 +135,9 @@
     "defaultUnit": "Unité par défaut",
     "availableUnits": "Unités disponibles",
     "addUnit": "Ajouter une unité",
+    "pieceAlias": "Nom de la pièce",
+    "pieceAliasPlaceholder": "ex : gousse, tranche, branche…",
+    "pieceAliasHint": "Nom à afficher à la place de « pièce » pour cet article (ex : « gousse » pour l'ail).",
     "daysAfterOpening": "Conservation après ouverture",
     "daysAfterOpeningPlaceholder": "Nombre de jours",
     "daysAfterOpeningHint": "Combien de jours cet article peut-il être consommé après ouverture ? (ex: 3 jours pour le lait, 7 jours pour la confiture)"
@@ -476,6 +479,7 @@
       "addRecipe": "Ajouter une recette",
       "noRecipes": "Aucune recette trouvée",
       "ingredients": "Ingrédients",
+      "freeQuantity": "Quantité à l'œil",
       "ingredientCount_one": "{{count}} ingrédient",
       "ingredientCount_other": "{{count}} ingrédients",
       "servingCount_one": "{{count}} portion",
@@ -737,15 +741,17 @@
     "l": "L",
     "cl": "cl",
     "ml": "ml",
-    "cup": "tasse",
-    "cups": "tasses",
     "tbsp": "cuillère à soupe",
     "tsp": "cuillère à café",
-    "bunch": "bouquet",
-    "dozen": "douzaine",
-    "pack": "pack",
     "serving": "portion",
-    "other": "autre"
+    "pinch": "pincée",
+    "drizzle": "filet",
+    "knob": "noix",
+    "freeQuantity": {
+      "pinch": "pincée de",
+      "drizzle": "filet de",
+      "knob": "noix de"
+    }
   },
   "unitConversion": {
     "title": "Équivalences",

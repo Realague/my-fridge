@@ -6,6 +6,7 @@ export interface Item {
   category: string;
   defaultUnit: string;
   availableUnits: string[];
+  pieceAlias?: string | null;
   daysAfterOpening?: number;
   excludeFromShopping?: boolean;
   createdBy: string | null;
@@ -23,6 +24,7 @@ export interface CreateItemRequest {
   category: string;
   defaultUnit?: string;
   availableUnits?: string[];
+  pieceAlias?: string | null;
   daysAfterOpening?: number;
   householdId: string;
   imageUrl?: string | null;
@@ -33,6 +35,7 @@ export interface UpdateItemRequest {
   category?: string;
   defaultUnit?: string;
   availableUnits?: string[];
+  pieceAlias?: string | null;
   daysAfterOpening?: number;
   imageUrl?: string | null;
 }

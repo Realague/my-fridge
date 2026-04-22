@@ -19,12 +19,15 @@ import { StructuredIngredientInput } from '@/components/StructuredIngredientInpu
 import { useTranslation } from 'react-i18next';
 import { Item } from '@/services/itemService';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { formatQuantityWithUnit } from '@/utils/unitSystem';
 import { ImageUpload } from '@/components/ImageUpload';
 import { uploadImageWithSignature, uploadImageFromUrl } from '@/services/imageUploadService';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-interface RecipeIngredientWithId extends CreateRecipeIngredientDto {
+interface RecipeIngredientWithId extends Omit<CreateRecipeIngredientDto, 'quantity'> {
   id: string;
+  // Always present in state — may be null when the ingredient is a free quantity.
+  quantity: number | null;
   item?: Item;
 }
 
@@ -58,6 +61,7 @@ const AddRecipe = () => {
       itemName: string | null;
       translatedName: string | null;
       availableUnits: string[];
+      isFreeQuantity?: boolean;
       originalIndex?: number;
     }>;
     ingredientStepMapping?: { [ingredientIndex: number]: number[] };
@@ -94,8 +98,9 @@ const AddRecipe = () => {
         .map((ing, index) => ({
           id: `imported-${index}-${Date.now()}`,
           itemId: ing.itemId!,
-          quantity: ing.quantity || 1,
+          quantity: ing.isFreeQuantity ? null : (ing.quantity ?? 1),
           unit: ing.unit || 'piece',
+          isFreeQuantity: Boolean(ing.isFreeQuantity),
           notes: '',
           item: {
             id: ing.itemId!,
@@ -209,7 +214,11 @@ const AddRecipe = () => {
       return;
     }
 
-    const validIngredients = ingredients.filter(ing => ing.itemId && ing.quantity > 0);
+    // An ingredient is valid if it has an item AND either a positive quantity OR
+    // is explicitly marked as a free-quantity ("à l'œil") entry.
+    const validIngredients = ingredients.filter(ing =>
+      ing.itemId && (ing.isFreeQuantity || (ing.quantity !== null && ing.quantity !== undefined && ing.quantity > 0))
+    );
     const filteredInstructions = instructions.filter(inst => inst.text.trim() !== '');
     
     if (validIngredients.length === 0) {
@@ -246,8 +255,9 @@ const AddRecipe = () => {
     // Transform ingredients and add step mapping
     const ingredientsForApi: CreateRecipeIngredientDto[] = validIngredients.map(ingredient => ({
       itemId: ingredient.itemId,
-      quantity: ingredient.quantity,
+      quantity: ingredient.isFreeQuantity ? null : ingredient.quantity,
       unit: ingredient.unit,
+      isFreeQuantity: Boolean(ingredient.isFreeQuantity),
       notes: ingredient.notes,
       usedInSteps: ingredientStepMap[ingredient.id] || []
     }));
@@ -595,6 +605,12 @@ const AddRecipe = () => {
                               <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                                 {ingredients.map((ingredient) => {
                                   const isLinked = (ingredientStepMap[ingredient.id] || []).includes(index);
+                                  const itemName = getItemDisplayName(ingredient.item, t);
+                                  const label = formatQuantityWithUnit(ingredient.quantity, ingredient.unit, t, {
+                                    item: ingredient.item,
+                                    itemName,
+                                    isFreeQuantity: ingredient.isFreeQuantity,
+                                  });
                                   return (
                                     <div key={ingredient.id} className="flex items-center space-x-2">
                                       <Checkbox
@@ -602,8 +618,7 @@ const AddRecipe = () => {
                                         onCheckedChange={() => toggleIngredientForStep(ingredient.id, index)}
                                       />
                                       <span className="text-sm text-muted-foreground">
-                                        {ingredient.quantity} {ingredient.unit !== 'piece' ? ingredient.unit : ''}{' '}
-                                        {getItemDisplayName(ingredient.item, t)}
+                                        {label} {itemName}
                                       </span>
                                     </div>
                                   );

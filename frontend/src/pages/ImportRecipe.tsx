@@ -21,6 +21,7 @@ interface SelectedIngredient {
   originalText: string;
   quantity: number | null;
   unit: string | null;
+  isFreeQuantity: boolean;
   itemId: string | null;
   itemName: string | null;
   translatedName: string | null;
@@ -73,6 +74,7 @@ const ImportRecipe = () => {
         originalText: mi.parsed.originalText,
         quantity: mi.parsed.quantity,
         unit: mi.parsed.unit,
+        isFreeQuantity: Boolean(mi.parsed.isFreeQuantity),
         itemId: mi.bestMatch?.itemId || null,
         itemName: mi.bestMatch?.itemName || null,
         translatedName: mi.bestMatch?.translatedName || null,
@@ -452,14 +454,12 @@ const ImportRecipe = () => {
                                   <SelectItem value="ml">ml</SelectItem>
                                   <SelectItem value="cl">cl</SelectItem>
                                   <SelectItem value="l">l</SelectItem>
-                                  <SelectItem value="cup">cup</SelectItem>
                                   <SelectItem value="tbsp">tbsp</SelectItem>
                                   <SelectItem value="tsp">tsp</SelectItem>
                                   <SelectItem value="piece">piece</SelectItem>
-                                  <SelectItem value="pack">pack</SelectItem>
-                                  <SelectItem value="bunch">bunch</SelectItem>
-                                  <SelectItem value="dozen">dozen</SelectItem>
-                                  <SelectItem value="other">other</SelectItem>
+                                  <SelectItem value="pinch">{t('units.pinch')}</SelectItem>
+                                  <SelectItem value="drizzle">{t('units.drizzle')}</SelectItem>
+                                  <SelectItem value="knob">{t('units.knob')}</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>

@@ -135,6 +135,9 @@
     "defaultUnit": "Default unit",
     "availableUnits": "Available units",
     "addUnit": "Add unit",
+    "pieceAlias": "Piece name",
+    "pieceAliasPlaceholder": "e.g. clove, slice, stalk…",
+    "pieceAliasHint": "Name to display instead of \"piece\" for this item (e.g. \"clove\" for garlic).",
     "daysAfterOpening": "Conservation after opening",
     "daysAfterOpeningPlaceholder": "Number of days",
     "daysAfterOpeningHint": "How many days can this item be consumed after opening? (e.g., 3 days for milk, 7 days for jam)"
@@ -497,6 +500,7 @@
       "addRecipe": "Add recipe",
       "noRecipes": "No recipes found",
       "ingredients": "Ingredients",
+      "freeQuantity": "To taste",
       "ingredientCount_one": "{{count}} ingredient",
       "ingredientCount_other": "{{count}} ingredients",
       "servingCount_one": "{{count}} serving",
@@ -759,15 +763,17 @@
     "l": "L",
     "cl": "cl",
     "ml": "ml",
-    "cup": "cup",
-    "cups": "cups",
     "tbsp": "tbsp",
     "tsp": "tsp",
-    "bunch": "bunch",
-    "pack": "pack",
-    "dozen": "dozen",
     "serving": "serving",
-    "other": "other"
+    "pinch": "pinch",
+    "drizzle": "drizzle",
+    "knob": "knob",
+    "freeQuantity": {
+      "pinch": "a pinch of",
+      "drizzle": "a drizzle of",
+      "knob": "a knob of"
+    }
   },
   "unitConversion": {
     "title": "Equivalences",

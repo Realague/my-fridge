@@ -11,6 +11,7 @@ import { useTimerTick } from '@/hooks/useTimerTick';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { formatQuantityWithUnit, isFreeQuantityUnit } from '@/utils/unitSystem';
 import { Item } from '@/services/itemService';
 import { ConsumeIngredientsDialog } from '@/components/ConsumeIngredientsDialog';
 import { FloatingTimerBar } from '@/components/cooking/FloatingTimerBar';
@@ -75,6 +76,20 @@ const RecipeCookingMode = () => {
   const scaleQty = (qty: number) => {
     const scaled = qty * scale;
     return Math.round(scaled * 100) / 100;
+  };
+
+  const formatIngredientLine = (ingredient: any) => {
+    const itemName = getItemDisplayName(ingredient?.item as Item, t);
+    const isFree = Boolean(ingredient.isFreeQuantity) || isFreeQuantityUnit(ingredient.unit);
+    const scaled = ingredient.quantity === null || ingredient.quantity === undefined
+      ? null
+      : scaleQty(Number(ingredient.quantity));
+    const label = formatQuantityWithUnit(scaled, ingredient.unit, t, {
+      item: ingredient.item,
+      itemName,
+      isFreeQuantity: isFree,
+    });
+    return { label, itemName };
   };
 
   if (loading) {
@@ -275,11 +290,12 @@ const RecipeCookingMode = () => {
                     <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 space-y-2">
                       {relevantIngredients.map((ingredientIndex) => {
                         const ingredient = recipe.ingredients[ingredientIndex];
+                        const { label, itemName } = formatIngredientLine(ingredient);
                         return (
                           <div key={ingredient.id} className="flex items-center gap-2 text-sm">
                             <span className="w-2 h-2 bg-primary rounded-full"></span>
                             <span className="font-medium text-foreground">
-                              {scaleQty(ingredient.quantity)} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient?.item as Item, t)}
+                              {label} {itemName}
                             </span>
                             {ingredient.notes && (
                               <span className="text-muted-foreground italic">({ingredient.notes})</span>
@@ -337,6 +353,7 @@ const RecipeCookingMode = () => {
                   <div className="space-y-3">
                     {recipe.ingredients.map((ingredient, index) => {
                       const isRelevant = relevantIngredients.includes(index);
+                      const { label, itemName } = formatIngredientLine(ingredient);
                       return (
                         <div
                           key={ingredient.id}
@@ -351,7 +368,7 @@ const RecipeCookingMode = () => {
                           />
                           <div className={`flex-1 text-sm ${checkedIngredients[index] ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
                             <div className={`font-medium ${isRelevant ? 'text-primary' : ''}`}>
-                              {scaleQty(ingredient.quantity)} {ingredient.unit !== 'piece' ? ingredient.unit : ''} {getItemDisplayName(ingredient?.item as Item, t)}
+                              {label} {itemName}
                             </div>
                             {ingredient.notes && (
                               <div className={`text-xs ${isRelevant ? 'text-primary' : 'text-muted-foreground'}`}>

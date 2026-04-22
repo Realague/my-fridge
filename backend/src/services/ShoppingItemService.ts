@@ -5,7 +5,7 @@ import { StoredItemService } from './StoredItemService';
 import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto, ShoppingItemDto, BulkTransferToStorageDto, CreateStoredItemDto } from '../types/ItemDto';
 import { ApiResponse } from '../types/ApiResponse';
 import { ShoppingItem } from '../models/ShoppingItem';
-import { STORAGE_UNITS, Unit, StorageAreaType } from '../types/enums';
+import { LINE_STORAGE_UNITS, Unit, StorageAreaType } from '../types/enums';
 import { convertToStorageUnit, canConvertUnits, normalizeToBaseUnit, getBestDisplayUnit } from '../utils/unitConversion';
 import { Item } from '../models/Item';
 import { StorageArea } from '../models/StorageArea';
@@ -51,7 +51,7 @@ export class ShoppingItemService {
 
       // Convert cooking measurements to storage-appropriate units
       // For dry ingredients, convert volume to weight (e.g., tsp of salt -> grams)
-      if (!STORAGE_UNITS.includes(data.unit as Unit)) {
+      if (!LINE_STORAGE_UNITS.includes(data.unit as Unit)) {
         const converted = convertToStorageUnit(data.quantity, data.unit, item.category);
         data.quantity = converted.quantity;
         data.unit = converted.unit;
@@ -104,6 +104,7 @@ export class ShoppingItemService {
           category: item.category,
           defaultUnit: item.defaultUnit,
           availableUnits: item.availableUnits,
+          pieceAlias: item.pieceAlias ?? null,
           imageUrl: item.imageUrl,
           createdBy: item.createdBy,
           householdId: item.householdId,
@@ -192,7 +193,7 @@ export class ShoppingItemService {
       // Convert cooking measurements to storage-appropriate units if unit is being updated
       // For dry ingredients, convert volume to weight (e.g., tbsp of butter -> grams)
       if (data.unit && data.quantity !== undefined) {
-        if (!STORAGE_UNITS.includes(data.unit as Unit)) {
+        if (!LINE_STORAGE_UNITS.includes(data.unit as Unit)) {
           // Get item category for density-based conversion
           const item = existingItem.item || await this.itemRepository.findById(existingItem.itemId);
           const category = item?.category;
@@ -501,6 +502,7 @@ export class ShoppingItemService {
         category: shoppingItem.item.category,
         defaultUnit: shoppingItem.item.defaultUnit,
         availableUnits: availableUnits,
+        pieceAlias: shoppingItem.item.pieceAlias ?? null,
         imageUrl: shoppingItem.item.imageUrl,
         createdBy: shoppingItem.item.createdBy,
         householdId: shoppingItem.item.householdId,

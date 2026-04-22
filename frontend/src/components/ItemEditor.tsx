@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { X, Trash2 } from 'lucide-react';
 import { Item, itemService } from '@/services/itemService';
-import { getUnitsForCategory, getUnitDisplayName, STORAGE_UNITS } from '@/utils/unitSystem';
+import { getUnitsForCategory, getUnitDisplayName, getStorableUnitOptionsForItemCategory } from '@/utils/unitSystem';
 import { ITEM_CATEGORIES } from '@/types/enums';
 import { useTranslation } from 'react-i18next';
 import { useHouseholdStore } from '@/stores/householdStore';
@@ -32,6 +32,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
   const [name, setName] = useState(item.name);
   const [category, setCategory] = useState(item.category);
   const [defaultUnit, setDefaultUnit] = useState(item.defaultUnit);
+  const [pieceAlias, setPieceAlias] = useState<string>(item.pieceAlias ?? '');
   const [daysAfterOpening, setDaysAfterOpening] = useState<string>(
     item.daysAfterOpening?.toString() || ''
   );
@@ -82,11 +83,14 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
   };
 
   const handleSave = () => {
+    const trimmedAlias = pieceAlias.trim();
     const updates: Partial<Item> = {
       name: name.trim(),
       category,
       defaultUnit,
       availableUnits,
+      // Empty string -> null so the DB-side value is cleared.
+      pieceAlias: trimmedAlias === '' ? null : trimmedAlias,
       imageUrl: imageUrl,
       // Pass the selected file for deferred upload handling via an extra property onSave 
       ...(selectedImageFile ? { _selectedImageFile: selectedImageFile } : {}),
@@ -174,6 +178,22 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
           </div>
           
           <div>
+            <Label htmlFor="item-piece-alias">
+              {t('itemEditor.pieceAlias')} <span className="text-muted-foreground text-xs">({t('common.optional')})</span>
+            </Label>
+            <Input
+              id="item-piece-alias"
+              value={pieceAlias}
+              onChange={(e) => setPieceAlias(e.target.value)}
+              placeholder={t('itemEditor.pieceAliasPlaceholder')}
+              className="mt-1"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              {t('itemEditor.pieceAliasHint')}
+            </p>
+          </div>
+
+          <div>
             <Label>{t('itemEditor.availableUnits')}</Label>
             <div className="flex flex-wrap gap-2 mt-2">
               {availableUnits.map((unit) => (
@@ -201,7 +221,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
                   <SelectValue placeholder={t('itemEditor.addUnit')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {STORAGE_UNITS.filter(unit => !availableUnits.includes(unit)).map((unit) => (
+                  {getStorableUnitOptionsForItemCategory(category).filter(unit => !availableUnits.includes(unit)).map((unit) => (
                     <SelectItem key={unit} value={unit}>
                       {t(`units.${getUnitDisplayName(unit)}`)}
                     </SelectItem>

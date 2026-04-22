@@ -91,8 +91,12 @@ export const MealPlanProvider = ({ children }: { children: ReactNode }) => {
       if (!recipe) return;
 
       recipe.ingredients.forEach(ingredient => {
+        // Free-quantity ingredients ("à l'œil") never contribute to the shopping list.
+        if ((ingredient as any).isFreeQuantity || ingredient.quantity === null || ingredient.quantity === undefined) {
+          return;
+        }
         const key = ingredient.itemId;
-        const neededQuantity = ingredient.quantity * mealPlan.servings;
+        const neededQuantity = Number(ingredient.quantity) * mealPlan.servings;
         
         if (ingredientTotals.has(key)) {
           const existing = ingredientTotals.get(key)!;

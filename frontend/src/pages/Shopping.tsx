@@ -17,6 +17,7 @@ import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
+import { formatQuantityWithUnit } from '@/utils/unitSystem';
 import { CategoryIcon } from '@/utils/categoryIcons';
 import { StorageAreaType } from '@/types/enums';
 import { BulkStorageDialog } from '@/components/BulkStorageDialog';
@@ -507,7 +508,10 @@ const Shopping = () => {
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {itemToStore.quantity} {itemToStore.unit !== 'piece' ? itemToStore.unit : ''}
+                  {formatQuantityWithUnit(itemToStore.quantity, itemToStore.unit, t, {
+                    item: itemToStore.item,
+                    itemName: getItemName(itemToStore),
+                  })}
                 </p>
               </div>
               

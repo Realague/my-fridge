@@ -106,6 +106,18 @@
     "addedQuantityToStorageArea": "Ajouté {{quantity}} {{unit}} de {{item}} à {{storageAreaName}}",
     "addItemToInformation": "Combien de {{item}} êtes-vous en train d'ajouter à {{name}} ?",
     "addItemInformation": "Combien de {{item}} êtes-vous en train d'ajouter ?",
+    "sort": {
+      "labelPrefix": "Tri :",
+      "ariaOpen": "Choisir le tri des articles dans cet espace",
+      "noCategory": "Sans catégorie",
+      "hintExpirationAsc": "Le plus urgent en premier",
+      "criterion": {
+        "expiration": "Péremption",
+        "addedAt": "Date d'ajout",
+        "name": "Nom",
+        "category": "Catégorie"
+      }
+    },
     "types": {
       "fridge": "Réfrigérateur",
       "freezer": "Congélateur",

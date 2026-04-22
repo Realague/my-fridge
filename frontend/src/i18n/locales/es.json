@@ -104,6 +104,18 @@
     "addedQuantityToStorageArea": "Agregado {{quantity}} {{unit}} de {{item}} al {{storageAreaName}}",
     "addItemToInformation": "¿Cuánto {{item}} estás agregando a {{name}}?",
     "addItemInformation": "¿Cuánto {{item}} estás agregando?",
+    "sort": {
+      "labelPrefix": "Orden:",
+      "ariaOpen": "Elegir cómo ordenar los artículos en esta zona",
+      "noCategory": "Sin categoría",
+      "hintExpirationAsc": "Lo más urgente primero",
+      "criterion": {
+        "expiration": "Caducidad",
+        "addedAt": "Fecha de alta",
+        "name": "Nombre",
+        "category": "Categoría"
+      }
+    },
     "types": {
       "fridge": "Refrigerador",
       "freezer": "Congelador",

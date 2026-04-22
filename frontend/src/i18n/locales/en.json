@@ -106,6 +106,18 @@
     "addedQuantityToStorageArea": "Added {{quantity}} {{unit}} of {{item}} to {{storageAreaName}}",
     "addItemToInformation": "How much {{item}} are you adding to {{name}}?",
     "addItemInformation": "How much {{item}} are you adding?",
+    "sort": {
+      "labelPrefix": "Sort:",
+      "ariaOpen": "Choose how to sort items in this storage area",
+      "noCategory": "Uncategorized",
+      "hintExpirationAsc": "Most urgent first",
+      "criterion": {
+        "expiration": "Expiration",
+        "addedAt": "Date added",
+        "name": "Name",
+        "category": "Category"
+      }
+    },
     "types": {
       "fridge": "Refrigerator",
       "freezer": "Freezer",

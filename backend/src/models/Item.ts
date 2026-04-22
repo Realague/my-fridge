@@ -69,7 +69,7 @@ Item.init(
       defaultValue: Unit.PIECE,
       validate: {
         isValidForCategory(value: string) {
-          const category = (this as Item).get('category') as ItemCategory;
+          const category = (this as unknown as Item).get('category') as ItemCategory;
           if (!isCatalogStorageUnitForCategory(value as Unit, category)) {
             throw new Error(`defaultUnit ${value} is not valid for category ${category}`);
           }
@@ -88,7 +88,7 @@ Item.init(
           if (value.length === 0) {
             throw new Error('Available units array cannot be empty');
           }
-          const category = (this as Item).get('category') as ItemCategory;
+          const category = (this as unknown as Item).get('category') as ItemCategory;
           for (const unit of value) {
             if (!UNITS.includes(unit)) {
               throw new Error(`Invalid unit: ${unit}`);

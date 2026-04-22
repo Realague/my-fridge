@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +6,22 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, ArrowLeft, Calendar, MapPin, AlertTriangle, Edit, Trash2, Save, X, PackageOpen, Snowflake } from 'lucide-react';
+import {
+  Plus,
+  ArrowLeft,
+  ArrowDown,
+  ArrowUp,
+  Calendar,
+  MapPin,
+  AlertTriangle,
+  Edit,
+  Trash2,
+  Save,
+  X,
+  PackageOpen,
+  Snowflake,
+  ChevronDown,
+} from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
 import { QuantitySelector } from '@/components/QuantitySelector';
@@ -31,6 +46,24 @@ import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/authStore';
 import { motion, useReducedMotion } from 'framer-motion';
 import { scrollRevealFadeUp } from '@/lib/motion';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useStorageAreaSortPreferences } from '@/hooks/useStorageAreaSortPreferences';
+import {
+  buildStorageAreaDisplayRows,
+  type StorageAreaSortCriterion,
+} from '@/utils/storageAreaSort';
+
+const STORAGE_SORT_CRITERIA: StorageAreaSortCriterion[] = [
+  'expiration',
+  'addedAt',
+  'name',
+  'category',
+];
 
 /** Text/badge color by share of recommended freezer time used (<70% blue, 70–90% orange, >90% red). */
 function getFreezerColorClass(daysFrozen: number, recommendedDays: number): string {
@@ -85,7 +118,7 @@ function getFreezerProgressDisplay(
 
 const StorageArea = () => {
   const { id } = useParams<{ id: string }>();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { formatDate } = useDateFormat();
   const navigate = useNavigate();
   
@@ -119,6 +152,32 @@ const StorageArea = () => {
   // Get data from stores
   const area = getStorageAreaById(id || '');
   const storageItems = getStoredItemsByStorageArea(id || '');
+  const areaId = id || '';
+  const { getSort, setCriterion, toggleDirection } =
+    useStorageAreaSortPreferences(currentUser?.id);
+  const sortState = getSort(areaId);
+  const itemsAfterFilter = storageItems;
+
+  const displayRows = useMemo(() => {
+    if (!area) return [];
+    return buildStorageAreaDisplayRows(
+      itemsAfterFilter,
+      items,
+      area.type,
+      sortState.criterion,
+      sortState.direction,
+      i18n.language,
+      t
+    );
+  }, [
+    area,
+    itemsAfterFilter,
+    items,
+    sortState.criterion,
+    sortState.direction,
+    i18n.language,
+    t,
+  ]);
 
   // Load storage areas and stored items on mount
   useEffect(() => {
@@ -594,6 +653,15 @@ const StorageArea = () => {
     );
   };
 
+  const handleSortOption = (criterion: StorageAreaSortCriterion) => {
+    if (!areaId) return;
+    if (sortState.criterion === criterion) {
+      toggleDirection(areaId);
+    } else {
+      setCriterion(areaId, criterion);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
@@ -771,14 +839,88 @@ const StorageArea = () => {
               </CardContent>
             </Card>
           ) : storageItems.length > 0 ? (
-            storageItems.map((storageItem) => (
-              <motion.div
-                key={storageItem.id}
-                {...scrollRevealFadeUp(prefersReducedMotion)}
-              >
-                <StorageItemCard storageItem={storageItem} storageAreas={storageAreasList} />
-              </motion.div>
-            ))
+            <>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full sm:w-auto justify-between gap-2 touch-friendly"
+                      aria-label={t('storageArea.sort.ariaOpen')}
+                      title={
+                        sortState.criterion === 'expiration' && sortState.direction === 'asc'
+                          ? t('storageArea.sort.hintExpirationAsc')
+                          : undefined
+                      }
+                    >
+                      <span className="flex items-center gap-2 min-w-0">
+                        <span className="text-muted-foreground shrink-0">
+                          {t('storageArea.sort.labelPrefix')}
+                        </span>
+                        <span className="font-medium truncate">
+                          {t(`storageArea.sort.criterion.${sortState.criterion}`)}
+                        </span>
+                        {sortState.direction === 'asc' ? (
+                          <ArrowUp className="h-4 w-4 shrink-0" aria-hidden />
+                        ) : (
+                          <ArrowDown className="h-4 w-4 shrink-0" aria-hidden />
+                        )}
+                      </span>
+                      <ChevronDown className="h-4 w-4 shrink-0 opacity-60" aria-hidden />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-56">
+                    {STORAGE_SORT_CRITERIA.map((criterion) => (
+                      <DropdownMenuItem
+                        key={criterion}
+                        onClick={() => handleSortOption(criterion)}
+                        className={
+                          sortState.criterion === criterion ? 'bg-accent focus:bg-accent' : ''
+                        }
+                      >
+                        {t(`storageArea.sort.criterion.${criterion}`)}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                {sortState.criterion === 'expiration' && sortState.direction === 'asc' && (
+                  <p className="text-xs text-muted-foreground sm:text-right">
+                    {t('storageArea.sort.hintExpirationAsc')}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-4">
+                {displayRows.map((row, rowIndex) =>
+                  row.kind === 'header' ? (
+                    <div
+                      key={`${area.id}-cat-${row.categoryKey ?? 'none'}-${rowIndex}`}
+                      className="flex items-center gap-2 border-b border-border/50 pb-2 pt-1"
+                    >
+                      <CategoryIcon
+                        category={row.categoryKey}
+                        className="h-5 w-5 text-muted-foreground"
+                      />
+                      <span className="text-sm font-semibold text-foreground">
+                        {row.categoryKey
+                          ? t(`items.categories.${row.categoryKey}`)
+                          : t('storageArea.sort.noCategory')}
+                      </span>
+                    </div>
+                  ) : (
+                    <motion.div
+                      key={row.storedItem.id}
+                      {...scrollRevealFadeUp(prefersReducedMotion)}
+                    >
+                      <StorageItemCard
+                        storageItem={row.storedItem}
+                        storageAreas={storageAreasList}
+                      />
+                    </motion.div>
+                  )
+                )}
+              </div>
+            </>
           ) : (
             <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
               <CardContent className="p-8 text-center">

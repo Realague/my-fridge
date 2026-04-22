@@ -4,10 +4,10 @@
 
 /**
  * Gets the base URL for API requests
- * VITE_API_URL should be the full API URL (e.g., https://example.com/api)
+ * VITE_BACKEND_URL should be the full API URL (e.g., https://example.com/api)
  */
 export const getApiBaseUrl = (): string => {
-  return import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  return import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 };
 
 /**

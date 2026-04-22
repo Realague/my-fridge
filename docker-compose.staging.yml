@@ -39,6 +39,10 @@ services:
       DB_NAME: my_fridge_db_staging
       PORT: 3001
       FRONTEND_URL: http://my-fridge.multiplus.ovh:8081
+      VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
+      VITE_GOOGLE_CLIENT_SECRET: ${VITE_GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-${VITE_GOOGLE_CLIENT_ID:-}}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-${VITE_GOOGLE_CLIENT_SECRET:-}}
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
@@ -64,7 +68,7 @@ services:
       dockerfile: Dockerfile.staging
     restart: always
     environment:
-      VITE_API_URL: http://my-fridge.multiplus.ovh:3001
+      VITE_BACKEND_URL: http://my-fridge.multiplus.ovh:3001
       VITE_PORT: 8081
     ports:
       - "8081:8081"

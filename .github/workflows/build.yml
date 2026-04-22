@@ -49,6 +49,30 @@ jobs:
             type=ref,event=pr
             type=semver,pattern={{version}}
 
+      # Vite bakes VITE_* into the static bundle at image build time. Empty vars.VITE_BACKEND_URL
+      # yields a bundle that falls back to http://localhost:3000 in the browser.
+      - name: Compute VITE_BACKEND_URL for Docker build
+        id: vite_backend
+        run: |
+          PR_STAGING="${{ vars.VITE_BACKEND_URL_STAGING }}"
+          COMMON="${{ vars.VITE_BACKEND_URL }}"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if [ -n "$PR_STAGING" ]; then
+              OUT="$PR_STAGING"
+            elif [ -n "$COMMON" ]; then
+              OUT="$COMMON"
+            else
+              OUT="http://my-fridge.multiplus.ovh:3001"
+            fi
+          else
+            if [ -n "$COMMON" ]; then
+              OUT="$COMMON"
+            else
+              OUT="https://my-fridge.multiplus.ovh"
+            fi
+          fi
+          echo "url=$OUT" >> "$GITHUB_OUTPUT"
+
       - name: Build & push
         uses: docker/build-push-action@v5
         with:
@@ -58,8 +82,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            VITE_API_URL=${{ vars.VITE_API_URL }}
-            VITE_GOOGLE_CLIENT_ID=${{ vars.VITE_GOOGLE_CLIENT_ID }}
+            VITE_BACKEND_URL=${{ steps.vite_backend.outputs.url }}
+            VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,scope=${{ matrix.service }},mode=max
 

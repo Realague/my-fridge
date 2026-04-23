@@ -49,29 +49,28 @@ jobs:
             type=ref,event=pr
             type=semver,pattern={{version}}
 
-      # Vite bakes VITE_* into the static bundle at image build time. Empty vars.VITE_BACKEND_URL
-      # yields a bundle that falls back to http://localhost:3000 in the browser.
-      - name: Compute VITE_BACKEND_URL for Docker build
+      - name: Vite backend URL for image build
         id: vite_backend
         run: |
-          PR_STAGING="${{ vars.VITE_BACKEND_URL_STAGING }}"
-          COMMON="${{ vars.VITE_BACKEND_URL }}"
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            if [ -n "$PR_STAGING" ]; then
-              OUT="$PR_STAGING"
-            elif [ -n "$COMMON" ]; then
-              OUT="$COMMON"
-            else
-              OUT="http://my-fridge.multiplus.ovh:3001"
-            fi
+            echo "url=http://my-fridge.multiplus.ovh:3001" >> $GITHUB_OUTPUT
           else
-            if [ -n "$COMMON" ]; then
-              OUT="$COMMON"
-            else
-              OUT="https://my-fridge.multiplus.ovh"
-            fi
+            echo "url=https://my-fridge.multiplus.ovh" >> $GITHUB_OUTPUT
           fi
-          echo "url=$OUT" >> "$GITHUB_OUTPUT"
+
+      - name: Frontend staging banner metadata
+        id: fe_banner
+        run: |
+          echo "build_date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "show=true" >> $GITHUB_OUTPUT
+            echo "branch=${{ github.head_ref }}" >> $GITHUB_OUTPUT
+            echo "commit=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "show=false" >> $GITHUB_OUTPUT
+            echo "branch=" >> $GITHUB_OUTPUT
+            echo "commit=" >> $GITHUB_OUTPUT
+          fi
 
       - name: Build & push
         uses: docker/build-push-action@v5
@@ -84,6 +83,10 @@ jobs:
           build-args: |
             VITE_BACKEND_URL=${{ steps.vite_backend.outputs.url }}
             VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+            VITE_SHOW_ENV_BANNER=${{ steps.fe_banner.outputs.show }}
+            VITE_DEPLOY_BRANCH=${{ steps.fe_banner.outputs.branch }}
+            VITE_DEPLOY_COMMIT=${{ steps.fe_banner.outputs.commit }}
+            VITE_BUILD_DATE=${{ steps.fe_banner.outputs.build_date }}
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,scope=${{ matrix.service }},mode=max
 

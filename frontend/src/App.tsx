@@ -13,6 +13,7 @@ import "./i18n/config"; // Initialize i18n
 import { RecipeProvider } from "@/contexts/RecipeContext";
 import { MealPlanProvider } from "@/contexts/MealPlanContext";
 import { StoreProvider } from "@/components/StoreProvider";
+import { StagingEnvBanner } from "@/components/StagingEnvBanner";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
@@ -56,8 +57,9 @@ function App() {
               <BrowserRouter>
                 <MealPlanProvider>
                   <StoreProvider>
+                    <StagingEnvBanner />
                     <Toaster />
-                    <Sonner /> 
+                    <Sonner />
                     <Routes>
                       <Route path="/" element={<Index />} />
                       <Route path="/auth" element={<Auth />} />

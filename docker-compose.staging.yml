@@ -70,6 +70,10 @@ services:
     environment:
       VITE_BACKEND_URL: http://my-fridge.multiplus.ovh:3001
       VITE_PORT: 8081
+      VITE_SHOW_ENV_BANNER: ${VITE_SHOW_ENV_BANNER:-}
+      VITE_DEPLOY_BRANCH: ${VITE_DEPLOY_BRANCH:-}
+      VITE_DEPLOY_COMMIT: ${VITE_DEPLOY_COMMIT:-}
+      VITE_BUILD_DATE: ${VITE_BUILD_DATE:-}
     ports:
       - "8081:8081"
     networks:

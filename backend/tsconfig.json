@@ -23,7 +23,8 @@
     "noImplicitOverride": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "allowJs": true
   },
   "include": [
     "src/**/*"

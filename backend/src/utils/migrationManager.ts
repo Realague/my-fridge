@@ -72,6 +72,8 @@ export class MigrationManager {
       const migrationFiles: MigrationFile[] = [];
 
       for (const file of files) {
+        // .d.ts also ends with ".ts" — never load declaration files
+        if (file.endsWith('.d.ts')) continue;
         if (!file.endsWith('.js') && !file.endsWith('.ts')) continue;
 
         const filepath = path.join(this.migrationsPath, file);

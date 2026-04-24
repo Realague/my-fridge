@@ -64,9 +64,6 @@ services:
   frontend:
     image: ghcr.io/realague/my-fridge/frontend:${APP_VERSION:-latest}
     restart: unless-stopped
-    environment:
-      VITE_BACKEND_URL: ${VITE_BACKEND_URL:-http://my-fridge.multiplus.ovh:3001}
-      VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID}
     ports:
       - "${FRONTEND_PORT:-80}:80"
 

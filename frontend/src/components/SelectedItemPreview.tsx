@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Item } from '@/services/itemService';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { CategoryIcon } from '@/utils/categoryIcons';
 import { X } from 'lucide-react';
 import { ItemImage } from '@/components/ItemImage';
 import { useTranslation } from 'react-i18next';
@@ -26,6 +27,7 @@ export const SelectedItemPreview = ({ item, onClear }: SelectedItemPreviewProps)
                 alt={getItemDisplayName(item, t)}
                 containerClassName="w-10 h-10 rounded-md"
                 fallbackIconSize={40}
+                category={item.category}
               />
             </div>
             <div className="flex-1 min-w-0">
@@ -37,7 +39,8 @@ export const SelectedItemPreview = ({ item, onClear }: SelectedItemPreviewProps)
                   </Badge>
                 )}
               </div>
-              <p className="text-sm text-muted-foreground capitalize">
+              <p className="text-sm text-muted-foreground capitalize inline-flex items-center gap-1.5">
+                <CategoryIcon category={item.category} className="h-3.5 w-3.5" />
                 {t(`items.categories.${item.category}`)}
               </p>
             </div>

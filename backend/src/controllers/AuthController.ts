@@ -12,7 +12,9 @@ export class AuthController {
   async exchangeGoogleCode(req: Request, res: Response): Promise<void> {
     try {
       const exchangeDto: GoogleOAuthExchangeDto = req.body;
-      
+      console.log('exchangeDto', exchangeDto);
+      console.log('process.env.VITE_GOOGLE_CLIENT_ID', process.env.VITE_GOOGLE_CLIENT_ID);
+      console.log('process.env.VITE_GOOGLE_CLIENT_SECRET', process.env.VITE_GOOGLE_CLIENT_SECRET);
       const authResponse = await this.authService.exchangeGoogleCode(exchangeDto);
       
       const response: ApiResponse = {

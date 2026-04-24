@@ -22,7 +22,7 @@ turkeyTenderloin,Aiguillette de dinde,,meat,Turkey tenderloin,lomo de pavo
 chickenTenderloin,Aiguillette de poulet,aiguillette-de-poulet_118144_w100h100c1cx463cy342cxt0cyt0cxb927cyb684.jpg,meat,Chicken tenderloin,filete de pollo
 garlic,Ail,ail_67514_w100h100c1cx350cy350.jpg,vegetables,Garlic,Ajo
 wildGarlic,Ail des ours,,vegetables,Wild garlic,ajo silvestre
-garlicPowder,Ail en poudre,ail-en-poudre_109577_w100h100c1cx150cy150cxt0cyt0cxb300cyb300.jpg,vegetables,Garlic powder,Polvo de ajo
+garlicPowder,Ail en poudre,ail-en-poudre_109577_w100h100c1cx150cy150cxt0cyt0cxb300cyb300.jpg,spices,Garlic powder,Polvo de ajo
 garlicPowder2,Ail semoule,ail-semoule_67618_w100h100c1cx350cy350.jpg,spices,Garlic powder,Polvo de ajo
 chickenWing,Aile de poulet,aile-de-poulet_68942_w100h100c1cxt0cyt0cxb700cyb700.jpg,meat,Chicken wing,ala de pollo
 rayWing,Aile de raie,,fish,Ray wing,Ala de raya
@@ -177,7 +177,7 @@ lowerCoast,Basse-côte,,meat,Lower Coast,Costa Baja
 bastogne,Bastogne,,snacks,Bastogne,Bastogne
 batavia,Batavia,batavia_68945_w100h100c1cxt0cyt0cxb700cyb700.jpg,vegetables,Batavia,Batavia
 whiteChocolateSticks,Bâtonnets au chocolat blanc,,snacks,White chocolate sticks,palitos de chocolate blanco
-anglerfish,Baudroie,baudroie_75708_w100h100c1cx2959cy1972cxt0cyt0cxb5919cyb3945.jpg,meat,Anglerfish,Pez rape
+anglerfish,Baudroie,baudroie_75708_w100h100c1cx2959cy1972cxt0cyt0cxb5919cyb3945.jpg,fish,Anglerfish,Pez rape
 bib,Bavette,bavette_139346_w100h100c1cx411cy411cxt0cyt0cxb822cyb822.png,meat,Bib,Babero
 beaufort,Beaufort,beaufort_161475_w100h100c1cxt0cyt0cxb1024cyb1024.png,dairy,Beaufort,Beaufort
 beaujolais,Beaujolais,beaujolais_76273_w100h100c1cx2083cy2083cxt0cyt0cxb4167cyb4167.jpg,beverages,Beaujolais,Beaujolais
@@ -201,11 +201,11 @@ mediumSizedRedBeet,Betterave rouge de taille moyenne,,vegetables,Medium-sized re
 butter,Beurre,beurre_115998_w100h100c1cx912cy821cxt0cyt0cxb1824cyb1643.jpg,dairy,Butter,Manteca
 reducedFatButter,Beurre allégé,beurre-allege_68917_w100h100c1cxt0cyt0cxb300cyb300.jpg,dairy,Reduced-fat butter,Mantequilla baja en grasa
 whiteButter,Beurre blanc,beurre-blanc_111699_w100h100c1cx332cy262cxt0cyt0cxb665cyb525.jpg,dairy,White butter,Mantequilla blanca
-almondButter,Beurre d'amande,beurre-d-amande_111388_w100h100c1cx150cy150cxt0cyt0cxb300cyb300.jpg,dairy,Almond butter,mantequilla de almendras
-peanutButter,Beurre d'arachide,beurre-d-arachide_68921_w100h100c1cxt0cyt0cxb700cyb700.jpg,dairy,Peanut butter,Manteca de cacahuete
+almondButter,Beurre d'amande,beurre-d-amande_111388_w100h100c1cx150cy150cxt0cyt0cxb300cyb300.jpg,snacks,Almond butter,mantequilla de almendras
+peanutButter,Beurre d'arachide,beurre-d-arachide_68921_w100h100c1cxt0cyt0cxb700cyb700.jpg,snacks,Peanut butter,Manteca de cacahuete
 snailButter,Beurre d'escargot,beurre-d-escargot_81518_w100h100c1cx1900cy1900cxt0cyt0cxb3800cyb3800.jpg,dairy,Snail butter,Mantequilla de caracol
-peanutButter2,Beurre de cacahuètes,beurre-de-cacahuetes_68922_w100h100c1cxt0cyt0cxb700cyb700.jpg,dairy,Peanut butter,Manteca de cacahuete
-cocoaButter,Beurre de cacao,beurre-de-cacao_111703_w100h100c1cx376cy232cxt0cyt0cxb752cyb465.jpg,dairy,Cocoa butter,manteca de cacao
+peanutButter2,Beurre de cacahuètes,beurre-de-cacahuetes_68922_w100h100c1cxt0cyt0cxb700cyb700.jpg,snacks,Peanut butter,Manteca de cacahuete
+cocoaButter,Beurre de cacao,beurre-de-cacao_111703_w100h100c1cx376cy232cxt0cyt0cxb752cyb465.jpg,preparation,Cocoa butter,manteca de cacao
 semiSaltedButter,Beurre demi-sel,beurre-demi-sel_115999_w100h100c1cx912cy821cxt0cyt0cxb1824cyb1643.jpg,dairy,Semi-salted butter,mantequilla semisalada
 sweetButter,Beurre doux,beurre-doux_116000_w100h100c1cx912cy821cxt0cyt0cxb1824cyb1643.jpg,dairy,Sweet butter,mantequilla dulce
 saltedButter,Beurre salé,beurre-sale_116001_w100h100c1cx912cy821cxt0cyt0cxb1824cyb1643.jpg,dairy,Salted butter,mantequilla salada
@@ -222,7 +222,7 @@ sweetDecorationBall,Bille de décoration sucré,,condiments,Sweet decoration bal
 chocolateBalls,Billes de chocolat,billes-de-chocolat_85404_w100h100c1cx1797cy1553cxt0cyt0cxb3594cyb3106.jpg,snacks,Chocolate balls,bolas de chocolate
 mozzarellaBalls,Billes de mozzarella,,dairy,Mozzarella balls,bolas de mozzarella
 multicoloredMarbles,Billes multicolores,,snacks,Multicolored marbles,Canicas multicolores
-bimiOrBroccolini,Bimi (ou broccolini),bimi-ou-broccolini_81856_w100h100c1cx2200cy2200cxt0cyt0cxb4400cyb4400.jpg,meat,Bimi (or broccolini),Bimi (o brócoli)
+bimiOrBroccolini,Bimi (ou broccolini),bimi-ou-broccolini_81856_w100h100c1cx2200cy2200cxt0cyt0cxb4400cyb4400.jpg,vegetables,Bimi (or broccolini),Bimi (o brócoli)
 biscotte,Biscotte,biscotte_67512_w100h100c1cx350cy350.jpg,grains,Biscotte,Biscotte
 biscuit,Biscuit,biscuit_67750_w100h100c1cx350cy350.jpg,snacks,Biscuit,Galleta
 amarettiBiscuit,Biscuit amaretti,biscuit-amaretti_118157_w100h100c1cx351cy449cxt0cyt0cxb702cyb898.png,snacks,Amaretti biscuit,Galleta Amaretti
@@ -239,7 +239,7 @@ ladyfingers,Biscuits à la cuillère,biscuits-a-la-cuillere_68934_w100h100c1cxt0
 savoryBiscuits,Biscuits apéritifs,biscuits-aperitifs_118161_w100h100c1cx241cy241cxt0cyt0cxb483cyb483.jpeg,snacks,Savory biscuits,galletas saladas
 dryBiscuits,Biscuits secs,biscuits-secs_68963_w100h100c1cxt0cyt0cxb700cyb700.jpg,snacks,Dry biscuits,galletas secas
 bison,Bison,bison_84348_w100h100c1cx250cy250cxt0cyt0cxb500cyb500.jpg,meat,Bison,Bisonte
-lobsterBisque,Bisque de homard,,seafood,Lobster bisque,sopa de langosta
+lobsterBisque,Bisque de homard,,meal,Lobster bisque,sopa de langosta
 italianBitters,Bitter italien,,beverages,Italian bitters,amargos italianos
 eggWhite,Blanc d'oeuf,blanc-d-oeuf_75633_w100h100c1cx1744cy1466cxt0cyt0cxb3488cyb2932.jpg,dairy,Egg white,clara de huevo
 turkeyBreast,Blanc de dinde,blanc-de-dinde_68965_w100h100c1cxt0cyt0cxb700cyb700.jpg,meat,Turkey breast,Pechuga de pavo
@@ -284,12 +284,12 @@ caribbeanBloodSausage,Boudin antillais,,meat,Caribbean blood sausage,morcilla ca
 whitePudding,Boudin blanc,boudin-blanc_67545_w100h100c1cx350cy350.jpg,meat,White pudding,morcilla blanca
 blackPudding2,Boudin noir,boudin-noir_67591_w100h100c1cx350cy350.jpg,meat,Black pudding,Morcilla
 boudoir,Boudoir,boudoir_67509_w100h100c1cx350cy350.jpg,grains,Boudoir,Tocador
-broth,Bouillon,bouillon_67659_w100h100c1cx350cy350.jpg,spices,Broth,Caldo
-beefBroth,Bouillon de boeuf,bouillon-de-boeuf_68971_w100h100c1cxt0cyt0cxb700cyb700.jpg,meat,Beef broth,Caldo de res
-vegetableBroth,Bouillon de légumes,bouillon-de-legumes_68970_w100h100c1cxt0cyt0cxb700cyb700.jpg,vegetables,Vegetable broth,caldo de verduras
-chickenBroth,Bouillon de poule,bouillon-de-poule_68969_w100h100c1cxt0cyt0cxb700cyb700.jpg,meat,Chicken broth,Caldo de pollo
-vealBroth,Bouillon de veau,bouillon-de-veau_118163_w100h100c1cx101cy96cxt0cyt0cxb202cyb192.png,meat,Veal broth,Caldo de ternera
-chickenBroth2,Bouillon de volaille,bouillon-de-volaille_67586_w100h100c1cx350cy350.jpg,meat,Chicken broth,Caldo de pollo
+broth,Bouillon,bouillon_67659_w100h100c1cx350cy350.jpg,preparation,Broth,Caldo
+beefBroth,Bouillon de boeuf,bouillon-de-boeuf_68971_w100h100c1cxt0cyt0cxb700cyb700.jpg,preparation,Beef broth,Caldo de res
+vegetableBroth,Bouillon de légumes,bouillon-de-legumes_68970_w100h100c1cxt0cyt0cxb700cyb700.jpg,preparation,Vegetable broth,caldo de verduras
+chickenBroth,Bouillon de poule,bouillon-de-poule_68969_w100h100c1cxt0cyt0cxb700cyb700.jpg,preparation,Chicken broth,Caldo de pollo
+vealBroth,Bouillon de veau,bouillon-de-veau_118163_w100h100c1cx101cy96cxt0cyt0cxb202cyb192.png,preparation,Veal broth,Caldo de ternera
+chickenBroth2,Bouillon de volaille,bouillon-de-volaille_67586_w100h100c1cx350cy350.jpg,preparation,Chicken broth,Caldo de pollo
 whiteBall,Boule blanche,,vegetables,White ball,Bola blanca
 beefMeatball,Boulette de boeuf,,meat,Beef meatball,albóndiga de ternera
 meatballs,Boulettes de viande,boulettes-de-viande_117495_w100h100c1cx295cy295cxt0cyt0cxb591cyb591.jpg,meal,Meatballs,Albóndigas
@@ -356,7 +356,7 @@ coffee,Café,cafe_67609_w100h100c1cx350cy350.jpg,beverages,Coffee,Café
 groundCoffee,Café en poudre,cafe-en-poudre_117424_w100h100c1cx866cy866cxt0cyt0cxb1732cyb1732.jpg,beverages,Ground coffee,café molido
 freezeDriedInstantCoffee,Café instantané lyophilisé,cafe-instantane-lyophilise_68975_w100h100c1cxt0cyt0cxb700cyb700.jpg,beverages,Freeze-dried instant coffee,café instantáneo liofilizado
 instantCoffee,Café soluble,cafe-soluble_67713_w100h100c1cx350cy350.jpg,beverages,Instant coffee,Café instantáneo
-quail,Caille,caille_67362_w100h100c1cx350cy350.jpg,dairy,Quail,Codorniz
+quail,Caille,caille_67362_w100h100c1cx350cy350.jpg,meat,Quail,Codorniz
 sheepSMilkCurd,Caillé de brebis,,dairy,Sheep's milk curd,Cuajada de leche de oveja
 squid,Calamar,calamar_67461_w100h100c1cx350cy350.jpg,seafood,Squid,Calamar
 calisson,Calisson,,snacks,Calisson,Calisson
@@ -682,7 +682,7 @@ lemonPeel,écorce de citron,,fruits,lemon peel,cáscara de limón
 candiedOrangePeels,écorces d'oranges confites,ecorces-d-oranges-confites_69029_w100h100c1cxt0cyt0cxb700cyb700.jpg,fruits,candied orange peels,cáscaras de naranja confitadas
 crayfish,écrevisse,ecrevisse_69031_w100h100c1cxt0cyt0cxb700cyb700.jpg,seafood,crayfish,cangrejo de río
 edam,Edam,edam_69243_w100h100c1cxt0cyt0cxb700cyb700.jpg,dairy,Edam,queso Edam
-edamame,Edamame,,dairy,Edamame,Edamame
+edamame,Edamame,,vegetables,Edamame,Edamame
 sweetener,édulcorant,edulcorant_67487_w100h100c1cx350cy350.jpg,condiments,sweetener,edulcorante
 eglantine,églantine,eglantine_117546_w100h100c1cx295cy295cxt0cyt0cxb591cyb591.jpg,fruits,eglantine,eglantina
 haddock,églefin,,fish,haddock,eglefino
@@ -708,7 +708,7 @@ rabelaisSpice,épice Rabelais,,spices,Rabelais spice,Especias Rabelais
 spices,épices,epices_118620_w100h100c1cx866cy866cxt0cyt0cxb1732cyb1732.jpg,spices,spices,especias
 colomboSpices,épices à colombo,epices-a-colombo_68995_w100h100c1cxt0cyt0cxb700cyb700.jpg,spices,Colombo spices,Especias de Colombo
 couscousSpices,épices à couscous,epices-a-couscous_117379_w100h100c1cx866cy866cxt0cyt0cxb1732cyb1732.jpg,spices,couscous spices,especias para cuscús
-paellaSpices,épices à paella,epices-a-paella_118194_w100h100c1cx425cy425cxt0cyt0cxb850cyb850.png,meal,paella spices,especias para paella
+paellaSpices,épices à paella,epices-a-paella_118194_w100h100c1cx425cy425cxt0cyt0cxb850cyb850.png,spices,paella spices,especias para paella
 gingerbreadSpices,épices à pain d'épices,epices-a-pain-d-epices_118167_w100h100c1cx2041cy1506cxt0cyt0cxb4083cyb3012.jpg,spices,gingerbread spices,especias de pan de jengibre
 mulledWineSpices,épices à vin chaud,,spices,mulled wine spices,especias para vino caliente
 poultrySpices,épices à volaille,epices-a-volaille_118278_w100h100c1cx1060cy707cxt0cyt0cxb2121cyb1414.jpg,spices,poultry spices,especias para aves
@@ -717,9 +717,9 @@ spanishSpices,épices espagnoles,epices-espagnoles_118279_w100h100c1cx300cy291cx
 spicesAndHerbs,Épices et arômates,epices-et-aromates_69034_w100h100c1cxt0cyt0cxb700cyb700.jpg,spices,Spices and herbs,Especias y hierbas
 indianSpices,épices indiennes,epices-indiennes_118280_w100h100c1cx295cy295cxt0cyt0cxb591cyb591.jpg,spices,Indian spices,Especias indias
 moroccanSpices,épices marocaines,epices-marocaines_118282_w100h100c1cx1555cy1172cxt0cyt0cxb3110cyb2345.jpg,spices,Moroccan spices,Especias marroquíes
-pizzaSpices,épices pour pizza,epices-pour-pizza_118283_w100h100c1cx1060cy707cxt0cyt0cxb2121cyb1414.jpg,meal,pizza spices,especias para pizza
+pizzaSpices,épices pour pizza,epices-pour-pizza_118283_w100h100c1cx1060cy707cxt0cyt0cxb2121cyb1414.jpg,spices,pizza spices,especias para pizza
 spicesForFish,épices pour poisson,epices-pour-poisson_118284_w100h100c1cx1060cy707cxt0cyt0cxb2121cyb1414.jpg,spices,spices for fish,especias para pescado
-spicesForTagine,épices pour tajine,epices-pour-tajine_118285_w100h100c1cx241cy241cxt0cyt0cxb482cyb482.jpeg,meal,spices for tagine,especias para tajín
+spicesForTagine,épices pour tajine,epices-pour-tajine_118285_w100h100c1cx241cy241cxt0cyt0cxb482cyb482.jpeg,spices,spices for tagine,especias para tajín
 tandooriSpices,épices tandoori,epices-tandoori_117400_w100h100c1cx866cy866cxt0cyt0cxb1732cyb1732.jpg,spices,tandoori spices,especias tandoori
 lambEpigram,épigramme d’agneau,,meat,Lamb epigram,Epigrama de Lamb
 spinach,épinards,epinards_67594_w100h100c1cx350cy350.jpg,vegetables,spinach,espinaca
@@ -846,7 +846,7 @@ figolus,Figolus,,snacks,Figolus,Fígolo
 fig,Figue,figue_67641_w100h100c1cx350cy350.jpg,fruits,Fig,Higo
 pricklyPear,Figue de barbarie,figue-de-barbarie_76365_w100h100c1cx2500cy2500cxt0cyt0cxb5000cyb5000.jpg,fruits,Prickly pear,Higo chumbo
 lambFillet,Filet d'agneau,,meat,Lamb fillet,filete de cordero
-beefFillet,Filet de boeuf,filet-de-boeuf_118637_w100h100c1cx361cy362cxt0cyt0cxb722cyb724.png,fish,Beef fillet,Filete de res
+beefFillet,Filet de boeuf,filet-de-boeuf_118637_w100h100c1cx361cy362cxt0cyt0cxb722cyb724.png,meat,Beef fillet,Filete de res
 fishFillet,Filet de poisson,,fish,Fish fillet,filete de pescado
 porkTenderloin,Filet de porc,filet-de-porc_85797_w100h100c1cx2551cy2551cxt0cyt0cxb5102cyb5102.jpg,meat,Pork tenderloin,lomo de cerdo
 chickenFillet,Filet de poulet,filet-de-poulet_67699_w100h100c1cx350cy350.jpg,meat,Chicken fillet,filete de pollo
@@ -890,11 +890,11 @@ calfSLiver,Foie de veau,,meat,Calf's liver,hígado de ternera
 chickenLiver,Foie de volaille,foie-de-volaille_121894_w100h100c1cxt0cyt0cxb822cyb822.png,meat,Chicken liver,Hígado de pollo
 foieGras,Foie gras,foie-gras_67410_w100h100c1cx350cy350.jpg,meat,Foie gras,Foie gras
 bottom,Fond,,meat,Bottom,Abajo
-whiteCookingBase,Fond blanc de cuisson,,meat,White cooking base,base de cocina blanca
+whiteCookingBase,Fond blanc de cuisson,,preparation,White cooking base,base de cocina blanca
 artichokeBottom,Fond d'artichaut,fond-d-artichaut_68957_w100h100c1cxt0cyt0cxb700cyb700.jpg,vegetables,artichoke bottom,fondo de alcachofa
-roastStock,Fond de rôti,,meat,Roast stock,Caldo de asar
-vealStock,Fond de veau,fond-de-veau_67741_w100h100c1cx350cy350.jpg,meat,Veal stock,caldo de ternera
-chickenStock,Fond de volaille,fond-de-volaille_67599_w100h100c1cx350cy350.jpg,meat,Chicken stock,caldo de pollo
+roastStock,Fond de rôti,,preparation,Roast stock,Caldo de asar
+vealStock,Fond de veau,fond-de-veau_67741_w100h100c1cx350cy350.jpg,preparation,Veal stock,caldo de ternera
+chickenStock,Fond de volaille,fond-de-volaille_67599_w100h100c1cx350cy350.jpg,preparation,Chicken stock,caldo de pollo
 fondant,Fondant,,preparation,Fondant,Fondant
 tomatoFondue,Fondue de tomate,,vegetables,Tomato fondue,fondue de tomate
 fonio,Fonio,,grains,Fonio,Fonio
@@ -1076,8 +1076,8 @@ sproutedSeeds,Graines germées,,vegetables,Sprouted seeds,semillas germinadas
 juniperBerries,Grains de genévrier,grains-de-genevrier_117431_w100h100c1cxt0cyt0cxb2594cyb2594.jpg,spices,Juniper berries,Bayas de enebro
 deepFryerOil,Graisse à friteuse,,condiments,Deep fryer oil,aceite para freír
 gooseFat,Graisse d'oie,graisse-d-oie_76348_w100h100c1cx2500cy2500cxt0cyt0cxb5000cyb5000.jpg,condiments,Goose fat,Grasa de ganso
-beefFat,Graisse de boeuf,,meat,Beef fat,Grasa de res
-duckFat,Graisse de canard,graisse-de-canard_89006_w100h100c1cx2500cy2500cxt0cyt0cxb5000cyb5000.jpg,meat,Duck fat,Grasa de pato
+beefFat,Graisse de boeuf,,condiments,Beef fat,Grasa de res
+duckFat,Graisse de canard,graisse-de-canard_89006_w100h100c1cx2500cy2500cxt0cyt0cxb5000cyb5000.jpg,condiments,Duck fat,Grasa de pato
 coconutFat,Graisse de coco,,condiments,Coconut fat,grasa de coco
 coconutFat2,Graisse de coprah,,condiments,Coconut fat,grasa de coco
 palmOil,Graisse de palme,,condiments,Palm oil,Aceite de palma
@@ -1560,7 +1560,7 @@ muffin,Muffin,muffin_117484_w100h100c1cx295cy295cxt0cyt0cxb591cyb591.jpg,snacks,
 wholemealMuffin,Muffin complet,,snacks,Wholemeal muffin,magdalena integral
 mule,Mulet,,fish,Mule,Mula
 munster,Munster,munster_69099_w100h100c1cxt0cyt0cxb700cyb700.jpg,dairy,Munster,Munster
-morayEel,Murène,,meat,Moray eel,morena
+morayEel,Murène,,fish,Moray eel,morena
 blackberries,Mûres,mures_67576_w100h100c1cx350cy350.jpg,fruits,Blackberries,Moras
 musk,Musc,,spices,Musk,Almizcle
 nutmeg,Muscade,muscade_67662_w100h100c1cx350cy350.jpg,spices,Nutmeg,Nuez moscada
@@ -1623,12 +1623,12 @@ eyelet,Oeillet,oeillet_117555_w100h100c1cxt0cyt0cxb591cyb591.jpg,vegetables,Eyel
 egg,Oeuf,oeuf_128066_w100h100c1cx1140cy1140cxt0cyt0cxb2280cyb2280.jpg,dairy,Egg,Huevo
 gooseEgg,Oeuf d'oie,oeuf-d-oie_76821_w100h100c1cx3272cy2743cxt0cyt0cxb6545cyb5487.jpg,dairy,Goose egg,huevo de ganso
 quailEgg,Oeuf de caille,oeuf-de-caille_68944_w100h100c1cxt0cyt0cxb700cyb700.jpg,dairy,Quail egg,huevo de codorniz
-lumpfishRoe,Oeuf de lump,oeuf-de-lump_69105_w100h100c1cxt0cyt0cxb700cyb700.jpg,meat,Lumpfish roe,huevas de lumpo
+lumpfishRoe,Oeuf de lump,oeuf-de-lump_69105_w100h100c1cxt0cyt0cxb700cyb700.jpg,fish,Lumpfish roe,huevas de lumpo
 troutEgg,Oeuf de truite,oeuf-de-truite_117611_w100h100c1cx956cy784cxt0cyt0cxb1913cyb1568.jpg,fish,Trout egg,Huevo de trucha
 hardBoiledEgg,Oeuf dur,oeuf-dur_161741_w100h100c1cxt0cyt0cxb500cyb500.png,dairy,Hard-boiled egg,Huevo duro
-eggsInLiqueur,Oeufs à la liqueur,oeufs-a-la-liqueur_81343_w100h100c1cx2900cy2900cxt0cyt0cxb5800cyb5800.png,beverages,Eggs in liqueur,Huevos en licor
+eggsInLiqueur,Oeufs à la liqueur,oeufs-a-la-liqueur_81343_w100h100c1cx2900cy2900cxt0cyt0cxb5800cyb5800.png,snacks,Eggs in liqueur,Huevos en licor
 salmonRoe,Oeufs de saumon,oeufs-de-saumon_69106_w100h100c1cxt0cyt0cxb700cyb700.jpg,fish,Salmon roe,huevas de salmón
-chocolateEggs,Oeufs en chocolat,oeufs-en-chocolat_81344_w100h100c1cx2900cy2900cxt0cyt0cxb5800cyb5800.png,beverages,Chocolate eggs,Huevos de chocolate
+chocolateEggs,Oeufs en chocolat,oeufs-en-chocolat_81344_w100h100c1cx2900cy2900cxt0cyt0cxb5800cyb5800.png,snacks,Chocolate eggs,Huevos de chocolate
 goose,Oie,oie_117186_w100h100c1cx707cy707cxt0cyt0cxb1414cyb1414.jpeg,meat,Goose,Ganso
 onion,Oignon,oignon_67621_w100h100c1cx350cy350.jpg,vegetables,Onion,Cebolla
 pickledOnion,Oignon au vinaigre,oignon-au-vinaigre_117408_w100h100c1cx866cy866cxt0cyt0cxb1732cyb1732.jpg,beverages,Pickled Onion,Cebolla encurtida
@@ -1638,7 +1638,7 @@ freshOnion,Oignon frais,oignon-frais_121880_w100h100c1cx124cy125cxt0cyt0cxb248cy
 driedFriedOnion,Oignon frit séché,oignon-frit-seche_117419_w100h100c1cx866cy866cxt0cyt0cxb1732cyb1732.jpg,vegetables,Dried fried onion,cebolla frita deshidratada
 pearlOnion,Oignon grelot,oignon-grelot_81470_w100h100c1cx2150cy2150cxt0cyt0cxb4300cyb4300.png,vegetables,Pearl onion,cebolla perla
 yellowOnion,Oignon jaune,oignon-jaune_68940_w100h100c1cxt0cyt0cxb300cyb300.jpg,vegetables,Yellow onion,cebolla amarilla
-springOnion2,Oignon nouveau,oignon-nouveau_67418_w100h100c1cx350cy350.jpg,meat,Spring onion,cebolla de verdeo
+springOnion2,Oignon nouveau,oignon-nouveau_67418_w100h100c1cx350cy350.jpg,vegetables,Spring onion,cebolla de verdeo
 pinkOnion,Oignon rose,oignon-rose_117429_w100h100c1cx1390cy1390cxt0cyt0cxb2780cyb2780.jpg,vegetables,Pink onion,cebolla rosa
 redOnion,Oignon rouge,oignon-rouge_67488_w100h100c1cx350cy350.jpg,vegetables,Red onion,cebolla roja
 friedOnions,Oignons frits,oignons-frits_120632_w100h100c1cx1060cy707cxt0cyt0cxb2121cyb1414.jpg,vegetables,Fried onions,cebollas fritas
@@ -1650,7 +1650,7 @@ olives,Olives,olives_67550_w100h100c1cx350cy350.jpg,fruits,Olives,Aceitunas
 kamalataOlivesInOil,Olives de kamalata à l'huile,,fruits,Kamalata olives in oil,Aceitunas Kamalata en aceite
 blackOlives,Olives noires,olives-noires_67688_w100h100c1cx350cy350.jpg,fruits,Black olives,Aceitunas negras
 greenOlives,Olives vertes,olives-vertes_67566_w100h100c1cx350cy350.jpg,fruits,Green olives,Aceitunas verdes
-arcticChar,Omble chevalier,,meat,Arctic char,trucha ártica
+arcticChar,Omble chevalier,,fish,Arctic char,trucha ártica
 tab,Onglet,,meat,Tab,Pestaña
 vealFlankSteak,Onglet de veau,,meat,Veal flank steak,Filete de falda de ternera
 orange,Orange,orange_67729_w100h100c1cx350cy350.jpg,fruits,Orange,Naranja
@@ -1787,7 +1787,7 @@ greekPasta,Pâte grecque,pate-grecque_117433_w100h100c1cx866cy866cxt0cyt0cxb1732
 shortcrustPastry2,Pâte sablée,pate-sablee_67493_w100h100c1cx350cy350.jpg,grains,Shortcrust pastry,Masa quebrada
 semiWholemealTwistedDough,Pâte torsade semi-complète,,grains,Semi-wholemeal twisted dough,Masa trenzada semiintegral
 pasta,Pâtes,pates_67341_w100h100c1cx350cy350.jpg,grains,Pasta,Pastas
-squidInkPasta,Pâtes à l'encre de seiche,pates-a-l-encre-de-seiche_117376_w100h100c1cxt0cyt0cxb1988cyb1508.jpg,seafood,Squid ink pasta,pasta de tinta de calamar
+squidInkPasta,Pâtes à l'encre de seiche,pates-a-l-encre-de-seiche_117376_w100h100c1cxt0cyt0cxb1988cyb1508.jpg,meal,Squid ink pasta,pasta de tinta de calamar
 lasagnaPasta,Pâtes à lasagnes,pates-a-lasagnes_69010_w100h100c1cxt0cyt0cxb700cyb700.jpg,meal,Lasagna pasta,Lasaña de pasta
 quinoaPasta,Pâtes au quinoa,,grains,Quinoa pasta,Pasta de quinoa
 freshPasta,Pâtes fraîches,pates-fraiches_69119_w100h100c1cxt0cyt0cxb700cyb700.jpg,grains,Fresh pasta,Pasta fresca
@@ -1820,7 +1820,7 @@ whiteChocolateChips,Pépites de chocolat blanc,,preparation,White chocolate chip
 darkChocolateChips,Pépites de chocolat noir,pepites-de-chocolat-noir_159522_w100h100c1cx1494cy1713cxt0cyt0cxb2989cyb3427.jpg,preparation,Dark chocolate chips,chips de chocolate negro
 pepperoni,Pepperoni,,meat,Pepperoni,Pepperoni
 perch,Perche,,fish,Perch,Perca
-nilePerch,Perche du nil,,meat,Nile perch,perca del Nilo
+nilePerch,Perche du nil,,fish,Nile perch,perca del Nilo
 partridge,Perdreau,,meat,Partridge,Perdiz
 partridge2,Perdrix,,meat,Partridge,Perdiz
 silverBeads,Perles argentées,,snacks,Silver beads,Cuentas de plata
@@ -1858,7 +1858,7 @@ picodon,Picodon,picodon_118445_w100h100c1cx267cy267cxt0cyt0cxb534cyb534.png,dair
 picon,Picon,,beverages,Picon,Picon
 pigSFoot,Pied de cochon,pied-de-cochon_117597_w100h100c1cx295cy295cxt0cyt0cxb591cyb591.jpg,meat,Pig's foot,Pata de cerdo
 calfSFoot,Pied de veau,,meat,Calf's foot,pie de pantorrilla
-hedgehog,Pied-de-mouton,pied-de-mouton_117222_w100h100c1cxt0cyt0cxb2000cyb2000.jpg,meat,Hedgehog,Erizo
+hedgehog,Pied-de-mouton,pied-de-mouton_117222_w100h100c1cxt0cyt0cxb2000cyb2000.jpg,vegetables,Hedgehog,Erizo
 sheepSFoot,Pied de mouton,,meat,Sheep's foot,Pie de oveja
 feet,Pieds,,meat,Feet,Pies
 pigeon,Pigeon,,meat,Pigeon,Paloma
@@ -2227,7 +2227,7 @@ lambStirFry,Sauté d'agneau,saute-d-agneau_108001_w100h100c1cx1061cy706cxt0cyt0c
 turkeyStirFry,Sauté de dinde,,meat,Turkey stir-fry,Salteado de pavo
 porkStirFry,Sauté de porc,saute-de-porc_117256_w100h100c1cx763cy744cxt0cyt0cxb1526cyb1488.jpeg,meat,Pork stir-fry,Salteado de cerdo
 vealSaut,Sauté de veau,saute-de-veau_117257_w100h100c1cx866cy866cxt0cyt0cxb1732cyb1732.jpg,meat,Veal sauté,salteado de ternera
-grasshopper,Sauterelle,,seafood,Grasshopper,Saltamontes
+grasshopper,Sauterelle,,snacks,Grasshopper,Saltamontes
 sauternes,Sauternes,,beverages,Sauternes,Sauternes
 liquidBlackSoap,Savon noir liquide,savon-noir-liquide_119329_w100h100c1cx229cy295cxt0cyt0cxb459cyb590.jpeg,cleaning_products,Liquid black soap,Jabón negro líquido
 savora,Savora,,condiments,Savora,Savor
@@ -2475,7 +2475,7 @@ summerBlackTruffle,Truffe noire d’été,,vegetables,Summer black truffle,Trufa
 blackTruffleFromPRigord,Truffe noire du périgord,truffe-noire-du-perigord_77335_w100h100c1cx2251cy1503cxt0cyt0cxb4503cyb3006.jpg,vegetables,Black truffle from Périgord,Trufa negra del Périgord
 trout,Truite,truite_67556_w100h100c1cx350cy350.jpg,fish,Trout,Trucha
 salmonTrout,Truite saumonée,truite-saumonee_69168_w100h100c1cxt0cyt0cxb700cyb700.jpg,fish,Salmon trout,Trucha salmón
-tsuyuFlyingFishBroth,Tsuyu (bouillon au poisson volant),tsuyu-bouillon-au-poisson-volant_74681_w100h100c1cx1869cy1246cxt0cyt0cxb3739cyb2493.jpg,meat,Tsuyu (flying fish broth),Tsuyu (caldo de pez volador)
+tsuyuFlyingFishBroth,Tsuyu (bouillon au poisson volant),tsuyu-bouillon-au-poisson-volant_74681_w100h100c1cx1869cy1246cxt0cyt0cxb3739cyb2493.jpg,preparation,Tsuyu (flying fish broth),Tsuyu (caldo de pez volador)
 tuc,Tuc,,snacks,Tuc,Tuc
 almondTuile,Tuile aux amandes,,snacks,Almond tuile,Teja de almendra
 turbot,Turbot,turbot_117324_w100h100c1cx866cy866cxt0cyt0cxb1732cyb1732.jpg,fish,Turbot,Rodaballo
@@ -2504,7 +2504,7 @@ chocolateSprinkles,Vermicelles en chocolat,vermicelles-en-chocolat_81878_w100h10
 vermouth,Vermouth,,beverages,Vermouth,Vermut
 dryVermouthMartiniNoillyPrat,"Vermouth dry (martini, noilly prat)",,beverages,"Dry vermouth (martini, noilly prat)","vermut seco (martini, noilly prat)"
 verbena,Verveine,verveine_69184_w100h100c1cxt0cyt0cxb700cyb700.jpg,spices,Verbena,Verbena
-lemonVerbena,Verveine citron,,fruits,Lemon verbena,Hierba luisa
+lemonVerbena,Verveine citron,,spices,Lemon verbena,Hierba luisa
 vetTsin,Vet-tsin,,preparation,Vet-tsin,Vet-tsin
 meat,Viande,viandes_67442_w100h100c1cx350cy350.jpg,meat,Meat,Carne
 ostrichMeat,Viande d'autruche,,meat,Ostrich meat,carne de avestruz
@@ -2523,7 +2523,7 @@ rosWine,Vin rosé,vin-rose_67768_w100h100c1cx350cy350.jpg,beverages,Rosé wine,v
 redWine,Vin rouge,vin-rouge_67416_w100h100c1cx350cy350.jpg,beverages,Red wine,Vino tinto
 redWineFromLanguedoc,Vin rouge du Languedoc,,beverages,Red wine from Languedoc,Vino tinto de Languedoc
 flavoredVinegar,Vinaigre aromatisé,vinaigre-aromatise_69189_w100h100c1cxt0cyt0cxb300cyb300.jpg,condiments,Flavored vinegar,vinagre aromatizado
-tarragonFlavoredVinegar,Vinaigre aromatisé à l'estragon,,spices,Tarragon-flavored vinegar,vinagre con sabor a estragón
+tarragonFlavoredVinegar,Vinaigre aromatisé à l'estragon,,condiments,Tarragon-flavored vinegar,vinagre con sabor a estragón
 nutFlavoredVinegar,Vinaigre aromatisé aux noix,,condiments,Nut-flavored vinegar,vinagre con sabor a nuez
 balsamicVinegar,Vinaigre balsamique,vinaigre-balsamique_67527_w100h100c1cx350cy350.jpg,condiments,Balsamic vinegar,vinagre balsámico
 figBalsamicVinegar,Vinaigre balsamique de figue,,condiments,Fig balsamic vinegar,vinagre balsámico de higos

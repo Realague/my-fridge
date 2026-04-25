@@ -192,7 +192,7 @@ async function computeDelta(rows: ParsedRow[]): Promise<{ newRows: ParsedRow[]; 
   });
   const existingNames = new Set(existing.map((i) => i.name));
   const newRows = rows.filter((r) => !existingNames.has(r.nameKey));
-  return { newRows, existingCount: existingNames.size };
+  return { newRows, existingCount: existing.length };
 }
 
 async function main() {

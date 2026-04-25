@@ -449,14 +449,14 @@ const ImportRecipe = () => {
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="g">g</SelectItem>
-                                  <SelectItem value="kg">kg</SelectItem>
-                                  <SelectItem value="ml">ml</SelectItem>
-                                  <SelectItem value="cl">cl</SelectItem>
-                                  <SelectItem value="l">l</SelectItem>
-                                  <SelectItem value="tbsp">tbsp</SelectItem>
-                                  <SelectItem value="tsp">tsp</SelectItem>
-                                  <SelectItem value="piece">piece</SelectItem>
+                                  <SelectItem value="g">{t('units.g')}</SelectItem>
+                                  <SelectItem value="kg">{t('units.kg')}</SelectItem>
+                                  <SelectItem value="ml">{t('units.ml')}</SelectItem>
+                                  <SelectItem value="cl">{t('units.cl')}</SelectItem>
+                                  <SelectItem value="l">{t('units.l')}</SelectItem>
+                                  <SelectItem value="tbsp">{t('units.tbsp')}</SelectItem>
+                                  <SelectItem value="tsp">{t('units.tsp')}</SelectItem>
+                                  <SelectItem value="piece">{t('units.piece')}</SelectItem>
                                   <SelectItem value="pinch">{t('units.pinch')}</SelectItem>
                                   <SelectItem value="drizzle">{t('units.drizzle')}</SelectItem>
                                   <SelectItem value="knob">{t('units.knob')}</SelectItem>

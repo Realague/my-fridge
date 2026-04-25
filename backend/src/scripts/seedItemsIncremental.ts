@@ -129,6 +129,72 @@ function readCSV(csvPath: string): { rows: ParsedRow[]; errors: string[] } {
   return { rows, errors };
 }
 
+interface ItemAttrs {
+  id: string;
+  name: string;
+  category: ItemCategory;
+  defaultUnit: Unit;
+  availableUnits: Unit[];
+  daysAfterOpening: number | null;
+  imageUrl: string | null;
+  householdId: string | null;
+  createdBy: string | null;
+}
+interface ItemCreate extends Optional<ItemAttrs, 'id' | 'defaultUnit' | 'availableUnits' | 'daysAfterOpening'> {}
+
+class ItemModel extends Model<ItemAttrs, ItemCreate> implements ItemAttrs {
+  public id!: string;
+  public name!: string;
+  public category!: ItemCategory;
+  public defaultUnit!: Unit;
+  public availableUnits!: Unit[];
+  public daysAfterOpening!: number | null;
+  public imageUrl!: string | null;
+  public householdId!: string | null;
+  public createdBy!: string | null;
+}
+
+function initItemModel(sequelize: Sequelize) {
+  ItemModel.init(
+    {
+      id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+      name: { type: DataTypes.STRING, allowNull: false, validate: { len: [1, 100] } },
+      category: { type: DataTypes.ENUM(...ITEM_CATEGORIES), allowNull: false, defaultValue: ItemCategory.OTHER },
+      defaultUnit: { type: DataTypes.ENUM(...UNITS), allowNull: false, defaultValue: Unit.PIECE },
+      availableUnits: {
+        type: DataTypes.JSON,
+        allowNull: false,
+        defaultValue: [Unit.PIECE],
+        validate: {
+          isValidUnitsArray(value: any) {
+            if (!Array.isArray(value) || value.length === 0) throw new Error('availableUnits must be non-empty array');
+            const category = (this as unknown as ItemModel).get('category') as ItemCategory;
+            for (const unit of value) {
+              if (!UNITS.includes(unit)) throw new Error(`Invalid unit: ${unit}`);
+              if (!isCatalogStorageUnitForCategory(unit, category)) throw new Error(`Unit ${unit} not allowed for category ${category}`);
+            }
+          },
+        },
+      },
+      daysAfterOpening: { type: DataTypes.INTEGER, allowNull: true, validate: { min: 1 } },
+      householdId: { type: DataTypes.UUID, allowNull: true, references: { model: 'households', key: 'id' } },
+      imageUrl: { type: DataTypes.STRING, allowNull: true },
+      createdBy: { type: DataTypes.UUID, allowNull: true, references: { model: 'users', key: 'id' } },
+    },
+    { sequelize, tableName: 'items', timestamps: true }
+  );
+}
+
+async function computeDelta(rows: ParsedRow[]): Promise<{ newRows: ParsedRow[]; existingCount: number }> {
+  const existing = await ItemModel.findAll({
+    where: { householdId: null },
+    attributes: ['name'],
+  });
+  const existingNames = new Set(existing.map((i) => i.name));
+  const newRows = rows.filter((r) => !existingNames.has(r.nameKey));
+  return { newRows, existingCount: existingNames.size };
+}
+
 async function main() {
   const opts = parseArgs();
   console.log(`CSV: ${opts.csvPath}`);
@@ -165,6 +231,18 @@ async function main() {
     errors.slice(0, 10).forEach((e) => console.log(`  - ${e}`));
     if (errors.length > 10) console.log(`  ... and ${errors.length - 10} more`);
   }
+
+  initItemModel(sequelize);
+  const { newRows, existingCount } = await computeDelta(rows);
+  console.log(`\nExisting global items in DB: ${existingCount}`);
+  console.log(`New items to insert: ${newRows.length}`);
+  if (newRows.length === 0) {
+    console.log('Nothing to do.');
+    await sequelize.close();
+    return;
+  }
+  console.log('First 10 new items:');
+  newRows.slice(0, 10).forEach((r) => console.log(`  - ${r.nameKey} [${r.category}] image=${r.imageName || 'none'}`));
 
   // Tasks 2-6 fill in the rest
   await sequelize.close();

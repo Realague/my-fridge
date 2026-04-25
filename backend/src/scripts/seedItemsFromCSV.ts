@@ -146,6 +146,8 @@ const CATEGORY_MAP: { [key: string]: ItemCategory } = {
   'vegetables': ItemCategory.VEGETABLES,
   'fruits': ItemCategory.FRUITS,
   'meat': ItemCategory.MEAT,
+  'fish': ItemCategory.FISH,
+  'seafood': ItemCategory.SEAFOOD,
   'dairy': ItemCategory.DAIRY,
   'grains': ItemCategory.GRAINS,
   'spices': ItemCategory.SPICES,
@@ -188,6 +190,8 @@ function getAvailableUnits(category: ItemCategory): Unit[] {
     case ItemCategory.VEGETABLES:
     case ItemCategory.FRUITS:
     case ItemCategory.MEAT:
+    case ItemCategory.FISH:
+    case ItemCategory.SEAFOOD:
       return [Unit.PIECE, Unit.GRAM, Unit.KILOGRAM, Unit.BUNCH];
     case ItemCategory.DAIRY:
       return [Unit.MILLILITER, Unit.LITER, Unit.PIECE, Unit.GRAM];

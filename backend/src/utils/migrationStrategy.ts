@@ -94,7 +94,8 @@ export class StagingMigrationStrategy extends MigrationStrategy {
 }
 
 /**
- * Production Strategy: Conservative approach with safety checks
+ * Production Strategy: Same as development — run pending migrations at startup.
+ * Set AUTO_MIGRATE=false to skip (e.g. maintenance or external migration process).
  */
 export class ProductionMigrationStrategy extends MigrationStrategy {
   async execute(): Promise<MigrationResult> {
@@ -102,16 +103,8 @@ export class ProductionMigrationStrategy extends MigrationStrategy {
     
     await this.validatePreconditions();
 
-    // Never auto-migrate in production
-    if (this.options.allowAutoMigration) {
-      console.warn('⚠️  Auto-migration is enabled but not recommended for production');
-    }
-
-    // Check for pending migrations
-    const pendingMigrations = await migrationManager.getPendingMigrations();
-    
-    if (pendingMigrations.length === 0) {
-      console.log('📋 No pending migrations in production');
+    if (!this.options.allowAutoMigration) {
+      console.log('⏭️  Auto-migration disabled (AUTO_MIGRATE=false)');
       return {
         success: true,
         migrationsRun: [],
@@ -120,26 +113,7 @@ export class ProductionMigrationStrategy extends MigrationStrategy {
       };
     }
 
-    // In production, we only report pending migrations, don't auto-execute
-    console.log('🚨 Pending migrations detected in production:');
-    pendingMigrations.forEach(m => console.log(`  - ${m.filename}`));
-    console.log('');
-    console.log('To execute production migrations, use one of:');
-    console.log('  1. npm run migrate:production');
-    console.log('  2. POST /api/migrations/run-production');
-    console.log('  3. Set FORCE_PRODUCTION_MIGRATION=true');
-
-    if (process.env.FORCE_PRODUCTION_MIGRATION === 'true') {
-      console.log('🚨 FORCE_PRODUCTION_MIGRATION detected - executing migrations...');
-      return await migrationManager.runMigrations();
-    }
-
-    return {
-      success: false,
-      migrationsRun: [],
-      errors: [`${pendingMigrations.length} pending migrations require manual execution`],
-      totalTime: 0
-    };
+    return await migrationManager.runMigrations();
   }
 }
 

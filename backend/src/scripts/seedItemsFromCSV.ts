@@ -93,7 +93,7 @@ ItemModel.init(
           if (value.length === 0) {
             throw new Error('Available units array cannot be empty');
           }
-          const category = (this as ItemModel).get('category') as ItemCategory;
+          const category = (this as unknown as ItemModel).get('category') as ItemCategory;
           for (const unit of value) {
             if (!UNITS.includes(unit)) {
               throw new Error(`Invalid unit: ${unit}`);

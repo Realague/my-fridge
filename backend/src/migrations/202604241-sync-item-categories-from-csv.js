@@ -11,7 +11,7 @@
  * Idempotent: running it against a database that already matches the CSV
  * is a no-op (bulkUpdate with zero affected rows).
  *
- * No 'down' function: catalog cleanup, not user data
+ * No 'down' function: catalog cleanup, not user data.
  */
 
 const UPDATES = {

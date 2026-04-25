@@ -36,6 +36,99 @@ function parseArgs(): {
 
 const CLOUDINARY_BASE_URL = 'https://res.cloudinary.com/duxpbou8b/image/upload/v1763055075/items';
 
+// CSV format: nameKey, frenchName, image, category, englishName, spanishName, defaultUnit?, availableUnits?, daysAfterOpening?
+function parseCSVLine(line: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') inQuotes = !inQuotes;
+    else if (c === ',' && !inQuotes) { result.push(current.trim()); current = ''; }
+    else current += c;
+  }
+  result.push(current.trim());
+  return result;
+}
+
+const CATEGORY_MAP: { [k: string]: ItemCategory } = {
+  vegetables: ItemCategory.VEGETABLES, fruits: ItemCategory.FRUITS,
+  meat: ItemCategory.MEAT, fish: ItemCategory.FISH, seafood: ItemCategory.SEAFOOD,
+  dairy: ItemCategory.DAIRY, grains: ItemCategory.GRAINS, spices: ItemCategory.SPICES,
+  beverages: ItemCategory.BEVERAGES, snacks: ItemCategory.SNACKS,
+  condiments: ItemCategory.CONDIMENTS, frozen: ItemCategory.FROZEN,
+  canned: ItemCategory.CANNED, meal: ItemCategory.MEAL,
+  preparation: ItemCategory.PREPARATION,
+  cleaning_products: ItemCategory.CLEANING_PRODUCTS,
+  other: ItemCategory.OTHER,
+};
+
+function getAvailableUnits(category: ItemCategory): Unit[] {
+  switch (category) {
+    case ItemCategory.MEAL: return [Unit.PIECE, Unit.SERVING];
+    case ItemCategory.VEGETABLES:
+    case ItemCategory.FRUITS:
+    case ItemCategory.MEAT:
+    case ItemCategory.FISH:
+    case ItemCategory.SEAFOOD: return [Unit.PIECE, Unit.GRAM, Unit.KILOGRAM];
+    case ItemCategory.DAIRY: return [Unit.MILLILITER, Unit.LITER, Unit.PIECE, Unit.GRAM];
+    case ItemCategory.GRAINS: return [Unit.GRAM, Unit.KILOGRAM, Unit.PIECE];
+    case ItemCategory.SPICES: return [Unit.GRAM, Unit.PIECE];
+    case ItemCategory.BEVERAGES: return [Unit.MILLILITER, Unit.LITER, Unit.PIECE];
+    case ItemCategory.SNACKS:
+    case ItemCategory.FROZEN:
+    case ItemCategory.CANNED: return [Unit.PIECE, Unit.GRAM, Unit.KILOGRAM];
+    case ItemCategory.CONDIMENTS: return [Unit.MILLILITER, Unit.LITER, Unit.GRAM, Unit.PIECE];
+    default: return [Unit.PIECE, Unit.GRAM, Unit.KILOGRAM];
+  }
+}
+
+function getDefaultUnit(category: ItemCategory): Unit {
+  switch (category) {
+    case ItemCategory.BEVERAGES:
+    case ItemCategory.DAIRY:
+    case ItemCategory.CONDIMENTS: return Unit.MILLILITER;
+    case ItemCategory.GRAINS:
+    case ItemCategory.SPICES: return Unit.GRAM;
+    default: return Unit.PIECE;
+  }
+}
+
+interface ParsedRow {
+  nameKey: string;
+  imageName: string;
+  category: ItemCategory;
+  defaultUnit: Unit;
+  availableUnits: Unit[];
+}
+
+function readCSV(csvPath: string): { rows: ParsedRow[]; errors: string[] } {
+  const content = fs.readFileSync(csvPath, 'utf-8');
+  const lines = content.trim().split('\n');
+  const rows: ParsedRow[] = [];
+  const errors: string[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line) continue;
+    const parts = parseCSVLine(line);
+    if (parts.length < 6 || parts[0] === 'nameKey' || !parts[0]) continue;
+    const [nameKey, , imageName, categoryStr] = parts;
+    if (!nameKey || nameKey.trim() === '') {
+      errors.push(`Line ${i + 1}: missing nameKey`);
+      continue;
+    }
+    const category = CATEGORY_MAP[(categoryStr || 'other').toLowerCase()] || ItemCategory.OTHER;
+    rows.push({
+      nameKey: nameKey.trim(),
+      imageName: (imageName || '').trim(),
+      category,
+      defaultUnit: getDefaultUnit(category),
+      availableUnits: getAvailableUnits(category),
+    });
+  }
+  return { rows, errors };
+}
+
 async function main() {
   const opts = parseArgs();
   console.log(`CSV: ${opts.csvPath}`);
@@ -64,6 +157,14 @@ async function main() {
 
   await sequelize.authenticate();
   console.log('Database connected.\n');
+
+  const { rows, errors } = readCSV(opts.csvPath);
+  console.log(`Parsed ${rows.length} valid rows from CSV.`);
+  if (errors.length > 0) {
+    console.log(`Encountered ${errors.length} parse errors:`);
+    errors.slice(0, 10).forEach((e) => console.log(`  - ${e}`));
+    if (errors.length > 10) console.log(`  ... and ${errors.length - 10} more`);
+  }
 
   // Tasks 2-6 fill in the rest
   await sequelize.close();

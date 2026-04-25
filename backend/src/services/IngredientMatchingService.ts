@@ -171,11 +171,13 @@ export class IngredientMatchingService {
    * a free-quantity flag.
    *
    * Detection priority (conservative by design):
-   *   1. Explicit numeric quantity present → `isFreeQuantity = false`, unit
-   *      taken from FRENCH_UNIT_MAP (tasse/verre/bol → ml×240; douzaine → piece×12).
-   *   2. A free-quantity keyword (pincée, filet, noix de beurre, pinch, drizzle,
-   *      knob of butter…) is present → `isFreeQuantity = true`, `quantity = null`,
-   *      unit from the keyword.
+   *   1. Explicit numeric quantity present → quantity preserved, unit taken from
+   *      FRENCH_UNIT_MAP (tasse/verre/bol → ml×240; douzaine → piece×12). When
+   *      the matched unit is gestural ("3 pincées de sel"), `isFreeQuantity = true`
+   *      but the count is kept as-is — only stock comparisons are skipped.
+   *   2. No numeric quantity but a free-quantity keyword (pincée, filet, noix de
+   *      beurre, pinch, drizzle, knob of butter…) is present → `isFreeQuantity = true`,
+   *      `quantity = null`, unit from the keyword.
    *   3. No quantity at all (ex: "sel, poivre") → `isFreeQuantity = true`,
    *      `quantity = null`, unit inferred from the ingredient name
    *      (salt/pepper → pinch, oil/vinegar → drizzle, butter → knob, else piece).
@@ -287,8 +289,10 @@ export class IngredientMatchingService {
 
     if (unit && FREE_QUANTITY_UNIT_VALUES.has(unit)) {
       // A gestural unit was detected (pinch/drizzle/knob) — always free quantity.
+      // Preserve any explicit count ("3 pincées de sel" → quantity=3): the
+      // free-quantity flag means stock/shopping comparisons are skipped, not
+      // that an author-supplied number must be discarded.
       isFreeQuantity = true;
-      quantity = null;
     } else if (quantity === null) {
       // No numeric quantity was parsed: look for free-quantity keywords anywhere
       // in the original text, then fall back to inference from the ingredient.

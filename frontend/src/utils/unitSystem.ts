@@ -239,6 +239,11 @@ export const getDisplayUnitLabel = (
 
   if (isFreeQuantity || isFreeQuantityUnit(unit)) {
     const key = getUnitDisplayName(unit);
+    // Free-quantity "piece" is the generic fallback (no specific gestural unit fits) —
+    // omit the label entirely so the item name reads cleanly without an awkward filler.
+    if (key === 'piece') {
+      return '';
+    }
     // Free-quantity keys are grouped under `units.freeQuantity.*` so apps can localize
     // the linking preposition ("pincée de", "filet de"…) independently of measurable units.
     return t(`units.freeQuantity.${key}`);
@@ -276,7 +281,15 @@ export const formatQuantityWithUnit = (
   const label = getDisplayUnitLabel(unit, quantity, t, options);
   const isFree = options.isFreeQuantity || isFreeQuantityUnit(unit);
   if (isFree) {
-    return label;
+    // Free-quantity "piece" is the generic fallback: render bare (no quantity, no
+    // label) so the item name reads cleanly. Other gestural units default to "1"
+    // when the count is missing/0 — "pincée de sel" → "1 pincée de sel".
+    if (!label) {
+      return '';
+    }
+    const qNum = typeof quantity === 'string' ? parseFloat(quantity) : quantity;
+    const effective = qNum && Number.isFinite(qNum) && qNum > 0 ? qNum : 1;
+    return `${effective} ${label}`;
   }
   const qStr = quantity === null || quantity === undefined || quantity === '' ? '' : String(quantity);
   if (!label) return qStr;

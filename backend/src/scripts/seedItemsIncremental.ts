@@ -195,6 +195,56 @@ async function computeDelta(rows: ParsedRow[]): Promise<{ newRows: ParsedRow[]; 
   return { newRows, existingCount: existing.length };
 }
 
+interface UploadResult {
+  row: ParsedRow;
+  imageUrl: string | null;
+  status: 'uploaded' | 'skipped-no-image' | 'skipped-file-missing' | 'failed';
+}
+
+async function uploadImagesForNewRows(
+  newRows: ParsedRow[],
+  imagesDir: string,
+  dryRun: boolean
+): Promise<UploadResult[]> {
+  const results: UploadResult[] = [];
+  for (const [idx, row] of newRows.entries()) {
+    if (!row.imageName) {
+      results.push({ row, imageUrl: null, status: 'skipped-no-image' });
+      continue;
+    }
+    const localPath = path.join(imagesDir, row.imageName);
+    if (!fs.existsSync(localPath)) {
+      console.warn(`  [${idx + 1}/${newRows.length}] ${row.nameKey}: image file missing (${row.imageName})`);
+      results.push({ row, imageUrl: null, status: 'skipped-file-missing' });
+      continue;
+    }
+    if (dryRun) {
+      // Predict final URL without calling Cloudinary
+      results.push({
+        row,
+        imageUrl: `${CLOUDINARY_BASE_URL}/${row.nameKey}.jpg`,
+        status: 'uploaded',
+      });
+      continue;
+    }
+    // Real upload: overwrite:false guarantees idempotency on Cloudinary side
+    const url = await uploadImageToCloudinary(localPath, row.nameKey, 'items');
+    if (url) {
+      console.log(`  [${idx + 1}/${newRows.length}] uploaded ${row.nameKey}`);
+      // Use the canonical .jpg URL convention used by the rest of the app
+      results.push({
+        row,
+        imageUrl: `${CLOUDINARY_BASE_URL}/${row.nameKey}.jpg`,
+        status: 'uploaded',
+      });
+    } else {
+      console.warn(`  [${idx + 1}/${newRows.length}] ${row.nameKey}: upload FAILED`);
+      results.push({ row, imageUrl: null, status: 'failed' });
+    }
+  }
+  return results;
+}
+
 async function main() {
   const opts = parseArgs();
   console.log(`CSV: ${opts.csvPath}`);
@@ -243,6 +293,14 @@ async function main() {
   }
   console.log('First 10 new items:');
   newRows.slice(0, 10).forEach((r) => console.log(`  - ${r.nameKey} [${r.category}] image=${r.imageName || 'none'}`));
+
+  console.log(`\nUploading images (dry-run=${opts.dryRun})...`);
+  const uploads = await uploadImagesForNewRows(newRows, opts.imagesDir, opts.dryRun);
+  const uploaded = uploads.filter((u) => u.status === 'uploaded').length;
+  const noImage = uploads.filter((u) => u.status === 'skipped-no-image').length;
+  const missing = uploads.filter((u) => u.status === 'skipped-file-missing').length;
+  const failed = uploads.filter((u) => u.status === 'failed').length;
+  console.log(`Upload summary: ${uploaded} uploaded, ${noImage} no-image, ${missing} file-missing, ${failed} failed`);
 
   // Tasks 2-6 fill in the rest
   await sequelize.close();

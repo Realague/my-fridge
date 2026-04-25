@@ -245,6 +245,43 @@ async function uploadImagesForNewRows(
   return results;
 }
 
+async function insertNewItems(uploads: UploadResult[], dryRun: boolean): Promise<number> {
+  const items = uploads.map((u) => ({
+    name: u.row.nameKey,
+    category: u.row.category,
+    defaultUnit: u.row.defaultUnit,
+    availableUnits: u.row.availableUnits,
+    imageUrl: u.imageUrl,
+    householdId: null,
+    createdBy: null,
+    daysAfterOpening: null,
+  }));
+  if (dryRun) {
+    console.log(`\n[dry-run] Would insert ${items.length} items. First 5:`);
+    items.slice(0, 5).forEach((i) =>
+      console.log(`  - ${i.name} (${i.category}) image=${i.imageUrl || 'none'}`)
+    );
+    return 0;
+  }
+  const BATCH = 100;
+  let created = 0;
+  for (let i = 0; i < items.length; i += BATCH) {
+    const batch = items.slice(i, i + BATCH);
+    try {
+      await ItemModel.bulkCreate(batch, { validate: true, individualHooks: false });
+      created += batch.length;
+      console.log(`  Inserted ${created}/${items.length}...`);
+    } catch (err: any) {
+      console.error(`Batch ${i}-${i + batch.length} failed:`, err?.message || err);
+      if (err?.errors) {
+        console.error('  Validation errors:', err.errors.map((e: any) => e.message).join(', '));
+      }
+      // continue with next batch
+    }
+  }
+  return created;
+}
+
 async function main() {
   const opts = parseArgs();
   console.log(`CSV: ${opts.csvPath}`);
@@ -302,7 +339,11 @@ async function main() {
   const failed = uploads.filter((u) => u.status === 'failed').length;
   console.log(`Upload summary: ${uploaded} uploaded, ${noImage} no-image, ${missing} file-missing, ${failed} failed`);
 
-  // Tasks 2-6 fill in the rest
+  const inserted = await insertNewItems(uploads, opts.dryRun);
+  if (!opts.dryRun) {
+    console.log(`\nInserted ${inserted} new items.`);
+  }
+
   await sequelize.close();
 }
 

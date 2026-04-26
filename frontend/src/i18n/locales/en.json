@@ -127,6 +127,20 @@
       "other": "Other"
     }
   },
+  "addStoredItemDialog": {
+    "title": "Add an item",
+    "description": "Pick the item, then the space to store it in.",
+    "openButton": "Add an item",
+    "storageAreaLabel": "Storage area",
+    "storageAreaPlaceholder": "Select a storage area",
+    "suggestion": "Suggested",
+    "singleAreaHint": "Will be added to {{name}}",
+    "areaDeleted": "This storage area no longer exists. Pick another one.",
+    "toastSuccess": "Item added to {{area}}",
+    "toastView": "View",
+    "noAreaTitle": "No storage area yet",
+    "noAreaDescription": "Create a storage area first so you have somewhere to put your items."
+  },
   "storageAreaManager": {
     "title": "Storage areas",
     "addStorage": "Add storage",

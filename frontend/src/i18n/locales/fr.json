@@ -127,6 +127,20 @@
       "other": "Autre"
     }
   },
+  "addStoredItemDialog": {
+    "title": "Ajouter un article",
+    "description": "Choisis l'article puis l'espace où le ranger.",
+    "openButton": "Ajouter un article",
+    "storageAreaLabel": "Espace de stockage",
+    "storageAreaPlaceholder": "Sélectionne un espace",
+    "suggestion": "Suggéré",
+    "singleAreaHint": "Sera ajouté à {{name}}",
+    "areaDeleted": "Cet espace n'existe plus. Choisis un autre espace.",
+    "toastSuccess": "Article ajouté à {{area}}",
+    "toastView": "Voir",
+    "noAreaTitle": "Aucun espace de stockage",
+    "noAreaDescription": "Crée d'abord un espace pour y ranger tes articles."
+  },
   "storageAreaManager": {
     "title": "Zones de stockage",
     "addStorage": "Ajouter stockage",

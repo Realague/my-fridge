@@ -28,6 +28,12 @@ export interface AisleSectionProps extends RowCallbackProps {
   storageAreas: StorageArea[];
   collapsed?: boolean;
   onToggleCollapsed?: (aisle: Aisle) => void;
+  /**
+   * When true, renders the aisle in its compact "drag preview" form:
+   * header only, no items. Used by the DragOverlay so the dragged ghost
+   * stays small and easy to move around.
+   */
+  dragPreview?: boolean;
 }
 
 export const AisleSection = ({
@@ -35,6 +41,7 @@ export const AisleSection = ({
   items,
   collapsed = false,
   onToggleCollapsed,
+  dragPreview = false,
   ...rowProps
 }: AisleSectionProps) => {
   const { t } = useTranslation();
@@ -47,12 +54,14 @@ export const AisleSection = ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: aisle });
+  } = useSortable({ id: aisle, disabled: dragPreview });
 
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+  const style: React.CSSProperties = dragPreview
+    ? {}
+    : {
+        transform: CSS.Transform.toString(transform),
+        transition,
+      };
 
   const name = t(getAisleTranslationKey(aisle));
   const completedCount = useMemo(
@@ -64,14 +73,15 @@ export const AisleSection = ({
 
   const contentId = `aisle-${aisle}-content`;
   const handleHeaderToggle = () => onToggleCollapsed?.(aisle);
+  const effectiveCollapsed = collapsed || dragPreview;
 
   return (
     <section
-      ref={setNodeRef}
+      ref={dragPreview ? undefined : setNodeRef}
       style={style}
       className={`rounded-xl border border-border bg-card/80 backdrop-blur-sm shadow-sm ${
-        isDragging ? 'opacity-60 ring-2 ring-primary' : ''
-      }`}
+        isDragging ? 'opacity-30' : ''
+      } ${dragPreview ? 'ring-2 ring-primary shadow-2xl cursor-grabbing' : ''}`}
       aria-label={name}
     >
       <header
@@ -91,7 +101,7 @@ export const AisleSection = ({
             : undefined
         }
         className={`flex items-center gap-2 px-3 py-2 transition-opacity ${
-          collapsed ? '' : 'border-b border-border/60'
+          effectiveCollapsed ? '' : 'border-b border-border/60'
         } ${allCompleted ? 'opacity-60' : ''} ${
           onToggleCollapsed
             ? 'cursor-pointer select-none hover:bg-accent/40'
@@ -129,14 +139,14 @@ export const AisleSection = ({
         {onToggleCollapsed && (
           <ChevronDown
             className={`h-4 w-4 text-muted-foreground flex-shrink-0 transition-transform ${
-              collapsed ? '-rotate-90' : ''
+              effectiveCollapsed ? '-rotate-90' : ''
             }`}
             aria-hidden
           />
         )}
       </header>
 
-      {!collapsed && (
+      {!effectiveCollapsed && (
         <div id={contentId} className="p-2 sm:p-3 space-y-2">
           {items.map((shoppingItem) => (
             <ShoppingItemRow

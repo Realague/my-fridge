@@ -33,6 +33,8 @@ import { scrollRevealFadeUp } from '@/lib/motion';
 import {
   DndContext,
   DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
   KeyboardSensor,
   PointerSensor,
   closestCenter,
@@ -90,6 +92,7 @@ const Shopping = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [completedItemsLoaded, setCompletedItemsLoaded] = useState(false);
   const [loadingCompleted, setLoadingCompleted] = useState(false);
+  const [activeAisle, setActiveAisle] = useState<Aisle | null>(null);
 
   // Load shopping items and storage areas from API
   useEffect(() => {
@@ -479,10 +482,19 @@ const Shopping = () => {
     })
   );
 
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveAisle(event.active.id as Aisle);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    setActiveAisle(null);
     if (!over || active.id === over.id) return;
     reorderAisle(active.id as Aisle, over.id as Aisle);
+  };
+
+  const handleDragCancel = () => {
+    setActiveAisle(null);
   };
 
   return (
@@ -720,7 +732,9 @@ const Shopping = () => {
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
+                onDragCancel={handleDragCancel}
               >
                 <SortableContext
                   items={visibleAisleOrder}
@@ -739,6 +753,17 @@ const Shopping = () => {
                     ))}
                   </div>
                 </SortableContext>
+                <DragOverlay>
+                  {activeAisle ? (
+                    <AisleSection
+                      aisle={activeAisle}
+                      items={itemsByAisle[activeAisle] ?? []}
+                      collapsed
+                      dragPreview
+                      {...sharedRowProps}
+                    />
+                  ) : null}
+                </DragOverlay>
               </DndContext>
             ) : (
               <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">

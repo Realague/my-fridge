@@ -105,8 +105,14 @@ const MyProducts = () => {
    */
   const [selectedAreaIds, setSelectedAreaIds] = useState<Set<string> | null>(null);
 
-  const { preferences, setCriterion, toggleDirection, setGroupByArea } =
-    useMyProductsPreferences(currentUser?.id);
+  const {
+    preferences,
+    setCriterion,
+    toggleDirection,
+    setGroupByArea,
+    toggleAreaCollapsed,
+    isAreaCollapsed,
+  } = useMyProductsPreferences(currentUser?.id);
 
   useEffect(() => {
     if (!selectedHouseholdId) return;
@@ -114,6 +120,27 @@ const MyProducts = () => {
     /** Refetch on mount: a per-area page may have overwritten the household bucket. */
     fetchStoredItems();
   }, [selectedHouseholdId, fetchStorageAreas, fetchStoredItems]);
+
+  /**
+   * Hydrate the catalog map from any `item` payload embedded on stored items,
+   * so the row renders immediately without waiting on per-id fetches. Only items
+   * lacking the embed go through the network path below.
+   */
+  useEffect(() => {
+    const fromEmbed: Record<string, Item> = {};
+    for (const si of storedItems) {
+      const embedded = si.item;
+      if (!embedded || items[si.itemId]) continue;
+      fromEmbed[embedded.id] = {
+        ...embedded,
+        availableUnits: embedded.availableUnits ?? [],
+        excludeFromShopping: undefined,
+        pieceAlias: null,
+      } as Item;
+    }
+    if (Object.keys(fromEmbed).length === 0) return;
+    setItems((prev) => ({ ...fromEmbed, ...prev }));
+  }, [storedItems, items]);
 
   /**
    * Tracks itemIds we've already started fetching (success OR pending) so we don't
@@ -343,7 +370,7 @@ const MyProducts = () => {
       <div className="container mx-auto px-4 py-6 space-y-6">
         <div className="relative">
           <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4"
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 z-10 pointer-events-none"
             aria-hidden
           />
           <Input
@@ -547,24 +574,46 @@ const MyProducts = () => {
                   {section.rows.map((row, idx) => renderRow(row, idx))}
                 </div>
               ) : (
-                <section key={section.areaId} className="space-y-4">
-                  <header className="flex items-center gap-2 px-3 py-2 rounded-lg bg-card/60 backdrop-blur-sm border border-border/40">
-                    <span className="text-lg" aria-hidden>
-                      {section.areaEmoji}
-                    </span>
-                    <h2 className="font-semibold text-sm sm:text-base text-foreground truncate">
-                      {section.areaName}
-                    </h2>
-                    <span className="ml-auto text-xs text-muted-foreground tabular-nums">
-                      {t('pages.myProducts.areaItems', { count: section.itemCount })}
-                    </span>
-                  </header>
-                  <div className="space-y-4">
-                    {section.rows.map((row, idx) =>
-                      renderRow(row, `${section.areaId}-${idx}`)
-                    )}
-                  </div>
-                </section>
+                (() => {
+                  const collapsed = isAreaCollapsed(section.areaId);
+                  return (
+                    <section key={section.areaId} className="space-y-4">
+                      <button
+                        type="button"
+                        onClick={() => toggleAreaCollapsed(section.areaId!)}
+                        aria-expanded={!collapsed}
+                        aria-controls={`area-section-${section.areaId}`}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-card/60 backdrop-blur-sm border border-border/40 hover:bg-card/80 transition-colors text-left"
+                      >
+                        <ChevronDown
+                          className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
+                            collapsed ? '-rotate-90' : ''
+                          }`}
+                          aria-hidden
+                        />
+                        <span className="text-lg" aria-hidden>
+                          {section.areaEmoji}
+                        </span>
+                        <h2 className="font-semibold text-sm sm:text-base text-foreground truncate">
+                          {section.areaName}
+                        </h2>
+                        <span className="ml-auto text-xs text-muted-foreground tabular-nums">
+                          {t('pages.myProducts.areaItems', { count: section.itemCount })}
+                        </span>
+                      </button>
+                      {!collapsed && (
+                        <div
+                          id={`area-section-${section.areaId}`}
+                          className="space-y-4"
+                        >
+                          {section.rows.map((row, idx) =>
+                            renderRow(row, `${section.areaId}-${idx}`)
+                          )}
+                        </div>
+                      )}
+                    </section>
+                  );
+                })()
               )
             )}
           </div>

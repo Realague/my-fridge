@@ -14,12 +14,15 @@ export interface MyProductsPreferences {
   criterion: StorageAreaSortCriterion;
   direction: StorageAreaSortDirection;
   groupByArea: boolean;
+  /** Storage-area ids that are currently collapsed in group-by-area mode. */
+  collapsedAreaIds: string[];
 }
 
 export const DEFAULT_MY_PRODUCTS_PREFERENCES: MyProductsPreferences = {
   criterion: 'expiration',
   direction: 'asc',
   groupByArea: false,
+  collapsedAreaIds: [],
 };
 
 const STORAGE_KEY_PREFIX = 'my-products-prefs-v1-';
@@ -52,6 +55,9 @@ function readPreferences(userId: string | undefined): MyProductsPreferences {
         typeof parsed.groupByArea === 'boolean'
           ? parsed.groupByArea
           : DEFAULT_MY_PRODUCTS_PREFERENCES.groupByArea,
+      collapsedAreaIds: Array.isArray(parsed.collapsedAreaIds)
+        ? parsed.collapsedAreaIds.filter((v): v is string => typeof v === 'string')
+        : DEFAULT_MY_PRODUCTS_PREFERENCES.collapsedAreaIds,
     };
   } catch {
     return DEFAULT_MY_PRODUCTS_PREFERENCES;
@@ -73,6 +79,8 @@ export interface UseMyProductsPreferencesReturn {
   setCriterion: (criterion: StorageAreaSortCriterion) => void;
   toggleDirection: () => void;
   setGroupByArea: (value: boolean) => void;
+  toggleAreaCollapsed: (areaId: string) => void;
+  isAreaCollapsed: (areaId: string) => boolean;
 }
 
 export function useMyProductsPreferences(
@@ -116,5 +124,29 @@ export function useMyProductsPreferences(
     setPreferences((prev) => (prev.groupByArea === value ? prev : { ...prev, groupByArea: value }));
   }, []);
 
-  return { preferences, setCriterion, toggleDirection, setGroupByArea };
+  const toggleAreaCollapsed = useCallback((areaId: string) => {
+    setPreferences((prev) => {
+      const has = prev.collapsedAreaIds.includes(areaId);
+      return {
+        ...prev,
+        collapsedAreaIds: has
+          ? prev.collapsedAreaIds.filter((id) => id !== areaId)
+          : [...prev.collapsedAreaIds, areaId],
+      };
+    });
+  }, []);
+
+  const isAreaCollapsed = useCallback(
+    (areaId: string) => preferences.collapsedAreaIds.includes(areaId),
+    [preferences.collapsedAreaIds]
+  );
+
+  return {
+    preferences,
+    setCriterion,
+    toggleDirection,
+    setGroupByArea,
+    toggleAreaCollapsed,
+    isAreaCollapsed,
+  };
 }

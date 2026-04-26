@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,10 +6,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Check, Trash2, Users, Edit, Save, X, Filter, Package, PackageCheck, CalendarIcon } from 'lucide-react';
+import { Users, Filter, Package, PackageCheck, CalendarIcon } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { AddItemCard } from '@/components/AddItemCard';
-import { QuantitySelector } from '@/components/QuantitySelector';
 import { Item } from '@/services/itemService';
 import { useShoppingStore, ShoppingItem } from '@/stores/shoppingStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
@@ -20,7 +19,6 @@ import { useTranslation } from 'react-i18next';
 import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
 import { CategoryIcon } from '@/utils/categoryIcons';
 import { StorageAreaType } from '@/types/enums';
-import { ItemImage } from '@/components/ItemImage';
 import { BulkStorageDialog } from '@/components/BulkStorageDialog';
 import { getSuggestedStorageAreaId } from '@/utils/categoryStorageMapping';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -30,6 +28,29 @@ import { fr } from 'date-fns/locale';
 import { useAuthStore } from '@/stores/authStore';
 import { motion, useReducedMotion } from 'framer-motion';
 import { scrollRevealFadeUp } from '@/lib/motion';
+
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+
+import { ShoppingItemRow } from '@/components/shopping/ShoppingItemRow';
+import { AisleSection } from '@/components/shopping/AisleSection';
+import { ShoppingViewModeToggle } from '@/components/shopping/ShoppingViewModeToggle';
+import { useShoppingPreferences } from '@/hooks/useShoppingPreferences';
+import { Aisle, groupItemsByAisle } from '@/utils/aisleMapping';
 
 const Shopping = () => {
   const { t } = useTranslation();
@@ -56,11 +77,21 @@ const Shopping = () => {
     getTotalItems,
     getCompletedCount
   } = useShoppingStore();
-  
+
+  const {
+    viewMode,
+    aisleOrder,
+    setViewMode,
+    reorderAisle,
+    isAisleCollapsed,
+    toggleAisleCollapsed,
+  } = useShoppingPreferences();
+
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [completedItemsLoaded, setCompletedItemsLoaded] = useState(false);
   const [loadingCompleted, setLoadingCompleted] = useState(false);
+  const [activeAisle, setActiveAisle] = useState<Aisle | null>(null);
 
   // Load shopping items and storage areas from API
   useEffect(() => {
@@ -373,7 +404,6 @@ const Shopping = () => {
   // Get unique categories from items
   const categories = ['all', ...Array.from(new Set(items.map(item => item.item?.category).filter(Boolean)))];
 
-
   const getItemName = (shoppingItem: ShoppingItem) => {
     return shoppingItem.item ? getItemDisplayName(shoppingItem.item, t) : 'Unknown Item';
   };
@@ -382,217 +412,88 @@ const Shopping = () => {
     return t(`items.categories.${shoppingItem.item?.category}`) || t('items.categories.other');
   };
 
-  const getItemData = (shoppingItem: ShoppingItem): Item | null => {
-    return shoppingItem.item || null;
+  // Shared props passed down to every ShoppingItemRow, regardless of view mode.
+  const sharedRowProps = {
+    currentUserId: currentUser?.id,
+    storageAreas,
+    editingItemId: editingItem,
+    quickStoreItemId,
+    quickStoreDate,
+    onToggleComplete: toggleItemComplete,
+    onStartEdit: startEditingItem,
+    onCancelEdit: cancelItemEdit,
+    onSaveEdit: saveItemEdit,
+    onDelete: deleteItemHandler,
+    onQuickStore: handleQuickStore,
+    onSkipQuickStore: handleSkipQuickStore,
+    onCancelQuickStore: handleCancelQuickStore,
+    onQuickStoreDateChange: setQuickStoreDate,
   };
 
-  const ShoppingItemRow = ({ shoppingItem, isCompleted = false }: { shoppingItem: ShoppingItem; isCompleted?: boolean }) => {
-    const [editQuantity, setEditQuantity] = useState(shoppingItem.quantity);
-    const [editUnit, setEditUnit] = useState(shoppingItem.unit);
-    const isEditing = editingItem === shoppingItem.id;
-    const isQuickStoring = quickStoreItemId === shoppingItem.id;
-    const itemData = getItemData(shoppingItem);
+  // --- Aisle mode data ---------------------------------------------------
+  // In aisle mode, completed items stay in their aisle rather than being
+  // split into a separate section, so we aggregate both sets together.
+  const allFilteredItems = useMemo(
+    () =>
+      filterItemsByCategory(
+        aggregateShoppingItems([...getPendingItems(), ...getCompletedItems()])
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [items, categoryFilter]
+  );
 
-    const suggestedAreaId = getSuggestedStorageAreaId(shoppingItem.item?.category, storageAreas);
-    const suggestedArea = storageAreas.find(a => a.id === suggestedAreaId);
-    const isFreezerArea = suggestedArea?.type === StorageAreaType.FREEZER;
+  const itemsByAisle = useMemo(
+    () => groupItemsByAisle(allFilteredItems),
+    [allFilteredItems]
+  );
 
-    const handleSave = () => {
-      saveItemEdit(shoppingItem.id, editQuantity, editUnit);
-    };
+  const visibleAisleOrder = useMemo(
+    () => aisleOrder.filter((aisle) => itemsByAisle[aisle].length > 0),
+    [aisleOrder, itemsByAisle]
+  );
 
-    const handleCancel = () => {
-      setEditQuantity(shoppingItem.quantity);
-      setEditUnit(shoppingItem.unit);
-      cancelItemEdit();
-    };
-
-    if (!itemData) {
-      return null;
-    }
-
-    return (
-      <div className="space-y-0">
-        <div
-          className={`flex items-start gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg hover:bg-accent transition-colors cursor-move ${
-            isCompleted ? 'bg-accent opacity-75' : isQuickStoring ? 'bg-green-50 dark:bg-green-950/20 rounded-b-none' : 'bg-muted'
-          }`}
-        >
-          <button
-            onClick={() => toggleItemComplete(shoppingItem.id)}
-            className={`flex-shrink-0 w-6 h-6 mt-1 rounded-full flex items-center justify-center transition-colors ${
-              isCompleted 
-                ? 'bg-green-500' 
-                : 'border-2 border-border hover:border-green-500 bg-primary/10'
-            }`}
-          >
-            {isCompleted && <Check className="h-4 w-4 text-white" />}
-          </button>
-
-          <ItemImage
-            src={shoppingItem.item?.imageUrl}
-            alt={getItemName(shoppingItem)}
-            containerClassName="w-10 h-10 rounded-md shrink-0 mt-0.5"
-            fallbackIconSize={40}
-            category={shoppingItem.item?.category}
-          />
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0 flex-1">
-                <span className={`font-medium line-clamp-2 sm:line-clamp-1 ${isCompleted ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
-                  {getItemName(shoppingItem)}
-                </span>
-                <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                  <Badge className={`${getCategoryColor(shoppingItem.item?.category)} inline-flex items-center gap-1`}>
-                    <CategoryIcon category={shoppingItem.item?.category} className="h-3.5 w-3.5" />
-                    {getItemCategory(shoppingItem)}
-                  </Badge>
-                </div>
-              </div>
-              <div className="flex items-center gap-1 shrink-0">
-                {isEditing ? (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleSave}
-                      className="h-8 px-2"
-                    >
-                      <Save className="h-3 w-3"/>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleCancel}
-                      className="h-8 px-2"
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    {!isCompleted && !isQuickStoring && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => startEditingItem(shoppingItem.id)}
-                        className="h-8 w-8 p-0 opacity-70 hover:opacity-100 transition-opacity hover:bg-primary/10"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    )}
-                    {!isEditing && !isQuickStoring && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteItemHandler(shoppingItem.id)}
-                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 hover:bg-primary/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-            <div className="text-sm text-muted-foreground mt-1">
-              {isEditing ? (
-                <QuantitySelector
-                  item={itemData}
-                  initialQuantity={editQuantity}
-                  initialUnit={editUnit}
-                  onQuantityChange={(quantity, unit) => {
-                    setEditQuantity(quantity);
-                    setEditUnit(unit);
-                  }}
-                  className="w-full"
-                />
-              ) : (
-                <div className="flex items-center gap-2">
-                  <span>{shoppingItem.quantity} {shoppingItem.unit !== 'piece' ? shoppingItem.unit : ''}</span>
-                  {shoppingItem.creator && (
-                    <>
-                      <span>•</span>
-                      <span className="truncate">
-                        {t('common.addedBy', {
-                          name: shoppingItem.creator.id === currentUser?.id
-                            ? t('common.you')
-                            : shoppingItem.creator.displayName,
-                        })}
-                      </span>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {isQuickStoring && (
-          <div className="bg-green-50 dark:bg-green-950/20 border border-t-0 border-green-200 dark:border-green-800 rounded-b-lg px-3 pb-3 pt-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              {suggestedArea && (
-                <span className="text-xs font-medium text-green-700 dark:text-green-400">
-                  {t('pages.shopping.suggestedArea', { area: `${suggestedArea.emoji} ${suggestedArea.name}` })}
-                </span>
-              )}
-              {!isFreezerArea && (
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 text-xs gap-1.5 bg-white dark:bg-background font-normal"
-                    >
-                      <CalendarIcon className="h-3 w-3" />
-                      {quickStoreDate
-                        ? format(new Date(quickStoreDate), 'dd/MM/yyyy', { locale: fr })
-                        : t('pages.shopping.expirationDate')}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={quickStoreDate ? new Date(quickStoreDate) : undefined}
-                      onSelect={(date) => setQuickStoreDate(date ? format(date, 'yyyy-MM-dd') : '')}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              )}
-              <div className="flex gap-1 ml-auto">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleSkipQuickStore(shoppingItem.id)}
-                  className="h-7 px-2 text-xs text-muted-foreground"
-                >
-                  {t('pages.shopping.skip')}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleCancelQuickStore}
-                  className="h-7 px-2 text-xs"
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-                <Button
-                  variant="green"
-                  size="sm"
-                  onClick={() => handleQuickStore(shoppingItem.id)}
-                  className="h-7 px-2 text-xs"
-                >
-                  <Check className="h-3 w-3 mr-1" />
-                  {t('pages.shopping.validate')}
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+  // --- A-Z mode data -----------------------------------------------------
+  const sortAlpha = (list: ShoppingItem[]) =>
+    [...list].sort((a, b) =>
+      getItemName(a).localeCompare(getItemName(b), undefined, {
+        sensitivity: 'base',
+      })
     );
+
+  const pendingItemsAlpha = useMemo(
+    () => sortAlpha(pendingItems),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pendingItems]
+  );
+  const completedItemsAlpha = useMemo(
+    () => sortAlpha(completedItems),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [completedItems]
+  );
+
+  // --- DnD --------------------------------------------------------------
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 4 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveAisle(event.active.id as Aisle);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveAisle(null);
+    if (!over || active.id === over.id) return;
+    reorderAisle(active.id as Aisle, over.id as Aisle);
+  };
+
+  const handleDragCancel = () => {
+    setActiveAisle(null);
   };
 
   return (
@@ -764,55 +665,53 @@ const Shopping = () => {
 
         {!loading && selectedHouseholdId && (
         <>
-        {/* Category Filter */}
+        {/* Category Filter + View Mode Toggle */}
         <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <Filter className="h-5 w-5 text-muted-foreground" />
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder={t('pages.shopping.filterByCategory')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      <span className="inline-flex items-center gap-2">
-                        {category !== 'all' && (
-                          <CategoryIcon category={category} className="h-4 w-4" />
-                        )}
-                        {t(`items.categories.${category}`)}
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {categoryFilter !== 'all' && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setCategoryFilter('all')}
-                  className="text-muted-foreground"
-                >
-                  {t('pages.shopping.clearFilter')}
-                </Button>
-              )}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-3">
+                <Filter className="h-5 w-5 text-muted-foreground" />
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder={t('pages.shopping.filterByCategory')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        <span className="inline-flex items-center gap-2">
+                          {category !== 'all' && (
+                            <CategoryIcon category={category} className="h-4 w-4" />
+                          )}
+                          {t(`items.categories.${category}`)}
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {categoryFilter !== 'all' && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCategoryFilter('all')}
+                    className="text-muted-foreground"
+                  >
+                    {t('pages.shopping.clearFilter')}
+                  </Button>
+                )}
+              </div>
+              <ShoppingViewModeToggle
+                value={viewMode}
+                onChange={setViewMode}
+                className="shrink-0"
+              />
             </div>
           </CardContent>
         </Card>
 
-        {/* Pending Items */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">
-                {t('pages.shopping.toBuy')} ({pendingItems.length})
-                {categoryFilter !== 'all' && (
-                  <span className="text-sm font-normal text-muted-foreground ml-2">
-                    • {t(`storageArea.types.${categoryFilter}`)}
-                  </span>
-                )}
-              </CardTitle>
-              {pendingItems.length > 0 && storageAreas.length > 0 && (
+        {viewMode === 'aisle' ? (
+          <>
+            {pendingItems.length > 0 && storageAreas.length > 0 && (
+              <div className="flex justify-end">
                 <Button
                   variant="green"
                   size="sm"
@@ -822,91 +721,183 @@ const Shopping = () => {
                   <PackageCheck className="h-4 w-4" />
                   {t('pages.shopping.bulkStorage')}
                 </Button>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {pendingItems.map((shoppingItem) => (
-                <motion.div
-                  key={shoppingItem.id}
-                  {...scrollRevealFadeUp(prefersReducedMotion)}
-                >
-                  <ShoppingItemRow shoppingItem={shoppingItem} />
-                </motion.div>
-              ))}
-              
-              {pendingItems.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  <div className="text-4xl mb-2">
-                    {categoryFilter === 'all' ? '🎉' : '📋'}
-                  </div>
-                  <p>
-                    {categoryFilter === 'all' 
-                      ? t('pages.shopping.allItemsCompleted')
-                      : t('pages.shopping.noItemsInCategory', { category: categoryFilter.toLowerCase() })
-                    }
-                  </p>
-                  <p className="text-sm">
-                    {categoryFilter === 'all' 
-                      ? t('pages.shopping.addNewItemsToGetStarted')
-                      : t('pages.shopping.tryDifferentCategory')
-                    }
-                  </p>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Completed Items */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-lg">
-              {t('pages.shopping.completed')} ({completedItems.length})
-              {categoryFilter !== 'all' && (
-                <span className="text-sm font-normal text-muted-foreground ml-2">
-                  • {categoryFilter}
-                </span>
-              )}
-              {loadingCompleted && (
-                <div className="inline-flex items-center gap-2 ml-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
-                  <span className="text-sm text-muted-foreground">{t('pages.shopping.loading')}</span>
-                </div>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loadingCompleted && completedItems.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
-                <p>{t('pages.shopping.loadingCompletedItems')}</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {completedItems.map((shoppingItem) => (
-                  <motion.div
-                    key={shoppingItem.id}
-                    {...scrollRevealFadeUp(prefersReducedMotion)}
-                  >
-                    <ShoppingItemRow
-                      shoppingItem={shoppingItem}
-                      isCompleted={true}
-                    />
-                  </motion.div>
-                ))}
-                {completedItems.length === 0 && completedItemsLoaded && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <div className="text-4xl mb-2">✅</div>
-                    <p>{t('pages.shopping.noCompletedItemsYet')}</p>
-                    <p className="text-sm">{t('pages.shopping.completedItemsWillAppear')}</p>
-                  </div>
-                )}
               </div>
             )}
-          </CardContent>
-        </Card>
+
+            {visibleAisleOrder.length > 0 ? (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                onDragCancel={handleDragCancel}
+              >
+                <SortableContext
+                  items={visibleAisleOrder}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-3">
+                    {visibleAisleOrder.map((aisle) => (
+                      <AisleSection
+                        key={aisle}
+                        aisle={aisle}
+                        items={itemsByAisle[aisle]}
+                        collapsed={isAisleCollapsed(aisle)}
+                        onToggleCollapsed={toggleAisleCollapsed}
+                        {...sharedRowProps}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+                <DragOverlay>
+                  {activeAisle ? (
+                    <AisleSection
+                      aisle={activeAisle}
+                      items={itemsByAisle[activeAisle] ?? []}
+                      collapsed
+                      dragPreview
+                      {...sharedRowProps}
+                    />
+                  ) : null}
+                </DragOverlay>
+              </DndContext>
+            ) : (
+              <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+                <CardContent className="p-8 text-center text-muted-foreground">
+                  <div className="text-4xl mb-2">
+                    {categoryFilter === 'all' ? '🛒' : '📋'}
+                  </div>
+                  <p>
+                    {categoryFilter === 'all'
+                      ? t('pages.shopping.addNewItemsToGetStarted')
+                      : t('pages.shopping.noItemsInCategory', {
+                          category: categoryFilter.toLowerCase(),
+                        })}
+                  </p>
+                  {categoryFilter !== 'all' && (
+                    <p className="text-sm">
+                      {t('pages.shopping.tryDifferentCategory')}
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </>
+        ) : (
+          <>
+            {/* Pending Items (A-Z) */}
+            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">
+                    {t('pages.shopping.toBuy')} ({pendingItemsAlpha.length})
+                    {categoryFilter !== 'all' && (
+                      <span className="text-sm font-normal text-muted-foreground ml-2">
+                        • {t(`storageArea.types.${categoryFilter}`)}
+                      </span>
+                    )}
+                  </CardTitle>
+                  {pendingItemsAlpha.length > 0 && storageAreas.length > 0 && (
+                    <Button
+                      variant="green"
+                      size="sm"
+                      onClick={() => setShowBulkDialog(true)}
+                      className="gap-1.5"
+                    >
+                      <PackageCheck className="h-4 w-4" />
+                      {t('pages.shopping.bulkStorage')}
+                    </Button>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {pendingItemsAlpha.map((shoppingItem) => (
+                    <motion.div
+                      key={shoppingItem.id}
+                      {...scrollRevealFadeUp(prefersReducedMotion)}
+                    >
+                      <ShoppingItemRow
+                        shoppingItem={shoppingItem}
+                        {...sharedRowProps}
+                      />
+                    </motion.div>
+                  ))}
+
+                  {pendingItemsAlpha.length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <div className="text-4xl mb-2">
+                        {categoryFilter === 'all' ? '🎉' : '📋'}
+                      </div>
+                      <p>
+                        {categoryFilter === 'all'
+                          ? t('pages.shopping.allItemsCompleted')
+                          : t('pages.shopping.noItemsInCategory', { category: categoryFilter.toLowerCase() })
+                        }
+                      </p>
+                      <p className="text-sm">
+                        {categoryFilter === 'all'
+                          ? t('pages.shopping.addNewItemsToGetStarted')
+                          : t('pages.shopping.tryDifferentCategory')
+                        }
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Completed Items (A-Z) */}
+            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-lg">
+                  {t('pages.shopping.completed')} ({completedItemsAlpha.length})
+                  {categoryFilter !== 'all' && (
+                    <span className="text-sm font-normal text-muted-foreground ml-2">
+                      • {categoryFilter}
+                    </span>
+                  )}
+                  {loadingCompleted && (
+                    <div className="inline-flex items-center gap-2 ml-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                      <span className="text-sm text-muted-foreground">{t('pages.shopping.loading')}</span>
+                    </div>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {loadingCompleted && completedItemsAlpha.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+                    <p>{t('pages.shopping.loadingCompletedItems')}</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {completedItemsAlpha.map((shoppingItem) => (
+                      <motion.div
+                        key={shoppingItem.id}
+                        {...scrollRevealFadeUp(prefersReducedMotion)}
+                      >
+                        <ShoppingItemRow
+                          shoppingItem={shoppingItem}
+                          isCompleted
+                          {...sharedRowProps}
+                        />
+                      </motion.div>
+                    ))}
+                    {completedItemsAlpha.length === 0 && completedItemsLoaded && (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <div className="text-4xl mb-2">✅</div>
+                        <p>{t('pages.shopping.noCompletedItemsYet')}</p>
+                        <p className="text-sm">{t('pages.shopping.completedItemsWillAppear')}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </>
+        )}
         </>
         )}
       </div>

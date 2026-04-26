@@ -388,7 +388,25 @@
       "loadingCompletedItems": "Cargando artículos completados...",
       "noCompletedItemsYet": "Aún no hay artículos completados",
       "completedItemsWillAppear": "Los artículos que marques como completados aparecerán aquí",
-      "addedQuantity": "Agregado {{quantity}} {{unit}} de {{item}} a la lista de compras"
+      "addedQuantity": "Agregado {{quantity}} {{unit}} de {{item}} a la lista de compras",
+      "viewMode": {
+        "label": "Modo de visualización",
+        "byAisle": "Por pasillo",
+        "alphabetical": "A-Z"
+      },
+      "aisles": {
+        "produce": "Frutas y verduras",
+        "butcher": "Carnicería y pescadería",
+        "dairy": "Lácteos y frescos",
+        "grocery": "Almacén",
+        "spices": "Especias",
+        "frozen": "Congelados",
+        "beveragesSnacks": "Bebidas y snacks",
+        "other": "Limpieza y otros",
+        "itemCount_one": "{{completed}}/{{count}} artículo",
+        "itemCount_other": "{{completed}}/{{count}} artículos",
+        "dragHandleLabel": "Reordenar el pasillo {{name}}"
+      }
     },
     "mealPlans": {
       "title": "Planes de comida",

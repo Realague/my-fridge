@@ -494,32 +494,32 @@ const MyProducts = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
 
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="group-by-area"
+                  checked={preferences.groupByArea}
+                  onCheckedChange={setGroupByArea}
+                  aria-label={t('pages.myProducts.groupByArea')}
+                />
+                <Label
+                  htmlFor="group-by-area"
+                  className="text-sm text-foreground cursor-pointer"
+                >
+                  {t('pages.myProducts.groupByArea')}
+                </Label>
+              </div>
+
               {filtersActive && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handleResetFilters}
-                  className="text-muted-foreground"
+                  className="text-muted-foreground ml-auto"
                 >
                   <X className="h-3.5 w-3.5 mr-1" aria-hidden />
                   {t('pages.myProducts.noResults.reset')}
                 </Button>
               )}
-            </div>
-
-            <div className="flex items-center justify-between gap-3 pt-1">
-              <Label
-                htmlFor="group-by-area"
-                className="text-sm text-foreground cursor-pointer flex-1"
-              >
-                {t('pages.myProducts.groupByArea')}
-              </Label>
-              <Switch
-                id="group-by-area"
-                checked={preferences.groupByArea}
-                onCheckedChange={setGroupByArea}
-                aria-label={t('pages.myProducts.groupByArea')}
-              />
             </div>
           </CardContent>
         </Card>

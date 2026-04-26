@@ -1,6 +1,7 @@
 {
   "navigation": {
     "home": "Home",
+    "products": "Products",
     "shopping": "Shopping",
     "meals": "Meals",
     "recipes": "Recipes"
@@ -391,6 +392,34 @@
       "itemsTracked_other": "{{count}} items tracked",
       "loyaltyCards": "Loyalty cards",
       "loyaltyCardsDesc": "Your store cards"
+    },
+    "myProducts": {
+      "title": "My products",
+      "subtitle_one": "{{count}} product across your household",
+      "subtitle_other": "{{count}} products across your household",
+      "searchPlaceholder": "Search by name…",
+      "filterByCategory": "Filter by category",
+      "filterByArea": "Storage areas",
+      "areasAll": "All storage areas",
+      "areasSelected_one": "{{count}} storage area",
+      "areasSelected_other": "{{count}} storage areas",
+      "groupByArea": "Group by storage area",
+      "areaItems_one": "{{count}} item",
+      "areaItems_other": "{{count}} items",
+      "openedDaysAgo_one": "Opened {{count}} day ago",
+      "openedDaysAgo_other": "Opened {{count}} days ago",
+      "openedToday": "Opened today",
+      "deleteFailed": "Could not delete this item",
+      "empty": {
+        "title": "Your fridge is empty",
+        "description": "Start adding products to keep track of what you have on hand.",
+        "cta": "Add an item"
+      },
+      "noResults": {
+        "title": "No products match your search",
+        "description": "Try a different keyword or reset the filters.",
+        "reset": "Reset filters"
+      }
     },
     "shopping": {
       "title": "Shopping List",

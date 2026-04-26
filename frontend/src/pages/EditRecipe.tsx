@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ArrowLeft, Plus, X, Clock, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Plus, X, Clock, ChevronDown, Trash2 } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { UpdateRecipeDto, RecipeStep } from '@/services/recipeService';
 import { StructuredIngredientInput, StructuredIngredient } from '@/components/StructuredIngredientInput';
@@ -523,12 +523,13 @@ const EditRecipe = () => {
                       {instructions.length > 1 && (
                         <Button
                           type="button"
-                          variant="outline"
-                          size="icon"
+                          variant="deleteTrash"
+                          size="sm"
                           onClick={() => removeInstruction(index)}
                           className="mt-2"
+                          aria-label={t('messages.action.delete')}
                         >
-                          <X className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       )}
                     </div>

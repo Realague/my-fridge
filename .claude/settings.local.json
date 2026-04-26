@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"[MyFridge] Tache de developpement: envisager /frontend-design (UI/front) et /feature-dev:feature-dev (feature ou changement structurant) avant de coder. Charte graphique canonique: docs/charte-graphique.html.\""
+          }
+        ]
+      }
+    ]
+  }
+}

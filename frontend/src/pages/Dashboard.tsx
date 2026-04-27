@@ -8,8 +8,6 @@ import BottomNavigation from '@/components/BottomNavigation';
 import NotificationDrawer from '@/components/NotificationDrawer';
 import AddStorageAreaDialog from '@/components/AddStorageAreaDialog';
 import { LowStockCard } from '@/components/LowStockCard';
-import { ExpiringSoonCard } from '@/components/ExpiringSoonCard';
-import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,7 +25,6 @@ import { useShoppingStore } from '@/stores/shoppingStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useItemMinimumStore } from '@/stores/itemMinimumStore';
-import { useExpirationNotificationStore } from '@/stores/expirationNotificationStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -50,10 +47,6 @@ const Dashboard = () => {
   const { fetchStoredItems } = useStoredItemStore();
   const { recipes, fetchRecipes } = useRecipeStore();
   const { getItemMinimumsForHousehold, fetchItemMinimums, fetchLowStockItems } = useItemMinimumStore();
-  const fetchNotifications = useExpirationNotificationStore((s) => s.fetchAll);
-  const unreadNotifications = useExpirationNotificationStore((s) =>
-    s.notifications.filter((n) => !n.readByCurrentUser).length
-  );
   
   // Household store - only re-renders when these specific values change
   const households = useHouseholdStore(state => state.households);
@@ -90,8 +83,6 @@ const Dashboard = () => {
       if (currentUser?.lowStockAlertsEnabled !== false) {
         fetchLowStockItems();
       }
-      // Fetch expiration notifications and expiring-now items for the dashboard
-      fetchNotifications(selectedHouseholdId);
     }
   }, [selectedHouseholdId, authLoading, hasHousehold, currentUser?.lowStockAlertsEnabled]); // Remove function dependencies to prevent infinite loops
 
@@ -183,18 +174,18 @@ const Dashboard = () => {
             </DropdownMenu>
             
             <div className="flex items-center gap-1 sm:gap-3">
-              <Button
-                variant="ghost"
-                size="icon"
+              <Button 
+                variant="ghost" 
+                size="icon" 
                 className="relative"
                 onClick={() => setShowNotifications(true)}
               >
                 <Bell className="h-5 w-5" />
-                {unreadNotifications > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-[10px] bg-rose-500 text-white p-0 rounded-full">
-                    {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                {/*{unreadCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs bg-red-500 text-white">
+                    {unreadCount > 9 ? '9+' : unreadCount}
                   </Badge>
-                )}
+                )}*/}
               </Button>
               <Button variant="ghost" size="icon" onClick={() => navigate('/settings')}>
                 <Settings className="h-5 w-5" />
@@ -222,9 +213,6 @@ const Dashboard = () => {
             </motion.div>
           ))}
         </div>
-
-        {/* Expiring Soon Alert */}
-        <ExpiringSoonCard householdId={selectedHouseholdId} />
 
         {/* Low Stock Alert */}
         <LowStockCard />
@@ -312,10 +300,9 @@ const Dashboard = () => {
       </div>
 
       {/* Notification Drawer */}
-      <NotificationDrawer
-        open={showNotifications}
-        onOpenChange={setShowNotifications}
-        householdId={selectedHouseholdId}
+      <NotificationDrawer 
+        open={showNotifications} 
+        onOpenChange={setShowNotifications} 
       />
 
       <BottomNavigation currentPage="dashboard" />

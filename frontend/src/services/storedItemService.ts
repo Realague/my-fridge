@@ -69,7 +69,6 @@ export interface UpdateStoredItemRequest {
   isOpened?: boolean;
   openedDate?: string;
   storageAreaId?: string;
-  frozenDate?: string | null;
 }
 
 export interface GetStoredItemsRequest {

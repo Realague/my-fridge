@@ -9,7 +9,6 @@ import { UserPlus, Trash2, ArrowLeft, LogOut, Pencil } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
 import StorageAreaManager from '@/components/StorageAreaManager';
-import { HouseholdExpirationSettings } from '@/components/HouseholdExpirationSettings';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
@@ -244,9 +243,6 @@ const HouseholdDetails = () => {
             </AlertDialog>
           </CardContent>
         </Card>
-
-        {/* Expiration alerts setting - any household member can adjust */}
-        {id && <HouseholdExpirationSettings householdId={id} />}
 
         {/* Storage Management Section - Always visible for admins */}
         {isAdmin && <StorageAreaManager />}

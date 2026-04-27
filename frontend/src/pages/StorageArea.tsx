@@ -245,7 +245,7 @@ const StorageArea = () => {
     if (!status || days === null) return null;
     
     const badges = {
-      'expired': <Badge variant="destructive" className="text-xs">{t('storageArea.expiredSince', { count: Math.abs(days) })}</Badge>,
+      'expired': <Badge variant="destructive" className="text-xs">{t('storageArea.expired')}</Badge>,
       'expiring-soon': <Badge variant="destructive" className="text-xs">{t('storageArea.expiresIn', { days })}</Badge>,
       'expiring-week': <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">{t('storageArea.expiresIn', { days })}</Badge>,
       'fresh': <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">{t('storageArea.fresh', { days })}</Badge>
@@ -545,19 +545,12 @@ const StorageArea = () => {
                       </span>
                     </div>
                     {area.type !== StorageAreaType.FREEZER &&
-                      (storageItem.effectiveExpirationDate || storageItem.expirationDate) && (() => {
-                        const expDays = getDaysUntilExpiration(storageItem.effectiveExpirationDate || storageItem.expirationDate);
-                        if (expDays === null) return null;
-                        const label = expDays < 0
-                          ? t('storageArea.expiredSince', { count: Math.abs(expDays) })
-                          : t('storageArea.expiresIn', { days: expDays });
-                        return (
-                          <div className="flex items-center gap-1">
-                            <AlertTriangle className="h-3 w-3" />
-                            <span>{label}</span>
-                          </div>
-                        );
-                      })()}
+                      (storageItem.effectiveExpirationDate || storageItem.expirationDate) && (
+                      <div className="flex items-center gap-1">
+                        <AlertTriangle className="h-3 w-3" />
+                        <span>{t('storageArea.expiresIn', { days: getDaysUntilExpiration(storageItem.effectiveExpirationDate || storageItem.expirationDate) })}</span>
+                      </div>
+                    )}
                     {storageItem.isOpened && storageItem.openedDate && (
                       <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
                         <PackageOpen className="h-3 w-3" />

@@ -379,7 +379,14 @@
         "viewMore_other": "Ver {{count}} más",
         "discardedToast": "{{name}} retirado del stock",
         "frozenToast": "{{name}} movido a {{freezer}}",
-        "noFreezer": "Añade primero un congelador a tu hogar para poder congelar."
+        "noFreezer": "Añade primero un congelador a tu hogar para poder congelar.",
+        "pushOptIn": {
+          "title": "¿Recibir estas alertas incluso cuando la app esté cerrada?",
+          "activate": "Activar",
+          "later": "Más tarde",
+          "enabledToast": "Notificaciones activadas",
+          "deniedToast": "Permiso denegado. Puedes reactivarlo en los ajustes del navegador."
+        }
       }
     },
     "shopping": {

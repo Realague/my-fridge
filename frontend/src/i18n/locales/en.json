@@ -407,7 +407,14 @@
         "viewMore_other": "See {{count}} more",
         "discardedToast": "{{name}} removed from stock",
         "frozenToast": "{{name}} moved to {{freezer}}",
-        "noFreezer": "Add a freezer to your household first to freeze items."
+        "noFreezer": "Add a freezer to your household first to freeze items.",
+        "pushOptIn": {
+          "title": "Get these alerts even when the app is closed?",
+          "activate": "Enable",
+          "later": "Later",
+          "enabledToast": "Notifications enabled",
+          "deniedToast": "Permission denied. You can re-enable it in your browser settings."
+        }
       }
     },
     "shopping": {

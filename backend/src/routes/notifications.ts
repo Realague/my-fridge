@@ -5,6 +5,8 @@ import { ExpirationNotificationRepository } from '../repositories/ExpirationNoti
 import { HouseholdRepository } from '../repositories/HouseholdRepository';
 import { HouseholdSettingsRepository } from '../repositories/HouseholdSettingsRepository';
 import { HouseholdSettingsService } from '../services/HouseholdSettingsService';
+import { PushSubscriptionRepository } from '../repositories/PushSubscriptionRepository';
+import { PushNotificationService } from '../services/PushNotificationService';
 import { authenticateGoogleToken } from '../middleware/auth';
 
 const router = Router();
@@ -13,10 +15,13 @@ const notificationRepository = new ExpirationNotificationRepository();
 const householdRepository = new HouseholdRepository();
 const settingsRepository = new HouseholdSettingsRepository();
 const settingsService = new HouseholdSettingsService(settingsRepository, householdRepository);
+const pushSubscriptionRepository = new PushSubscriptionRepository();
+const pushService = new PushNotificationService(pushSubscriptionRepository);
 const notificationService = new ExpirationNotificationService(
   notificationRepository,
   householdRepository,
-  settingsService
+  settingsService,
+  pushService
 );
 const notificationController = new ExpirationNotificationController(notificationService);
 

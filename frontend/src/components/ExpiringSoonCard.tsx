@@ -114,7 +114,11 @@ export const ExpiringSoonCard = ({ householdId }: ExpiringSoonCardProps) => {
   };
 
   const handleRecipes = (item: ExpiringNowItem) => {
-    navigate(`/recipes?ingredient=${encodeURIComponent(item.itemId)}`);
+    const params = new URLSearchParams({
+      itemId: item.itemId,
+      itemName: translateItemName(item.itemName, item.itemHouseholdId, t),
+    });
+    navigate(`/recipes?${params.toString()}`);
   };
 
   return (

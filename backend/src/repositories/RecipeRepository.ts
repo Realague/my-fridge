@@ -22,6 +22,7 @@ export class RecipeRepository {
       maxTotalTime,
       isFavorite,
       createdBy,
+      itemId,
       limit = 20,
       offset = 0
     } = params;
@@ -72,6 +73,23 @@ export class RecipeRepository {
       whereConditions.createdBy = createdBy;
     }
 
+    const ingredientInclude: Record<string, unknown> = {
+      model: RecipeIngredient,
+      as: 'ingredients',
+      include: [
+        {
+          model: Item,
+          as: 'item',
+          attributes: ['id', 'name', 'category', 'defaultUnit', 'availableUnits']
+        }
+      ]
+    };
+    if (itemId) {
+      // Filter recipes that contain this ingredient
+      ingredientInclude.where = { itemId };
+      ingredientInclude.required = true;
+    }
+
     const { rows: recipes, count: total } = await Recipe.findAndCountAll({
       where: whereConditions,
       include: [
@@ -80,17 +98,7 @@ export class RecipeRepository {
           as: 'creator',
           attributes: ['id', 'firstName', 'lastName', 'email']
         },
-        {
-          model: RecipeIngredient,
-          as: 'ingredients',
-          include: [
-            {
-              model: Item,
-              as: 'item',
-              attributes: ['id', 'name', 'category', 'defaultUnit', 'availableUnits']
-            }
-          ]
-        }
+        ingredientInclude as any
       ],
       order: [['createdAt', 'DESC']],
       limit,

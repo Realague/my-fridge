@@ -119,6 +119,7 @@ export interface RecipeSearchParams {
   maxTotalTime?: number;
   isFavorite?: boolean;
   createdBy?: string;
+  itemId?: string;
   limit?: number;
   offset?: number;
-} 
+}

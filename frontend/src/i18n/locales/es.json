@@ -484,6 +484,7 @@
     },
     "recipes": {
       "title": "Recetas",
+      "filteredByIngredient": "Filtrado por: {{name}}",
       "addRecipe": "Agregar receta",
       "noRecipes": "No se encontraron recetas",
       "ingredients": "Ingredientes",

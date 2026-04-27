@@ -527,6 +527,7 @@
     },
     "recipes": {
       "title": "Recipes",
+      "filteredByIngredient": "Filtered by: {{name}}",
       "addRecipe": "Add recipe",
       "noRecipes": "No recipes found",
       "ingredients": "Ingredients",

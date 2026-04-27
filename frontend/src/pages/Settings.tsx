@@ -258,13 +258,15 @@ const Settings = () => {
                     <Label htmlFor="push-notifications" className="flex flex-col space-y-1 cursor-pointer flex-1">
                        <span className="font-medium">{t('pages.settings.notificationSettings.pushNotifications')}</span>
                        <span className="font-normal text-sm text-muted-foreground">
-                         {t('pages.settings.notificationSettings.pushDescription')}
+                         {pushPermission === 'denied'
+                           ? t('pages.settings.notificationSettings.pushDeniedHelp')
+                           : t('pages.settings.notificationSettings.pushDescription')}
                        </span>
                     </Label>
                     <Switch
                       id="push-notifications"
                       checked={pushSubscribed}
-                      disabled={pushIsLoading || pushPermission === 'denied'}
+                      disabled={pushIsLoading || pushPermission === 'denied' || !pushInitialized}
                       onCheckedChange={handlePushToggle}
                     />
                   </div>

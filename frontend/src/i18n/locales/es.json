@@ -649,6 +649,7 @@
         "description": "Configura cómo recibes alertas.",
         "pushNotifications": "Notificaciones push",
         "pushDescription": "Recibir alertas en tu dispositivo.",
+        "pushDeniedHelp": "Notificaciones bloqueadas en el navegador. Vuelve a autorizarlas desde los ajustes del sistema y recarga la app.",
         "lowStockAlerts": "Alertas de stock bajo",
         "lowStockDescription": "Notificarme cuando los artículos se estén agotando."
       },

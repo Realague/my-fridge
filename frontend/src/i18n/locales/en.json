@@ -693,6 +693,7 @@
         "description": "Configure how you receive alerts.",
         "pushNotifications": "Push notifications",
         "pushDescription": "Receive alerts on your device.",
+        "pushDeniedHelp": "Notifications blocked in the browser. Re-allow them from the system settings, then reload the app.",
         "lowStockAlerts": "Low stock alerts",
         "lowStockDescription": "Notify me when items are running low."
       },

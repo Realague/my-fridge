@@ -32,7 +32,9 @@ const urlBase64ToUint8Array = (base64String: string): Uint8Array => {
 const getOrRegisterServiceWorker = async (): Promise<ServiceWorkerRegistration> => {
   const existing = await navigator.serviceWorker.getRegistration();
   if (existing) return existing;
-  return await navigator.serviceWorker.register('/sw.js', { type: 'classic' });
+  // type: 'module' is required because vite-plugin-pwa serves the SW as ES module in dev,
+  // and the production build emits a module SW too via injectManifest.
+  return await navigator.serviceWorker.register('/sw.js', { type: 'module' });
 };
 
 export interface SerializedPushSubscription {

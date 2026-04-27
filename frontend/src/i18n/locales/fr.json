@@ -64,6 +64,8 @@
     "goToDashboard": "Aller au tableau de bord",
     "expired": "Expiré",
     "expiresIn": "Expire dans {{days}}j",
+    "expiredSince_one": "Expiré depuis {{count}}j",
+    "expiredSince_other": "Expiré depuis {{count}}j",
     "fresh": "Frais ({{days}}j)",
     "quantity": "Quantité",
     "location": "Emplacement",
@@ -213,6 +215,16 @@
     "noNotifications": "Aucune notification",
     "allCaughtUp": "Vous êtes à jour ! Revenez plus tard pour les mises à jour."
   },
+  "expirationNotifications": {
+    "titleInitial_one": "{{name}} expire dans {{count}} jour",
+    "titleInitial_other": "{{name}} expire dans {{count}} jours",
+    "titleReminder": "{{name}} expire demain",
+    "titleToday": "{{name}} expire aujourd'hui",
+    "titleExpired_one": "{{name}} a expiré depuis {{count}} jour",
+    "titleExpired_other": "{{name}} a expiré depuis {{count}} jours",
+    "openedDaysAgo_one": "Ouvert il y a {{count}} jour",
+    "openedDaysAgo_other": "Ouverte il y a {{count}} jours"
+  },
   "recipeSelector": {
     "loadingRecipes": "Chargement des recettes...",
     "startTyping": "Commencez à taper pour rechercher des recettes...",
@@ -279,6 +291,7 @@
       "authenticationRequired": "Authentification requise. Veuillez vous connecter pour continuer.",
       "sessionExpired": "Session expirée. Veuillez vous reconnecter.",
       "requestTimeout": "Délai d'attente dépassé. Veuillez réessayer.",
+      "requestFailed": "L'opération a échoué. Veuillez réessayer.",
       "failedToCreateItem": "Échec de la création d'article",
       "failedToUpdateItem": "Échec de la mise à jour d'article",
       "duplicateItemName": "Un article avec ce nom existe déjà dans votre foyer",
@@ -354,7 +367,27 @@
       "itemsTracked_one": "{{count}} article suivi",
       "itemsTracked_other": "{{count}} articles suivis",
       "loyaltyCards": "Cartes de fidélité",
-      "loyaltyCardsDesc": "Vos cartes en magasin"
+      "loyaltyCardsDesc": "Vos cartes en magasin",
+      "expiringSoon": {
+        "title": "À consommer rapidement",
+        "subtitle_one": "{{count}} article approche de sa date",
+        "subtitle_other": "{{count}} articles approchent de leur date",
+        "badgeExpired": "Expiré",
+        "badgeToday": "Aujourd'hui",
+        "badgeTomorrow": "Demain",
+        "badgeInDays_one": "Dans {{count}} jour",
+        "badgeInDays_other": "Dans {{count}} jours",
+        "actionDiscard": "Jeter",
+        "actionFreeze": "Congeler",
+        "actionRecipes": "Recettes",
+        "openedDaysAgo_one": "Ouvert il y a {{count}} jour",
+        "openedDaysAgo_other": "Ouvert il y a {{count}} jours",
+        "viewMore_one": "Voir le {{count}} autre",
+        "viewMore_other": "Voir les {{count}} autres",
+        "discardedToast": "{{name}} retiré du stock",
+        "frozenToast": "{{name}} déplacé vers {{freezer}}",
+        "noFreezer": "Ajoutez d'abord un congélateur à votre foyer pour congeler des articles."
+      }
     },
     "shopping": {
       "title": "Liste de Courses",
@@ -687,6 +720,15 @@
       "role": {
         "admin": "Administrateur",
         "member": "Membre"
+      },
+      "expirationAlerts": {
+        "title": "Alertes de péremption",
+        "description": "Choisissez à partir de quand votre foyer est prévenu des produits qui approchent de leur date.",
+        "label": "Me prévenir",
+        "option_one": "{{count}} jour avant expiration",
+        "option_other": "{{count}} jours avant expiration",
+        "note": "Un rappel automatique est aussi envoyé la veille de l'expiration. Le changement s'applique aux nouvelles notifications uniquement.",
+        "savedToast": "Alerte mise à jour pour tout le foyer."
       }
     },
     "index": {

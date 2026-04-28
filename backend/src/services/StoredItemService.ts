@@ -130,6 +130,7 @@ export class StoredItemService {
         category: storedItem.item.category,
         defaultUnit: storedItem.item.defaultUnit,
         availableUnits: storedItem.item.availableUnits,
+        pieceAlias: storedItem.item.pieceAlias ?? null,
         daysAfterOpening: storedItem.item.daysAfterOpening || undefined,
         imageUrl: storedItem.item.imageUrl,
         createdBy: storedItem.item.createdBy,

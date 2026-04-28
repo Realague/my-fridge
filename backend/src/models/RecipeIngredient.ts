@@ -1,6 +1,6 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
-import { Unit, UNITS } from '../types/enums';
+import { Unit, UNITS, FREE_QUANTITY_UNITS } from '../types/enums';
 import { Recipe } from './Recipe';
 import { Item } from './Item';
 
@@ -9,8 +9,11 @@ interface RecipeIngredientAttributes {
   id: string;
   recipeId: string;
   itemId: string;
-  quantity: number;
+  // Null when `isFreeQuantity` is true (ingredient "à l'œil").
+  quantity: number | null;
   unit: Unit;
+  // When true, the ingredient has no numeric quantity. Skipped in stock/shopping computations.
+  isFreeQuantity: boolean;
   notes: string | null;
   usedInSteps: number[];
   createdAt?: Date;
@@ -18,14 +21,15 @@ interface RecipeIngredientAttributes {
 }
 
 // Some attributes are optional in `RecipeIngredient.build()` and `RecipeIngredient.create()`
-interface RecipeIngredientCreationAttributes extends Optional<RecipeIngredientAttributes, 'id' | 'notes' | 'usedInSteps' | 'createdAt' | 'updatedAt'> {}
+interface RecipeIngredientCreationAttributes extends Optional<RecipeIngredientAttributes, 'id' | 'quantity' | 'isFreeQuantity' | 'notes' | 'usedInSteps' | 'createdAt' | 'updatedAt'> {}
 
 export class RecipeIngredient extends Model<RecipeIngredientAttributes, RecipeIngredientCreationAttributes> implements RecipeIngredientAttributes {
   public id!: string;
   public recipeId!: string;
   public itemId!: string;
-  public quantity!: number;
+  public quantity!: number | null;
   public unit!: Unit;
+  public isFreeQuantity!: boolean;
   public notes!: string | null;
   public usedInSteps!: number[];
   public readonly createdAt!: Date;
@@ -79,15 +83,37 @@ RecipeIngredient.init(
     },
     quantity: {
       type: DataTypes.DECIMAL(10, 3),
-      allowNull: false,
+      // Nullable since free-quantity ingredients ("à l'œil") have no numeric value.
+      allowNull: true,
       validate: {
-        min: 1,
+        quantityRequiredUnlessFree(this: RecipeIngredient, value: number | null) {
+          if (this.isFreeQuantity) return;
+          if (value === null || value === undefined) {
+            throw new Error('quantity is required unless isFreeQuantity is true');
+          }
+          if (Number(value) <= 0) {
+            throw new Error('quantity must be positive');
+          }
+        },
       },
     },
     unit: {
       type: DataTypes.ENUM(...UNITS),
       allowNull: false,
       defaultValue: Unit.PIECE,
+    },
+    isFreeQuantity: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      validate: {
+        freeQuantityConsistency(this: RecipeIngredient, value: boolean) {
+          // Gestural units (pinch/drizzle/knob) are always free-quantity.
+          if (!value && FREE_QUANTITY_UNITS.includes(this.unit)) {
+            throw new Error(`Unit ${this.unit} requires isFreeQuantity to be true`);
+          }
+        },
+      },
     },
     notes: {
       type: DataTypes.TEXT,

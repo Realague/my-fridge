@@ -11,8 +11,9 @@ export interface RecipeStep {
 export interface RecipeIngredientDto {
   id: string;
   itemId: string;
-  quantity: number;
+  quantity: number | null;
   unit: string;
+  isFreeQuantity: boolean;
   notes?: string;
   usedInSteps?: number[];
   item?: {
@@ -21,14 +22,16 @@ export interface RecipeIngredientDto {
     category: string;
     defaultUnit: string;
     availableUnits: string[];
+    pieceAlias?: string | null;
     householdId?: string;
   };
 }
 
 export interface CreateRecipeIngredientDto {
   itemId: string;  // Removed the Key type which was causing the error
-  quantity: number;
+  quantity?: number | null;
   unit: string;
+  isFreeQuantity?: boolean;
   notes?: string;
   usedInSteps?: number[];
 }
@@ -141,6 +144,7 @@ export interface ParsedIngredient {
   quantity: number | null;
   unit: string | null;
   itemName: string;
+  isFreeQuantity?: boolean;
 }
 
 export interface IngredientMatch {

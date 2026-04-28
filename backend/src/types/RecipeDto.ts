@@ -9,8 +9,9 @@ export interface RecipeStep {
 export interface RecipeIngredientDto {
   id: string;
   itemId: string;
-  quantity: number;
+  quantity: number | null;
   unit: Unit;
+  isFreeQuantity: boolean;
   notes?: string;
   usedInSteps?: number[];
   item?: {
@@ -19,14 +20,16 @@ export interface RecipeIngredientDto {
     category: string;
     defaultUnit: string;
     availableUnits: string[];
+    pieceAlias: string | null;
     householdId?: string;
   };
 }
 
 export interface CreateRecipeIngredientDto {
   itemId: string;
-  quantity: number;
+  quantity?: number | null;
   unit: Unit;
+  isFreeQuantity?: boolean;
   notes?: string;
   usedInSteps?: number[];
 }

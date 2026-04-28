@@ -1,6 +1,6 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
-import { Unit, UNITS, STORAGE_UNITS, StorageAreaType } from '../types/enums';
+import { Unit, UNITS, LINE_STORAGE_UNITS, StorageAreaType } from '../types/enums';
 import { User } from './User';
 import { Item } from './Item';
 import { StorageArea } from './StorageArea';
@@ -162,8 +162,8 @@ StoredItem.init(
       defaultValue: Unit.PIECE,
       validate: {
         isStorageUnit(value: string) {
-          // Cooking measurements (cup, tbsp, tsp) are only allowed in recipes, not in storage
-          if (!STORAGE_UNITS.includes(value as Unit)) {
+          // Cooking / free-quantity units are not allowed; `serving` is kept for line-level rows.
+          if (!LINE_STORAGE_UNITS.includes(value as Unit)) {
             throw new Error(`Unit ${value} is only available for recipes, not for storage items`);
           }
         },

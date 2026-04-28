@@ -290,8 +290,11 @@ export class RecipeService {
     return {
       id: ingredient.id,
       itemId: ingredient.itemId,
-      quantity: Number(ingredient.quantity),
+      quantity: ingredient.quantity === null || ingredient.quantity === undefined
+        ? null
+        : Number(ingredient.quantity),
       unit: ingredient.unit,
+      isFreeQuantity: Boolean(ingredient.isFreeQuantity),
       notes: ingredient.notes || undefined,
       usedInSteps: ingredient.usedInSteps,
       item: ingredient.item ? {
@@ -300,6 +303,7 @@ export class RecipeService {
         category: ingredient.item.category,
         defaultUnit: ingredient.item.defaultUnit,
         availableUnits: ingredient.item.availableUnits,
+        pieceAlias: ingredient.item.pieceAlias ?? null,
         householdId: ingredient.item.householdId || undefined
       } : undefined
     };

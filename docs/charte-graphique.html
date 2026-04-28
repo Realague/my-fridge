@@ -1,0 +1,1381 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MyFridge — Charte Graphique</title>
+  <meta name="description" content="Système de design de l'application MyFridge — palette, typographie, composants, voix." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=Funnel+Sans:wght@300..800&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* ——— Couleurs fondamentales ——— */
+      --mf-paper:      #F5EFE2;   /* fond chaud, papier non blanchi */
+      --mf-paper-soft: #EFE7D4;   /* sous-fond, cartouches */
+      --mf-paper-ink:  #E5D9BF;   /* filets décoratifs, règles */
+      --mf-ink:        #14231B;   /* encre — presque noir, teinté olive */
+      --mf-ink-soft:   #3E4E45;   /* texte secondaire */
+      --mf-ink-mute:   #7C8A82;   /* caption, méta */
+
+      /* ——— Vert Pistache (marque) ——— */
+      --mf-green:      #2E7D4F;   /* action, affirmation */
+      --mf-green-deep: #1F5736;   /* hover, focus */
+      --mf-green-leaf: #6DAE7F;   /* illustration, "frais" */
+      --mf-green-soft: #DEEBDD;   /* fond succès, badge frais */
+
+      /* ——— Accents chauds ——— */
+      --mf-saffron:    #D88A2B;   /* alerte "expire bientôt" */
+      --mf-saffron-soft:#F6E4C4;
+      --mf-paprika:    #B4452E;   /* détruire, expiré */
+      --mf-paprika-soft:#F1D7CE;
+      --mf-plum:       #5E3E5C;   /* détail éditorial */
+
+      /* ——— Mode nuit ——— */
+      --mf-night:      #0F1613;   /* fond sombre */
+      --mf-night-card: #182421;
+      --mf-night-line: #2A3833;
+
+      /* ——— Tokens système ——— */
+      --mf-radius-xs: 4px;
+      --mf-radius-sm: 6px;
+      --mf-radius-md: 8px;
+      --mf-radius-lg: 12px;
+      --mf-radius-xl: 20px;
+
+      --mf-shadow-1: 0 1px 2px hsla(150, 20%, 10%, .06);
+      --mf-shadow-2: 0 8px 20px -6px hsla(150, 20%, 10%, .10), 0 2px 4px hsla(150,20%,10%,.06);
+      --mf-shadow-3: 0 24px 48px -20px hsla(150, 30%, 10%, .25), 0 4px 10px hsla(150,20%,10%,.08);
+
+      --mf-ease: cubic-bezier(.25,.1,.25,1);
+      --mf-dur:  300ms;
+
+      --mf-font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+      --mf-font-body:    "Funnel Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+      --mf-font-mono:    "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      background: var(--mf-paper);
+      color: var(--mf-ink);
+      font-family: var(--mf-font-body);
+      font-size: 17px;
+      line-height: 1.55;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "ss01", "ss02", "cv11";
+      /* Grain discret, inspiré du papier kraft */
+      background-image:
+        radial-gradient(1200px 800px at 10% -10%, hsla(150,30%,80%,.4), transparent 60%),
+        radial-gradient(900px 600px at 110% 10%, hsla(30,50%,80%,.25), transparent 55%),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.08  0 0 0 0 0.13  0 0 0 0 0.10  0 0 0 .045 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    }
+
+    ::selection { background: var(--mf-green); color: var(--mf-paper); }
+
+    /* ——— Mise en page ——— */
+    .page {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 64px 48px 160px;
+    }
+    @media (max-width: 720px) { .page { padding: 32px 20px 120px; } }
+
+    /* ——— En-tête ——— */
+    .masthead {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--mf-paper-ink);
+      margin-bottom: 56px;
+    }
+    .masthead .lockup {
+      display: flex; align-items: baseline; gap: 14px;
+      font-family: var(--mf-font-display);
+      font-weight: 500;
+      font-size: clamp(32px, 5vw, 48px);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .lockup .leaf {
+      display: inline-block;
+      width: .9em; height: .9em;
+      background: var(--mf-green);
+      border-radius: 60% 30% 60% 30%;
+      transform: rotate(-18deg);
+      position: relative;
+    }
+    .lockup .leaf::after {
+      content: "";
+      position: absolute; inset: 12% 45% 12% 42%;
+      background: var(--mf-green-deep);
+      border-radius: 60% 30% 60% 30%;
+    }
+    .lockup em {
+      font-style: italic;
+      font-variation-settings: "SOFT" 100;
+      color: var(--mf-green);
+    }
+    .masthead .meta {
+      text-align: right;
+      font-family: var(--mf-font-mono);
+      font-size: 12px;
+      color: var(--mf-ink-mute);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      line-height: 1.7;
+    }
+    .masthead .meta strong { color: var(--mf-ink); font-weight: 500; }
+
+    /* ——— Cover héroïque ——— */
+    .cover {
+      display: grid;
+      grid-template-columns: 1.2fr .9fr;
+      gap: 64px;
+      align-items: end;
+      padding: 40px 0 80px;
+      margin-bottom: 120px;
+      border-bottom: 1px solid var(--mf-paper-ink);
+      position: relative;
+    }
+    @media (max-width: 900px) { .cover { grid-template-columns: 1fr; gap: 32px; padding-bottom: 56px; margin-bottom: 72px; } }
+
+    .cover h1 {
+      font-family: var(--mf-font-display);
+      font-weight: 400;
+      font-size: clamp(56px, 10vw, 144px);
+      line-height: .92;
+      letter-spacing: -0.04em;
+      margin: 0;
+      font-variation-settings: "SOFT" 30;
+    }
+    .cover h1 .it {
+      font-style: italic;
+      color: var(--mf-green);
+      font-variation-settings: "SOFT" 100, "opsz" 100;
+    }
+    .cover h1 .amp {
+      font-family: var(--mf-font-display);
+      font-style: italic;
+      color: var(--mf-saffron);
+      font-weight: 300;
+      display: inline-block;
+      transform: translateY(.08em) rotate(-6deg);
+    }
+    .cover .intro {
+      font-size: 20px;
+      line-height: 1.45;
+      max-width: 42ch;
+      color: var(--mf-ink-soft);
+    }
+    .cover .intro .caps {
+      display: block;
+      font-family: var(--mf-font-mono);
+      font-size: 11.5px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--mf-ink-mute);
+      margin-bottom: 14px;
+    }
+    .cover .intro p { margin: 0 0 14px; }
+    .cover .intro p em { font-family: var(--mf-font-display); font-style: italic; font-size: 1.06em; color: var(--mf-ink); }
+
+    .folio {
+      position: absolute;
+      top: 8px; right: 0;
+      font-family: var(--mf-font-mono);
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--mf-ink-mute);
+    }
+
+    /* ——— Index latéral — numéros de chapitre ——— */
+    section.chapter {
+      display: grid;
+      grid-template-columns: 128px 1fr;
+      gap: 48px;
+      padding: 72px 0;
+      border-top: 1px solid var(--mf-paper-ink);
+    }
+    @media (max-width: 900px) { section.chapter { grid-template-columns: 1fr; gap: 18px; padding: 48px 0; } }
+
+    .chapter-no {
+      font-family: var(--mf-font-display);
+      font-size: 96px;
+      line-height: 1;
+      font-style: italic;
+      font-variation-settings: "SOFT" 100, "opsz" 144;
+      color: var(--mf-green);
+      font-weight: 300;
+      letter-spacing: -0.04em;
+    }
+    .chapter-body h2 {
+      font-family: var(--mf-font-display);
+      font-weight: 400;
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin: 16px 0 10px;
+      max-width: 20ch;
+    }
+    .chapter-body .kicker {
+      font-family: var(--mf-font-mono);
+      font-size: 11.5px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--mf-ink-mute);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .chapter-body .lede {
+      font-size: 19px;
+      color: var(--mf-ink-soft);
+      max-width: 60ch;
+      margin: 0 0 32px;
+    }
+
+    /* ——— Principes ——— */
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    @media (max-width: 900px) { .principles { grid-template-columns: 1fr; } }
+
+    .principle {
+      padding: 28px 28px 32px;
+      background: linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,.15));
+      border: 1px solid var(--mf-paper-ink);
+      border-radius: var(--mf-radius-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .principle::before {
+      content: "";
+      position: absolute; inset: auto -20px -20px auto;
+      width: 120px; height: 120px;
+      background: radial-gradient(circle, var(--mf-green-leaf) 0%, transparent 70%);
+      opacity: .35;
+      filter: blur(6px);
+    }
+    .principle .num {
+      font-family: var(--mf-font-mono);
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--mf-green-deep);
+    }
+    .principle h3 {
+      font-family: var(--mf-font-display);
+      font-weight: 400;
+      font-size: 28px;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin: 10px 0 12px;
+    }
+    .principle h3 em { font-style: italic; color: var(--mf-green); font-variation-settings: "SOFT" 100; }
+    .principle p { margin: 0; font-size: 15px; color: var(--mf-ink-soft); }
+
+    /* ——— Palette ——— */
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+    }
+    .swatch {
+      grid-column: span 3;
+      padding: 18px 18px 16px;
+      border-radius: var(--mf-radius-md);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 168px;
+      box-shadow: var(--mf-shadow-1);
+      border: 1px solid transparent;
+      position: relative;
+    }
+    .swatch.hero {
+      grid-column: span 6;
+      min-height: 240px;
+    }
+    .swatch .name {
+      font-family: var(--mf-font-display);
+      font-weight: 500;
+      font-size: 22px;
+      letter-spacing: -0.01em;
+    }
+    .swatch.hero .name {
+      font-size: 38px; line-height: 1;
+      font-weight: 400;
+    }
+    .swatch .name em { font-style: italic; font-variation-settings: "SOFT" 100; opacity: .95; }
+    .swatch .token {
+      font-family: var(--mf-font-mono);
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      opacity: .85;
+    }
+    .swatch .usage {
+      font-size: 13px;
+      line-height: 1.4;
+      opacity: .88;
+      max-width: 26ch;
+    }
+    .swatch .hex {
+      font-family: var(--mf-font-mono);
+      font-size: 13px;
+      letter-spacing: .04em;
+    }
+    @media (max-width: 900px) {
+      .swatch { grid-column: span 6; }
+      .swatch.hero { grid-column: span 12; }
+    }
+    @media (max-width: 560px) { .swatch, .swatch.hero { grid-column: span 12; } }
+
+    /* ——— Palette — catégories (harmonisées) ——— */
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 32px;
+    }
+    @media (max-width: 720px) { .categories { grid-template-columns: repeat(2, 1fr); } }
+
+    .cat {
+      padding: 14px 14px;
+      border-radius: var(--mf-radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      border: 1px solid transparent;
+    }
+    .cat .dot { width: 24px; height: 24px; border-radius: 50%; flex: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); }
+    .cat .label { font-weight: 500; }
+    .cat .tok { font-family: var(--mf-font-mono); font-size: 11px; color: var(--mf-ink-mute); margin-left: auto; }
+
+    /* ——— Typographie ——— */
+    .type-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 32px;
+    }
+    @media (max-width: 900px) { .type-grid { grid-template-columns: 1fr; } }
+
+    .type-card {
+      padding: 28px 28px 24px;
+      border: 1px solid var(--mf-paper-ink);
+      border-radius: var(--mf-radius-lg);
+      background: rgba(255,255,255,.35);
+    }
+    .type-card .label {
+      font-family: var(--mf-font-mono);
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--mf-ink-mute);
+    }
+    .type-card .specimen {
+      font-family: var(--mf-font-display);
+      font-weight: 400;
+      font-size: 104px;
+      line-height: .9;
+      letter-spacing: -0.03em;
+      margin: 8px 0 6px;
+    }
+    .type-card .specimen em { font-style: italic; font-variation-settings: "SOFT" 100; color: var(--mf-green); }
+    .type-card.body .specimen {
+      font-family: var(--mf-font-body);
+      font-size: 88px;
+      letter-spacing: -0.02em;
+      font-weight: 500;
+    }
+    .type-card .desc {
+      font-size: 14px;
+      color: var(--mf-ink-soft);
+      max-width: 52ch;
+    }
+    .type-card .meta {
+      margin-top: 14px;
+      font-family: var(--mf-font-mono);
+      font-size: 11.5px;
+      letter-spacing: .08em;
+      color: var(--mf-ink-mute);
+      display: flex; flex-wrap: wrap; gap: 16px;
+    }
+
+    .scale {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 16px 24px;
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 1px solid var(--mf-paper-ink);
+      align-items: baseline;
+    }
+    .scale .tag { font-family: var(--mf-font-mono); font-size: 11px; color: var(--mf-ink-mute); letter-spacing: .15em; text-transform: uppercase; }
+    .scale .row   { font-family: var(--mf-font-display); font-weight: 400; letter-spacing: -0.02em; color: var(--mf-ink); }
+
+    /* ——— Rythme / spacing ——— */
+    .rhythm {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+    @media (max-width: 900px) { .rhythm { grid-template-columns: 1fr; } }
+
+    .tile {
+      border: 1px solid var(--mf-paper-ink);
+      border-radius: var(--mf-radius-lg);
+      padding: 24px;
+      background: rgba(255,255,255,.35);
+    }
+    .tile h4 {
+      font-family: var(--mf-font-mono);
+      font-size: 11px; letter-spacing: .2em;
+      text-transform: uppercase; margin: 0 0 14px; color: var(--mf-ink-mute);
+    }
+    .steps { display: flex; align-items: flex-end; gap: 8px; height: 96px; }
+    .steps span {
+      display: block; width: 18px;
+      background: var(--mf-green);
+      opacity: .2; border-radius: 2px;
+    }
+    .steps span.l1 { height: 6.25%;  opacity: .15; }
+    .steps span.l2 { height: 12.5%;  opacity: .25; }
+    .steps span.l3 { height: 25%;    opacity: .35; }
+    .steps span.l4 { height: 50%;    opacity: .55; }
+    .steps span.l5 { height: 75%;    opacity: .75; }
+    .steps span.l6 { height: 100%;   opacity: 1;   }
+    .steps-legend { margin-top: 10px; font-family: var(--mf-font-mono); font-size: 11px; color: var(--mf-ink-mute); letter-spacing: .1em; }
+
+    .radii { display: flex; gap: 14px; align-items: flex-end; height: 96px; }
+    .radii div {
+      width: 56px; height: 56px;
+      background: var(--mf-ink);
+      border: 1px solid var(--mf-ink);
+    }
+    .radii .r-xs { border-radius: 4px; }
+    .radii .r-sm { border-radius: 6px; }
+    .radii .r-md { border-radius: 8px; }
+    .radii .r-lg { border-radius: 12px; }
+    .radii .r-xl { border-radius: 20px; }
+
+    .shadows { display: flex; gap: 18px; align-items: center; height: 96px; }
+    .shadows div {
+      width: 60px; height: 60px;
+      background: var(--mf-paper-soft);
+      border-radius: var(--mf-radius-md);
+    }
+    .shadows .s-1 { box-shadow: var(--mf-shadow-1); }
+    .shadows .s-2 { box-shadow: var(--mf-shadow-2); }
+    .shadows .s-3 { box-shadow: var(--mf-shadow-3); }
+
+    /* ——— Mouvement ——— */
+    .motion {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 32px;
+      margin-top: 24px;
+    }
+    @media (max-width: 900px) { .motion { grid-template-columns: 1fr; } }
+
+    .motion-demo {
+      border: 1px solid var(--mf-paper-ink);
+      border-radius: var(--mf-radius-lg);
+      background: rgba(255,255,255,.35);
+      padding: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+    .motion-demo .seeds {
+      display: flex; gap: 14px; flex-wrap: wrap;
+    }
+    .seed {
+      height: 56px; padding: 0 18px;
+      border-radius: 999px;
+      background: var(--mf-green-soft);
+      color: var(--mf-green-deep);
+      display: inline-flex; align-items: center; gap: 10px;
+      font-weight: 500;
+      border: 1px solid rgba(0,0,0,.04);
+      animation: seedIn .7s var(--mf-ease) both;
+    }
+    .seed .glyph {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--mf-green);
+      color: var(--mf-paper);
+      display: grid; place-items: center;
+      font-family: var(--mf-font-mono);
+      font-size: 12px;
+    }
+    @keyframes seedIn {
+      0%   { opacity: 0; transform: translateY(12px) scale(.96); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .motion-demo .seed:nth-child(1) { animation-delay: .05s; }
+    .motion-demo .seed:nth-child(2) { animation-delay: .10s; }
+    .motion-demo .seed:nth-child(3) { animation-delay: .15s; }
+    .motion-demo .seed:nth-child(4) { animation-delay: .20s; }
+    .motion-demo .seed:nth-child(5) { animation-delay: .25s; }
+    .motion-demo .seed:nth-child(6) { animation-delay: .30s; }
+
+    .motion-specs { display: grid; gap: 14px; }
+    .spec {
+      padding: 16px 18px;
+      border-radius: var(--mf-radius-md);
+      background: var(--mf-paper-soft);
+      display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center;
+    }
+    .spec .k {
+      font-family: var(--mf-font-mono);
+      font-size: 12px;
+      color: var(--mf-ink-mute);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .spec .v {
+      font-family: var(--mf-font-display);
+      font-size: 22px;
+      letter-spacing: -0.01em;
+    }
+
+    /* ——— Composants — démos ——— */
+    .components {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      margin-top: 20px;
+    }
+    @media (max-width: 900px) { .components { grid-template-columns: 1fr; } }
+
+    .component-demo {
+      padding: 28px;
+      border: 1px solid var(--mf-paper-ink);
+      border-radius: var(--mf-radius-lg);
+      background: rgba(255,255,255,.4);
+    }
+    .component-demo .caption {
+      font-family: var(--mf-font-mono);
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--mf-ink-mute);
+      margin-bottom: 16px;
+    }
+
+    /* Boutons */
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      height: 40px;
+      padding: 0 16px;
+      border-radius: var(--mf-radius-md);
+      font-family: var(--mf-font-body);
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid transparent;
+      display: inline-flex; align-items: center; gap: 8px;
+      cursor: pointer;
+      transition: background-color var(--mf-dur) var(--mf-ease), transform var(--mf-dur) var(--mf-ease);
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn.primary   { background: var(--mf-green); color: var(--mf-paper); }
+    .btn.primary:hover { background: var(--mf-green-deep); }
+    .btn.outline   { border-color: var(--mf-ink); color: var(--mf-ink); background: transparent; }
+    .btn.outline:hover { background: var(--mf-ink); color: var(--mf-paper); }
+    .btn.ghost     { background: transparent; color: var(--mf-ink); }
+    .btn.ghost:hover { background: var(--mf-paper-soft); }
+    .btn.danger    { background: var(--mf-paprika); color: var(--mf-paper); }
+    .btn.danger:hover { background: #8E3423; }
+
+    /* Carte espace de stockage (inspirée de StorageAreaCard.tsx) */
+    .storage {
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 18px;
+      background: var(--mf-paper-soft);
+      border-radius: var(--mf-radius-lg);
+      box-shadow: var(--mf-shadow-2);
+      border: 1px solid hsla(150, 20%, 10%, .06);
+      margin-bottom: 10px;
+    }
+    .storage .bubble {
+      width: 56px; height: 56px;
+      background: var(--mf-green-soft);
+      border-radius: 14px;
+      display: grid; place-items: center;
+      font-size: 28px;
+    }
+    .storage .titles h5 { margin: 0; font-family: var(--mf-font-display); font-size: 19px; font-weight: 500; letter-spacing: -0.01em; }
+    .storage .titles p  { margin: 2px 0 0; font-size: 13px; color: var(--mf-ink-mute); }
+    .storage .meta { display: flex; align-items: center; gap: 10px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: var(--mf-font-body);
+      border: 1px solid transparent;
+    }
+    .badge.fresh   { background: var(--mf-green-soft);  color: var(--mf-green-deep); }
+    .badge.warn    { background: var(--mf-saffron-soft);color: #7E4A0E; }
+    .badge.danger  { background: var(--mf-paprika-soft);color: #7A2212; }
+    .badge.muted   { background: var(--mf-paper-ink);   color: var(--mf-ink-soft); }
+
+    /* Étiquette champ de saisie */
+    .field {
+      display: flex; flex-direction: column; gap: 6px;
+      margin-bottom: 12px;
+    }
+    .field label { font-family: var(--mf-font-mono); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--mf-ink-mute); }
+    .field input {
+      height: 40px; padding: 0 14px;
+      border-radius: var(--mf-radius-md);
+      border: 1px solid var(--mf-ink);
+      background: var(--mf-paper);
+      font-family: var(--mf-font-body);
+      font-size: 15px;
+      color: var(--mf-ink);
+      transition: border-color var(--mf-dur) var(--mf-ease), box-shadow var(--mf-dur) var(--mf-ease);
+    }
+    .field input:focus {
+      outline: none;
+      border-color: var(--mf-green);
+      box-shadow: 0 0 0 3px var(--mf-green-soft);
+    }
+
+    /* Iconographie */
+    .icons {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 24px;
+    }
+    @media (max-width: 900px) { .icons { grid-template-columns: repeat(2, 1fr); } }
+    .icon-card {
+      padding: 20px; border: 1px solid var(--mf-paper-ink); border-radius: var(--mf-radius-lg);
+      background: rgba(255,255,255,.4);
+      display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+    }
+    .icon-card svg { stroke: var(--mf-ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .icon-card .s16 { width: 16px; height: 16px; }
+    .icon-card .s20 { width: 20px; height: 20px; }
+    .icon-card .s24 { width: 24px; height: 24px; }
+    .icon-card .s40 { width: 40px; height: 40px; stroke-width: 1.4; color: var(--mf-green); stroke: currentColor; }
+    .icon-card code { font-family: var(--mf-font-mono); font-size: 11px; color: var(--mf-ink-mute); letter-spacing: .08em; }
+    .emoji-row { display: flex; gap: 10px; flex-wrap: wrap; font-size: 28px; }
+
+    /* Voix & ton */
+    .voice {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+    @media (max-width: 900px) { .voice { grid-template-columns: 1fr; } }
+
+    .voice-card {
+      padding: 24px 26px;
+      border-radius: var(--mf-radius-lg);
+      border: 1px solid var(--mf-paper-ink);
+      background: rgba(255,255,255,.4);
+    }
+    .voice-card h4 { margin: 0 0 14px; font-family: var(--mf-font-display); font-weight: 500; font-size: 22px; letter-spacing: -0.01em; }
+    .voice-card h4 em { font-style: italic; color: var(--mf-green); font-variation-settings: "SOFT" 100; }
+    .voice-card ul { margin: 0; padding-left: 18px; color: var(--mf-ink-soft); font-size: 15px; line-height: 1.6; }
+    .voice-card ul li { margin: 6px 0; }
+    .voice-card .good { color: var(--mf-green-deep); }
+    .voice-card .bad  { color: var(--mf-paprika); text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: hsla(10,55%,45%,.45); }
+
+    .languages {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px;
+    }
+    .lang {
+      padding: 14px 16px;
+      border-radius: var(--mf-radius-md);
+      background: var(--mf-paper-soft);
+      border: 1px solid var(--mf-paper-ink);
+    }
+    .lang .flag { font-family: var(--mf-font-mono); font-size: 11px; color: var(--mf-ink-mute); letter-spacing: .15em; text-transform: uppercase; }
+    .lang .sentence { font-family: var(--mf-font-display); font-size: 17px; margin-top: 4px; letter-spacing: -0.01em; }
+    @media (max-width: 720px) { .languages { grid-template-columns: 1fr; } }
+
+    /* Tokens — table finale */
+    .tokens {
+      margin-top: 24px;
+      border: 1px solid var(--mf-paper-ink);
+      border-radius: var(--mf-radius-lg);
+      overflow: hidden;
+      background: rgba(255,255,255,.4);
+    }
+    .tokens table { width: 100%; border-collapse: collapse; }
+    .tokens th, .tokens td {
+      padding: 12px 18px;
+      text-align: left;
+      font-size: 13.5px;
+      border-bottom: 1px solid var(--mf-paper-ink);
+    }
+    .tokens th {
+      font-family: var(--mf-font-mono);
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--mf-ink-mute);
+      background: var(--mf-paper-soft);
+    }
+    .tokens code { font-family: var(--mf-font-mono); font-size: 12.5px; color: var(--mf-green-deep); }
+    .tokens tr:last-child td { border-bottom: none; }
+
+    /* Pied de page */
+    footer.colophon {
+      margin-top: 120px;
+      padding-top: 28px;
+      border-top: 1px solid var(--mf-paper-ink);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: baseline;
+      font-family: var(--mf-font-mono);
+      font-size: 11.5px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--mf-ink-mute);
+    }
+    footer.colophon em { font-family: var(--mf-font-display); font-style: italic; color: var(--mf-green); text-transform: none; letter-spacing: -0.01em; font-size: 14px; }
+
+    /* ——— Révélation à l'arrivée ——— */
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: reveal .9s var(--mf-ease) forwards;
+    }
+    .reveal.d1 { animation-delay: .05s; }
+    .reveal.d2 { animation-delay: .10s; }
+    .reveal.d3 { animation-delay: .16s; }
+    .reveal.d4 { animation-delay: .22s; }
+    .reveal.d5 { animation-delay: .30s; }
+    @keyframes reveal {
+      to { opacity: 1; transform: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .seed { animation: none !important; opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Règle décorative */
+    .rule {
+      display: flex; align-items: center; gap: 14px;
+      font-family: var(--mf-font-mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--mf-ink-mute);
+      margin: 24px 0 4px;
+    }
+    .rule::before, .rule::after {
+      content: ""; flex: 1; height: 1px; background: var(--mf-paper-ink);
+    }
+
+  </style>
+</head>
+<body>
+
+  <main class="page">
+
+    <!-- ——————————— CARTOUCHE ——————————— -->
+    <div class="masthead reveal">
+      <div class="lockup">
+        <span class="leaf" aria-hidden="true"></span>
+        <span>My<em>Fridge</em></span>
+      </div>
+      <div class="meta">
+        <div>Charte graphique</div>
+        <div><strong>Édition 01</strong> · Avril 2026</div>
+      </div>
+    </div>
+
+    <!-- ——————————— COVER ——————————— -->
+    <section class="cover reveal d1">
+      <span class="folio">No 01 / MyFridge</span>
+      <h1>
+        La fraîcheur,<br>
+        <span class="it">rangée&nbsp;</span><span class="amp">&amp;</span><br>
+        <span class="it">partagée</span>.
+      </h1>
+      <div class="intro">
+        <span class="caps">Un système de design pour le quotidien domestique</span>
+        <p>
+          MyFridge aide les foyers à tenir leur garde-manger, cuisiner ensemble
+          et faire les courses sans friction. Ce document rassemble <em>les règles
+          non écrites</em> qui faisaient déjà l'identité de l'application, et les
+          formalise pour qu'elles se transmettent.
+        </p>
+        <p>
+          Trois directions guident chaque choix&nbsp;: la <em>fraîcheur</em> d'un étal
+          de marché, la <em>clarté</em> d'une ardoise, la <em>chaleur</em> d'une
+          cuisine qu'on partage.
+        </p>
+      </div>
+    </section>
+
+    <!-- ——————————— 01 · PRINCIPES ——————————— -->
+    <section class="chapter reveal">
+      <div class="chapter-no">01</div>
+      <div class="chapter-body">
+        <span class="kicker">Fondations</span>
+        <h2>Trois principes, tenus ensemble.</h2>
+        <p class="lede">
+          Quand une décision hésite — une couleur, un rayon, un mot — ces trois
+          phrases tranchent. Elles ne se négocient pas&nbsp;: elles se cumulent.
+        </p>
+
+        <div class="principles">
+          <article class="principle">
+            <div class="num">01 · Frais</div>
+            <h3>On privilégie le <em>vivant</em>.</h3>
+            <p>
+              Les aliments bougent, mûrissent, s'épuisent. L'interface suit ce
+              rythme&nbsp;: les dates respirent, les stocks bas remontent, le vert
+              signale ce qui va bien.
+            </p>
+          </article>
+          <article class="principle">
+            <div class="num">02 · Concret</div>
+            <h3>Un <em>objet</em> vaut mille abstractions.</h3>
+            <p>
+              Les catégories ont une icône, les espaces de stockage ont un emoji,
+              les unités se convertissent devant l'œil. On parle d'aubergines, pas
+              d'items.
+            </p>
+          </article>
+          <article class="principle">
+            <div class="num">03 · Ensemble</div>
+            <h3>Le foyer est <em>l'unité</em> de base.</h3>
+            <p>
+              Rien n'est "mien"&nbsp;: tout est partagé au sein du foyer. Le langage,
+              les alertes, les listes&nbsp;— tout s'adresse à un "nous" implicite, en
+              trois langues.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ——————————— 02 · MOT-MARQUE ——————————— -->
+    <section class="chapter reveal">
+      <div class="chapter-no">02</div>
+      <div class="chapter-body">
+        <span class="kicker">Identité</span>
+        <h2>Le mot-marque en un trait.</h2>
+        <p class="lede">
+          Le nom s'écrit en un seul mot, <strong>MyFridge</strong>, avec
+          <em>Fridge</em> en italique Fraunces SOFT 100. La feuille cédille — une
+          goutte verte inclinée à −18° — précède toujours le mot, à la hauteur de
+          la base.
+        </p>
+
+        <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items:center; padding: 48px; background: rgba(255,255,255,.4); border:1px solid var(--mf-paper-ink); border-radius: var(--mf-radius-lg);">
+          <div class="lockup" style="font-size: clamp(48px, 7vw, 84px); line-height: 1;">
+            <span class="leaf" style="width:.7em; height:.7em;" aria-hidden="true"></span>
+            <span>My<em>Fridge</em></span>
+          </div>
+          <div style="font-size: 14px; color: var(--mf-ink-soft);">
+            <p style="margin:0 0 10px;"><strong>Couleur.</strong> Le mot est toujours à l'encre (<code>--mf-ink</code>), sauf sur fond sombre où il bascule sur papier (<code>--mf-paper</code>). La feuille reste <code>--mf-green</code> dans tous les cas.</p>
+            <p style="margin:0 0 10px;"><strong>Zone de protection.</strong> Une hauteur de glyphe « F » autour du lockup.</p>
+            <p style="margin:0;"><strong>Interdits.</strong> Pas d'ombre portée, pas d'inclinaison sur le mot, pas de dégradé sur la feuille, pas de « My » en italique.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ——————————— 03 · PALETTE ——————————— -->
+    <section class="chapter reveal">
+      <div class="chapter-no">03</div>
+      <div class="chapter-body">
+        <span class="kicker">Couleurs</span>
+        <h2>Un vert, une encre, un papier.</h2>
+        <p class="lede">
+          Trois couleurs portent l'identité. Tout le reste — saffran, paprika, prune
+          — sert la lecture (alertes, statuts, ponctuation éditoriale).
+        </p>
+
+        <div class="swatches">
+          <div class="swatch hero" style="background: var(--mf-green); color: var(--mf-paper);">
+            <div>
+              <div class="token">Marque · Action · Succès</div>
+              <div class="name">Pistache<em> vive</em></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; gap: 16px;">
+              <div class="usage">Bouton principal, actif, indicateur de fraîcheur.</div>
+              <div class="hex">#2E7D4F</div>
+            </div>
+          </div>
+          <div class="swatch hero" style="background: var(--mf-ink); color: var(--mf-paper);">
+            <div>
+              <div class="token">Texte · Contraste</div>
+              <div class="name">Encre<em> d'olivier</em></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; gap: 16px;">
+              <div class="usage">Corps de texte, titres, bordures nettes.</div>
+              <div class="hex">#14231B</div>
+            </div>
+          </div>
+
+          <div class="swatch" style="background: var(--mf-paper); color: var(--mf-ink); border-color: var(--mf-paper-ink);">
+            <div>
+              <div class="token">Fond clair</div>
+              <div class="name">Papier kraft</div>
+            </div>
+            <div class="hex" style="color: var(--mf-ink-mute);">#F5EFE2</div>
+          </div>
+          <div class="swatch" style="background: var(--mf-paper-soft); color: var(--mf-ink); border-color: var(--mf-paper-ink);">
+            <div>
+              <div class="token">Sous-fond · Cartouche</div>
+              <div class="name">Papier cru</div>
+            </div>
+            <div class="hex" style="color: var(--mf-ink-mute);">#EFE7D4</div>
+          </div>
+          <div class="swatch" style="background: var(--mf-green-soft); color: var(--mf-green-deep); border-color: rgba(0,0,0,.05);">
+            <div>
+              <div class="token">Badge "frais"</div>
+              <div class="name">Mousse<em> claire</em></div>
+            </div>
+            <div class="hex">#DEEBDD</div>
+          </div>
+          <div class="swatch" style="background: var(--mf-green-deep); color: var(--mf-paper);">
+            <div>
+              <div class="token">Hover · Focus</div>
+              <div class="name">Sous-bois</div>
+            </div>
+            <div class="hex">#1F5736</div>
+          </div>
+
+          <div class="swatch" style="background: var(--mf-saffron); color: var(--mf-ink);">
+            <div>
+              <div class="token">"Expire bientôt"</div>
+              <div class="name">Saffran</div>
+            </div>
+            <div class="hex">#D88A2B</div>
+          </div>
+          <div class="swatch" style="background: var(--mf-paprika); color: var(--mf-paper);">
+            <div>
+              <div class="token">Détruire · Expiré</div>
+              <div class="name">Paprika</div>
+            </div>
+            <div class="hex">#B4452E</div>
+          </div>
+          <div class="swatch" style="background: var(--mf-plum); color: var(--mf-paper);">
+            <div>
+              <div class="token">Éditorial · Accent rare</div>
+              <div class="name">Prune</div>
+            </div>
+            <div class="hex">#5E3E5C</div>
+          </div>
+          <div class="swatch" style="background: var(--mf-night); color: var(--mf-paper);">
+            <div>
+              <div class="token">Mode nuit · fond</div>
+              <div class="name">Sous-ciel</div>
+            </div>
+            <div class="hex">#0F1613</div>
+          </div>
+
+          <!-- Règle pour catégories -->
+        </div>
+
+        <div class="rule" style="margin-top: 48px;">Catégories d'aliments · pastels harmonisés</div>
+        <div class="categories">
+          <div class="cat" style="background: #E6EFD8;"><span class="dot" style="background:#6FA040;"></span><span class="label">Légumes</span><span class="tok">#E6EFD8</span></div>
+          <div class="cat" style="background: #F8E3CC;"><span class="dot" style="background:#D08A3A;"></span><span class="label">Fruits</span><span class="tok">#F8E3CC</span></div>
+          <div class="cat" style="background: #F4D3CB;"><span class="dot" style="background:#B4452E;"></span><span class="label">Viande</span><span class="tok">#F4D3CB</span></div>
+          <div class="cat" style="background: #D7E5EC;"><span class="dot" style="background:#4E7A95;"></span><span class="label">Poisson</span><span class="tok">#D7E5EC</span></div>
+          <div class="cat" style="background: #CBDDD8;"><span class="dot" style="background:#3E7B6C;"></span><span class="label">Fruits de mer</span><span class="tok">#CBDDD8</span></div>
+          <div class="cat" style="background: #DAE4F2;"><span class="dot" style="background:#5372B0;"></span><span class="label">Produits laitiers</span><span class="tok">#DAE4F2</span></div>
+          <div class="cat" style="background: #F2E6C1;"><span class="dot" style="background:#B89333;"></span><span class="label">Céréales</span><span class="tok">#F2E6C1</span></div>
+          <div class="cat" style="background: #E2D5E5;"><span class="dot" style="background:#7C5A84;"></span><span class="label">Épices</span><span class="tok">#E2D5E5</span></div>
+          <div class="cat" style="background: #CFE5E4;"><span class="dot" style="background:#3C7B7A;"></span><span class="label">Boissons</span><span class="tok">#CFE5E4</span></div>
+          <div class="cat" style="background: #F1D5DD;"><span class="dot" style="background:#AE4E6C;"></span><span class="label">Snacks</span><span class="tok">#F1D5DD</span></div>
+          <div class="cat" style="background: #DAD7EB;"><span class="dot" style="background:#615B96;"></span><span class="label">Condiments</span><span class="tok">#DAD7EB</span></div>
+          <div class="cat" style="background: #D6E7F2;"><span class="dot" style="background:#3F6F9E;"></span><span class="label">Surgelés</span><span class="tok">#D6E7F2</span></div>
+        </div>
+
+        <p style="margin-top: 28px; font-size: 14px; color: var(--mf-ink-soft); max-width: 64ch;">
+          Ces pastels remplacent les bleus/verts/oranges par défaut de Tailwind
+          (<code>bg-green-100</code>, <code>bg-orange-100</code>, …) actuellement éparpillés dans
+          <code>getCategoryColor()</code>. Ils partagent tous une même luminosité
+          perçue et se lisent sur papier kraft.
+        </p>
+      </div>
+    </section>
+
+    <!-- ——————————— 04 · TYPOGRAPHIE ——————————— -->
+    <section class="chapter reveal">
+      <div class="chapter-no">04</div>
+      <div class="chapter-body">
+        <span class="kicker">Typographie</span>
+        <h2>Fraunces chante, Funnel travaille.</h2>
+        <p class="lede">
+          Une <em>sérif optique</em> (Fraunces) pour ce qui doit marquer — titres,
+          marque, accents italiques. Un <em>neo-grotesque chaud</em> (Funnel Sans)
+          pour l'interface. Un <em>monospace architectural</em> (IBM Plex Mono) pour
+          les tokens, unités et méta.
+        </p>
+
+        <div class="type-grid">
+          <div class="type-card display">
+            <div class="label">Display · Fraunces · SOFT 30</div>
+            <div class="specimen">Aa<em>Àé</em></div>
+            <div class="desc">
+              Sérif optique réglable (axe SOFT, opsz). On la pousse en italique
+              SOFT 100 sur les mots-clés (<em>frais</em>, <em>partagé</em>).
+              Jamais en capitales serrées.
+            </div>
+            <div class="meta">
+              <span>300 · 400 · 500</span><span>italic</span><span>SOFT 30 — 100</span><span>opsz 9 — 144</span>
+            </div>
+          </div>
+          <div class="type-card body">
+            <div class="label">Texte · Funnel Sans</div>
+            <div class="specimen">Aa123</div>
+            <div class="desc">
+              Sans-serif contemporain, dessin vivant — vraie cursive « a » à deux
+              étages. Remplace la stack système actuelle. 300 à 800 en variable.
+            </div>
+            <div class="meta">
+              <span>300 · 400 · 500 · 600 · 700</span><span>tabular-nums</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="scale">
+          <span class="tag">Display / 88</span>  <div class="row" style="font-size: 88px; line-height: .92;">Mon frigo, aujourd'hui</div>
+          <span class="tag">H1 / 48</span>       <div class="row" style="font-size: 48px; line-height: 1.05;">Courses de la semaine</div>
+          <span class="tag">H2 / 32</span>       <div class="row" style="font-size: 32px; line-height: 1.1;">Bac à légumes — 12 articles</div>
+          <span class="tag">H3 / 22</span>       <div class="row" style="font-size: 22px; line-height: 1.2; font-weight: 500;">Expire dans 2 jours</div>
+          <span class="tag">Corps / 17</span>    <div class="row" style="font-family: var(--mf-font-body); font-size: 17px; line-height: 1.55; font-weight: 400;">Deux briques de lait demi-écrémé, ouvertes il y a 3 jours. À consommer rapidement.</div>
+          <span class="tag">Méta / 12</span>     <div class="row" style="font-family: var(--mf-font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--mf-ink-mute);">DATE · UNITÉ · SOURCE</div>
+        </div>
+
+        <p style="margin-top: 28px; font-size: 14px; color: var(--mf-ink-soft); max-width: 68ch;">
+          À charger dans <code>frontend/index.html</code> via
+          <code>&lt;link&gt;</code> Google Fonts, puis exposer en tokens Tailwind
+          (<code>theme.extend.fontFamily</code>). Le <code>font-feature-settings</code>
+          recommandé&nbsp;: <code>"ss01", "ss02", "cv11"</code> (styles stylistiques
+          Funnel Sans pour les chiffres et l'œil du « a »).
+        </p>
+      </div>
+    </section>
+
+    <!-- ——————————— 05 · ICONOGRAPHIE ——————————— -->
+    <section class="chapter reveal">
+      <div class="chapter-no">05</div>
+      <div class="chapter-body">
+        <span class="kicker">Iconographie</span>
+        <h2>Lucide, tenue à 1,6&nbsp;de trait.</h2>
+        <p class="lede">
+          Un seul jeu — <strong>Lucide React</strong> — déjà en place, mais gouverné&nbsp;:
+          trait 1,6, tailles 16 / 20 / 24 px, <code>currentColor</code> toujours. Les
+          <strong>emojis</strong> subsistent pour les espaces de stockage — ils
+          signent l'<em>identité humaine</em> que chaque foyer imprime à son frigo.
+        </p>
+
+        <div class="icons">
+          <div class="icon-card">
+            <svg class="s16" viewBox="0 0 24 24"><path d="M3 3h18v18H3z"/><path d="M3 9h18"/></svg>
+            <code>16 px · Chips · badges · meta</code>
+          </div>
+          <div class="icon-card">
+            <svg class="s20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <code>20 px · Boutons · champs</code>
+          </div>
+          <div class="icon-card">
+            <svg class="s24" viewBox="0 0 24 24"><path d="M3 7h18M6 7v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>
+            <code>24 px · Navigation · card</code>
+          </div>
+          <div class="icon-card">
+            <svg class="s40" viewBox="0 0 24 24"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M2 13h20"/><path d="M6 13v7h12v-7"/></svg>
+            <code>40 px · Illustration · empty state</code>
+          </div>
+        </div>
+
+        <div class="rule" style="margin-top: 40px;">Emojis d'espaces · un par zone</div>
+        <div class="emoji-row" style="margin-top: 8px;">
+          🧊 🥕 ❄️ 🫙 🧺 🍞 🧴 🍷 🌶️ 🫒 🥫 🗄️
+        </div>
+        <p style="margin-top: 10px; font-size: 13.5px; color: var(--mf-ink-mute); max-width: 60ch;">
+          Le champ <code>StorageArea.emoji</code> accepte tout emoji Unicode —
+          l'app n'en impose pas la liste. Privilégier les objets concrets (un
+          contenant, un aliment emblématique) plutôt que des visages ou
+          symboles abstraits.
+        </p>
+      </div>
+    </section>
+
+    <!-- ——————————— 06 · RYTHME ——————————— -->
+    <section class="chapter reveal">
+      <div class="chapter-no">06</div>
+      <div class="chapter-body">
+        <span class="kicker">Rythme & espace</span>
+        <h2>Une trame&nbsp;: 4 px.</h2>
+        <p class="lede">
+          Tout respire en multiples de 4. Les coins sont arrondis doucement
+          (8&nbsp;px par défaut). Les ombres sont courtes — la lumière vient du
+          haut — jamais colorées.
+        </p>
+
+        <div class="rhythm">
+          <div class="tile">
+            <h4>Échelle d'espacement</h4>
+            <div class="steps" aria-hidden="true">
+              <span class="l1"></span><span class="l2"></span><span class="l3"></span><span class="l4"></span><span class="l5"></span><span class="l6"></span>
+            </div>
+            <div class="steps-legend">4 · 8 · 16 · 24 · 32 · 48 · 64</div>
+          </div>
+          <div class="tile">
+            <h4>Rayons</h4>
+            <div class="radii" aria-hidden="true">
+              <div class="r-xs"></div><div class="r-sm"></div><div class="r-md"></div><div class="r-lg"></div><div class="r-xl"></div>
+            </div>
+            <div class="steps-legend">4 · 6 · 8 · 12 · 20 px</div>
+          </div>
+          <div class="tile">
+            <h4>Ombres</h4>
+            <div class="shadows" aria-hidden="true">
+              <div class="s-1"></div><div class="s-2"></div><div class="s-3"></div>
+            </div>
+            <div class="steps-legend">Subtile · flottante · levée</div>
+          </div>
+        </div>
+
+        <p style="margin-top: 28px; font-size: 14px; color: var(--mf-ink-soft); max-width: 68ch;">
+          Les composants shadcn existants conservent leur rayon par défaut
+          (<code>--radius: 0.5rem</code>). La charte ajoute seulement les tokens
+          nommés — <code>--mf-radius-lg</code> (12&nbsp;px) pour les cartes-étals
+          (<code>StorageAreaCard</code>), <code>--mf-radius-xl</code> (20&nbsp;px)
+          pour les illustrations et les bulles.
+        </p>
+      </div>
+    </section>
+
+    <!-- ——————————— 07 · MOUVEMENT ——————————— -->
+    <section class="chapter reveal">
+      <div class="chapter-no">07</div>
+      <div class="chapter-body">
+        <span class="kicker">Mouvement</span>
+        <h2>On entre en scène, on ne s'agite pas.</h2>
+        <p class="lede">
+          Un seul tempo, une seule courbe. Les éléments <em>arrivent</em> en
+          cascade — rarement plus — et ne bougent plus. Le mouvement ponctue
+          l'arrivée, pas la présence.
+        </p>
+
+        <div class="motion">
+          <div class="motion-demo" aria-hidden="true">
+            <div class="seeds">
+              <span class="seed"><span class="glyph">1</span> Pommes · 6 pièces</span>
+              <span class="seed"><span class="glyph">2</span> Yaourts · 4 pots</span>
+              <span class="seed"><span class="glyph">3</span> Épinards · 200 g</span>
+              <span class="seed"><span class="glyph">4</span> Saumon · 1 pavé</span>
+              <span class="seed"><span class="glyph">5</span> Pain · 1 pièce</span>
+              <span class="seed"><span class="glyph">6</span> Carottes · 500 g</span>
+            </div>
+          </div>
+
+          <div class="motion-specs">
+            <div class="spec"><div class="k">Durée</div><div class="v">300 ms</div></div>
+            <div class="spec"><div class="k">Courbe</div><div class="v">cubic-bezier(.25, .1, .25, 1)</div></div>
+            <div class="spec"><div class="k">Décalage</div><div class="v">50 ms par rang</div></div>
+            <div class="spec"><div class="k">Entrée</div><div class="v">opacity 0 → 1 · y +16 → 0</div></div>
+          </div>
+        </div>
+
+        <p style="margin-top: 28px; font-size: 14px; color: var(--mf-ink-soft); max-width: 68ch;">
+          Ces réglages sont déjà codifiés dans
+          <code>frontend/src/lib/motion.ts</code> (<code>motionEase</code>,
+          <code>motionStagger</code>, <code>scrollRevealFadeUp</code>). Les respecter
+          partout&nbsp;: ne pas introduire d'easing alternatif sans raison narrative.
+          <code>prefers-reduced-motion</code> désactive toutes ces entrées.
+        </p>
+      </div>
+    </section>
+
+    <!-- ——————————— 08 · COMPOSANTS ——————————— -->
+    <section class="chapter reveal">
+      <div class="chapter-no">08</div>
+      <div class="chapter-body">
+        <span class="kicker">Composants</span>
+        <h2>Des pièces signées, pas génériques.</h2>
+        <p class="lede">
+          Les composants shadcn/Radix sont conservés — ils donnent l'ossature
+          accessible. La charte redonne le ton&nbsp;: couleurs, rayons, typo, motion
+          remontent des variables CSS plutôt que des classes Tailwind littérales.
+        </p>
+
+        <div class="components">
+          <div class="component-demo">
+            <div class="caption">Boutons</div>
+            <div class="btn-row">
+              <button class="btn primary">Ajouter au frigo</button>
+              <button class="btn outline">Retour</button>
+              <button class="btn ghost">Ignorer</button>
+              <button class="btn danger">Tout jeter</button>
+            </div>
+          </div>
+
+          <div class="component-demo">
+            <div class="caption">Champs</div>
+            <div class="field">
+              <label>Quantité</label>
+              <input type="text" value="2 · briques de lait" />
+            </div>
+            <div class="field" style="margin-bottom:0;">
+              <label>Date limite</label>
+              <input type="text" value="dimanche 27 avril" />
+            </div>
+          </div>
+
+          <div class="component-demo" style="grid-column: span 2;">
+            <div class="caption">Carte — Espace de stockage</div>
+            <div class="storage">
+              <div class="bubble">🥕</div>
+              <div class="titles"><h5>Bac à légumes</h5><p>Réfrigérateur · 12 articles</p></div>
+              <div class="meta"><span class="badge warn">3 à consommer</span></div>
+            </div>
+            <div class="storage">
+              <div class="bubble">❄️</div>
+              <div class="titles"><h5>Congélateur</h5><p>Surgélation · 27 articles</p></div>
+              <div class="meta"><span class="badge fresh">tout OK</span></div>
+            </div>
+            <div class="storage">
+              <div class="bubble">🧴</div>
+              <div class="titles"><h5>Produits ménagers</h5><p>Placard · 5 articles</p></div>
+              <div class="meta"><span class="badge danger">1 expiré</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ——————————— 09 · VOIX & TON ——————————— -->
+    <section class="chapter reveal">
+      <div class="chapter-no">09</div>
+      <div class="chapter-body">
+        <span class="kicker">Voix · FR · EN · ES</span>
+        <h2>On parle <em>à</em> un foyer, pas à un utilisateur.</h2>
+        <p class="lede">
+          Ton direct, phrases courtes, pas de jargon technique. Les quantités
+          s'écrivent comme on les dit (« 2 briques », « 500 g »), pas comme une
+          ligne de base de données. Chaque message existe en trois langues.
+        </p>
+
+        <div class="voice">
+          <div class="voice-card">
+            <h4>On <em>dit</em>.</h4>
+            <ul>
+              <li class="good">« Deux pots de yaourt ouverts il y a 3 jours. »</li>
+              <li class="good">« À ajouter à la prochaine liste&nbsp;? »</li>
+              <li class="good">« Le frigo est à jour. »</li>
+              <li class="good">« Julien a consommé 200 g d'épinards. »</li>
+            </ul>
+          </div>
+          <div class="voice-card">
+            <h4>On <em>ne dit pas</em>.</h4>
+            <ul>
+              <li class="bad">« Item expiration threshold exceeded. »</li>
+              <li class="bad">« Voulez-vous procéder à l'ajout de cet élément&nbsp;? »</li>
+              <li class="bad">« StoredItem successfully persisted. »</li>
+              <li class="bad">« User 7a3c a décrémenté la quantité. »</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="languages">
+          <div class="lang">
+            <div class="flag">FR · fallback</div>
+            <div class="sentence">« Ton frigo est presque à sec. »</div>
+          </div>
+          <div class="lang">
+            <div class="flag">EN · default</div>
+            <div class="sentence">"Your fridge is almost empty."</div>
+          </div>
+          <div class="lang">
+            <div class="flag">ES</div>
+            <div class="sentence">«&nbsp;Tu nevera está casi vacía.&nbsp;»</div>
+          </div>
+        </div>
+
+        <p style="margin-top: 24px; font-size: 14px; color: var(--mf-ink-soft); max-width: 68ch;">
+          Chaque clé ajoutée dans <code>frontend/src/i18n/locales/en.json</code>
+          doit l'être aussi dans <code>fr.json</code> et <code>es.json</code>. L'anglais
+          sert de fallback&nbsp;; il ne doit jamais apparaître dans une version
+          francophone par accident.
+        </p>
+      </div>
+    </section>
+
+    <!-- ——————————— 10 · TOKENS ——————————— -->
+    <section class="chapter reveal">
+      <div class="chapter-no">10</div>
+      <div class="chapter-body">
+        <span class="kicker">Mise en application</span>
+        <h2>Du charter au code, sans friction.</h2>
+        <p class="lede">
+          Chaque décision de cette charte se traduit en variable CSS et en token
+          Tailwind. Les composants shadcn existants ne changent pas de nom — ils
+          héritent simplement de nouvelles valeurs.
+        </p>
+
+        <div class="tokens">
+          <table>
+            <thead>
+              <tr><th>Token</th><th>Valeur</th><th>Variable shadcn équivalente</th><th>Usage</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>--mf-green</code></td>     <td>#2E7D4F (HSL 142 47% 33%)</td> <td><code>--primary</code> (mode clair)</td>       <td>CTA, actif, succès</td></tr>
+              <tr><td><code>--mf-green-deep</code></td><td>#1F5736</td>                   <td><code>--primary</code> hover</td>              <td>Focus, survol</td></tr>
+              <tr><td><code>--mf-green-soft</code></td><td>#DEEBDD</td>                   <td><code>--accent</code>, badge frais</td>        <td>Fond calme, badge</td></tr>
+              <tr><td><code>--mf-ink</code></td>       <td>#14231B</td>                   <td><code>--foreground</code> (clair), <code>--background</code> (nuit)</td><td>Texte, bordure nette</td></tr>
+              <tr><td><code>--mf-paper</code></td>     <td>#F5EFE2</td>                   <td><code>--background</code> (clair)</td>         <td>Fond d'application</td></tr>
+              <tr><td><code>--mf-paper-soft</code></td><td>#EFE7D4</td>                   <td><code>--card</code></td>                       <td>Surface de carte</td></tr>
+              <tr><td><code>--mf-saffron</code></td>   <td>#D88A2B</td>                   <td>—</td>                                          <td>Expire bientôt</td></tr>
+              <tr><td><code>--mf-paprika</code></td>   <td>#B4452E</td>                   <td><code>--destructive</code></td>                <td>Détruire, expiré</td></tr>
+              <tr><td><code>--mf-radius-lg</code></td> <td>12 px</td>                     <td><code>--radius</code> (existant 8 px)</td>     <td>Cartes-étals</td></tr>
+              <tr><td><code>--mf-ease</code></td>      <td>cubic-bezier(.25,.1,.25,1)</td><td><code>motionEase</code></td>                   <td>Toutes les entrées</td></tr>
+              <tr><td><code>--mf-dur</code></td>       <td>300 ms</td>                    <td><code>motionDuration</code></td>               <td>Toutes les transitions</td></tr>
+              <tr><td><code>--mf-font-display</code></td><td>"Fraunces"</td>              <td>Tailwind <code>fontFamily.display</code></td>  <td>Titres, marque</td></tr>
+              <tr><td><code>--mf-font-body</code></td> <td>"Funnel Sans"</td>             <td>Tailwind <code>fontFamily.sans</code></td>     <td>Texte d'interface</td></tr>
+              <tr><td><code>--mf-font-mono</code></td> <td>"IBM Plex Mono"</td>           <td>Tailwind <code>fontFamily.mono</code></td>     <td>Tokens, unités, meta</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p style="margin-top: 22px; font-size: 13.5px; color: var(--mf-ink-soft); max-width: 68ch;">
+          Étapes concrètes&nbsp;: (1) injecter les <code>--mf-*</code> dans
+          <code>frontend/src/index.css</code>, (2) remapper les
+          <code>--background / --foreground / --primary / --accent /
+          --destructive</code> existants pour les faire pointer vers les tokens
+          MyFridge, (3) déclarer les familles dans
+          <code>tailwind.config.ts → theme.extend.fontFamily</code>, (4) charger
+          les trois Google Fonts dans <code>frontend/index.html</code>.
+          Les 300+ usages ponctuels de <code>green-600 / orange-500 / …</code>
+          peuvent alors migrer progressivement vers les classes sémantiques.
+        </p>
+      </div>
+    </section>
+
+    <footer class="colophon">
+      <div>Charte graphique MyFridge · <em>Fraîcheur rangée, partagée</em></div>
+      <div>Édition 01 · Avr. 2026</div>
+    </footer>
+
+  </main>
+
+</body>
+</html>

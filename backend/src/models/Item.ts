@@ -1,6 +1,6 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
-import { ItemCategory, Unit, ITEM_CATEGORIES, UNITS, STORAGE_UNITS } from '../types/enums';
+import { ItemCategory, Unit, ITEM_CATEGORIES, UNITS, isCatalogStorageUnitForCategory } from '../types/enums';
 import { User } from './User';
 import { Household } from './Household';
 
@@ -11,6 +11,7 @@ interface ItemAttributes {
   category: ItemCategory;
   defaultUnit: Unit;
   availableUnits: Unit[];
+  pieceAlias: string | null;
   daysAfterOpening: number | null;
   excludeFromShopping: boolean;
   imageUrl: string | null;
@@ -21,7 +22,7 @@ interface ItemAttributes {
 }
 
 // Some attributes are optional in `Item.build()` and `Item.create()`
-interface ItemCreationAttributes extends Optional<ItemAttributes, 'id' | 'defaultUnit' | 'availableUnits' | 'daysAfterOpening' | 'excludeFromShopping' | 'createdAt' | 'updatedAt'> {}
+interface ItemCreationAttributes extends Optional<ItemAttributes, 'id' | 'defaultUnit' | 'availableUnits' | 'pieceAlias' | 'daysAfterOpening' | 'excludeFromShopping' | 'createdAt' | 'updatedAt'> {}
 
 export class Item extends Model<ItemAttributes, ItemCreationAttributes> implements ItemAttributes {
   public id!: string;
@@ -29,6 +30,7 @@ export class Item extends Model<ItemAttributes, ItemCreationAttributes> implemen
   public category!: ItemCategory;
   public defaultUnit!: Unit;
   public availableUnits!: Unit[];
+  public pieceAlias!: string | null;
   public daysAfterOpening!: number | null;
   public excludeFromShopping!: boolean;
   public imageUrl!: string | null;
@@ -65,6 +67,14 @@ Item.init(
       type: DataTypes.ENUM(...UNITS),
       allowNull: false,
       defaultValue: Unit.PIECE,
+      validate: {
+        isValidForCategory(value: string) {
+          const category = (this as unknown as Item).get('category') as ItemCategory;
+          if (!isCatalogStorageUnitForCategory(value as Unit, category)) {
+            throw new Error(`defaultUnit ${value} is not valid for category ${category}`);
+          }
+        },
+      },
     },
     availableUnits: {
       type: DataTypes.JSON,
@@ -78,16 +88,26 @@ Item.init(
           if (value.length === 0) {
             throw new Error('Available units array cannot be empty');
           }
+          const category = (this as unknown as Item).get('category') as ItemCategory;
           for (const unit of value) {
             if (!UNITS.includes(unit)) {
               throw new Error(`Invalid unit: ${unit}`);
             }
-            // Cooking measurements (cup, tbsp, tsp) are only allowed in recipes, not in item definitions
-            if (!STORAGE_UNITS.includes(unit)) {
-              throw new Error(`Unit ${unit} is only available for recipes, not for storage items`);
+            // Cooking measurements (tbsp, tsp) and free-quantity units (pinch, drizzle, knob)
+            // are recipe-only — they are not valid for storage catalog items.
+            if (!isCatalogStorageUnitForCategory(unit as Unit, category)) {
+              throw new Error(`Unit ${unit} is not available for this item category (catalog storage)`);
             }
           }
         },
+      },
+    },
+    pieceAlias: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+      validate: {
+        len: [0, 50],
       },
     },
     daysAfterOpening: {

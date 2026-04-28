@@ -12,7 +12,7 @@ export class RecipeIngredientRepository {
         {
           model: Item,
           as: 'item',
-          attributes: ['id', 'name', 'category', 'defaultUnit', 'availableUnits']
+          attributes: ['id', 'name', 'category', 'defaultUnit', 'availableUnits', 'pieceAlias']
         }
       ],
       order: [['createdAt', 'ASC']]
@@ -110,7 +110,9 @@ export class RecipeIngredientRepository {
         };
       }
       acc[key].usageCount += 1;
-      acc[key].totalQuantity += Number(ingredient.quantity);
+      if (ingredient.quantity !== null && ingredient.quantity !== undefined) {
+        acc[key].totalQuantity += Number(ingredient.quantity);
+      }
       return acc;
     }, {} as Record<string, any>);
 

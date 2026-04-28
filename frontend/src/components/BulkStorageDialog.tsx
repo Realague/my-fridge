@@ -13,6 +13,7 @@ import { ShoppingItem } from '@/stores/shoppingStore';
 import { StorageArea } from '@/services/storageAreaService';
 import { getSuggestedStorageAreaId } from '@/utils/categoryStorageMapping';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { formatQuantityWithUnit } from '@/utils/unitSystem';
 import { ItemImage } from '@/components/ItemImage';
 import { StorageAreaType } from '@/types/enums';
 
@@ -173,7 +174,10 @@ export function BulkStorageDialog({
                       {getItemDisplayName(itemData, t)}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {bulkItem.shoppingItem.quantity} {bulkItem.shoppingItem.unit !== 'piece' ? bulkItem.shoppingItem.unit : ''}
+                      {formatQuantityWithUnit(bulkItem.shoppingItem.quantity, bulkItem.shoppingItem.unit, t, {
+                        item: itemData,
+                        itemName: getItemDisplayName(itemData, t),
+                      })}
                     </span>
                   </div>
                 </div>

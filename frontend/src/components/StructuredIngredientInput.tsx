@@ -12,8 +12,10 @@ export interface StructuredIngredient {
   id?: string;
   itemId: string;
   item?: Item;
-  quantity: number;
+  // Null when `isFreeQuantity` is true (ingredient "à l'œil").
+  quantity: number | null;
   unit: string;
+  isFreeQuantity?: boolean;
   notes?: string;
   usedInSteps?: number[];
 }
@@ -37,6 +39,7 @@ export const StructuredIngredientInput = ({
       itemId: '',
       quantity: 1,
       unit: 'piece',
+      isFreeQuantity: false,
       notes: ''
     };
     onIngredientsChange([...ingredients, newIngredient]);
@@ -149,19 +152,32 @@ export const StructuredIngredientInput = ({
                           name: '',
                           category: 'other',
                           defaultUnit: ingredient.unit,
-                          availableUnits: [ingredient.unit, 'piece', 'cup', 'tsp', 'tbsp'],
+                          availableUnits: [ingredient.unit, 'piece', 'tsp', 'tbsp'],
                           imageUrl: null,
                           createdBy: null,
                           householdId: null,
                           createdAt: '',
                           updatedAt: ''
                         }}
-                        initialQuantity={ingredient.quantity.toString()}
+                        initialQuantity={
+                          ingredient.quantity === null || ingredient.quantity === undefined
+                            ? ''
+                            : ingredient.quantity.toString()
+                        }
                         initialUnit={ingredient.unit}
                         onQuantityChange={(quantity, unit) => {
                           updateIngredient(index, {
-                            quantity: parseFloat(quantity) || 0,
-                            unit
+                            quantity: quantity === '' ? null : (parseFloat(quantity) || 0),
+                            unit,
+                          });
+                        }}
+                        isFreeQuantity={Boolean(ingredient.isFreeQuantity)}
+                        onFreeQuantityChange={(isFree) => {
+                          updateIngredient(index, {
+                            isFreeQuantity: isFree,
+                            // When switching to free-quantity, clear the numeric value
+                            // so the DTO carries null through to the backend.
+                            ...(isFree ? { quantity: null } : {}),
                           });
                         }}
                         context="recipe"

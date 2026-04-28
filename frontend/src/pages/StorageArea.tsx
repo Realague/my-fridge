@@ -22,6 +22,7 @@ import { useDateFormat } from '@/utils/dateFormatting';
 import { toast } from 'sonner';
 import { SelectedItemPreview } from '@/components/SelectedItemPreview';
 import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
+import { formatQuantityWithUnit } from '@/utils/unitSystem';
 import { CategoryIcon } from '@/utils/categoryIcons';
 import { OpenedStatusToggle } from '@/components/OpenedStatusToggle';
 import { ItemImage } from '@/components/ItemImage';
@@ -484,7 +485,12 @@ const StorageArea = () => {
               ) : (
                 <div className="space-y-2">
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span className="font-medium text-foreground">{storageItem.quantity} {storageItem.unit !== 'piece' ? storageItem.unit : ''}</span>
+                    <span className="font-medium text-foreground">
+                      {formatQuantityWithUnit(storageItem.quantity, storageItem.unit, t, {
+                        item,
+                        itemName: getItemDisplayName(item, t),
+                      })}
+                    </span>
                     {storageItem.location && (
                       <div className="flex items-center gap-1">
                         <MapPin className="h-3 w-3" />

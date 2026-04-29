@@ -14,7 +14,7 @@ const BottomNavigation = ({ currentPage }: BottomNavigationProps) => {
   const navItems = [
     { id: 'dashboard', label: t('navigation.home'), icon: Home, route: '/dashboard' },
     { id: 'shopping', label: t('navigation.shopping'), icon: ShoppingCart, route: '/shopping' },
-    { id: 'meal-plans', label: t('navigation.meals'), icon: Calendar, route: '/meal-plans' },
+    { id: 'meals', label: t('navigation.meals'), icon: Calendar, route: '/meals' },
     { id: 'recipes', label: t('navigation.recipes'), icon: BookOpen, route: '/recipes' },
   ];
 

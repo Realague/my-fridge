@@ -445,46 +445,81 @@
         "dragHandleLabel": "Réordonner le rayon {{name}}"
       }
     },
-    "mealPlans": {
-      "title": "Plans de repas",
-      "addMealPlan": "Ajouter un plan de repas",
-      "noMealPlans": "Aucun plan de repas créé pour le moment",
-      "generateShoppingList": "Générer la liste de courses",
-      "addMeal": "Ajouter un repas",
-      "mealType": "Type de repas",
-      "recipe": "Recette",
-      "selectMealType": "Sélectionner le type de repas",
-      "selectServings": "Sélectionner les portions",
-      "mealTypes": {
-        "breakfast": "Petit-déjeuner",
-        "lunch": "Déjeuner",
-        "dinner": "Dîner",
-        "snack": "Collation"
-      },
-      "searchRecipe": "Rechercher une recette...",
-      "addMealFor": "Ajouter un repas pour",
+    "meals": {
+      "kicker": "Cette semaine",
+      "title": "Repas planifiés",
+      "subtitle_one": "{{count}} recette à cuisiner.",
+      "subtitle_other": "{{count}} recettes à cuisiner.",
+      "subtitleEmpty": "Aucun repas planifié.",
+      "synced": "Synchronisé",
+      "statCaption": "Recettes",
+      "sectionPlanned": "Au menu",
       "viewRecipe": "Voir la recette",
-      "today": "Aujourd'hui",
-      "currentWeek": "Semaine actuelle",
-      "save": "Enregistrer",
-      "mealPlanAdded": "Plan de repas ajouté !",
-      "mealPlanSaved": "Votre plan de repas a été sauvegardé.",
-      "mealPlanDeleted": "Plan de repas supprimé !",
-      "mealPlanRemoved": "Le plan de repas a été supprimé.",
-      "noMealsPlanned": "Aucun repas planifié",
-      "generateShoppingListDialog": {
-        "title": "Générer la liste de courses",
-        "selectDateRange": "Sélectionner la plage de dates",
-        "description": "Sélectionner la plage de dates pour générer la liste de courses à partir des plans de repas",
-        "startDate": "Date de début",
-        "endDate": "Date de fin",
-        "selectStartDate": "Sélectionner la date de début",
-        "selectEndDate": "Sélectionner la date de fin"
+      "addRecipe": "Ajouter une recette",
+      "removeMeal": "Retirer",
+      "increaseServings": "Plus une portion",
+      "decreaseServings": "Moins une portion",
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} min",
+      "servings_one": "{{count}} portion",
+      "servings_other": "{{count}} portions",
+      "empty": {
+        "title": "Aucun repas planifié.",
+        "subtitle": "Ajouter une recette pour démarrer."
       },
-      "serving": "portion",
-      "servings": "portions",
-      "servingCount_one": "{{count}} portion",
-      "servingCount_other": "{{count}} portions"
+      "categories": {
+        "vegetarian": "Végé",
+        "fish": "Poisson",
+        "meat": "Viande",
+        "pasta": "Pâtes",
+        "dessert": "Dessert",
+        "other": "Autre"
+      },
+      "availability": {
+        "kicker": "Inventaire",
+        "headline_one": "{{count}} ingrédient à acheter.",
+        "headline_other": "{{count}} ingrédients à acheter.",
+        "allCoveredHeadline": "Tout est déjà au frigo.",
+        "missingCaption": "À acheter",
+        "inStockLine_one": "{{count}} déjà au frigo.",
+        "inStockLine_other": "{{count}} déjà au frigo.",
+        "prepareList": "Préparer la liste",
+        "allCovered": "Rien à acheter"
+      },
+      "selector": {
+        "kicker": "Bibliothèque",
+        "title": "Choisir une recette",
+        "search": "Rechercher une recette…",
+        "filtersLabel": "Filtrer",
+        "empty": {
+          "title": "Aucun résultat.",
+          "subtitle": "Modifier la recherche ou changer de filtre."
+        },
+        "filters": {
+          "all": "Toutes",
+          "haveAll": "J'ai tout",
+          "quick": "Rapide",
+          "vegetarian": "Végé"
+        },
+        "haveAll": "Tout en stock",
+        "missingCount_one": "Manque {{count}} ingrédient",
+        "missingCount_other": "Manque {{count}} ingrédients",
+        "usesExpiring": "Utilise {{item}} bientôt périmé",
+        "confirmServings": {
+          "kicker": "Portions",
+          "title": "Combien de portions ?",
+          "helper_one": "{{count}} personne",
+          "helper_other": "{{count}} personnes",
+          "add": "Ajouter au menu"
+        }
+      },
+      "toasts": {
+        "mealAdded": "{{title}} ajoutée au menu.",
+        "mealRemoved": "Retirée du menu.",
+        "shoppingListReady": "Liste prête.",
+        "shoppingListReadyDescription_one": "{{count}} article à acheter.",
+        "shoppingListReadyDescription_other": "{{count}} articles à acheter."
+      }
     },
     "recipes": {
       "title": "Recettes",
@@ -558,7 +593,6 @@
       "addedToFavorites": "Ajoutée aux favoris",
       "minTotal": "min total",
       "startCooking": "Commencer à cuisiner",
-      "addToMealPlan": "Ajouter au plan de repas",
       "deleteRecipe": "Supprimer la recette",
       "deleteWarning": "Cette action ne peut pas être annulée.",
       "addNewRecipe": "Ajouter une nouvelle recette",
@@ -3646,6 +3680,7 @@
     "next": "Suivant",
     "optional": "Facultatif",
     "addedBy": "Ajouté par {{name}}",
-    "you": "vous"
+    "you": "vous",
+    "back": "Retour"
   }
 }

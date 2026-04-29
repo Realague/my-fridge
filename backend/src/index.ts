@@ -7,7 +7,7 @@ import householdRoutes from './routes/households';
 import itemRoutes from './routes/items';
 import storedItemRoutes from './routes/storedItems';
 import recipeRoutes from './routes/recipes';
-import mealPlanRoutes from './routes/mealPlans';
+import mealRoutes from './routes/meals';
 import imageRoutes from './routes/images';
 import importRoutes from './routes/import';
 import { sequelize } from './models';
@@ -77,7 +77,7 @@ app.use('/api/households', householdRoutes);
 app.use('/api/households', storedItemRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api', recipeRoutes);
-app.use('/api', mealPlanRoutes);
+app.use('/api', mealRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api', importRoutes);
 
@@ -94,7 +94,7 @@ app.get('/', (req, res) => {
       storageAreas: '/api/households/:householdId/storage-areas',
       storedItems: '/api/households/:householdId/stored-items',
       recipes: '/api/recipes/:householdId/recipes',
-      mealPlans: '/api/households/:householdId/meal-plans',
+      meals: '/api/households/:householdId/meals',
       items: '/api/items',
       dbTest: '/db-test'
     }

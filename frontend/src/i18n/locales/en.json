@@ -466,46 +466,81 @@
         "dragHandleLabel": "Reorder {{name}} aisle"
       }
     },
-    "mealPlans": {
-      "title": "Meal plans",
-      "addMealPlan": "Add meal plan",
-      "noMealPlans": "No meal plans created yet",
-      "generateShoppingList": "Generate shopping list",
-      "addMeal": "Add meal",
-      "mealType": "Meal type",
-      "recipe": "Recipe",
-      "selectMealType": "Select meal type",
-      "selectServings": "Select servings",
-      "searchRecipe": "Search for a recipe...",
-      "addMealFor": "Add a meal for",
-      "viewRecipe": "View recipe",
-      "today": "Today",
-      "currentWeek": "Current week",
-      "save": "Save",
-      "mealPlanAdded": "Meal plan added!",
-      "mealPlanSaved": "Your meal plan has been saved.",
-      "mealPlanDeleted": "Meal plan deleted!",
-      "mealPlanRemoved": "The meal plan has been removed.",
-      "noMealsPlanned": "No meals planned",
-      "mealTypes": {
-        "breakfast": "Breakfast",
-        "lunch": "Lunch",
-        "dinner": "Dinner",
-        "snack": "Snack"
+    "meals": {
+      "kicker": "This week",
+      "title": "Planned meals",
+      "subtitle_one": "{{count}} recipe to cook.",
+      "subtitle_other": "{{count}} recipes to cook.",
+      "subtitleEmpty": "No meals planned.",
+      "synced": "Synced",
+      "statCaption": "Recipes",
+      "sectionPlanned": "On the menu",
+      "viewRecipe": "Open recipe",
+      "addRecipe": "Add a recipe",
+      "removeMeal": "Remove",
+      "increaseServings": "One more serving",
+      "decreaseServings": "One less serving",
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} min",
+      "servings_one": "{{count}} serving",
+      "servings_other": "{{count}} servings",
+      "empty": {
+        "title": "No meals planned.",
+        "subtitle": "Add a recipe to start."
       },
-      "generateShoppingListDialog": {
-        "title": "Generate Shopping List",
-        "selectDateRange": "Select date range",
-        "description": "Select date range to generate shopping list from meal plans",
-        "startDate": "Start date",
-        "endDate": "End date",
-        "selectStartDate": "Select start date",
-        "selectEndDate": "Select end date"
+      "categories": {
+        "vegetarian": "Veggie",
+        "fish": "Fish",
+        "meat": "Meat",
+        "pasta": "Pasta",
+        "dessert": "Dessert",
+        "other": "Other"
       },
-      "serving": "serving",
-      "servings": "servings",
-      "servingCount_one": "{{count}} serving",
-      "servingCount_other": "{{count}} servings"
+      "availability": {
+        "kicker": "Pantry",
+        "headline_one": "{{count}} ingredient to buy.",
+        "headline_other": "{{count}} ingredients to buy.",
+        "allCoveredHeadline": "Already in the fridge.",
+        "missingCaption": "To buy",
+        "inStockLine_one": "{{count}} already at home.",
+        "inStockLine_other": "{{count}} already at home.",
+        "prepareList": "Build the list",
+        "allCovered": "Nothing to buy"
+      },
+      "selector": {
+        "kicker": "Library",
+        "title": "Pick a recipe",
+        "search": "Search a recipe…",
+        "filtersLabel": "Filter",
+        "empty": {
+          "title": "No results.",
+          "subtitle": "Adjust the search or change a filter."
+        },
+        "filters": {
+          "all": "All",
+          "haveAll": "Got it all",
+          "quick": "Quick",
+          "vegetarian": "Veggie"
+        },
+        "haveAll": "All in stock",
+        "missingCount_one": "Missing {{count}} ingredient",
+        "missingCount_other": "Missing {{count}} ingredients",
+        "usesExpiring": "Uses {{item}} expiring soon",
+        "confirmServings": {
+          "kicker": "Servings",
+          "title": "How many servings?",
+          "helper_one": "{{count}} person",
+          "helper_other": "{{count}} people",
+          "add": "Add to the menu"
+        }
+      },
+      "toasts": {
+        "mealAdded": "{{title}} added to the menu.",
+        "mealRemoved": "Off the menu.",
+        "shoppingListReady": "List ready.",
+        "shoppingListReadyDescription_one": "{{count}} item to buy.",
+        "shoppingListReadyDescription_other": "{{count}} items to buy."
+      }
     },
     "recipes": {
       "title": "Recipes",
@@ -580,7 +615,6 @@
       "addedToFavorites": "Added to favorites",
       "minTotal": "min total",
       "startCooking": "Start cooking",
-      "addToMealPlan": "Add to meal plan",
       "deleteRecipe": "Delete recipe",
       "deleteWarning": "This action cannot be undone.",
       "addNewRecipe": "Add new recipe",
@@ -3666,6 +3700,7 @@
     "next": "Next",
     "optional": "Optional",
     "addedBy": "Added by {{name}}",
-    "you": "you"
+    "you": "you",
+    "back": "Back"
   }
 }

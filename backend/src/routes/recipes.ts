@@ -10,6 +10,7 @@ router.use(authenticateGoogleToken);
 
 // Recipe CRUD operations
 router.get('/households/:householdId/recipes', recipeController.getRecipes);
+router.get('/households/:householdId/recipes/availability', recipeController.getRecipesAvailability);
 router.get('/households/:householdId/recipes/favorites', recipeController.getFavorites);
 router.get('/households/:householdId/recipes/tags', recipeController.getTags);
 router.get('/households/:householdId/recipes/stats', recipeController.getStats);

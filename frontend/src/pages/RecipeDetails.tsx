@@ -6,9 +6,10 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, ChefHat, ExternalLink, UtensilsCrossed } from 'lucide-react';
-import { AddMealPlanDialog } from '@/components/AddMealPlanDialog';
+import { ConfirmServingsDialog } from '@/components/meals/ConfirmServingsDialog';
 import { ConsumeIngredientsDialog } from '@/components/ConsumeIngredientsDialog';
 import { useRecipeStore } from '@/stores/recipeStore';
+import { useMealStore } from '@/stores/mealStore';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName } from '@/utils/itemUtils';
@@ -34,8 +35,9 @@ const RecipeDetails = () => {
   } = useRecipeStore();
   const currentUser = useAuthStore((state) => state.user);
   
-  const [showMealPlanDialog, setShowMealPlanDialog] = useState(false);
+  const [showAddToMealsDialog, setShowAddToMealsDialog] = useState(false);
   const [showConsumeDialog, setShowConsumeDialog] = useState(false);
+  const { addMeal, saving: addingMeal } = useMealStore();
 
   useEffect(() => {
     if (id) {
@@ -172,11 +174,28 @@ const RecipeDetails = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Add Meal Plan Dialog */}
-      <AddMealPlanDialog
-        isOpen={showMealPlanDialog}
-        onClose={() => setShowMealPlanDialog(false)}
-        preselectedRecipe={recipe}
+      {/* Add to Meals Dialog */}
+      <ConfirmServingsDialog
+        open={showAddToMealsDialog}
+        onOpenChange={setShowAddToMealsDialog}
+        defaultServings={recipe.servings ?? 1}
+        recipeTitle={recipe.title}
+        saving={addingMeal}
+        onConfirm={async (servings) => {
+          try {
+            await addMeal(recipe.id, servings);
+            toast({
+              title: t('pages.meals.toasts.mealAdded', { title: recipe.title }),
+            });
+            setShowAddToMealsDialog(false);
+          } catch (error) {
+            toast({
+              title: t('messages.error.somethingWentWrong'),
+              description: error instanceof Error ? error.message : '',
+              variant: 'destructive',
+            });
+          }
+        }}
       />
 
       {/* Consume Ingredients Dialog */}
@@ -190,9 +209,9 @@ const RecipeDetails = () => {
       <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/recipes')}
+            <Button
+              variant="ghost"
+              onClick={() => navigate(-1)}
               className="text-muted-foreground"
             >
               <ArrowLeft className="h-4 w-4 sm:mr-2" />
@@ -224,7 +243,7 @@ const RecipeDetails = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setShowMealPlanDialog(true)}
+                    onClick={() => setShowAddToMealsDialog(true)}
                   >
                     <Calendar className="h-4 w-4" />
                   </Button>
@@ -310,9 +329,9 @@ const RecipeDetails = () => {
                 {t('pages.recipes.startCooking')}
               </Button>
               <div className="grid grid-cols-2 gap-2">
-                <Button onClick={() => setShowMealPlanDialog(true)} variant="outline" className="min-w-0">
+                <Button onClick={() => setShowAddToMealsDialog(true)} variant="outline" className="min-w-0">
                   <Calendar className="h-4 w-4 shrink-0 sm:mr-2" />
-                  <span className="hidden sm:inline truncate">{t('pages.recipes.addToMealPlan')}</span>
+                  <span className="hidden sm:inline truncate">{t('pages.meals.addRecipe')}</span>
                 </Button>
                 <Button onClick={() => setShowConsumeDialog(true)} variant="outline" className="min-w-0">
                   <UtensilsCrossed className="h-4 w-4 shrink-0 sm:mr-2" />

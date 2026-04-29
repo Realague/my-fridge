@@ -131,7 +131,7 @@ const Dashboard = () => {
   
   const quickActions = [
     { title: t('pages.shopping.title'), description: t('pages.dashboard.itemsPending', { count: getPendingItems().length }), emoji: '🛒', route: '/shopping' },
-    { title: t('pages.mealPlans.title'), description: t('pages.dashboard.planThisWeek'), emoji: '📅', route: '/meal-plans' },
+    { title: t('pages.meals.title'), description: t('pages.dashboard.planThisWeek'), emoji: '📅', route: '/meals' },
     { title: t('pages.recipes.title'), description: t('pages.dashboard.savedRecipes', { count: (recipes || []).length }), emoji: '📖', route: '/recipes' },
     { title: t('pages.dashboard.itemMinimums'), description: t('pages.dashboard.itemsTracked', { count: itemMinimums.length }), emoji: '📊', route: '/item-minimums' },
     { title: t('pages.dashboard.loyaltyCards'), description: t('pages.dashboard.loyaltyCardsDesc'), emoji: '💳', route: '/loyalty-cards' },

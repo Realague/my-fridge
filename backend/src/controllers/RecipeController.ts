@@ -1,17 +1,35 @@
 import { Request, Response } from 'express';
 import { RecipeService } from '../services/RecipeService';
 import { RecipeConsumeService } from '../services/RecipeConsumeService';
+import { RecipeAvailabilityService } from '../services/RecipeAvailabilityService';
 import { CreateRecipeDto, UpdateRecipeDto, RecipeSearchParams } from '../types/RecipeDto';
 import { ValidationError, NotFoundError } from '../errors/CustomErrors';
 
 export class RecipeController {
   private recipeService: RecipeService;
   private recipeConsumeService: RecipeConsumeService;
+  private recipeAvailabilityService: RecipeAvailabilityService;
 
   constructor() {
     this.recipeService = new RecipeService();
     this.recipeConsumeService = new RecipeConsumeService();
+    this.recipeAvailabilityService = new RecipeAvailabilityService();
   }
+
+  // GET /api/households/:householdId/recipes/availability
+  getRecipesAvailability = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { householdId } = req.params as { householdId: string };
+      const data = await this.recipeAvailabilityService.getRecipesAvailability(householdId);
+      res.json({ success: true, data });
+    } catch (error) {
+      console.error('Error getting recipes availability:', error);
+      res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to get recipes availability',
+      });
+    }
+  };
 
   // GET /api/households/:householdId/recipes
   getRecipes = async (req: Request, res: Response): Promise<void> => {

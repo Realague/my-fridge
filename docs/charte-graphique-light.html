@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MyFridge — Charte Graphique v3.0</title>
-  <meta name="description" content="Système de design de l'application MyFridge — palette nocturne, typographie, composants signés." />
+  <title>MyFridge — Charte Graphique v3.0 · Mode jour</title>
+  <meta name="description" content="Système de design de l'application MyFridge — palette diurne (papier), typographie, composants signés." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,45 +12,48 @@
 
   <style>
     :root {
-      /* ——— Surfaces (mode nuit canonique) ——— */
-      --mf-night:          #0B1018;   /* fond global, presque noir teinté bleu nuit */
-      --mf-night-surface:  #0F1620;   /* cartes, panneaux, popovers */
-      --mf-night-elevated: #141C28;   /* hover, surfaces flottantes */
-      --mf-night-line:     #1E2A3B;   /* bordures, séparateurs */
-      --mf-night-line-soft:#162033;   /* divisions internes très discrètes */
+      /* ——— Surfaces (mode jour) ——— */
+      --mf-paper:          #FFFFFF;   /* fond global */
+      --mf-paper-soft:     #F5F7FA;   /* cartes, panneaux, popovers */
+      --mf-paper-elevated: #EEF1F5;   /* hover, surfaces flottantes */
+      --mf-paper-line:     #E2E8F0;   /* bordures, séparateurs */
+      --mf-paper-line-soft:#EDF1F6;   /* divisions internes très discrètes */
 
       /* ——— Encre (texte) ——— */
-      --mf-text:      #F5F7FA;        /* texte principal */
-      --mf-text-soft: #9CA3AF;        /* texte secondaire, méta */
-      --mf-text-mute: #5B6675;        /* captions, désactivé */
+      --mf-text:      #0B1018;        /* texte principal — encre presque noire */
+      --mf-text-soft: #475569;        /* texte secondaire, méta */
+      --mf-text-mute: #94A3B8;        /* captions, désactivé */
 
       /* ——— Vert pistache (marque + action) ——— */
       --mf-green:       #22C55E;
       --mf-green-deep:  #16A34A;      /* hover/pressed */
-      --mf-green-leaf:  #86EFAC;      /* texte sur fond sombre, "frais" */
-      --mf-green-soft:  rgba(34, 197, 94, .12);
+      --mf-green-ink:   #15803D;      /* texte sur fond clair (badges, liens) */
+      --mf-green-soft:  #DCFCE7;      /* fond de badge "Frais" */
       --mf-green-ring:  rgba(34, 197, 94, .35);
 
       /* ——— Sémantique ——— */
       --mf-danger:      #EF4444;
-      --mf-danger-soft: rgba(239, 68, 68, .12);
-      --mf-info:        #3B82F6;      /* éditer */
-      --mf-info-soft:   rgba(59, 130, 246, .12);
-      --mf-warning:     #F59E0B;      /* expire bientôt */
-      --mf-warning-soft:rgba(245, 158, 11, .14);
+      --mf-danger-ink:  #B91C1C;      /* texte sur fond clair */
+      --mf-danger-soft: #FEE2E2;
+      --mf-info:        #3B82F6;
+      --mf-info-ink:    #1D4ED8;
+      --mf-info-soft:   #DBEAFE;
+      --mf-warning:     #D97706;      /* en mode jour, orange plus profond pour le contraste */
+      --mf-warning-ink: #92400E;
+      --mf-warning-soft:#FEF3C7;
 
-      /* ——— Tokens système ——— */
+      /* ——— Tokens système (identiques à v3.0 nuit) ——— */
       --mf-radius-xs: 4px;
       --mf-radius-sm: 6px;
-      --mf-radius-md: 10px;     /* contrôles courts (boutons, inputs) */
-      --mf-radius-lg: 14px;     /* cartes */
-      --mf-radius-xl: 20px;     /* identités (hero, modales) */
+      --mf-radius-md: 10px;
+      --mf-radius-lg: 14px;
+      --mf-radius-xl: 20px;
       --mf-radius-pill: 999px;
 
-      --mf-shadow-1: 0 1px 2px hsla(220, 50%, 4%, .35);
-      --mf-shadow-2: 0 12px 28px -12px hsla(220, 50%, 4%, .55), 0 2px 6px hsla(220,50%,4%,.35);
-      --mf-shadow-3: 0 28px 56px -20px hsla(220, 60%, 4%, .65), 0 6px 14px hsla(220,50%,4%,.45);
-      --mf-shadow-glow: 0 0 0 1px var(--mf-green-ring), 0 8px 24px -6px rgba(34,197,94,.35);
+      --mf-shadow-1: 0 1px 2px hsla(220, 30%, 20%, .06);
+      --mf-shadow-2: 0 12px 28px -12px hsla(220, 30%, 20%, .14), 0 2px 6px hsla(220,30%,20%,.06);
+      --mf-shadow-3: 0 28px 56px -20px hsla(220, 30%, 20%, .22), 0 6px 14px hsla(220,30%,20%,.08);
+      --mf-shadow-glow: 0 0 0 1px var(--mf-green-ring), 0 8px 24px -6px rgba(34,197,94,.25);
 
       --mf-ease:     cubic-bezier(.25, .1, .25, 1);
       --mf-ease-out: cubic-bezier(.16, 1, .3, 1);
@@ -67,7 +70,7 @@
     html, body { margin: 0; padding: 0; }
 
     body {
-      background: var(--mf-night);
+      background: var(--mf-paper);
       color: var(--mf-text);
       font-family: var(--mf-font-body);
       font-size: 16px;
@@ -76,12 +79,12 @@
       -webkit-font-smoothing: antialiased;
       font-feature-settings: "ss01", "cv11";
       background-image:
-        radial-gradient(1200px 800px at 80% -10%, rgba(34,197,94,.08), transparent 60%),
-        radial-gradient(900px 600px at 0% 40%, rgba(59,130,246,.06), transparent 55%);
+        radial-gradient(1200px 800px at 80% -10%, rgba(34,197,94,.06), transparent 60%),
+        radial-gradient(900px 600px at 0% 40%, rgba(59,130,246,.04), transparent 55%);
       background-attachment: fixed;
     }
 
-    ::selection { background: var(--mf-green); color: var(--mf-night); }
+    ::selection { background: var(--mf-green); color: #FFFFFF; }
 
     .page { max-width: 1240px; margin: 0 auto; padding: 64px 48px 160px; }
     @media (max-width: 720px) { .page { padding: 32px 20px 120px; } }
@@ -93,7 +96,7 @@
       gap: 24px;
       align-items: end;
       padding-bottom: 28px;
-      border-bottom: 1px solid var(--mf-night-line);
+      border-bottom: 1px solid var(--mf-paper-line);
       margin-bottom: 56px;
     }
     .lockup { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
@@ -110,7 +113,7 @@
     /* ——— Cover ——— */
     .cover {
       padding: 72px 0 56px;
-      border-bottom: 1px solid var(--mf-night-line);
+      border-bottom: 1px solid var(--mf-paper-line);
       margin-bottom: 72px;
     }
     .cover h1 {
@@ -131,7 +134,7 @@
     }
 
     /* ——— Chapters ——— */
-    .chapter { padding: 56px 0; border-bottom: 1px solid var(--mf-night-line); }
+    .chapter { padding: 56px 0; border-bottom: 1px solid var(--mf-paper-line); }
     .chapter:last-of-type { border-bottom: 0; }
     .eyebrow {
       font-family: var(--mf-font-mono);
@@ -172,8 +175,8 @@
 
     /* ——— Card ——— */
     .card {
-      background: var(--mf-night-surface);
-      border: 1px solid var(--mf-night-line);
+      background: var(--mf-paper-soft);
+      border: 1px solid var(--mf-paper-line);
       border-radius: var(--mf-radius-lg);
       padding: 24px;
     }
@@ -187,8 +190,8 @@
 
     /* ——— Swatch ——— */
     .swatch {
-      background: var(--mf-night-surface);
-      border: 1px solid var(--mf-night-line);
+      background: var(--mf-paper-soft);
+      border: 1px solid var(--mf-paper-line);
       border-radius: var(--mf-radius-lg);
       overflow: hidden;
     }
@@ -219,22 +222,22 @@
       border-radius: var(--mf-radius-md);
       border: 1px solid transparent;
       cursor: pointer;
-      transition: background var(--mf-dur) var(--mf-ease-out), border-color var(--mf-dur) var(--mf-ease-out);
+      transition: background var(--mf-dur) var(--mf-ease-out), color var(--mf-dur) var(--mf-ease-out), border-color var(--mf-dur) var(--mf-ease-out);
       line-height: 1;
     }
     .btn-primary { background: var(--mf-green); color: #FFFFFF; }
     .btn-primary:hover { background: var(--mf-green-deep); }
     .btn-ghost {
-      background: var(--mf-night-elevated);
+      background: var(--mf-paper);
       color: var(--mf-text);
-      border-color: var(--mf-night-line);
+      border-color: var(--mf-paper-line);
     }
-    .btn-ghost:hover { background: var(--mf-night-line); }
+    .btn-ghost:hover { background: var(--mf-paper-elevated); }
     .btn-ghost.is-active {
-      background: var(--mf-night-line);
-      border-color: var(--mf-night-line);
+      background: var(--mf-paper-elevated);
+      border-color: var(--mf-paper-line);
     }
-    .btn-danger { background: var(--mf-danger-soft); color: var(--mf-danger); }
+    .btn-danger { background: var(--mf-danger-soft); color: var(--mf-danger-ink); }
     .btn-danger:hover { background: var(--mf-danger); color: #FFFFFF; }
 
     /* ——— Badges ——— */
@@ -248,16 +251,16 @@
       font-weight: 500;
       line-height: 1.4;
     }
-    .badge-green   { background: var(--mf-green-soft);   color: var(--mf-green-leaf); }
-    .badge-warn    { background: var(--mf-warning-soft); color: var(--mf-warning); }
-    .badge-danger  { background: var(--mf-danger-soft);  color: var(--mf-danger); }
-    .badge-neutral { background: var(--mf-night-elevated); color: var(--mf-text-soft); }
+    .badge-green   { background: var(--mf-green-soft);   color: var(--mf-green-ink); }
+    .badge-warn    { background: var(--mf-warning-soft); color: var(--mf-warning-ink); }
+    .badge-danger  { background: var(--mf-danger-soft);  color: var(--mf-danger-ink); }
+    .badge-neutral { background: var(--mf-paper-elevated); color: var(--mf-text-soft); }
 
     /* ——— Input ——— */
     .input {
       width: 100%;
-      background: var(--mf-night);
-      border: 1px solid var(--mf-night-line);
+      background: var(--mf-paper);
+      border: 1px solid var(--mf-paper-line);
       border-radius: var(--mf-radius-md);
       padding: 12px 14px;
       color: var(--mf-text);
@@ -268,13 +271,13 @@
     .input:focus {
       outline: none;
       border-color: var(--mf-green);
-      box-shadow: 0 0 0 3px var(--mf-green-soft);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, .15);
     }
 
     /* ——— List signature MyFridge ——— */
     .list {
-      background: var(--mf-night-surface);
-      border: 1px solid var(--mf-night-line);
+      background: var(--mf-paper-soft);
+      border: 1px solid var(--mf-paper-line);
       border-radius: var(--mf-radius-lg);
       overflow: hidden;
     }
@@ -283,7 +286,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 16px 20px;
-      border-bottom: 1px solid var(--mf-night-line);
+      border-bottom: 1px solid var(--mf-paper-line);
     }
     .list-header .title {
       display: flex;
@@ -292,7 +295,7 @@
       font-weight: 600;
       font-size: 15px;
     }
-    .list-header .title .ico { font-size: 18px; color: var(--mf-green-leaf); }
+    .list-header .title .ico { font-size: 18px; color: var(--mf-green-ink); }
     .list-header .count { font-size: 13px; color: var(--mf-text-soft); display: inline-flex; align-items: center; gap: 8px; }
     .list-row {
       display: grid;
@@ -300,12 +303,13 @@
       align-items: center;
       gap: 16px;
       padding: 14px 20px;
-      border-top: 1px solid var(--mf-night-line);
+      border-top: 1px solid var(--mf-paper-line);
+      background: var(--mf-paper);
     }
     .checkbox {
       width: 22px; height: 22px;
       border-radius: 999px;
-      border: 1.5px solid var(--mf-night-line);
+      border: 1.5px solid var(--mf-paper-line);
       background: transparent;
       transition: all var(--mf-dur) var(--mf-ease-out);
     }
@@ -316,10 +320,10 @@
     .thumb {
       width: 44px; height: 44px;
       border-radius: var(--mf-radius-md);
-      background: var(--mf-night-elevated);
+      background: var(--mf-paper-elevated);
       display: flex; align-items: center; justify-content: center;
       font-size: 22px;
-      border: 1px solid var(--mf-night-line);
+      border: 1px solid var(--mf-paper-line);
     }
     .row-text .name { font-weight: 600; font-size: 15px; }
     .row-text .meta {
@@ -337,9 +341,9 @@
       transition: background var(--mf-dur) var(--mf-ease);
       font-size: 14px;
     }
-    .icon-btn:hover { background: var(--mf-night-elevated); }
-    .icon-btn.edit { color: var(--mf-info); }
-    .icon-btn.danger { color: var(--mf-danger); }
+    .icon-btn:hover { background: var(--mf-paper-elevated); }
+    .icon-btn.edit { color: var(--mf-info-ink); }
+    .icon-btn.danger { color: var(--mf-danger-ink); }
     .icon-btn.muted { color: var(--mf-text-mute); }
 
     /* ——— Type ladder ——— */
@@ -349,7 +353,7 @@
       align-items: baseline;
       gap: 24px;
       padding: 16px 0;
-      border-bottom: 1px dashed var(--mf-night-line);
+      border-bottom: 1px dashed var(--mf-paper-line);
     }
     .type-row:last-child { border: 0; }
     .type-row .lbl { color: var(--mf-text-mute); font-family: var(--mf-font-mono); font-size: 12px; }
@@ -379,7 +383,7 @@
 
     /* ——— Motion demo ——— */
     .motion-card { padding: 20px; transition: transform var(--mf-dur) var(--mf-ease-out), box-shadow var(--mf-dur) var(--mf-ease-out); cursor: pointer; }
-    .motion-card:hover { transform: translateY(-3px); box-shadow: var(--mf-shadow-2); border-color: var(--mf-night-line); }
+    .motion-card:hover { transform: translateY(-3px); box-shadow: var(--mf-shadow-2); border-color: var(--mf-paper-line); }
 
     /* ——— Voice ——— */
     .voice {
@@ -391,10 +395,10 @@
     .voice .col {
       padding: 24px;
       border-radius: var(--mf-radius-lg);
-      border: 1px solid var(--mf-night-line);
-      background: var(--mf-night-surface);
+      border: 1px solid var(--mf-paper-line);
+      background: var(--mf-paper-soft);
     }
-    .voice .yes { border-color: rgba(34,197,94,.3); }
+    .voice .yes { border-color: rgba(34,197,94,.4); background: var(--mf-green-soft); }
     .voice .no { opacity: .85; }
     .voice .verdict {
       font-family: var(--mf-font-mono);
@@ -403,25 +407,25 @@
       letter-spacing: .14em;
       margin-bottom: 16px;
     }
-    .voice .yes .verdict { color: var(--mf-green); }
-    .voice .no .verdict { color: var(--mf-danger); }
+    .voice .yes .verdict { color: var(--mf-green-ink); }
+    .voice .no .verdict { color: var(--mf-danger-ink); }
     .voice p { color: var(--mf-text); margin: 0 0 12px; }
     .voice p:last-child { margin: 0; }
 
     /* ——— Code ——— */
     code, pre { font-family: var(--mf-font-mono); font-size: 13px; }
-    code { color: var(--mf-green-leaf); background: var(--mf-green-soft); padding: 2px 6px; border-radius: 4px; }
+    code { color: var(--mf-green-ink); background: var(--mf-green-soft); padding: 2px 6px; border-radius: 4px; }
     pre {
-      background: var(--mf-night-surface);
-      border: 1px solid var(--mf-night-line);
+      background: var(--mf-paper-soft);
+      border: 1px solid var(--mf-paper-line);
       border-radius: var(--mf-radius-md);
       padding: 20px;
       overflow-x: auto;
       color: var(--mf-text-soft);
       line-height: 1.7;
     }
-    pre .key { color: var(--mf-info); }
-    pre .val { color: var(--mf-green-leaf); }
+    pre .key { color: var(--mf-info-ink); }
+    pre .val { color: var(--mf-green-ink); }
     pre .com { color: var(--mf-text-mute); font-style: italic; }
 
     /* ——— Hero stat ——— */
@@ -429,7 +433,7 @@
       font-family: var(--mf-font-display);
       font-size: 32px;
       font-weight: 700;
-      color: var(--mf-green);
+      color: var(--mf-green-ink);
       line-height: 1;
     }
 
@@ -437,15 +441,15 @@
     .filter-bar {
       display: flex; align-items: center; gap: 12px;
       padding: 14px 18px;
-      background: var(--mf-night-surface);
-      border: 1px solid var(--mf-night-line);
+      background: var(--mf-paper-soft);
+      border: 1px solid var(--mf-paper-line);
       border-radius: var(--mf-radius-lg);
       flex-wrap: wrap;
     }
     .filter-bar .funnel { color: var(--mf-text-mute); }
     .select-mock {
-      background: var(--mf-night);
-      border: 1px solid var(--mf-night-line);
+      background: var(--mf-paper);
+      border: 1px solid var(--mf-paper-line);
       border-radius: var(--mf-radius-md);
       padding: 8px 14px;
       font-size: 13px;
@@ -454,8 +458,8 @@
     }
     .toggle-group {
       display: inline-flex;
-      background: var(--mf-night);
-      border: 1px solid var(--mf-night-line);
+      background: var(--mf-paper);
+      border: 1px solid var(--mf-paper-line);
       border-radius: var(--mf-radius-md);
       padding: 3px;
       gap: 2px;
@@ -466,7 +470,7 @@
       border-radius: var(--mf-radius-sm);
       color: var(--mf-text-soft);
     }
-    .toggle-group .opt.is-active { background: var(--mf-night-elevated); color: var(--mf-text); }
+    .toggle-group .opt.is-active { background: var(--mf-paper-elevated); color: var(--mf-text); }
 
     /* ——— Mode switch link ——— */
     .mode-switch {
@@ -475,21 +479,21 @@
       gap: 8px;
       padding: 6px 12px;
       border-radius: var(--mf-radius-pill);
-      background: var(--mf-night-surface);
-      border: 1px solid var(--mf-night-line);
+      background: var(--mf-paper-soft);
+      border: 1px solid var(--mf-paper-line);
       color: var(--mf-text-soft);
       font-family: var(--mf-font-mono);
       font-size: 12px;
       text-decoration: none;
       transition: all var(--mf-dur) var(--mf-ease);
     }
-    .mode-switch:hover { background: var(--mf-night-elevated); color: var(--mf-text); }
+    .mode-switch:hover { background: var(--mf-paper-elevated); color: var(--mf-text); }
 
     /* ——— Colophon ——— */
     .colophon {
       margin-top: 96px;
       padding-top: 32px;
-      border-top: 1px solid var(--mf-night-line);
+      border-top: 1px solid var(--mf-paper-line);
       color: var(--mf-text-mute);
       font-family: var(--mf-font-mono);
       font-size: 12px;
@@ -506,24 +510,24 @@
     <header class="masthead">
       <div class="lockup">
         <span class="wordmark">MyFridge<span class="dot">.</span></span>
-        <span class="meta">Charte graphique — v3.0 · Mode nuit canonique</span>
+        <span class="meta">Charte graphique — v3.0 · Mode jour</span>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
-        <a class="mode-switch" href="charte-graphique-light.html">☀ Voir mode jour</a>
+        <a class="mode-switch" href="charte-graphique.html">☾ Voir mode nuit</a>
         <span class="meta">2026-04-29</span>
       </div>
     </header>
 
     <!-- COVER -->
     <section class="cover">
-      <h1>Un système <em>net</em>,<br/>pour gérer ce qui ne&nbsp;peut&nbsp;pas attendre.</h1>
-      <p class="lede">MyFridge organise un foyer. La charte est nocturne, fonctionnelle, sans bruit visuel&nbsp;: un fond profond qui laisse les contenus respirer, et un seul vert pistache qui signe la marque, valide l'action, célèbre le frais.</p>
+      <h1>Un système <em>net</em>,<br/>en pleine lumière.</h1>
+      <p class="lede">La version diurne de MyFridge garde le même squelette que le mode nuit — mêmes tokens, mêmes composants, même voix. On retourne juste les surfaces&nbsp;: papier blanc, encre presque noire, et le vert pistache qui reste seul à signer la marque et l'action.</p>
     </section>
 
     <!-- 01 — PRINCIPES -->
     <section class="chapter">
       <div class="eyebrow">01 — Principes</div>
-      <h2>Trois principes, en une nuit calme.</h2>
+      <h2>Mêmes principes, jour ou nuit.</h2>
       <div class="grid grid-3" style="margin-top:32px;">
         <div class="card">
           <div class="label">01</div>
@@ -546,37 +550,37 @@
     <!-- 02 — COULEURS -->
     <section class="chapter">
       <div class="eyebrow">02 — Couleurs</div>
-      <h2>Une nuit, un vert, trois alertes.</h2>
-      <p>Le mode nuit est l'état canonique. Les surfaces empilées (fond → carte → élément hover) restent sur le même axe bleu nuit, jamais grisées à plat — c'est ce qui donne sa profondeur calme.</p>
+      <h2>Papier, encre, et le même vert.</h2>
+      <p>Les surfaces empilées (papier → carte → hover) restent sur l'axe gris très froid, sans virer chaud — ça préserve la cohérence avec le mode nuit. Les variantes "ink" des couleurs sémantiques (vert, rouge, bleu, orange) sont les versions assombries pour le texte sur fond clair, indispensables pour le contraste WCAG AA.</p>
 
       <div class="section-title">Surfaces</div>
       <div class="grid grid-4">
-        <div class="swatch"><div class="sample" style="background:#0B1018"></div><div class="body"><span class="name">Night</span><span class="hex">#0B1018</span><span class="var">--mf-night</span></div></div>
-        <div class="swatch"><div class="sample" style="background:#0F1620"></div><div class="body"><span class="name">Surface</span><span class="hex">#0F1620</span><span class="var">--mf-night-surface</span></div></div>
-        <div class="swatch"><div class="sample" style="background:#141C28"></div><div class="body"><span class="name">Elevated</span><span class="hex">#141C28</span><span class="var">--mf-night-elevated</span></div></div>
-        <div class="swatch"><div class="sample" style="background:#0F1620"><div class="inner-tag" style="border:1px solid #1E2A3B; background:transparent;"></div></div><div class="body"><span class="name">Line</span><span class="hex">#1E2A3B</span><span class="var">--mf-night-line</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#FFFFFF; border-bottom:1px solid var(--mf-paper-line);"></div><div class="body"><span class="name">Paper</span><span class="hex">#FFFFFF</span><span class="var">--mf-paper</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#F5F7FA"></div><div class="body"><span class="name">Paper soft</span><span class="hex">#F5F7FA</span><span class="var">--mf-paper-soft</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#EEF1F5"></div><div class="body"><span class="name">Paper elevated</span><span class="hex">#EEF1F5</span><span class="var">--mf-paper-elevated</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#FFFFFF"><div class="inner-tag" style="border:1px solid #E2E8F0; background:transparent;"></div></div><div class="body"><span class="name">Paper line</span><span class="hex">#E2E8F0</span><span class="var">--mf-paper-line</span></div></div>
       </div>
 
       <div class="section-title">Encre (texte)</div>
       <div class="grid grid-3">
-        <div class="swatch"><div class="sample" style="background:#0F1620"><div class="inner-tag" style="background:#F5F7FA;"></div></div><div class="body"><span class="name">Text</span><span class="hex">#F5F7FA</span><span class="var">--mf-text</span></div></div>
-        <div class="swatch"><div class="sample" style="background:#0F1620"><div class="inner-tag" style="background:#9CA3AF;"></div></div><div class="body"><span class="name">Text soft</span><span class="hex">#9CA3AF</span><span class="var">--mf-text-soft</span></div></div>
-        <div class="swatch"><div class="sample" style="background:#0F1620"><div class="inner-tag" style="background:#5B6675;"></div></div><div class="body"><span class="name">Text mute</span><span class="hex">#5B6675</span><span class="var">--mf-text-mute</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#FFFFFF"><div class="inner-tag" style="background:#0B1018;"></div></div><div class="body"><span class="name">Text</span><span class="hex">#0B1018</span><span class="var">--mf-text</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#FFFFFF"><div class="inner-tag" style="background:#475569;"></div></div><div class="body"><span class="name">Text soft</span><span class="hex">#475569</span><span class="var">--mf-text-soft</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#FFFFFF"><div class="inner-tag" style="background:#94A3B8;"></div></div><div class="body"><span class="name">Text mute</span><span class="hex">#94A3B8</span><span class="var">--mf-text-mute</span></div></div>
       </div>
 
       <div class="section-title">Vert pistache — marque, action, frais</div>
       <div class="grid grid-4">
         <div class="swatch"><div class="sample" style="background:#22C55E"></div><div class="body"><span class="name">Green</span><span class="hex">#22C55E</span><span class="var">--mf-green</span></div></div>
         <div class="swatch"><div class="sample" style="background:#16A34A"></div><div class="body"><span class="name">Green deep</span><span class="hex">#16A34A</span><span class="var">--mf-green-deep</span></div></div>
-        <div class="swatch"><div class="sample" style="background:#86EFAC"></div><div class="body"><span class="name">Green leaf</span><span class="hex">#86EFAC</span><span class="var">--mf-green-leaf</span></div></div>
-        <div class="swatch"><div class="sample" style="background:#0F1620"><div class="inner-tag" style="background:rgba(34,197,94,.12);"></div></div><div class="body"><span class="name">Green soft</span><span class="hex">rgba(34,197,94,.12)</span><span class="var">--mf-green-soft</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#15803D"></div><div class="body"><span class="name">Green ink</span><span class="hex">#15803D</span><span class="var">--mf-green-ink · texte</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#DCFCE7"></div><div class="body"><span class="name">Green soft</span><span class="hex">#DCFCE7</span><span class="var">--mf-green-soft · badge</span></div></div>
       </div>
 
-      <div class="section-title">Sémantique</div>
+      <div class="section-title">Sémantique (paire <em>color</em> + <em>ink</em>)</div>
       <div class="grid grid-3">
-        <div class="swatch"><div class="sample" style="background:#EF4444"></div><div class="body"><span class="name">Danger</span><span class="hex">#EF4444</span><span class="var">--mf-danger · supprimer, périmé</span></div></div>
-        <div class="swatch"><div class="sample" style="background:#3B82F6"></div><div class="body"><span class="name">Info</span><span class="hex">#3B82F6</span><span class="var">--mf-info · éditer</span></div></div>
-        <div class="swatch"><div class="sample" style="background:#F59E0B"></div><div class="body"><span class="name">Warning</span><span class="hex">#F59E0B</span><span class="var">--mf-warning · expire bientôt</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#EF4444; position:relative;"><div style="position:absolute; inset:0 0 0 50%; background:#B91C1C;"></div></div><div class="body"><span class="name">Danger</span><span class="hex">#EF4444 / #B91C1C</span><span class="var">--mf-danger / --mf-danger-ink</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#3B82F6; position:relative;"><div style="position:absolute; inset:0 0 0 50%; background:#1D4ED8;"></div></div><div class="body"><span class="name">Info</span><span class="hex">#3B82F6 / #1D4ED8</span><span class="var">--mf-info / --mf-info-ink</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#D97706; position:relative;"><div style="position:absolute; inset:0 0 0 50%; background:#92400E;"></div></div><div class="body"><span class="name">Warning</span><span class="hex">#D97706 / #92400E</span><span class="var">--mf-warning / --mf-warning-ink</span></div></div>
       </div>
     </section>
 
@@ -584,7 +588,7 @@
     <section class="chapter">
       <div class="eyebrow">03 — Typographie</div>
       <h2>Inter, du <em>display</em> au <em>caption</em>.</h2>
-      <p>Une seule famille — Inter — du titre principal au méta. Les variations sont assurées par la graisse, la taille et l'espacement des lettres. <strong>JetBrains Mono</strong> couvre les unités, codes, dates, identifiants techniques.</p>
+      <p>Identique au mode nuit&nbsp;: une seule famille, Inter, du titre au méta. Les variations sont assurées par la graisse, la taille et l'espacement des lettres. <strong>JetBrains Mono</strong> couvre les unités, codes, dates, identifiants techniques.</p>
 
       <div class="card" style="margin-top:32px;">
         <div class="type-row"><span class="lbl">Display 1</span><span class="display-1">Liste de Courses</span></div>
@@ -602,7 +606,7 @@
     <section class="chapter">
       <div class="eyebrow">04 — Espace &amp; rayons</div>
       <h2>Une trame, 4&nbsp;pixels.</h2>
-      <p>Toutes les distances dérivent de 4&nbsp;px. Les rayons sont alignés sur trois familles&nbsp;: contrôles courts (<code>md 10px</code>), cartes (<code>lg 14px</code>), zones d'identité (<code>xl 20px</code>). Les pilules — badges, statuts — restent en pleine arrondie.</p>
+      <p>Identique au mode nuit. Toutes les distances dérivent de 4&nbsp;px. Trois familles de rayons&nbsp;: contrôles courts (<code>md 10px</code>), cartes (<code>lg 14px</code>), zones d'identité (<code>xl 20px</code>). Les pilules — badges, statuts — restent en pleine arrondie.</p>
 
       <div class="card" style="margin-top:32px;">
         <div class="label">Échelle d'espacement (×4&nbsp;px)</div>
@@ -619,10 +623,10 @@
         </div>
 
         <div class="grid grid-4" style="margin-top:32px;">
-          <div><div style="height:80px; background:var(--mf-night-elevated); border-radius:var(--mf-radius-xs); border:1px solid var(--mf-night-line);"></div><div class="caption-text" style="margin-top:10px;">XS · 4px</div></div>
-          <div><div style="height:80px; background:var(--mf-night-elevated); border-radius:var(--mf-radius-md); border:1px solid var(--mf-night-line);"></div><div class="caption-text" style="margin-top:10px;">MD · 10px · contrôles</div></div>
-          <div><div style="height:80px; background:var(--mf-night-elevated); border-radius:var(--mf-radius-lg); border:1px solid var(--mf-night-line);"></div><div class="caption-text" style="margin-top:10px;">LG · 14px · cartes</div></div>
-          <div><div style="height:80px; background:var(--mf-night-elevated); border-radius:var(--mf-radius-xl); border:1px solid var(--mf-night-line);"></div><div class="caption-text" style="margin-top:10px;">XL · 20px · identités</div></div>
+          <div><div style="height:80px; background:var(--mf-paper-elevated); border-radius:var(--mf-radius-xs); border:1px solid var(--mf-paper-line);"></div><div class="caption-text" style="margin-top:10px;">XS · 4px</div></div>
+          <div><div style="height:80px; background:var(--mf-paper-elevated); border-radius:var(--mf-radius-md); border:1px solid var(--mf-paper-line);"></div><div class="caption-text" style="margin-top:10px;">MD · 10px · contrôles</div></div>
+          <div><div style="height:80px; background:var(--mf-paper-elevated); border-radius:var(--mf-radius-lg); border:1px solid var(--mf-paper-line);"></div><div class="caption-text" style="margin-top:10px;">LG · 14px · cartes</div></div>
+          <div><div style="height:80px; background:var(--mf-paper-elevated); border-radius:var(--mf-radius-xl); border:1px solid var(--mf-paper-line);"></div><div class="caption-text" style="margin-top:10px;">XL · 20px · identités</div></div>
         </div>
       </div>
     </section>
@@ -631,7 +635,7 @@
     <section class="chapter">
       <div class="eyebrow">05 — Mouvement</div>
       <h2>On entre vite, on ne s'agite pas.</h2>
-      <p>La durée par défaut est <code>240&nbsp;ms</code>, l'easing <code>cubic-bezier(.16, 1, .3, 1)</code> — une sortie ferme, sans rebond. Hover&nbsp;: une élévation discrète et un changement de surface. Pas de transitions inutiles sur les couleurs de texte.</p>
+      <p>Identique au mode nuit. Durée par défaut <code>240&nbsp;ms</code>, easing <code>cubic-bezier(.16, 1, .3, 1)</code>. Hover&nbsp;: élévation discrète et changement de surface. Pas de transitions inutiles sur les couleurs de texte.</p>
 
       <div class="grid grid-3" style="margin-top:32px;">
         <div class="card motion-card">
@@ -656,7 +660,7 @@
     <!-- 06 — COMPOSANTS -->
     <section class="chapter">
       <div class="eyebrow">06 — Composants signés</div>
-      <h2>Des pièces, pas des génériques.</h2>
+      <h2>Mêmes pièces, fond clair.</h2>
 
       <div class="section-title">Boutons</div>
       <div class="card">
@@ -699,7 +703,7 @@
       <div class="card" style="display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;">
         <div>
           <h2 style="font-size:24px; margin:0; font-weight:700; letter-spacing:-.02em;">Liste de Courses</h2>
-          <div class="body-sm" style="margin-top:6px;">0 sur 6 articles terminés · <span style="color:var(--mf-green);">● Synchronisé</span></div>
+          <div class="body-sm" style="margin-top:6px;">0 sur 6 articles terminés · <span style="color:var(--mf-green-ink);">● Synchronisé</span></div>
         </div>
         <div style="text-align:right;">
           <div class="stat">0%</div>
@@ -795,29 +799,37 @@
     <section class="chapter">
       <div class="eyebrow">08 — De la charte au code</div>
       <h2>Tokens, sans détour.</h2>
-      <p>Tous les tokens existent en <code>CSS custom properties</code> sous le préfixe <code>--mf-*</code>. Tailwind référence ces variables dans <code>tailwind.config.ts</code>&nbsp;: pas de couleur en dur dans les composants.</p>
-<pre><span class="com">/* :root — tokens canoniques */</span>
-<span class="key">--mf-night</span>:           <span class="val">#0B1018</span>;
-<span class="key">--mf-night-surface</span>:   <span class="val">#0F1620</span>;
-<span class="key">--mf-night-elevated</span>:  <span class="val">#141C28</span>;
-<span class="key">--mf-night-line</span>:      <span class="val">#1E2A3B</span>;
+      <p>Mêmes structures que le mode nuit, autres valeurs. Le switch jour/nuit se fait via une classe sur <code>&lt;html&gt;</code> ou un <code>media (prefers-color-scheme)</code> qui réécrit les CSS variables — aucun composant ne change.</p>
+<pre><span class="com">/* :root — tokens canoniques (mode jour) */</span>
+<span class="key">--mf-paper</span>:           <span class="val">#FFFFFF</span>;
+<span class="key">--mf-paper-soft</span>:      <span class="val">#F5F7FA</span>;
+<span class="key">--mf-paper-elevated</span>:  <span class="val">#EEF1F5</span>;
+<span class="key">--mf-paper-line</span>:      <span class="val">#E2E8F0</span>;
 
-<span class="key">--mf-text</span>:            <span class="val">#F5F7FA</span>;
-<span class="key">--mf-text-soft</span>:       <span class="val">#9CA3AF</span>;
-<span class="key">--mf-text-mute</span>:       <span class="val">#5B6675</span>;
+<span class="key">--mf-text</span>:            <span class="val">#0B1018</span>;
+<span class="key">--mf-text-soft</span>:       <span class="val">#475569</span>;
+<span class="key">--mf-text-mute</span>:       <span class="val">#94A3B8</span>;
 
 <span class="key">--mf-green</span>:           <span class="val">#22C55E</span>;
 <span class="key">--mf-green-deep</span>:      <span class="val">#16A34A</span>;
-<span class="key">--mf-green-leaf</span>:      <span class="val">#86EFAC</span>;
-<span class="key">--mf-green-soft</span>:      <span class="val">rgba(34, 197, 94, .12)</span>;
+<span class="key">--mf-green-ink</span>:       <span class="val">#15803D</span>;     <span class="com">/* texte sur fond clair */</span>
+<span class="key">--mf-green-soft</span>:      <span class="val">#DCFCE7</span>;     <span class="com">/* fond de badge */</span>
 
 <span class="key">--mf-danger</span>:          <span class="val">#EF4444</span>;
-<span class="key">--mf-info</span>:            <span class="val">#3B82F6</span>;
-<span class="key">--mf-warning</span>:         <span class="val">#F59E0B</span>;
+<span class="key">--mf-danger-ink</span>:      <span class="val">#B91C1C</span>;
+<span class="key">--mf-danger-soft</span>:     <span class="val">#FEE2E2</span>;
 
-<span class="key">--mf-radius-md</span>:       <span class="val">10px</span>;     <span class="com">/* contrôles */</span>
-<span class="key">--mf-radius-lg</span>:       <span class="val">14px</span>;     <span class="com">/* cartes */</span>
-<span class="key">--mf-radius-xl</span>:       <span class="val">20px</span>;     <span class="com">/* identités */</span>
+<span class="key">--mf-info</span>:            <span class="val">#3B82F6</span>;
+<span class="key">--mf-info-ink</span>:        <span class="val">#1D4ED8</span>;
+<span class="key">--mf-info-soft</span>:       <span class="val">#DBEAFE</span>;
+
+<span class="key">--mf-warning</span>:         <span class="val">#D97706</span>;     <span class="com">/* +sombre que le mode nuit pour le contraste */</span>
+<span class="key">--mf-warning-ink</span>:     <span class="val">#92400E</span>;
+<span class="key">--mf-warning-soft</span>:    <span class="val">#FEF3C7</span>;
+
+<span class="key">--mf-radius-md</span>:       <span class="val">10px</span>;
+<span class="key">--mf-radius-lg</span>:       <span class="val">14px</span>;
+<span class="key">--mf-radius-xl</span>:       <span class="val">20px</span>;
 
 <span class="key">--mf-dur</span>:             <span class="val">240ms</span>;
 <span class="key">--mf-ease-out</span>:        <span class="val">cubic-bezier(.16, 1, .3, 1)</span>;
@@ -825,7 +837,7 @@
     </section>
 
     <footer class="colophon">
-      <span>MyFridge — Charte graphique v3.0 · Mode nuit</span>
+      <span>MyFridge — Charte graphique v3.0 · Mode jour</span>
       <span>Inter · JetBrains Mono</span>
       <span>2026-04-29</span>
     </footer>

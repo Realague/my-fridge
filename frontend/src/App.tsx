@@ -11,7 +11,6 @@ import "./i18n/config"; // Initialize i18n
 
 
 import { RecipeProvider } from "@/contexts/RecipeContext";
-import { MealPlanProvider } from "@/contexts/MealPlanContext";
 import { StoreProvider } from "@/components/StoreProvider";
 import { StagingEnvBanner } from "@/components/StagingEnvBanner";
 import Index from "./pages/Index";
@@ -27,7 +26,8 @@ import RecipeCookingMode from "./pages/RecipeCookingMode";
 import AddRecipe from "./pages/AddRecipe";
 import EditRecipe from "./pages/EditRecipe";
 import ImportRecipe from "./pages/ImportRecipe";
-import MealPlans from "./pages/MealPlans";
+import Meals from "./pages/Meals";
+import RecipeSelector from "./pages/RecipeSelector";
 import Household from "./pages/Household";
 import HouseholdDetails from "./pages/HouseholdDetails";
 import JoinHousehold from "./pages/JoinHousehold";
@@ -55,36 +55,35 @@ function App() {
           <NotificationProvider>
             <RecipeProvider>
               <BrowserRouter>
-                <MealPlanProvider>
-                  <StoreProvider>
-                    <StagingEnvBanner />
-                    <Toaster />
-                    <Sonner />
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/auth" element={<Auth />} />
-                      <Route path="/join" element={<JoinHousehold />} />
-                      <Route path="/onboarding" element={<Onboarding />} />
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/shopping" element={<Shopping />} />
-                      <Route path="/storage/:id" element={<StorageArea />} />
-                      <Route path="/recipes" element={<Recipes />} />
-                      <Route path="/recipes/:id" element={<RecipeDetails />} />
-                      <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />
-                      <Route path="/add-recipe" element={<AddRecipe />} />
-                      <Route path="/import-recipe" element={<ImportRecipe />} />
-                      <Route path="/recipes/:id/edit" element={<EditRecipe />} />
-                      <Route path="/meal-plans" element={<MealPlans />} />
-                      <Route path="/household" element={<Household />} />
-                      <Route path="/household/:id" element={<HouseholdDetails />} />
-                      <Route path="/settings" element={<Settings />} />
-                      <Route path="/item-minimums" element={<ItemMinimums />} />
-                      <Route path="/loyalty-cards" element={<LoyaltyCards />} />
-                      <Route path="/demo" element={<Demo />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </StoreProvider>
-                </MealPlanProvider>
+                <StoreProvider>
+                  <StagingEnvBanner />
+                  <Toaster />
+                  <Sonner />
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/join" element={<JoinHousehold />} />
+                    <Route path="/onboarding" element={<Onboarding />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/shopping" element={<Shopping />} />
+                    <Route path="/storage/:id" element={<StorageArea />} />
+                    <Route path="/recipes" element={<Recipes />} />
+                    <Route path="/recipes/:id" element={<RecipeDetails />} />
+                    <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />
+                    <Route path="/add-recipe" element={<AddRecipe />} />
+                    <Route path="/import-recipe" element={<ImportRecipe />} />
+                    <Route path="/recipes/:id/edit" element={<EditRecipe />} />
+                    <Route path="/meals" element={<Meals />} />
+                    <Route path="/meals/add" element={<RecipeSelector />} />
+                    <Route path="/household" element={<Household />} />
+                    <Route path="/household/:id" element={<HouseholdDetails />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/item-minimums" element={<ItemMinimums />} />
+                    <Route path="/loyalty-cards" element={<LoyaltyCards />} />
+                    <Route path="/demo" element={<Demo />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </StoreProvider>
               </BrowserRouter>
             </RecipeProvider>
           </NotificationProvider>

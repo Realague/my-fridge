@@ -43,6 +43,7 @@ export interface MealsAvailabilityDto {
   totalIngredients: number;
   missingCount: number;
   inStockCount: number;
+  onShoppingListCount: number;
   expiringSoon: Array<{ itemId: string; itemName: string }>;
   items: MealsAvailabilityItemDto[];
 }
@@ -53,6 +54,41 @@ export interface ShoppingListItemDto {
   totalQuantity: number;
   unit: string;
   recipes: string[];
+}
+
+export interface ShoppingPreviewItemDto {
+  itemId: string;
+  itemName: string;
+  itemCategory: string;
+  itemHouseholdId: string | null;
+  itemImageUrl: string | null;
+  needed: number;
+  inStock: number;
+  toBuy: number;
+  unit: string;
+  recipes: string[];
+  existingShoppingQty: number;
+  shoppingItemId?: string;
+}
+
+export interface ShoppingPreviewDto {
+  toBuy: ShoppingPreviewItemDto[];
+  inStock: ShoppingPreviewItemDto[];
+  inShoppingList: ShoppingPreviewItemDto[];
+  basics: ShoppingPreviewItemDto[];
+}
+
+export interface CommitShoppingItemInputDto {
+  itemId: string;
+  quantity: number;
+  unit: string;
+  recipes: string[];
+}
+
+export interface CommitShoppingMergeDto {
+  newItems: ShoppingListItemDto[];
+  mergedItems: Array<ShoppingListItemDto & { previousQuantity: number }>;
+  alreadyCoveredItems: ShoppingListItemDto[];
 }
 
 export type RecipeAvailabilityStatus = 'haveAll' | 'missing' | 'usesExpiring';
@@ -117,12 +153,21 @@ export const mealService = {
     return result.data;
   },
 
-  async generateShoppingList(householdId: string): Promise<ShoppingListItemDto[]> {
+  async getShoppingPreview(householdId: string): Promise<ShoppingPreviewDto> {
+    const response = await apiCall(`/api/households/${householdId}/meals/shopping-preview`);
+    const result: ApiResponse<ShoppingPreviewDto> = await response.json();
+    return result.data;
+  },
+
+  async commitShopping(
+    householdId: string,
+    items: CommitShoppingItemInputDto[]
+  ): Promise<CommitShoppingMergeDto> {
     const response = await apiCall(
-      `/api/households/${householdId}/meals/generate-shopping-list`,
-      { method: 'POST' }
+      `/api/households/${householdId}/meals/commit-shopping`,
+      { method: 'POST', body: { items } }
     );
-    const result: ApiResponse<ShoppingListItemDto[]> = await response.json();
+    const result: ApiResponse<CommitShoppingMergeDto> = await response.json();
     return result.data;
   },
 

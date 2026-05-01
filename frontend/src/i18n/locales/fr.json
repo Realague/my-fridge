@@ -455,6 +455,7 @@
       "statCaption": "Recettes",
       "sectionPlanned": "Au menu",
       "viewRecipe": "Voir la recette",
+      "editRecipe": "Modifier la recette",
       "addRecipe": "Ajouter une recette",
       "removeMeal": "Retirer",
       "increaseServings": "Plus une portion",
@@ -483,7 +484,10 @@
         "missingCaption": "À acheter",
         "inStockLine_one": "{{count}} déjà au frigo.",
         "inStockLine_other": "{{count}} déjà au frigo.",
+        "onShoppingListLine_one": "{{count}} déjà sur la liste.",
+        "onShoppingListLine_other": "{{count}} déjà sur la liste.",
         "prepareList": "Préparer la liste",
+        "reviewList": "Voir le récap",
         "allCovered": "Rien à acheter"
       },
       "selector": {
@@ -519,6 +523,52 @@
         "shoppingListReady": "Liste prête.",
         "shoppingListReadyDescription_one": "{{count}} article à acheter.",
         "shoppingListReadyDescription_other": "{{count}} articles à acheter."
+      }
+    },
+    "mealsShopping": {
+      "kicker": "Avant d'envoyer",
+      "title": "Récap de la liste",
+      "send": "Envoyer vers ma liste",
+      "selectedCount_one": "{{count}} article sélectionné",
+      "selectedCount_other": "{{count}} articles sélectionnés",
+      "consolidatedFrom": "Consolidé :",
+      "increaseQty": "Plus",
+      "decreaseQty": "Moins",
+      "basicsTitle": "Basiques à vérifier",
+      "basicsHint": "Ouvre et coche ce qu'il faut racheter.",
+      "inStockTitle": "Déjà dans le frigo",
+      "inStockHint": "Quantité suffisante dans le stock.",
+      "inStockBadge": "Couvert",
+      "inShoppingListTitle": "Déjà dans ta liste de courses",
+      "inShoppingListHint": "Tu as déjà ajouté assez à ta liste pour couvrir le besoin.",
+      "inShoppingListBadge": "Sur la liste",
+      "partial": {
+        "have": "{{have}} {{unit}} en stock",
+        "line": "Tu en as {{have}} {{unit}} · il en manque {{missing}} sur {{total}} {{unit}}",
+        "alreadyOnList": "{{qty}} {{unit}} déjà dans ta liste"
+      },
+      "empty": {
+        "title": "Rien à préparer.",
+        "subtitle": "Aucun ingrédient nécessaire pour les repas planifiés."
+      },
+      "merge": {
+        "kicker": "Confirmation",
+        "title": "Fusion avec la liste",
+        "subtitle_one": "{{count}} article au total.",
+        "subtitle_other": "{{count}} articles au total.",
+        "newSection_one": "{{count}} nouveau",
+        "newSection_other": "{{count}} nouveaux",
+        "mergedSection_one": "{{count}} quantité fusionnée",
+        "mergedSection_other": "{{count}} quantités fusionnées",
+        "coveredSection_one": "{{count}} déjà couvert",
+        "coveredSection_other": "{{count}} déjà couverts",
+        "empty": "Aucun changement.",
+        "confirm": "Confirmer"
+      },
+      "toasts": {
+        "commitDone": "Liste mise à jour.",
+        "commitDoneDescription_one": "{{count}} article traité.",
+        "commitDoneDescription_other": "{{count}} articles traités."
       }
     },
     "recipes": {

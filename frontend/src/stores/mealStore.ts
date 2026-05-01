@@ -4,7 +4,9 @@ import {
   MealDto,
   MealsAvailabilityDto,
   RecipeAvailabilityDto,
-  ShoppingListItemDto,
+  ShoppingPreviewDto,
+  CommitShoppingItemInputDto,
+  CommitShoppingMergeDto,
 } from '@/services/mealService';
 import { useHouseholdStore } from './householdStore';
 
@@ -23,7 +25,8 @@ interface MealStore {
   removeMeal: (id: string) => Promise<void>;
   fetchAvailability: () => Promise<void>;
   fetchRecipesAvailability: () => Promise<void>;
-  generateShoppingList: () => Promise<ShoppingListItemDto[]>;
+  fetchShoppingPreview: () => Promise<ShoppingPreviewDto>;
+  commitShopping: (items: CommitShoppingItemInputDto[]) => Promise<CommitShoppingMergeDto>;
 }
 
 const getHouseholdId = (): string | null => {
@@ -138,9 +141,15 @@ export const useMealStore = create<MealStore>((set, get) => ({
     }
   },
 
-  generateShoppingList: async () => {
+  fetchShoppingPreview: async () => {
     const householdId = getHouseholdId();
     if (!householdId) throw new Error('No household selected');
-    return await mealService.generateShoppingList(householdId);
+    return await mealService.getShoppingPreview(householdId);
+  },
+
+  commitShopping: async (items) => {
+    const householdId = getHouseholdId();
+    if (!householdId) throw new Error('No household selected');
+    return await mealService.commitShopping(householdId, items);
   },
 }));

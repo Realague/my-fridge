@@ -156,8 +156,12 @@ const RecipeSelector = () => {
           {loadingRecipes && filtered.length === 0 ? (
             <div className="mf-list">
               {[0, 1, 2].map((i) => (
-                <div key={i} className="mf-list-row">
-                  <div className="mf-thumb mf-thumb-lg animate-pulse bg-[color:var(--mf-night-line)]" />
+                <div
+                  key={i}
+                  className="flex items-center gap-4 px-5 py-3.5 border-t"
+                  style={{ borderColor: 'var(--mf-night-line)' }}
+                >
+                  <div className="mf-thumb mf-thumb-lg animate-pulse bg-[color:var(--mf-night-line)] flex-shrink-0" />
                   <div className="flex-1 space-y-2">
                     <div className="h-4 w-2/3 animate-pulse rounded bg-[color:var(--mf-night-line)]" />
                     <div className="h-3 w-1/3 animate-pulse rounded bg-[color:var(--mf-night-line)]" />
@@ -186,7 +190,8 @@ const RecipeSelector = () => {
                     key={recipe.id}
                     type="button"
                     onClick={() => setConfirmRecipe(recipe)}
-                    className="mf-list-row text-left transition-colors hover:bg-[color:var(--mf-night-elevated)]"
+                    className="flex w-full items-center gap-4 px-5 py-3.5 border-t text-left transition-colors hover:bg-[color:var(--mf-night-elevated)]"
+                    style={{ borderColor: 'var(--mf-night-line)' }}
                   >
                     {recipe.imageUrl ? (
                       <img
@@ -195,12 +200,12 @@ const RecipeSelector = () => {
                         className="h-14 w-14 flex-shrink-0 rounded-[10px] border border-[color:var(--mf-night-line)] object-cover"
                       />
                     ) : (
-                      <div className="mf-thumb mf-thumb-lg">
+                      <div className="mf-thumb mf-thumb-lg flex-shrink-0">
                         <span aria-hidden>{emoji}</span>
                       </div>
                     )}
-                    <div className="flex flex-col gap-1.5">
-                      <div className="text-[15px] font-semibold text-[color:var(--mf-text)]">
+                    <div className="flex flex-1 min-w-0 flex-col gap-1.5">
+                      <div className="text-[15px] font-semibold text-[color:var(--mf-text)] truncate">
                         {recipe.title}
                       </div>
                       <div className="flex flex-wrap items-center gap-2 text-[12px] text-[color:var(--mf-text-mute)]">
@@ -226,8 +231,9 @@ const RecipeSelector = () => {
                       )}
                     </div>
                     <span
-                      className="mf-caption justify-self-end"
+                      className="flex-shrink-0 text-[18px] leading-none"
                       style={{ color: 'var(--mf-text-mute)' }}
+                      aria-hidden
                     >
                       ›
                     </span>

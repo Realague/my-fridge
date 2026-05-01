@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Clock, Minus, Plus, Pencil, Trash2 } from 'lucide-react';
+import { Clock, Minus, Plus, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { MealDto } from '@/services/mealService';
 import { getRecipeCategory } from '@/types/recipeCategory';
@@ -35,7 +35,10 @@ export const MealRow = ({ meal, disabled, onIncrement, onDecrement, onRemove }: 
   };
 
   return (
-    <div className="mf-list-row">
+    <div
+      className="flex items-center gap-4 px-5 py-3.5 border-t"
+      style={{ borderColor: 'var(--mf-night-line)' }}
+    >
       <button
         type="button"
         onClick={openRecipe}
@@ -56,9 +59,9 @@ export const MealRow = ({ meal, disabled, onIncrement, onDecrement, onRemove }: 
       <button
         type="button"
         onClick={openRecipe}
-        className="flex flex-col gap-1 text-left"
+        className="flex flex-1 min-w-0 flex-col gap-1 text-left"
       >
-        <div className="text-[15px] font-semibold text-[color:var(--mf-text)]">
+        <div className="text-[15px] font-semibold text-[color:var(--mf-text)] truncate">
           {recipe?.title ?? '—'}
         </div>
         <div className="mt-1 flex flex-wrap items-center gap-2 text-[12px] text-[color:var(--mf-text-mute)]">
@@ -74,7 +77,7 @@ export const MealRow = ({ meal, disabled, onIncrement, onDecrement, onRemove }: 
         </div>
       </button>
 
-      <div className="flex items-center justify-self-center gap-2">
+      <div className="flex flex-shrink-0 items-center gap-2">
         <button
           type="button"
           onClick={onDecrement}
@@ -98,26 +101,15 @@ export const MealRow = ({ meal, disabled, onIncrement, onDecrement, onRemove }: 
         </button>
       </div>
 
-      <div className="flex items-center gap-1">
-        <button
-          type="button"
-          onClick={openRecipe}
-          disabled={disabled}
-          className="mf-icon-btn mf-icon-btn-edit"
-          aria-label={t('pages.meals.viewRecipe')}
-        >
-          <Pencil className="h-4 w-4" strokeWidth={1.8} />
-        </button>
-        <button
-          type="button"
-          onClick={onRemove}
-          disabled={disabled}
-          className="mf-icon-btn mf-icon-btn-danger"
-          aria-label={t('pages.meals.removeMeal')}
-        >
-          <Trash2 className="h-4 w-4" strokeWidth={1.8} />
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={onRemove}
+        disabled={disabled}
+        className="mf-icon-btn mf-icon-btn-danger flex-shrink-0"
+        aria-label={t('pages.meals.removeMeal')}
+      >
+        <Trash2 className="h-4 w-4" strokeWidth={1.8} />
+      </button>
     </div>
   );
 };

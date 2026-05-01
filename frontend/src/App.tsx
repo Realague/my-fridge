@@ -28,6 +28,7 @@ import EditRecipe from "./pages/EditRecipe";
 import ImportRecipe from "./pages/ImportRecipe";
 import Meals from "./pages/Meals";
 import RecipeSelector from "./pages/RecipeSelector";
+import MealsShoppingPreview from "./pages/MealsShoppingPreview";
 import Household from "./pages/Household";
 import HouseholdDetails from "./pages/HouseholdDetails";
 import JoinHousehold from "./pages/JoinHousehold";
@@ -75,6 +76,7 @@ function App() {
                     <Route path="/recipes/:id/edit" element={<EditRecipe />} />
                     <Route path="/meals" element={<Meals />} />
                     <Route path="/meals/add" element={<RecipeSelector />} />
+                    <Route path="/meals/shopping-preview" element={<MealsShoppingPreview />} />
                     <Route path="/household" element={<Household />} />
                     <Route path="/household/:id" element={<HouseholdDetails />} />
                     <Route path="/settings" element={<Settings />} />

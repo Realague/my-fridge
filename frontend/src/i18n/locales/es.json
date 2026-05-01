@@ -549,6 +549,24 @@
         "commitDoneDescription_other": "{{count}} artículos procesados."
       }
     },
+    "mealRemoval": {
+      "kicker": "Quitar una comida",
+      "title": "Quitar {{title}}",
+      "subtitle": "Este es el impacto en tu lista de compras.",
+      "subtitleEmpty": "Sin impacto en tu lista de compras.",
+      "toRemoveTitle": "Quitar de la lista",
+      "toRemoveHint": "Artículos usados solo por esta receta. Desmarca para conservarlos.",
+      "toReduceTitle": "Reducir cantidades",
+      "toReduceHint": "Artículos compartidos con otras recetas. La cantidad baja.",
+      "alreadyPurchasedTitle": "Ya comprado",
+      "alreadyPurchasedHint": "Artículos marcados como comprados. Marca para quitarlos igualmente.",
+      "alreadyPurchasedReason": "Marcado como comprado. Marca la casilla para quitarlo.",
+      "noImpactTitle": "Sin impacto",
+      "noImpactHint": "Artículos cubiertos por la nevera, no están en la lista.",
+      "sharedReason_one": "Esta receta usaba {{count}} {{unit}} · compartido con {{others}}",
+      "sharedReason_other": "Esta receta usaba {{count}} {{unit}} · compartido con {{others}}",
+      "confirm": "Quitar {{title}}"
+    },
     "recipes": {
       "title": "Recetas",
       "addRecipe": "Agregar receta",

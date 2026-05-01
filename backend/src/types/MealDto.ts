@@ -69,6 +69,52 @@ export interface CommitShoppingMergeDto {
   alreadyCoveredItems: ShoppingListItemDto[];
 }
 
+// ——— Meal removal impact ———
+
+export interface MealRemovalShoppingItemDto {
+  shoppingItemId: string;
+  itemId: string;
+  itemName: string;
+  itemHouseholdId: string | null;
+  itemImageUrl: string | null;
+  unit: string;
+  currentQuantity: number;     // qté actuelle dans la shopping list
+  reductionQuantity: number;   // ce qu'on enlève si on applique
+  remainingQuantity: number;   // ce qui reste après réduction
+  otherRecipes?: string[];     // pour toReduce : autres recettes qui en ont besoin
+  isCompleted?: boolean;       // pour alreadyPurchased
+}
+
+export interface MealRemovalNoImpactItemDto {
+  itemId: string;
+  itemName: string;
+  itemHouseholdId: string | null;
+  itemImageUrl: string | null;
+  needed: number;
+  unit: string;
+}
+
+export interface MealRemovalImpactDto {
+  mealId: string;
+  recipeTitle: string;
+  toRemove: MealRemovalShoppingItemDto[];
+  toReduce: MealRemovalShoppingItemDto[];
+  alreadyPurchased: MealRemovalShoppingItemDto[];
+  noImpact: MealRemovalNoImpactItemDto[];
+}
+
+export type MealRemovalActionType = 'remove' | 'reduce' | 'keep';
+
+export interface MealRemovalActionDto {
+  shoppingItemId: string;
+  action: MealRemovalActionType;
+  newQuantity?: number; // requis si action = 'reduce'
+}
+
+export interface ConfirmMealRemovalDto {
+  actions: MealRemovalActionDto[];
+}
+
 export interface MealsAvailabilityItemDto {
   itemId: string;
   itemName: string;

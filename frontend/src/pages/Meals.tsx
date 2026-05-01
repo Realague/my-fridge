@@ -7,7 +7,9 @@ import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import BottomNavigation from '@/components/BottomNavigation';
 import { MealRow } from '@/components/meals/MealRow';
 import { AvailabilitySummaryCard } from '@/components/meals/AvailabilitySummaryCard';
+import { MealRemovalImpactDialog } from '@/components/meals/MealRemovalImpactDialog';
 import { useMealStore } from '@/stores/mealStore';
+import type { MealRemovalImpactDto } from '@/services/mealService';
 
 const Meals = () => {
   const { t } = useTranslation();
@@ -26,9 +28,13 @@ const Meals = () => {
     fetchAvailability,
     updateServings,
     removeMeal,
+    getRemovalImpact,
+    confirmRemoval,
   } = useMealStore();
 
   const [preparingList] = useState(false);
+  const [removalImpact, setRemovalImpact] = useState<MealRemovalImpactDto | null>(null);
+  const [pendingRemovalId, setPendingRemovalId] = useState<string | null>(null);
 
   useEffect(() => {
     if (selectedHouseholdId) fetchMeals();
@@ -56,8 +62,38 @@ const Meals = () => {
 
   const handleRemove = async (id: string) => {
     try {
-      await removeMeal(id);
+      const impact = await getRemovalImpact(id);
+      const hasImpact =
+        impact.toRemove.length +
+          impact.toReduce.length +
+          impact.alreadyPurchased.length +
+          impact.noImpact.length >
+        0;
+      if (!hasImpact) {
+        await removeMeal(id);
+        toast({ title: t('pages.meals.toasts.mealRemoved') });
+        return;
+      }
+      setRemovalImpact(impact);
+      setPendingRemovalId(id);
+    } catch (error) {
+      toast({
+        title: t('messages.error.somethingWentWrong'),
+        description: error instanceof Error ? error.message : '',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleRemovalConfirm = async (
+    actions: { shoppingItemId: string; action: 'remove' | 'reduce' | 'keep'; newQuantity?: number }[]
+  ) => {
+    if (!pendingRemovalId) return;
+    try {
+      await confirmRemoval(pendingRemovalId, actions);
       toast({ title: t('pages.meals.toasts.mealRemoved') });
+      setRemovalImpact(null);
+      setPendingRemovalId(null);
     } catch (error) {
       toast({
         title: t('messages.error.somethingWentWrong'),
@@ -169,6 +205,19 @@ const Meals = () => {
           </section>
         ) : null}
       </div>
+
+      <MealRemovalImpactDialog
+        open={!!removalImpact}
+        onOpenChange={(open) => {
+          if (!open) {
+            setRemovalImpact(null);
+            setPendingRemovalId(null);
+          }
+        }}
+        impact={removalImpact}
+        saving={removing}
+        onConfirm={handleRemovalConfirm}
+      />
 
       <BottomNavigation currentPage="meals" />
     </div>

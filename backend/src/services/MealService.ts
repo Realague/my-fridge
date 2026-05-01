@@ -14,6 +14,10 @@ import {
   ShoppingPreviewItemDto,
   CommitShoppingItemInputDto,
   CommitShoppingMergeDto,
+  MealRemovalImpactDto,
+  MealRemovalShoppingItemDto,
+  MealRemovalNoImpactItemDto,
+  MealRemovalActionDto,
 } from '../types/MealDto';
 import { CreateShoppingItemDto } from '../types/ItemDto';
 import { Meal } from '../models/Meal';
@@ -348,6 +352,244 @@ export class MealService {
       recipes: it.recipes,
     }));
     return this.commitShopping(householdId, createdBy, items);
+  }
+
+  /**
+   * Compute the impact of removing a single meal from the household plan:
+   * which shopping list items would be removed, reduced, already purchased,
+   * or have no impact (covered by stock). The recipe's ingredients are
+   * compared to what other planned meals still need.
+   */
+  async getRemovalImpact(mealId: string, householdId: string): Promise<MealRemovalImpactDto> {
+    const meal = await this.mealRepository.findById(mealId, true);
+    if (!meal || meal.householdId !== householdId) {
+      throw new NotFoundError('Meal not found');
+    }
+    const recipe = await this.recipeRepository.findById(meal.recipeId, householdId);
+    if (!recipe || !recipe.servings || recipe.servings <= 0) {
+      // Recipe missing — nothing to recap, just allow removal.
+      return {
+        mealId,
+        recipeTitle: (meal as any).recipe?.title ?? '',
+        toRemove: [],
+        toReduce: [],
+        alreadyPurchased: [],
+        noImpact: [],
+      };
+    }
+
+    // Per-ingredient need for this meal, in baseUnit.
+    type Need = {
+      itemId: string;
+      itemName: string;
+      itemHouseholdId: string | null;
+      itemImageUrl: string | null;
+      category: string;
+      excludeFromShopping: boolean;
+      mealNeedBase: number;
+      otherNeedBase: number;
+      otherRecipes: string[];
+      baseUnit: string;
+    };
+    const needs = new Map<string, Need>();
+
+    for (const ingredient of recipe.ingredients || []) {
+      if (
+        ingredient.isFreeQuantity ||
+        ingredient.quantity === null ||
+        ingredient.quantity === undefined
+      ) {
+        continue;
+      }
+      const item = (ingredient as any).item as Item | undefined
+        ?? (await this.itemRepository.findById(ingredient.itemId));
+      if (!item) continue;
+      const needed = (Number(ingredient.quantity) / recipe.servings) * meal.servings;
+      const normalized = normalizeToBaseUnit(needed, ingredient.unit);
+      const key = `${ingredient.itemId}|${normalized.unit}`;
+      const existing = needs.get(key);
+      if (existing) {
+        existing.mealNeedBase += normalized.quantity;
+      } else {
+        needs.set(key, {
+          itemId: item.id,
+          itemName: item.name,
+          itemHouseholdId: (item as any).householdId ?? null,
+          itemImageUrl: (item as any).imageUrl ?? null,
+          category: item.category,
+          excludeFromShopping: !!item.excludeFromShopping,
+          mealNeedBase: normalized.quantity,
+          otherNeedBase: 0,
+          otherRecipes: [],
+          baseUnit: normalized.unit,
+        });
+      }
+    }
+
+    // Aggregate the same ingredients across the *other* meals (everything
+    // except the one being removed) so we know whether each is shared.
+    const otherMeals = (await this.mealRepository.findByHousehold(householdId)).filter(
+      (m) => m.id !== mealId
+    );
+    for (const other of otherMeals) {
+      const otherRecipe = await this.recipeRepository.findById(other.recipeId, householdId);
+      if (!otherRecipe || !otherRecipe.servings || otherRecipe.servings <= 0) continue;
+      for (const ingredient of otherRecipe.ingredients || []) {
+        if (
+          ingredient.isFreeQuantity ||
+          ingredient.quantity === null ||
+          ingredient.quantity === undefined
+        ) {
+          continue;
+        }
+        const otherNeeded =
+          (Number(ingredient.quantity) / otherRecipe.servings) * other.servings;
+        const normalized = normalizeToBaseUnit(otherNeeded, ingredient.unit);
+        const key = `${ingredient.itemId}|${normalized.unit}`;
+        const need = needs.get(key);
+        if (need) {
+          need.otherNeedBase += normalized.quantity;
+          if (!need.otherRecipes.includes(otherRecipe.title)) {
+            need.otherRecipes.push(otherRecipe.title);
+          }
+        }
+      }
+    }
+
+    const toRemove: MealRemovalShoppingItemDto[] = [];
+    const toReduce: MealRemovalShoppingItemDto[] = [];
+    const alreadyPurchased: MealRemovalShoppingItemDto[] = [];
+    const noImpact: MealRemovalNoImpactItemDto[] = [];
+
+    for (const need of needs.values()) {
+      if (need.excludeFromShopping) continue;
+      const displayed = this.toDisplayUnit(need.mealNeedBase, need.baseUnit, need.category);
+      const ratio = displayed.quantity / Math.max(need.mealNeedBase, 1e-9);
+      const mealNeedDisplay = roundQuantity(need.mealNeedBase * ratio);
+
+      const activeShop = await this.shoppingItemRepository.getDuplicateShoppingItem(
+        need.itemId,
+        householdId,
+        displayed.unit,
+        false
+      );
+      const completedShop = await this.shoppingItemRepository.getDuplicateShoppingItem(
+        need.itemId,
+        householdId,
+        displayed.unit,
+        true
+      );
+
+      // 1) Already purchased: report it as informational. The user can opt in
+      //    to remove it from the list.
+      if (completedShop) {
+        const completedQty = Number(completedShop.quantity);
+        alreadyPurchased.push({
+          shoppingItemId: completedShop.id,
+          itemId: need.itemId,
+          itemName: need.itemName,
+          itemHouseholdId: need.itemHouseholdId,
+          itemImageUrl: need.itemImageUrl,
+          unit: displayed.unit,
+          currentQuantity: completedQty,
+          reductionQuantity: Math.min(mealNeedDisplay, completedQty),
+          remainingQuantity: Math.max(0, completedQty - mealNeedDisplay),
+          isCompleted: true,
+        });
+      }
+
+      // 2) Active shopping item: removal or reduction depending on whether
+      //    other meals still need this ingredient.
+      if (activeShop) {
+        const currentQty = Number(activeShop.quantity);
+        const reduction = Math.min(mealNeedDisplay, currentQty);
+        const remaining = Math.max(0, currentQty - reduction);
+        const entry: MealRemovalShoppingItemDto = {
+          shoppingItemId: activeShop.id,
+          itemId: need.itemId,
+          itemName: need.itemName,
+          itemHouseholdId: need.itemHouseholdId,
+          itemImageUrl: need.itemImageUrl,
+          unit: displayed.unit,
+          currentQuantity: currentQty,
+          reductionQuantity: reduction,
+          remainingQuantity: remaining,
+        };
+        if (need.otherNeedBase > 0) {
+          entry.otherRecipes = need.otherRecipes;
+          toReduce.push(entry);
+        } else {
+          toRemove.push(entry);
+        }
+      } else if (!completedShop) {
+        // 3) Neither active nor completed shopping item: came from stock.
+        noImpact.push({
+          itemId: need.itemId,
+          itemName: need.itemName,
+          itemHouseholdId: need.itemHouseholdId,
+          itemImageUrl: need.itemImageUrl,
+          needed: mealNeedDisplay,
+          unit: displayed.unit,
+        });
+      }
+    }
+
+    const sortByName = (
+      a: { itemName: string },
+      b: { itemName: string }
+    ) => a.itemName.localeCompare(b.itemName);
+    toRemove.sort(sortByName);
+    toReduce.sort(sortByName);
+    alreadyPurchased.sort(sortByName);
+    noImpact.sort(sortByName);
+
+    return {
+      mealId,
+      recipeTitle: recipe.title,
+      toRemove,
+      toReduce,
+      alreadyPurchased,
+      noImpact,
+    };
+  }
+
+  /**
+   * Apply the user-confirmed removal: each action targets a ShoppingItem and
+   * either deletes it ('remove'), updates its quantity ('reduce') or leaves
+   * it untouched ('keep'). Then the meal itself is removed and positions
+   * are repacked.
+   */
+  async confirmRemoval(
+    mealId: string,
+    householdId: string,
+    actions: MealRemovalActionDto[]
+  ): Promise<void> {
+    const meal = await this.mealRepository.findById(mealId, false);
+    if (!meal || meal.householdId !== householdId) {
+      throw new NotFoundError('Meal not found');
+    }
+
+    for (const action of actions || []) {
+      if (!action?.shoppingItemId) continue;
+      const shoppingItem = await this.shoppingItemRepository.findById(action.shoppingItemId);
+      if (!shoppingItem || shoppingItem.householdId !== householdId) continue;
+
+      if (action.action === 'remove') {
+        await this.shoppingItemRepository.delete(action.shoppingItemId);
+      } else if (action.action === 'reduce') {
+        const newQty = Number(action.newQuantity);
+        if (!Number.isFinite(newQty) || newQty <= 0) {
+          await this.shoppingItemRepository.delete(action.shoppingItemId);
+        } else {
+          await this.shoppingItemRepository.update(action.shoppingItemId, {
+            quantity: roundQuantity(newQty),
+          });
+        }
+      }
+      // 'keep' = no-op
+    }
+
+    await this.mealRepository.deleteAndRepack(mealId, householdId);
   }
 
   // ——— Helpers ———

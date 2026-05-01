@@ -53,6 +53,18 @@ router.patch(
   mealController.updateMeal.bind(mealController)
 );
 
+// Compute the impact of removing a meal on the shopping list
+router.get(
+  '/households/:householdId/meals/:id/removal-impact',
+  mealController.getRemovalImpact.bind(mealController)
+);
+
+// Confirm meal removal with chosen shopping actions
+router.post(
+  '/households/:householdId/meals/:id/confirm-removal',
+  mealController.confirmRemoval.bind(mealController)
+);
+
 // Delete a meal (positions are repacked after deletion)
 router.delete(
   '/households/:householdId/meals/:id',

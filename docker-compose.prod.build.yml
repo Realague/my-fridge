@@ -63,18 +63,15 @@ services:
       - /app/node_modules
     command: npm run dev
 
-  # Frontend React App
+  # Frontend React App (built locally — static bundle served by nginx)
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_BACKEND_URL: ${VITE_BACKEND_URL:-https://my-fridge.multiplus.ovh}
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
     restart: unless-stopped
-    environment:
-      VITE_BACKEND_URL: https://my-fridge.multiplus.ovh
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    command: npm run dev
 
 volumes:
   pgdata:

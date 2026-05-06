@@ -1,6 +1,7 @@
 {
   "navigation": {
     "home": "Accueil",
+    "products": "Mes produits",
     "shopping": "Courses",
     "meals": "Repas",
     "recipes": "Recettes"
@@ -370,6 +371,34 @@
       "itemsTracked_other": "{{count}} articles suivis",
       "loyaltyCards": "Cartes de fidélité",
       "loyaltyCardsDesc": "Vos cartes en magasin"
+    },
+    "myProducts": {
+      "title": "Mes produits",
+      "subtitle_one": "{{count}} article dans le foyer",
+      "subtitle_other": "{{count}} articles dans le foyer",
+      "searchPlaceholder": "Rechercher par nom…",
+      "filterByCategory": "Filtrer par catégorie",
+      "filterByArea": "Espaces de stockage",
+      "areasAll": "Tous les espaces",
+      "areasSelected_one": "{{count}} espace",
+      "areasSelected_other": "{{count}} espaces",
+      "groupByArea": "Grouper par espace",
+      "areaItems_one": "{{count}} article",
+      "areaItems_other": "{{count}} articles",
+      "openedDaysAgo_one": "Ouvert il y a {{count}} jour",
+      "openedDaysAgo_other": "Ouvert il y a {{count}} jours",
+      "openedToday": "Ouvert aujourd'hui",
+      "deleteFailed": "Impossible de supprimer cet article",
+      "empty": {
+        "title": "Aucun article dans ton foyer",
+        "description": "Commence à ajouter des produits pour suivre ce que tu as en stock.",
+        "cta": "Ajouter un article"
+      },
+      "noResults": {
+        "title": "Aucun produit ne correspond à ta recherche",
+        "description": "Essaie un autre mot-clé ou réinitialise les filtres.",
+        "reset": "Réinitialiser les filtres"
+      }
     },
     "shopping": {
       "title": "Liste de Courses",

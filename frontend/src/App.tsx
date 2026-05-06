@@ -20,6 +20,7 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Shopping from "./pages/Shopping";
 import StorageArea from "./pages/StorageArea";
+import MyProducts from "./pages/MyProducts";
 
 import Recipes from "./pages/Recipes";
 import RecipeDetails from "./pages/RecipeDetails";
@@ -68,6 +69,7 @@ function App() {
                       <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/shopping" element={<Shopping />} />
                       <Route path="/storage/:id" element={<StorageArea />} />
+                      <Route path="/products" element={<MyProducts />} />
                       <Route path="/recipes" element={<Recipes />} />
                       <Route path="/recipes/:id" element={<RecipeDetails />} />
                       <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />

@@ -1,6 +1,7 @@
 {
   "navigation": {
     "home": "Inicio",
+    "products": "Productos",
     "shopping": "Compras",
     "meals": "Comidas",
     "recipes": "Recetas"
@@ -363,6 +364,34 @@
       "itemsTracked_other": "{{count}} artículos rastreados",
       "loyaltyCards": "Tarjetas de fidelidad",
       "loyaltyCardsDesc": "Tus tarjetas de tiendas"
+    },
+    "myProducts": {
+      "title": "Mis productos",
+      "subtitle_one": "{{count}} producto en tu hogar",
+      "subtitle_other": "{{count}} productos en tu hogar",
+      "searchPlaceholder": "Buscar por nombre…",
+      "filterByCategory": "Filtrar por categoría",
+      "filterByArea": "Áreas de almacenamiento",
+      "areasAll": "Todas las áreas",
+      "areasSelected_one": "{{count}} área",
+      "areasSelected_other": "{{count}} áreas",
+      "groupByArea": "Agrupar por área",
+      "areaItems_one": "{{count}} artículo",
+      "areaItems_other": "{{count}} artículos",
+      "openedDaysAgo_one": "Abierto hace {{count}} día",
+      "openedDaysAgo_other": "Abierto hace {{count}} días",
+      "openedToday": "Abierto hoy",
+      "deleteFailed": "No se pudo eliminar este artículo",
+      "empty": {
+        "title": "Tu hogar está vacío",
+        "description": "Empieza a agregar productos para llevar el control de lo que tienes.",
+        "cta": "Agregar un artículo"
+      },
+      "noResults": {
+        "title": "Ningún producto coincide con tu búsqueda",
+        "description": "Prueba con otra palabra clave o restablece los filtros.",
+        "reset": "Restablecer filtros"
+      }
     },
     "shopping": {
       "title": "Lista de Compras",

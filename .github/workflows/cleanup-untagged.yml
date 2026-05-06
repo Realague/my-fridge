@@ -1,0 +1,41 @@
+name: Cleanup untagged GHCR images
+
+on:
+  schedule:
+    # Tous les lundis à 04:00 UTC
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Lister sans supprimer'
+        type: boolean
+        default: true
+      cut-off:
+        description: 'Age minimum (ex: 7d, 1mo)'
+        type: string
+        default: '7d'
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [backend, frontend]
+    steps:
+      - name: Delete untagged ${{ matrix.image }} manifests
+        uses: snok/container-retention-policy@v3.0.0
+        with:
+          account: user
+          token: ${{ secrets.GHCR_CLEANUP_TOKEN }}
+          image-names: ${{ github.event.repository.name }}/${{ matrix.image }}
+          tag-selection: untagged
+          cut-off: ${{ inputs.cut-off || '7d' }}
+          dry-run: ${{ inputs.dry-run || false }}
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Cleanup untagged – ${{ matrix.image }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cut-off :** \`${{ inputs.cut-off || '7d' }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dry-run :** \`${{ inputs.dry-run || false }}\`" >> $GITHUB_STEP_SUMMARY

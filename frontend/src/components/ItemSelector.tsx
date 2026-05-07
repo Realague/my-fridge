@@ -260,6 +260,25 @@ export const ItemSelector = ({
     };
   }, [isOpen]);
 
+  /**
+   * react-remove-scroll (used by Radix Dialog) registers capture-phase listeners on
+   * the document that call preventDefault() on wheel events to block body scrolling.
+   * Since capture-phase document listeners fire before any element-level handler, the
+   * only reliable fix is to intercept the event ourselves with { passive: false } and
+   * manually drive scrollTop, bypassing the lock entirely.
+   */
+  useEffect(() => {
+    const el = dropdownRef.current;
+    if (!el || !isOpen) return;
+    const onWheel = (e: WheelEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      el.scrollTop += e.deltaY;
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, [isOpen]);
+
   const handleItemSelect = (item: Item) => {
     onItemSelect(item);
     setQuery('');

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
+import { toast } from 'sonner';
 import {
   ArrowDown,
   ArrowUp,
@@ -9,6 +10,7 @@ import {
   ChefHat,
   ChevronDown,
   Filter,
+  Plus,
   Search,
   X,
 } from 'lucide-react';
@@ -17,6 +19,14 @@ import BottomNavigation from '@/components/BottomNavigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,12 +45,15 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
+import AddStorageAreaDialog from '@/components/AddStorageAreaDialog';
+import { AddStoredItemDialog } from '@/components/AddStoredItemDialog';
 import { MyProductsItemCard } from '@/components/MyProductsItemCard';
 import { useAuthStore } from '@/stores/authStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useMyProductsPreferences } from '@/hooks/useMyProductsPreferences';
+import { useStorageAreaSuggestion } from '@/hooks/useStorageAreaSuggestion';
 import { itemService, type Item } from '@/services/itemService';
 import {
   buildStorageAreaDisplayRows,
@@ -113,6 +126,40 @@ const MyProducts = () => {
     toggleAreaCollapsed,
     isAreaCollapsed,
   } = useMyProductsPreferences(currentUser?.id);
+
+  const { memory: suggestionMemory, recordUsage: recordAreaUsage } =
+    useStorageAreaSuggestion(currentUser?.id);
+
+  const [addItemOpen, setAddItemOpen] = useState(false);
+  const [noAreaPromptOpen, setNoAreaPromptOpen] = useState(false);
+  const [addAreaOpen, setAddAreaOpen] = useState(false);
+
+  const handleAddClick = () => {
+    if (sortedAreas.length === 0) {
+      setNoAreaPromptOpen(true);
+      return;
+    }
+    setAddItemOpen(true);
+  };
+
+  const handleItemAdded = ({
+    areaId,
+    areaName,
+    category,
+  }: {
+    storedItemId: string;
+    areaId: string;
+    areaName: string;
+    category: string | null;
+  }) => {
+    recordAreaUsage(areaId, category);
+    toast.success(t('addStoredItemDialog.toastSuccess', { area: areaName }), {
+      action: {
+        label: t('addStoredItemDialog.toastView'),
+        onClick: () => navigate(`/storage/${areaId}`),
+      },
+    });
+  };
 
   useEffect(() => {
     if (!selectedHouseholdId) return;
@@ -353,16 +400,27 @@ const MyProducts = () => {
     <div className="min-h-screen bg-background pb-20">
       <div className="bg-card/80 backdrop-blur-sm border-b border-border/20 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <Boxes className="h-6 w-6 text-primary shrink-0" aria-hidden />
-            <div className="min-w-0">
-              <h1 className="text-xl font-bold text-foreground truncate">
-                {t('pages.myProducts.title')}
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                {t('pages.myProducts.subtitle', { count: storedItems.length })}
-              </p>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <Boxes className="h-6 w-6 text-primary shrink-0" aria-hidden />
+              <div className="min-w-0">
+                <h1 className="text-xl font-bold text-foreground truncate">
+                  {t('pages.myProducts.title')}
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  {t('pages.myProducts.subtitle', { count: storedItems.length })}
+                </p>
+              </div>
             </div>
+            <Button
+              onClick={handleAddClick}
+              variant="green"
+              className="hidden sm:inline-flex shrink-0 touch-friendly"
+              aria-label={t('addStoredItemDialog.openButton')}
+            >
+              <Plus className="h-4 w-4" />
+              <span>{t('addStoredItemDialog.openButton')}</span>
+            </Button>
           </div>
         </div>
       </div>
@@ -543,7 +601,7 @@ const MyProducts = () => {
               <p className="text-muted-foreground mb-4">
                 {t('pages.myProducts.empty.description')}
               </p>
-              <Button onClick={() => navigate('/dashboard')} variant="green">
+              <Button onClick={handleAddClick} variant="green">
                 {t('pages.myProducts.empty.cta')}
               </Button>
             </CardContent>
@@ -619,6 +677,55 @@ const MyProducts = () => {
           </div>
         )}
       </div>
+
+      <Button
+        onClick={handleAddClick}
+        variant="green"
+        size="icon"
+        aria-label={t('addStoredItemDialog.openButton')}
+        className="sm:hidden fixed bottom-20 right-4 h-14 w-14 rounded-full shadow-xl z-40 [&_svg]:size-6"
+      >
+        <Plus />
+      </Button>
+
+      {selectedHouseholdId && (
+        <AddStoredItemDialog
+          open={addItemOpen}
+          onOpenChange={setAddItemOpen}
+          householdId={selectedHouseholdId}
+          storageAreas={sortedAreas}
+          suggestionMemory={suggestionMemory}
+          onItemAdded={handleItemAdded}
+        />
+      )}
+
+      <Dialog open={noAreaPromptOpen} onOpenChange={setNoAreaPromptOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('addStoredItemDialog.noAreaTitle')}</DialogTitle>
+            <DialogDescription>
+              {t('addStoredItemDialog.noAreaDescription')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setNoAreaPromptOpen(false)}>
+              {t('buttons.cancel')}
+            </Button>
+            <Button
+              variant="green"
+              onClick={() => {
+                setNoAreaPromptOpen(false);
+                setAddAreaOpen(true);
+              }}
+            >
+              <Plus className="h-4 w-4" />
+              {t('storageArea.createArea')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <AddStorageAreaDialog open={addAreaOpen} onOpenChange={setAddAreaOpen} />
 
       <BottomNavigation currentPage="products" />
     </div>

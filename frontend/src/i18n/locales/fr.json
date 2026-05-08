@@ -79,7 +79,7 @@
     "addTo": "Ajouter à {{name}}",
     "added": "Ajouté le",
     "addedDetails": "Ajouté {{quantity}} {{unit}} de {{item}} à {{area}}",
-    "locationPlaceholder": "ex., Frigo, Placard",
+    "locationPlaceholder": "ex., Tiroir du bas, Étagère du haut, Porte",
     "kitchenFridge": "Réfrigérateur de cuisine",
     "coldStorage": "Garde-manger de frigo",
     "chestFreezer": "Congélateur de pecho",
@@ -126,6 +126,20 @@
       "kitchen_cupboard": "Placard de cuisine",
       "other": "Autre"
     }
+  },
+  "addStoredItemDialog": {
+    "title": "Ajouter un article",
+    "description": "Choisis l'article puis l'espace où le ranger.",
+    "openButton": "Ajouter un article",
+    "storageAreaLabel": "Espace de stockage",
+    "storageAreaPlaceholder": "Sélectionne un espace",
+    "suggestion": "Suggéré",
+    "singleAreaHint": "Sera ajouté à {{name}}",
+    "areaDeleted": "Cet espace n'existe plus. Choisis un autre espace.",
+    "toastSuccess": "Article ajouté à {{area}}",
+    "toastView": "Voir",
+    "noAreaTitle": "Aucun espace de stockage",
+    "noAreaDescription": "Crée d'abord un espace pour y ranger tes articles."
   },
   "storageAreaManager": {
     "title": "Zones de stockage",

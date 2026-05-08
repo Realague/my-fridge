@@ -77,7 +77,7 @@
     "addTo": "Agregar a {{name}}",
     "added": "Agregado",
     "addedDetails": "Agregado {{quantity}} {{unit}} de {{item}} a {{area}}",
-    "locationPlaceholder": "ej., Almacén principal, Alacena",
+    "locationPlaceholder": "ej., Cajón inferior, Estante superior, Puerta",
     "kitchenFridge": "Refrigerador de cocina",
     "coldStorage": "Almacén de frío",
     "chestFreezer": "Congelador de pecho",
@@ -124,6 +124,20 @@
       "kitchen_cupboard": "Alacena de cocina",
       "other": "Otro"
     }
+  },
+  "addStoredItemDialog": {
+    "title": "Añadir un artículo",
+    "description": "Elige el artículo y el espacio donde guardarlo.",
+    "openButton": "Añadir un artículo",
+    "storageAreaLabel": "Espacio de almacenamiento",
+    "storageAreaPlaceholder": "Selecciona un espacio",
+    "suggestion": "Sugerido",
+    "singleAreaHint": "Se añadirá a {{name}}",
+    "areaDeleted": "Este espacio ya no existe. Elige otro espacio.",
+    "toastSuccess": "Artículo añadido a {{area}}",
+    "toastView": "Ver",
+    "noAreaTitle": "Sin espacios de almacenamiento",
+    "noAreaDescription": "Crea primero un espacio para poder guardar tus artículos."
   },
   "storageAreaManager": {
     "title": "Áreas de almacenamiento",

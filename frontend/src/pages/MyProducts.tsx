@@ -600,7 +600,7 @@ const MyProducts = () => {
               <p className="text-muted-foreground mb-4">
                 {t('pages.myProducts.empty.description')}
               </p>
-              <Button onClick={() => navigate('/dashboard')} variant="green">
+              <Button onClick={handleAddClick} variant="green">
                 {t('pages.myProducts.empty.cta')}
               </Button>
             </CardContent>

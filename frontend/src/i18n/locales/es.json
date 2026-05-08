@@ -77,7 +77,7 @@
     "addTo": "Agregar a {{name}}",
     "added": "Agregado",
     "addedDetails": "Agregado {{quantity}} {{unit}} de {{item}} a {{area}}",
-    "locationPlaceholder": "ej., Almacén principal, Alacena",
+    "locationPlaceholder": "ej., Cajón inferior, Estante superior, Puerta",
     "kitchenFridge": "Refrigerador de cocina",
     "coldStorage": "Almacén de frío",
     "chestFreezer": "Congelador de pecho",

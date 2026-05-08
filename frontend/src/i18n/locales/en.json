@@ -80,7 +80,7 @@
     "addTo": "Add to {{name}}",
     "added": "Added",
     "addedDetails": "Added {{quantity}} {{unit}} of {{item}} to {{area}}",
-    "locationPlaceholder": "e.g., Main shelf, Cupboard",
+    "locationPlaceholder": "e.g., Bottom drawer, Top shelf, Door",
     "mainFridge": "Refrigerator",
     "mainFreezer": "Freezer",
     "mainPantry": "Pantry",

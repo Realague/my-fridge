@@ -79,7 +79,7 @@
     "addTo": "Ajouter à {{name}}",
     "added": "Ajouté le",
     "addedDetails": "Ajouté {{quantity}} {{unit}} de {{item}} à {{area}}",
-    "locationPlaceholder": "ex., Frigo, Placard",
+    "locationPlaceholder": "ex., Tiroir du bas, Étagère du haut, Porte",
     "kitchenFridge": "Réfrigérateur de cuisine",
     "coldStorage": "Garde-manger de frigo",
     "chestFreezer": "Congélateur de pecho",

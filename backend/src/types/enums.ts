@@ -35,51 +35,67 @@ export enum Unit {
   // Weight
   GRAM = 'g',
   KILOGRAM = 'kg',
-  
+
   // Volume
   MILLILITER = 'ml',
   CENTILITER = 'cl',
   LITER = 'l',
-  CUP = 'cup',
   TABLESPOON = 'tbsp',
   TEASPOON = 'tsp',
-  
+
   // Pieces
   PIECE = 'piece',
-  PACK = 'pack',
-  BUNCH = 'bunch',
-  DOZEN = 'dozen',
-  
-  // Meal
+
+  // Portion / cooked dish — only valid on catalog `items` in category `meal`.
   SERVING = 'serving',
-  
-  // Other
-  OTHER = 'other'
+
+  // Free-quantity (gestural) units — recipe-only, no numeric quantity
+  PINCH = 'pinch',
+  DRIZZLE = 'drizzle',
+  KNOB = 'knob',
 }
 
 export const UNITS = Object.values(Unit);
 
-// Storage units (excluding cooking measurements like cup, tbsp, tsp)
-export const STORAGE_UNITS = [
+// Free-quantity units (gestural, recipe-only, no numeric value)
+export const FREE_QUANTITY_UNITS: Unit[] = [
+  Unit.PINCH,
+  Unit.DRIZZLE,
+  Unit.KNOB,
+];
+
+// No globally hidden base units. `serving` is not in catalog storage (see
+// isCatalogStorageUnitForCategory) except for `ItemCategory.MEAL`.
+export const HIDDEN_STORAGE_UNITS: Unit[] = [];
+
+// Base units for catalog `items` (defaultUnit / availableUnits) — no `serving`
+// (use isCatalogStorageUnitForCategory; meal may add serving).
+export const CATALOG_BASE_STORAGE_UNITS: Unit[] = [
   Unit.GRAM,
   Unit.KILOGRAM,
   Unit.MILLILITER,
   Unit.CENTILITER,
   Unit.LITER,
   Unit.PIECE,
-  Unit.PACK,
-  Unit.BUNCH,
-  Unit.DOZEN,
-  Unit.SERVING,
-  Unit.OTHER,
 ];
 
-// Recipe units (includes all units including cooking measurements)
+// Alias kept for seed scripts & clarity.
+export const STORAGE_UNITS: Unit[] = CATALOG_BASE_STORAGE_UNITS;
+
+/** `serving` is allowed on inventory/shopping lines (e.g. legacy or meal-prepared). */
+export const LINE_STORAGE_UNITS: Unit[] = [...CATALOG_BASE_STORAGE_UNITS, Unit.SERVING];
+
+export function isCatalogStorageUnitForCategory(unit: Unit, category: ItemCategory | string): boolean {
+  if (CATALOG_BASE_STORAGE_UNITS.includes(unit)) return true;
+  return unit === Unit.SERVING && category === ItemCategory.MEAL;
+}
+
+// Recipe units — everything a recipe ingredient can use.
 export const RECIPE_UNITS = [
-  ...STORAGE_UNITS,
-  Unit.CUP,
+  ...LINE_STORAGE_UNITS,
   Unit.TABLESPOON,
   Unit.TEASPOON,
+  ...FREE_QUANTITY_UNITS,
 ];
 
 export enum ShoppingItemStatus {

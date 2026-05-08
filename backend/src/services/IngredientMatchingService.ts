@@ -7,6 +7,12 @@ export interface ParsedIngredient {
   quantity: number | null;
   unit: string | null;
   itemName: string;
+  /**
+   * True when the ingredient has no precise quantity — e.g. "pincée de sel",
+   * "filet d'huile", or a bare "sel, poivre" without any number. Free-quantity
+   * ingredients are skipped by stock comparisons and shopping list generation.
+   */
+  isFreeQuantity: boolean;
 }
 
 export interface IngredientMatch {
@@ -25,7 +31,11 @@ export interface MatchedIngredient {
   bestMatch: IngredientMatch | null;
 }
 
-// French unit mappings
+// Mapping of common French / English tokens to canonical Unit enum values.
+// Removed units (cup, dozen, bunch, other) are kept as mapping entries but
+// resolved to concrete replacements ahead of time (tasse/verre/bol → ml
+// with a multiplier in parseIngredient, bouquet → piece, douzaine → piece
+// with quantity × 12).
 const FRENCH_UNIT_MAP: { [key: string]: string } = {
   // Weight
   'g': 'g',
@@ -47,9 +57,7 @@ const FRENCH_UNIT_MAP: { [key: string]: string } = {
   'l': 'l',
   'litre': 'l',
   'litres': 'l',
-  // Cooking
-  'tasse': 'cup',
-  'tasses': 'cup',
+  // Cooking (remaining after 'cup' removal)
   'cs': 'tbsp',
   'c.s': 'tbsp',
   'c.s.': 'tbsp',
@@ -65,23 +73,19 @@ const FRENCH_UNIT_MAP: { [key: string]: string } = {
   // Pieces
   'pièce': 'piece',
   'pièces': 'piece',
-  'paquet': 'pack',
-  'paquets': 'pack',
-  'sachet': 'pack',
-  'sachets': 'pack',
-  'botte': 'bunch',
-  'bottes': 'bunch',
-  'bouquet': 'bunch',
-  'bouquets': 'bunch',
-  'douzaine': 'dozen',
-  'douzaines': 'dozen',
-  'portion': 'serving',
-  'portions': 'serving',
-  // Common informal units
-  'verre': 'cup',
-  'verres': 'cup',
-  'bol': 'cup',
-  'bols': 'cup',
+  // 'pack' was removed from the unit system; containers map to 'piece'.
+  'paquet': 'piece',
+  'paquets': 'piece',
+  'sachet': 'piece',
+  'sachets': 'piece',
+  // "bouquet" and "botte" are not real storage units anymore — map to 'piece'
+  // so recipe parsing gives a usable unit.
+  'botte': 'piece',
+  'bottes': 'piece',
+  'bouquet': 'piece',
+  'bouquets': 'piece',
+  // "douzaine" is handled specially via DOZEN_TOKENS (quantity × 12 → piece).
+  // Common informal measures — mapped to ml with a multiplier (see CUP_TOKENS).
   'gousse': 'piece',
   'gousses': 'piece',
   'tranche': 'piece',
@@ -92,18 +96,52 @@ const FRENCH_UNIT_MAP: { [key: string]: string } = {
   'branches': 'piece',
   'brin': 'piece',
   'brins': 'piece',
-  'filet': 'piece',
-  'filets': 'piece',
-  'boîte': 'pack',
-  'boîtes': 'pack',
-  'pot': 'pack',
-  'pots': 'pack',
-  'noix': 'piece',
-  'pincée': 'other',
-  'pincées': 'other',
-  'poignée': 'other',
-  'poignées': 'other',
+  'boîte': 'piece',
+  'boîtes': 'piece',
+  'pot': 'piece',
+  'pots': 'piece',
+  // Free-quantity (gestural) units — no numeric quantity.
+  'pincée': 'pinch',
+  'pincées': 'pinch',
+  'pinch': 'pinch',
+  'filet': 'drizzle',
+  'filets': 'drizzle',
+  'drizzle': 'drizzle',
+  'splash': 'drizzle',
+  'noix': 'knob',   // only when followed by "beurre"/"butter" — see buildKnobRegex
+  'poignée': 'pinch',
+  'poignées': 'pinch',
 };
+
+// Tokens that trigger a volume conversion (to ml, multiplier 240 = 1 US cup).
+const CUP_TOKENS = new Set(['tasse', 'tasses', 'verre', 'verres', 'bol', 'bols', 'cup', 'cups']);
+// Tokens that trigger a dozen conversion (quantity × 12, unit becomes piece).
+const DOZEN_TOKENS = new Set(['douzaine', 'douzaines', 'dozen']);
+
+// Free-quantity canonical units. Their presence forces isFreeQuantity = true.
+const FREE_QUANTITY_UNIT_VALUES = new Set(['pinch', 'drizzle', 'knob']);
+
+// Tokens that, when seen alone, strongly suggest a free-quantity ingredient
+// even if no quantity number is found. Values are the canonical Unit the
+// ingredient should be tagged with.
+const FREE_QUANTITY_KEYWORD_PATTERNS: Array<{ regex: RegExp; unit: string }> = [
+  // "pincée(s) de", "pinch of", "a pinch"
+  { regex: /\b(une\s+)?pinc[ée]es?\b|\bpinch(?:\s+of)?\b/iu, unit: 'pinch' },
+  // "filet de", "drizzle of", "splash of"
+  { regex: /\b(un\s+)?filets?\b|\bdrizzle(?:\s+of)?\b|\bsplash(?:\s+of)?\b/iu, unit: 'drizzle' },
+  // "noix de beurre", "knob of butter", "dab of butter"
+  { regex: /\b(une\s+)?noix\s+de\s+beurre\b|\bknob\s+of\s+butter\b|\bdab\s+of\s+butter\b/iu, unit: 'knob' },
+];
+
+// When no quantity and no unit is detected, try to infer a gestural unit from
+// the ingredient itself (salt/pepper → pinch, oil/vinegar → drizzle, butter → knob).
+function inferFreeQuantityUnit(itemName: string): string {
+  const lc = itemName.toLowerCase();
+  if (/\b(sel|poivre|piment|salt|pepper|chili)\b/u.test(lc)) return 'pinch';
+  if (/\b(huile|vinaigre|oil|vinegar)\b/u.test(lc)) return 'drizzle';
+  if (/\b(beurre|butter)\b/u.test(lc)) return 'knob';
+  return 'piece';
+}
 
 // Some French tokens can be both units and ingredient names.
 // Keep them as ingredient names when they appear alone after quantity (e.g. "3 noix").
@@ -129,45 +167,58 @@ function escapeRegExp(value: string): string {
 
 export class IngredientMatchingService {
   /**
-   * Parse a raw ingredient string to extract quantity, unit and item name
+   * Parse a raw ingredient string to extract quantity, unit, item name, and
+   * a free-quantity flag.
+   *
+   * Detection priority (conservative by design):
+   *   1. Explicit numeric quantity present → quantity preserved, unit taken from
+   *      FRENCH_UNIT_MAP (tasse/verre/bol → ml×240; douzaine → piece×12). When
+   *      the matched unit is gestural ("3 pincées de sel"), `isFreeQuantity = true`
+   *      but the count is kept as-is — only stock comparisons are skipped.
+   *   2. No numeric quantity but a free-quantity keyword (pincée, filet, noix de
+   *      beurre, pinch, drizzle, knob of butter…) is present → `isFreeQuantity = true`,
+   *      `quantity = null`, unit from the keyword.
+   *   3. No quantity at all (ex: "sel, poivre") → `isFreeQuantity = true`,
+   *      `quantity = null`, unit inferred from the ingredient name
+   *      (salt/pepper → pinch, oil/vinegar → drizzle, butter → knob, else piece).
    */
   parseIngredient(text: string): ParsedIngredient {
     const originalText = text.trim();
     let workingText = originalText.toLowerCase();
-    
-    // Extract quantity (handles fractions, decimals, ranges)
+
+    // ------------------------------------------------------------------
+    // Step 1: extract a leading numeric quantity (if any).
+    // Handles fractions, decimals, ranges, simple integers.
+    // ------------------------------------------------------------------
     let quantity: number | null = null;
-    
-    // Match patterns like "1/2", "1,5", "1.5", "1-2", "200", "1 à 2"
+
     const quantityPatterns = [
       /^(\d+)\s*[àa-]\s*(\d+)/, // Range: "1 à 2", "1-2"
       /^(\d+)[,.](\d+)/, // Decimal: "1,5", "1.5"
       /^(\d+)\s*\/\s*(\d+)/, // Fraction: "1/2"
       /^(\d+)/, // Simple number: "200"
     ];
-    
+
     for (const pattern of quantityPatterns) {
       const match = workingText.match(pattern);
       if (match) {
         if (pattern.source.includes('[àa-]') && match[1] && match[2]) {
-          // Range - take average
           quantity = (parseInt(match[1], 10) + parseInt(match[2], 10)) / 2;
         } else if (pattern.source.includes('[,.]') && match[1] && match[2]) {
-          // Decimal
           quantity = parseFloat(match[1] + '.' + match[2]);
         } else if (pattern.source.includes('/') && match[1] && match[2]) {
-          // Fraction
           quantity = parseInt(match[1], 10) / parseInt(match[2], 10);
         } else if (match[1]) {
-          // Simple number
           quantity = parseInt(match[1], 10);
         }
         workingText = workingText.substring(match[0].length).trim();
         break;
       }
     }
-    
-    // Extract unit
+
+    // ------------------------------------------------------------------
+    // Step 2: extract a unit token at the current cursor position.
+    // ------------------------------------------------------------------
     let unit: string | null = null;
     const escapedUnitKeys = Object.keys(FRENCH_UNIT_MAP)
       .sort((a, b) => b.length - a.length)
@@ -178,8 +229,37 @@ export class IngredientMatchingService {
       `^(${escapedUnitKeys.join('|')})(?=$|[^\\p{L}\\p{N}_])`,
       'iu'
     );
+
+    // Also match CUP_TOKENS / DOZEN_TOKENS explicitly (they're not in
+    // FRENCH_UNIT_MAP, which now only carries canonical Unit enum values).
+    const cupRegex = new RegExp(
+      `^(${Array.from(CUP_TOKENS).map(escapeRegExp).join('|')})(?=$|[^\\p{L}\\p{N}_])`,
+      'iu'
+    );
+    const dozenRegex = new RegExp(
+      `^(${Array.from(DOZEN_TOKENS).map(escapeRegExp).join('|')})(?=$|[^\\p{L}\\p{N}_])`,
+      'iu'
+    );
+
+    const cupMatch = workingText.match(cupRegex);
+    const dozenMatch = workingText.match(dozenRegex);
     const unitMatch = workingText.match(unitPattern);
-    if (unitMatch && unitMatch[1]) {
+
+    if (cupMatch && cupMatch[1]) {
+      // tasse/verre/bol/cup → ml, with *240 multiplier on any explicit quantity.
+      unit = 'ml';
+      if (quantity !== null) {
+        quantity = quantity * 240;
+      }
+      workingText = workingText.substring(cupMatch[0].length).trim();
+    } else if (dozenMatch && dozenMatch[1]) {
+      // douzaine/dozen → piece, with *12 multiplier on any explicit quantity.
+      unit = 'piece';
+      if (quantity !== null) {
+        quantity = quantity * 12;
+      }
+      workingText = workingText.substring(dozenMatch[0].length).trim();
+    } else if (unitMatch && unitMatch[1]) {
       const normalizedMatch = unitMatch[1].toLowerCase();
       const mappedUnit = FRENCH_UNIT_MAP[normalizedMatch];
       if (mappedUnit) {
@@ -187,34 +267,79 @@ export class IngredientMatchingService {
         const shouldKeepAsIngredient =
           AMBIGUOUS_FRENCH_UNITS.has(normalizedMatch) && remainingText.length === 0;
 
-        if (!shouldKeepAsIngredient) {
+        // Special case for "noix": only treat as a unit (knob) if followed by
+        // "beurre" / "butter". Otherwise keep "noix" as an ingredient name.
+        if (normalizedMatch === 'noix') {
+          if (/^(de\s+)?(beurre|butter)\b/iu.test(remainingText)) {
+            unit = 'knob';
+            workingText = remainingText;
+          }
+          // else: do not consume the token, leave it for ingredient matching.
+        } else if (!shouldKeepAsIngredient) {
           unit = mappedUnit;
           workingText = remainingText;
         }
       }
     }
-    
-    // Remove stop words and clean up
+
+    // ------------------------------------------------------------------
+    // Step 3: determine isFreeQuantity.
+    // ------------------------------------------------------------------
+    let isFreeQuantity = false;
+
+    if (unit && FREE_QUANTITY_UNIT_VALUES.has(unit)) {
+      // A gestural unit was detected (pinch/drizzle/knob) — always free quantity.
+      // Preserve any explicit count ("3 pincées de sel" → quantity=3): the
+      // free-quantity flag means stock/shopping comparisons are skipped, not
+      // that an author-supplied number must be discarded.
+      isFreeQuantity = true;
+    } else if (quantity === null) {
+      // No numeric quantity was parsed: look for free-quantity keywords anywhere
+      // in the original text, then fall back to inference from the ingredient.
+      let keywordHit: string | null = null;
+      for (const { regex, unit: kwUnit } of FREE_QUANTITY_KEYWORD_PATTERNS) {
+        if (regex.test(originalText.toLowerCase())) {
+          keywordHit = kwUnit;
+          break;
+        }
+      }
+      if (keywordHit) {
+        unit = keywordHit;
+        isFreeQuantity = true;
+      } else if (!unit) {
+        // Truly no quantity and no unit — conservative default: free quantity
+        // with a unit inferred from the ingredient context.
+        isFreeQuantity = true;
+        unit = inferFreeQuantityUnit(workingText);
+      }
+    }
+
+    // ------------------------------------------------------------------
+    // Step 4: clean the remaining text into an item name.
+    // ------------------------------------------------------------------
     let itemName = workingText;
     for (const word of FRENCH_STOP_WORDS) {
       const regex = new RegExp(`\\b${word}\\b`, 'gi');
       itemName = itemName.replace(regex, ' ');
     }
-    
-    // Clean up multiple spaces and trim
+
+    // Strip trailing free-quantity keywords so the ingredient name stays clean.
+    for (const { regex } of FREE_QUANTITY_KEYWORD_PATTERNS) {
+      itemName = itemName.replace(regex, ' ');
+    }
+
     itemName = itemName.replace(/\s+/g, ' ').trim();
-    
-    // Remove leading/trailing punctuation
     itemName = itemName.replace(/^[,.\s-]+|[,.\s-]+$/g, '');
-    
+
     return {
       originalText,
       quantity,
       unit,
       itemName,
+      isFreeQuantity,
     };
   }
-  
+
   /**
    * Calculate string similarity using Levenshtein distance
    */
@@ -372,4 +497,3 @@ export class IngredientMatchingService {
     return results;
   }
 }
-

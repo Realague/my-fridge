@@ -29,6 +29,7 @@ import { StorageAreaType } from '@/types/enums';
 import { CategoryIcon } from '@/utils/categoryIcons';
 import { getSuggestedStorageAreaId } from '@/utils/categoryStorageMapping';
 import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
+import { formatQuantityWithUnit } from '@/utils/unitSystem';
 
 export interface ShoppingItemRowProps {
   shoppingItem: ShoppingItem;
@@ -219,8 +220,10 @@ export const ShoppingItemRow = ({
             ) : (
               <div className="flex items-center gap-2">
                 <span>
-                  {shoppingItem.quantity}{' '}
-                  {shoppingItem.unit !== 'piece' ? shoppingItem.unit : ''}
+                  {formatQuantityWithUnit(shoppingItem.quantity, shoppingItem.unit, t, {
+                    item: itemData,
+                    itemName,
+                  })}
                 </span>
                 {shoppingItem.creator && (
                   <>

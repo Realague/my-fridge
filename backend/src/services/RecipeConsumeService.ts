@@ -113,6 +113,13 @@ export class RecipeConsumeService {
       const item = ingredient.item;
       if (!item) continue;
 
+      // Free-quantity ingredients have no measurable amount — skip stock
+      // comparison entirely. They will not block recipe consumption and will
+      // not generate shopping list entries.
+      if (ingredient.isFreeQuantity || ingredient.quantity === null || ingredient.quantity === undefined) {
+        continue;
+      }
+
       const scaledQuantity = Number(ingredient.quantity) * scale;
       const originalUnit = ingredient.unit;
 

@@ -63,6 +63,8 @@
     "goToDashboard": "Ir al tablero",
     "expired": "Vencido",
     "expiresIn": "Vence en {{days}}d",
+    "expiredSince_one": "Vencido hace {{count}}d",
+    "expiredSince_other": "Vencido hace {{count}}d",
     "fresh": "Fresco ({{days}}d)",
     "quantity": "Cantidad",
     "location": "Ubicación",
@@ -239,6 +241,16 @@
     "noNotifications": "Sin notificaciones",
     "allCaughtUp": "¡Estás al día! Revisa más tarde para actualizaciones."
   },
+  "expirationNotifications": {
+    "titleInitial_one": "{{name}} caduca en {{count}} día",
+    "titleInitial_other": "{{name}} caduca en {{count}} días",
+    "titleReminder": "{{name}} caduca mañana",
+    "titleToday": "{{name}} caduca hoy",
+    "titleExpired_one": "{{name}} caducó hace {{count}} día",
+    "titleExpired_other": "{{name}} caducó hace {{count}} días",
+    "openedDaysAgo_one": "Abierto hace {{count}} día",
+    "openedDaysAgo_other": "Abierto hace {{count}} días"
+  },
   "recipeSelector": {
     "loadingRecipes": "Cargando recetas...",
     "startTyping": "Comienza a escribir para buscar recetas...",
@@ -303,6 +315,7 @@
       "authenticationRequired": "Autenticación requerida. Por favor inicia sesión para continuar.",
       "sessionExpired": "Sesión expirada. Por favor inicia sesión de nuevo.",
       "requestTimeout": "Tiempo de espera agotado. Por favor inténtalo de nuevo.",
+      "requestFailed": "La acción ha fallado. Por favor inténtalo de nuevo.",
       "failedToCreateItem": "Error al crear artículo",
       "failedToUpdateItem": "Error al actualizar artículo",
       "duplicateItemName": "Ya existe un artículo con este nombre en tu hogar",
@@ -377,7 +390,27 @@
       "itemsTracked_one": "{{count}} artículo rastreado",
       "itemsTracked_other": "{{count}} artículos rastreados",
       "loyaltyCards": "Tarjetas de fidelidad",
-      "loyaltyCardsDesc": "Tus tarjetas de tiendas"
+      "loyaltyCardsDesc": "Tus tarjetas de tiendas",
+      "expiringSoon": {
+        "title": "Consumir pronto",
+        "subtitle_one": "{{count}} artículo se acerca a su fecha",
+        "subtitle_other": "{{count}} artículos se acercan a su fecha",
+        "badgeExpired": "Caducado",
+        "badgeToday": "Hoy",
+        "badgeTomorrow": "Mañana",
+        "badgeInDays_one": "En {{count}} día",
+        "badgeInDays_other": "En {{count}} días",
+        "actionDiscard": "Tirar",
+        "actionFreeze": "Congelar",
+        "actionRecipes": "Recetas",
+        "openedDaysAgo_one": "Abierto hace {{count}} día",
+        "openedDaysAgo_other": "Abierto hace {{count}} días",
+        "viewMore_one": "Ver {{count}} más",
+        "viewMore_other": "Ver {{count}} más",
+        "discardedToast": "{{name}} retirado del stock",
+        "frozenToast": "{{name}} movido a {{freezer}}",
+        "noFreezer": "Añade primero un congelador a tu hogar para poder congelar."
+      }
     },
     "myProducts": {
       "title": "Mis productos",
@@ -509,6 +542,7 @@
     },
     "recipes": {
       "title": "Recetas",
+      "filteredByIngredient": "Filtrado por: {{name}}",
       "addRecipe": "Agregar receta",
       "noRecipes": "No se encontraron recetas",
       "ingredients": "Ingredientes",
@@ -721,6 +755,15 @@
       "role": {
         "admin": "Administrador",
         "member": "Miembro"
+      },
+      "expirationAlerts": {
+        "title": "Alertas de caducidad",
+        "description": "Elige con cuántos días de antelación tu hogar es avisado de los productos que se acercan a su fecha.",
+        "label": "Avisarme",
+        "option_one": "{{count}} día antes de caducar",
+        "option_other": "{{count}} días antes de caducar",
+        "note": "Se envía un recordatorio automático el día antes de la caducidad. Los cambios solo se aplican a las nuevas notificaciones.",
+        "savedToast": "Alerta actualizada para todo el hogar."
       }
     },
     "index": {

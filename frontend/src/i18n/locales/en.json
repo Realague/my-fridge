@@ -66,6 +66,8 @@
     "goToDashboard": "Go to dashboard",
     "expired": "Expired",
     "expiresIn": "Expires in {{days}}d",
+    "expiredSince_one": "Expired {{count}}d ago",
+    "expiredSince_other": "Expired {{count}}d ago",
     "fresh": "Fresh ({{days}}d)",
     "quantity": "Quantity",
     "location": "Location",
@@ -243,6 +245,16 @@
     "noNotifications": "No notifications",
     "allCaughtUp": "You're all caught up! Check back later for updates."
   },
+  "expirationNotifications": {
+    "titleInitial_one": "{{name}} expires in {{count}} day",
+    "titleInitial_other": "{{name}} expires in {{count}} days",
+    "titleReminder": "{{name}} expires tomorrow",
+    "titleToday": "{{name}} expires today",
+    "titleExpired_one": "{{name}} expired {{count}} day ago",
+    "titleExpired_other": "{{name}} expired {{count}} days ago",
+    "openedDaysAgo_one": "Opened {{count}} day ago",
+    "openedDaysAgo_other": "Opened {{count}} days ago"
+  },
   "recipeSelector": {
     "loadingRecipes": "Loading recipes...",
     "startTyping": "Start typing to search recipes...",
@@ -329,6 +341,7 @@
       "authenticationRequired": "Authentication required. Please log in to continue.",
       "sessionExpired": "Session expired. Please log in again.",
       "requestTimeout": "Request timeout. Please try again.",
+      "requestFailed": "The action failed. Please try again.",
       "failedToCreateItem": "Failed to create item",
       "failedToUpdateItem": "Failed to update item",
       "duplicateItemName": "An item with this name already exists in your household",
@@ -405,7 +418,27 @@
       "itemsTracked_one": "{{count}} item tracked",
       "itemsTracked_other": "{{count}} items tracked",
       "loyaltyCards": "Loyalty cards",
-      "loyaltyCardsDesc": "Your store cards"
+      "loyaltyCardsDesc": "Your store cards",
+      "expiringSoon": {
+        "title": "Eat soon",
+        "subtitle_one": "{{count}} item is approaching its date",
+        "subtitle_other": "{{count}} items are approaching their date",
+        "badgeExpired": "Expired",
+        "badgeToday": "Today",
+        "badgeTomorrow": "Tomorrow",
+        "badgeInDays_one": "In {{count}} day",
+        "badgeInDays_other": "In {{count}} days",
+        "actionDiscard": "Discard",
+        "actionFreeze": "Freeze",
+        "actionRecipes": "Recipes",
+        "openedDaysAgo_one": "Opened {{count}} day ago",
+        "openedDaysAgo_other": "Opened {{count}} days ago",
+        "viewMore_one": "See {{count}} more",
+        "viewMore_other": "See {{count}} more",
+        "discardedToast": "{{name}} removed from stock",
+        "frozenToast": "{{name}} moved to {{freezer}}",
+        "noFreezer": "Add a freezer to your household first to freeze items."
+      }
     },
     "myProducts": {
       "title": "My products",
@@ -552,6 +585,7 @@
     },
     "recipes": {
       "title": "Recipes",
+      "filteredByIngredient": "Filtered by: {{name}}",
       "addRecipe": "Add recipe",
       "noRecipes": "No recipes found",
       "ingredients": "Ingredients",
@@ -768,6 +802,15 @@
       "role": {
         "admin": "Admin",
         "member": "Member"
+      },
+      "expirationAlerts": {
+        "title": "Expiration alerts",
+        "description": "Choose how many days in advance your household is notified about items approaching their expiration date.",
+        "label": "Notify me",
+        "option_one": "{{count}} day before expiration",
+        "option_other": "{{count}} days before expiration",
+        "note": "A reminder is automatically sent the day before expiration. Changes apply to new notifications only.",
+        "savedToast": "Alert updated for the whole household."
       }
     },
     "index": {

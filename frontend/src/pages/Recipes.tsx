@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Plus, Search, Heart, Clock, Users, ChefHat, Download } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
@@ -15,6 +15,7 @@ import { RecipeListDto } from '@/services/recipeService';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/stores/authStore';
+import { X } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { scrollRevealFadeUp } from '@/lib/motion';
 
@@ -23,6 +24,9 @@ const Recipes = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { selectedHouseholdId } = useProtectedRoute();
+  const [searchParamsHook, setSearchParamsHook] = useSearchParams();
+  const filterItemId = searchParamsHook.get('itemId');
+  const filterItemName = searchParamsHook.get('itemName');
   const {
     recipes,
     favoriteRecipes,
@@ -40,10 +44,17 @@ const Recipes = () => {
 
   useEffect(() => {
     if (selectedHouseholdId) {
-      fetchRecipes();
+      fetchRecipes(filterItemId ? { itemId: filterItemId } : undefined);
       fetchFavoriteRecipes();
     }
-  }, [selectedHouseholdId, fetchRecipes, fetchFavoriteRecipes]);
+  }, [selectedHouseholdId, filterItemId, fetchRecipes, fetchFavoriteRecipes]);
+
+  const clearIngredientFilter = () => {
+    const next = new URLSearchParams(searchParamsHook);
+    next.delete('itemId');
+    next.delete('itemName');
+    setSearchParamsHook(next, { replace: true });
+  };
 
   useEffect(() => {
     if (error) {
@@ -139,6 +150,19 @@ const Recipes = () => {
             className="pl-10 bg-card/80 backdrop-blur-sm border-0 shadow-lg"
           />
         </div>
+
+        {/* Active ingredient filter */}
+        {filterItemId && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={clearIngredientFilter}
+            className="bg-card/80 backdrop-blur-sm"
+          >
+            {t('pages.recipes.filteredByIngredient', { name: filterItemName ?? '' })}
+            <X className="h-3 w-3 ml-2" />
+          </Button>
+        )}
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>

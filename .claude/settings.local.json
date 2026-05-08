@@ -1,5 +1,31 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/api/health)",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_resize",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "mcp__plugin_playwright_playwright__browser_console_messages",
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "mcp__plugin_playwright_playwright__browser_click",
+      "mcp__plugin_playwright_playwright__browser_press_key",
+      "mcp__plugin_playwright_playwright__browser_wait_for",
+      "mcp__plugin_playwright_playwright__browser_close",
+      "Bash(curl -sI \"http://localhost:8080/src/utils/dateFormatting.ts\")",
+      "Bash(curl -s \"http://localhost:8080/__vite_ping\" -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(docker compose *)",
+      "Bash(curl -s \"http://localhost:8080/src/utils/dateFormatting.ts?bust=$\\(date +%s\\)\")",
+      "Bash(python -c \"import json; data=json.load\\(open\\('frontend/src/i18n/locales/fr.json', encoding='utf8'\\)\\); print\\('OK', len\\(json.dumps\\(data\\)\\)\\)\")",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\('frontend/src/i18n/locales/fr.json','utf8'\\)\\); console.log\\('OK', JSON.stringify\\(d\\).length\\)\")",
+      "Bash(node -e \"['fr','en','es'].forEach\\(l => { const d=JSON.parse\\(require\\('fs'\\).readFileSync\\('frontend/src/i18n/locales/'+l+'.json','utf8'\\)\\); console.log\\(l, 'storedItemAdded:', JSON.stringify\\(d.messages.success.storedItemAdded\\), 'failedToDeleteItem:', JSON.stringify\\(d.messages.error.failedToDeleteItem\\)\\); }\\)\")",
+      "Bash(node -e \"['fr','en','es'].forEach\\(l => { try { JSON.parse\\(require\\('fs'\\).readFileSync\\('frontend/src/i18n/locales/'+l+'.json','utf8'\\)\\); console.log\\(l, 'OK'\\); } catch\\(e\\) { console.log\\(l, 'BROKEN', e.message\\); } }\\)\")",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\('frontend/src/i18n/locales/fr.json','utf8'\\)\\); const t=d.storageArea; console.log\\('coldStorage:',t.coldStorage\\); console.log\\('chestFreezer:',t.chestFreezer\\); console.log\\('iceBox:',t.iceBox\\); console.log\\('walkInPantry:',t.walkInPantry\\); console.log\\('foodCloset:',t.foodCloset\\); console.log\\('upperCabinets:',t.upperCabinets\\); console.log\\('lowerCabinets:',t.lowerCabinets\\); console.log\\('spiceCabinet:',t.spiceCabinet\\); console.log\\('itemDeletedDescription:',d.messages.success.itemDeletedDescription\\); console.log\\('createYourHouseholdDescription:',d.pages.household.createYourHouseholdDescription\\)\")",
+      "Bash(node -e \"['fr','en','es'].forEach\\(l => { try { const d=JSON.parse\\(require\\('fs'\\).readFileSync\\('frontend/src/i18n/locales/'+l+'.json','utf8'\\)\\); console.log\\(l,'OK -',d.pages.recipes.finishCooking\\); } catch\\(e\\) { console.log\\(l,'BROKEN',e.message\\); } }\\)\")"
+    ]
+  },
   "hooks": {
     "UserPromptSubmit": [
       {

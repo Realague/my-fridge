@@ -1,4 +1,4 @@
-import { Unit, STORAGE_UNITS } from '../types/enums';
+import { Unit, LINE_STORAGE_UNITS } from '../types/enums';
 
 // Conversion rates to base units (grams for weight, milliliters for volume)
 const WEIGHT_CONVERSIONS: Record<string, number> = {
@@ -11,7 +11,6 @@ const VOLUME_CONVERSIONS: Record<string, number> = {
   [Unit.CENTILITER]: 10,
   [Unit.LITER]: 1000,
   // Cooking measurements (approximate conversions)
-  [Unit.CUP]: 240,        // 1 cup = 240ml (US standard)
   [Unit.TABLESPOON]: 15,  // 1 tbsp = 15ml
   [Unit.TEASPOON]: 5,     // 1 tsp = 5ml
 };
@@ -28,7 +27,7 @@ export enum UnitType {
 export function getUnitType(unit: string): UnitType {
   if (unit in WEIGHT_CONVERSIONS) return UnitType.WEIGHT;
   if (unit in VOLUME_CONVERSIONS) return UnitType.VOLUME;
-  if ([Unit.PIECE, Unit.PACK, Unit.BUNCH, Unit.DOZEN].includes(unit as Unit)) return UnitType.COUNT;
+  if ([Unit.PIECE, Unit.SERVING].includes(unit as Unit)) return UnitType.COUNT;
   return UnitType.OTHER;
 }
 
@@ -195,7 +194,7 @@ export function convertVolumeToWeight(quantity: number, volumeUnit: string, ingr
 // This ensures cooking measurements (cup, tbsp, tsp) are converted to ml, cl, l, or g/kg
 export function convertToStorageUnit(quantity: number, unit: string, itemCategory?: string): { quantity: number; unit: string } {
   // If already a storage unit, return as-is
-  if (STORAGE_UNITS.includes(unit as Unit)) {
+  if (LINE_STORAGE_UNITS.includes(unit as Unit)) {
     return { quantity, unit };
   }
   

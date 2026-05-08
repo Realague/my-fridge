@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, Plus, Trash2, X, CreditCard } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, CreditCard } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import BarcodeDisplay from '@/components/BarcodeDisplay';
 import LoyaltyCardForm from '@/components/LoyaltyCardForm';
@@ -116,7 +116,7 @@ const LoyaltyCards = () => {
             onClick={() => setSelectedCard(null)}
             className="text-white hover:bg-white/20"
           >
-            <X className="h-5 w-5" />
+            <ArrowLeft className="h-5 w-5" />
           </Button>
           <h2 className="text-white font-bold text-lg">{selectedCard.storeName}</h2>
           <Button

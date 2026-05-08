@@ -98,7 +98,17 @@ export class RecipeRepository {
           as: 'creator',
           attributes: ['id', 'firstName', 'lastName', 'email']
         },
-        ingredientInclude as any
+        {
+          model: RecipeIngredient,
+          as: 'ingredients',
+          include: [
+            {
+              model: Item,
+              as: 'item',
+              attributes: ['id', 'name', 'category', 'defaultUnit', 'availableUnits', 'pieceAlias']
+            }
+          ]
+        }
       ],
       order: [['createdAt', 'DESC']],
       limit,
@@ -125,7 +135,7 @@ export class RecipeRepository {
             {
               model: Item,
               as: 'item',
-              attributes: ['id', 'name', 'category', 'defaultUnit', 'availableUnits', 'householdId']
+              attributes: ['id', 'name', 'category', 'defaultUnit', 'availableUnits', 'pieceAlias', 'householdId']
             }
           ]
         }

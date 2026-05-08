@@ -189,9 +189,15 @@ export class MealPlanService {
       if (!recipe) continue;
 
       for (const ingredient of recipe.ingredients || []) {
-        
-        const neededQuantity = Number(ingredient.quantity / recipe.servings * mealPlan.servings);
-        
+        // Free-quantity ingredients (pincée de sel, filet d'huile…) never
+        // contribute to the shopping list — they're "à l'œil" and don't have
+        // a measurable amount.
+        if (ingredient.isFreeQuantity || ingredient.quantity === null || ingredient.quantity === undefined) {
+          continue;
+        }
+
+        const neededQuantity = Number(Number(ingredient.quantity) / recipe.servings * mealPlan.servings);
+
         // Normalize to base unit for aggregation
         const normalized = normalizeToBaseUnit(neededQuantity, ingredient.unit);
         const key = ingredient.itemId+normalized.unit;

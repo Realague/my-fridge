@@ -247,6 +247,7 @@ export class ItemService {
       category: item.category,
       defaultUnit: item.defaultUnit,
       availableUnits: availableUnits,
+      pieceAlias: item.pieceAlias ?? null,
       daysAfterOpening: item.daysAfterOpening || undefined,
       createdBy: item.createdBy,
       householdId: item.householdId,

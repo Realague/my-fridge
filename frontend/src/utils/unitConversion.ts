@@ -24,7 +24,7 @@ export enum UnitType {
 export function getUnitType(unit: string): UnitType {
   if (unit in WEIGHT_CONVERSIONS) return UnitType.WEIGHT;
   if (unit in VOLUME_CONVERSIONS) return UnitType.VOLUME;
-  if ([Unit.PIECE, Unit.PACK, Unit.BUNCH, Unit.DOZEN].includes(unit as Unit)) return UnitType.COUNT;
+  if ([Unit.PIECE, Unit.SERVING].includes(unit as Unit)) return UnitType.COUNT;
   return UnitType.OTHER;
 }
 

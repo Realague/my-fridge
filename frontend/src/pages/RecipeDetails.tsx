@@ -12,6 +12,7 @@ import { useRecipeStore } from '@/stores/recipeStore';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { formatQuantityWithUnit, isFreeQuantityUnit } from '@/utils/unitSystem';
 import { Item } from '@/services/itemService';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -346,12 +347,19 @@ const RecipeDetails = () => {
           <CardContent>
             <ul className="space-y-3">
               {recipe.ingredients.map((ingredient, index) => {
+                const itemName = getItemDisplayName(ingredient?.item as Item, t);
+                const isFree = Boolean(ingredient.isFreeQuantity) || isFreeQuantityUnit(ingredient.unit);
+                const label = formatQuantityWithUnit(ingredient.quantity, ingredient.unit, t, {
+                  item: ingredient.item as { name?: string; pieceAlias?: string | null } | null,
+                  itemName,
+                  isFreeQuantity: isFree,
+                });
                 return (
                   <li key={ingredient.id} className="flex items-start gap-3 p-2 bg-muted rounded-lg">
                     <span className="text-green-600 mt-1.5 text-xs">●</span>
                     <div className="flex-1">
                       <div className="font-medium text-foreground">
-                        {ingredient.quantity} {getItemDisplayName(ingredient?.item as Item, t)} {ingredient.unit !== 'piece' ? ingredient.unit : ''}
+                        {label} {itemName}
                       </div>
                       {ingredient.notes && (
                         <div className="text-sm text-muted-foreground mt-1">{ingredient.notes}</div>
@@ -388,6 +396,13 @@ const RecipeDetails = () => {
                         <ul className="space-y-1">
                           {relevantIngredients.map((ingredientIndex) => {
                             const ingredient = recipe.ingredients[ingredientIndex];
+                            const itemName = getItemDisplayName(ingredient?.item as Item, t);
+                            const isFree = Boolean(ingredient.isFreeQuantity) || isFreeQuantityUnit(ingredient.unit);
+                            const label = formatQuantityWithUnit(ingredient.quantity, ingredient.unit, t, {
+                              item: ingredient.item as { name?: string; pieceAlias?: string | null } | null,
+                              itemName,
+                              isFreeQuantity: isFree,
+                            });
 
                             return (
                               <li
@@ -396,9 +411,7 @@ const RecipeDetails = () => {
                               >
                                 <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
                                 <span>
-                                  {ingredient.quantity}{' '}
-                                  {ingredient.unit !== 'piece' ? ingredient.unit : ''}{' '}
-                                  {getItemDisplayName(ingredient?.item as Item, t)}
+                                  {label} {itemName}
                                   {ingredient.notes && (
                                     <span className="italic text-xs text-muted-foreground">
                                       {' '}

@@ -10,11 +10,19 @@ import StorageAreaDialog from './StorageAreaDialog';
 
 interface AddStorageAreaDialogProps {
   trigger?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
+const AddStorageAreaDialog = ({ trigger, open: controlledOpen, onOpenChange }: AddStorageAreaDialogProps) => {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = (next: boolean) => {
+    if (!isControlled) setInternalOpen(next);
+    onOpenChange?.(next);
+  };
 
   const { user } = useAuthStore();
   const { createStorageArea } = useCurrentHouseholdStorageAreas(user?.selectedHouseholdId);
@@ -46,7 +54,7 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
     <>
       {trigger ? (
         <span onClick={() => setOpen(true)}>{trigger}</span>
-      ) : (
+      ) : !isControlled ? (
         <Button
           variant="green"
           size="sm"
@@ -55,7 +63,7 @@ const AddStorageAreaDialog = ({ trigger }: AddStorageAreaDialogProps) => {
           <Plus className="h-4 w-4 sm:mr-2" />
           <span className="hidden sm:inline">{t('storageArea.addArea')}</span>
         </Button>
-      )}
+      ) : null}
 
       <StorageAreaDialog
         isOpen={open}

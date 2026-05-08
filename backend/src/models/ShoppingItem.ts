@@ -3,7 +3,7 @@ import sequelize from '../config/database';
 import { Item } from './Item';
 import { Household } from './Household';
 import { User } from './User';
-import { Unit, STORAGE_UNITS } from '../types/enums';
+import { Unit, LINE_STORAGE_UNITS } from '../types/enums';
 
 interface ShoppingItemAttributes {
   id: string;
@@ -71,7 +71,7 @@ ShoppingItem.init(
       validate: {
         isStorageUnit(value: string) {
           // Shopping items should only use storage-appropriate units, not cooking measurements
-          if (!STORAGE_UNITS.includes(value as Unit)) {
+          if (!LINE_STORAGE_UNITS.includes(value as Unit)) {
             throw new Error(`Unit ${value} is not allowed for shopping items. Please use storage-appropriate units (ml, l, g, kg, etc.)`);
           }
         },

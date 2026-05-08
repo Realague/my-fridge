@@ -34,29 +34,36 @@ export enum Unit {
   // Weight
   GRAM = 'g',
   KILOGRAM = 'kg',
-  
+
   // Volume
   MILLILITER = 'ml',
   CENTILITER = 'cl',
   LITER = 'l',
-  CUP = 'cup',
   TABLESPOON = 'tbsp',
   TEASPOON = 'tsp',
-  
+
   // Pieces
   PIECE = 'piece',
-  PACK = 'pack',
-  BUNCH = 'bunch',
-  DOZEN = 'dozen',
 
-  // Meal
+  // Portion / cooked dish — only meaningful for catalog items in category `meal`.
   SERVING = 'serving',
-  
-  // Other
-  OTHER = 'other'
+
+  // Free-quantity (gestural) units — recipe-only, no numeric quantity
+  PINCH = 'pinch',
+  DRIZZLE = 'drizzle',
+  KNOB = 'knob',
 }
 
 export const UNITS = Object.values(Unit);
+
+export const FREE_QUANTITY_UNITS: Unit[] = [
+  Unit.PINCH,
+  Unit.DRIZZLE,
+  Unit.KNOB,
+];
+
+// `serving` is not hidden globally — it is only offered for `ItemCategory.MEAL` (see unitSystem).
+export const HIDDEN_STORAGE_UNITS: Unit[] = [];
 
 export enum ShoppingItemStatus {
   PENDING = 'pending',

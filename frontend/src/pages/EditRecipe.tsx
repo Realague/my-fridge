@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ArrowLeft, Plus, X, Clock, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Plus, X, Clock, ChevronDown, Trash2 } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { UpdateRecipeDto, RecipeStep } from '@/services/recipeService';
 import { StructuredIngredientInput, StructuredIngredient } from '@/components/StructuredIngredientInput';
@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useItemService } from '@/services/itemService';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { formatQuantityWithUnit } from '@/utils/unitSystem';
 import { ImageUpload } from '@/components/ImageUpload';
 
 interface RecipeFormData {
@@ -90,6 +91,10 @@ const EditRecipe = () => {
       });
       setIngredients(recipe.ingredients.map(ingredient => ({
         ...ingredient,
+        // Recipe DTOs can carry a null quantity when the ingredient is marked
+        // as a free quantity ("à l'œil"). Keep that shape for the UI.
+        quantity: ingredient.quantity as number | null,
+        isFreeQuantity: Boolean(ingredient.isFreeQuantity),
         item: ingredient.item as StructuredIngredient['item']
       })));
       setInstructions(recipe.instructions);
@@ -206,7 +211,9 @@ const EditRecipe = () => {
       return;
     }
 
-    const validIngredients = ingredients.filter(ing => ing.itemId && ing.quantity > 0);
+    const validIngredients = ingredients.filter(ing =>
+      ing.itemId && (ing.isFreeQuantity || (ing.quantity !== null && ing.quantity !== undefined && ing.quantity > 0))
+    );
     const filteredInstructions = instructions.filter(inst => inst.text.trim() !== '');
     
     if (validIngredients.length === 0) {
@@ -246,6 +253,8 @@ const EditRecipe = () => {
       const ingredientKey = getIngredientKey(ingredient, index);
       return {
         ...ingredientWithoutId,
+        quantity: ingredient.isFreeQuantity ? null : ingredient.quantity,
+        isFreeQuantity: Boolean(ingredient.isFreeQuantity),
         usedInSteps: ingredientStepMap[ingredientKey] || []
       };
     });
@@ -514,12 +523,13 @@ const EditRecipe = () => {
                       {instructions.length > 1 && (
                         <Button
                           type="button"
-                          variant="outline"
-                          size="icon"
+                          variant="deleteTrash"
+                          size="sm"
                           onClick={() => removeInstruction(index)}
                           className="mt-2"
+                          aria-label={t('messages.action.delete')}
                         >
-                          <X className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       )}
                     </div>
@@ -551,8 +561,15 @@ const EditRecipe = () => {
                                         onCheckedChange={() => toggleIngredientForStep(ingredient, ingredientIndex, index)}
                                       />
                                       <span className="text-sm text-muted-foreground">
-                                        {getItemDisplayName(ingredient?.item, t)} {ingredient.quantity}{' '}
-                                        {ingredient.unit !== 'piece' ? ingredient.unit : ''}
+                                        {(() => {
+                                          const itemName = getItemDisplayName(ingredient?.item, t);
+                                          const label = formatQuantityWithUnit(ingredient.quantity, ingredient.unit, t, {
+                                            item: ingredient.item,
+                                            itemName,
+                                            isFreeQuantity: ingredient.isFreeQuantity,
+                                          });
+                                          return `${itemName} ${label}`;
+                                        })()}
                                       </span>
                                     </div>
                                   );

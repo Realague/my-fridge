@@ -132,6 +132,7 @@ const MyProducts = () => {
 
   const [addItemOpen, setAddItemOpen] = useState(false);
   const [noAreaPromptOpen, setNoAreaPromptOpen] = useState(false);
+  const [addAreaOpen, setAddAreaOpen] = useState(false);
 
   const handleAddClick = () => {
     if (sortedAreas.length === 0) {
@@ -710,17 +711,21 @@ const MyProducts = () => {
             <Button variant="outline" onClick={() => setNoAreaPromptOpen(false)}>
               {t('buttons.cancel')}
             </Button>
-            <AddStorageAreaDialog
-              trigger={
-                <Button variant="green" onClick={() => setNoAreaPromptOpen(false)}>
-                  <Plus className="h-4 w-4" />
-                  {t('storageArea.createArea')}
-                </Button>
-              }
-            />
+            <Button
+              variant="green"
+              onClick={() => {
+                setNoAreaPromptOpen(false);
+                setAddAreaOpen(true);
+              }}
+            >
+              <Plus className="h-4 w-4" />
+              {t('storageArea.createArea')}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AddStorageAreaDialog open={addAreaOpen} onOpenChange={setAddAreaOpen} />
 
       <BottomNavigation currentPage="products" />
     </div>

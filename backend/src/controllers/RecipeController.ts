@@ -44,6 +44,7 @@ export class RecipeController {
         maxTotalTime,
         isFavorite,
         createdBy,
+        itemId,
         limit = '20',
         offset = '0'
       } = req.query;
@@ -57,6 +58,7 @@ export class RecipeController {
         maxTotalTime: maxTotalTime ? parseInt(maxTotalTime as string) : undefined,
         isFavorite: isFavorite ? isFavorite === 'true' : undefined,
         createdBy: createdBy as string,
+        itemId: itemId as string,
         limit: parseInt(limit as string),
         offset: parseInt(offset as string)
       };

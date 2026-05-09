@@ -14,6 +14,8 @@ import { useAuthStore } from '@/stores/authStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'next-themes';
+import { usePushNotificationsStore } from '@/stores/pushNotificationsStore';
+import { isPushSupported } from '@/utils/pushSubscription';
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -31,6 +33,50 @@ const Settings = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isUpdatingLowStockAlerts, setIsUpdatingLowStockAlerts] = useState(false);
   const { user, updateUser, signOut, tokens } = useAuthStore();
+
+  const pushSupported = isPushSupported();
+  const pushPermission = usePushNotificationsStore((s) => s.permission);
+  const pushSubscribed = usePushNotificationsStore((s) => s.subscribed);
+  const pushIsLoading = usePushNotificationsStore((s) => s.isLoading);
+  const pushInitialized = usePushNotificationsStore((s) => s.initialized);
+  const initPush = usePushNotificationsStore((s) => s.init);
+  const enablePush = usePushNotificationsStore((s) => s.enable);
+  const disablePush = usePushNotificationsStore((s) => s.disable);
+
+  useEffect(() => {
+    if (pushSupported && !pushInitialized) {
+      void initPush();
+    }
+  }, [pushSupported, pushInitialized, initPush]);
+
+  const handlePushToggle = async (checked: boolean) => {
+    if (checked) {
+      const result = await enablePush();
+      if (result.ok) {
+        toast({
+          title: t('pages.dashboard.expiringSoon.pushOptIn.enabledToast'),
+        });
+      } else if (result.reason === 'denied') {
+        toast({
+          variant: 'destructive',
+          title: t('pages.dashboard.expiringSoon.pushOptIn.deniedToast'),
+        });
+      } else {
+        toast({
+          variant: 'destructive',
+          title: t('messages.error.requestFailed'),
+        });
+      }
+    } else {
+      const result = await disablePush();
+      if (!result.ok) {
+        toast({
+          variant: 'destructive',
+          title: t('messages.error.requestFailed'),
+        });
+      }
+    }
+  };
 
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -207,15 +253,24 @@ const Settings = () => {
                  <CardDescription>{t('pages.settings.notificationSettings.description')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-4 rounded-lg bg-muted/70">
-                  <Label htmlFor="push-notifications" className="flex flex-col space-y-1 cursor-pointer flex-1">
-                     <span className="font-medium">{t('pages.settings.notificationSettings.pushNotifications')}</span>
-                     <span className="font-normal text-sm text-muted-foreground">
-                       {t('pages.settings.notificationSettings.pushDescription')}
-                     </span>
-                  </Label>
-                  <Switch id="push-notifications" defaultChecked />
-                </div>
+                {pushSupported && (
+                  <div className="flex items-center justify-between p-4 rounded-lg bg-muted/70">
+                    <Label htmlFor="push-notifications" className="flex flex-col space-y-1 cursor-pointer flex-1">
+                       <span className="font-medium">{t('pages.settings.notificationSettings.pushNotifications')}</span>
+                       <span className="font-normal text-sm text-muted-foreground">
+                         {pushPermission === 'denied'
+                           ? t('pages.settings.notificationSettings.pushDeniedHelp')
+                           : t('pages.settings.notificationSettings.pushDescription')}
+                       </span>
+                    </Label>
+                    <Switch
+                      id="push-notifications"
+                      checked={pushSubscribed}
+                      disabled={pushIsLoading || pushPermission === 'denied' || !pushInitialized}
+                      onCheckedChange={handlePushToggle}
+                    />
+                  </div>
+                )}
                 <div className="flex items-center justify-between p-4 rounded-lg bg-muted/70">
                   <Label htmlFor="low-stock-alerts" className="flex flex-col space-y-1 cursor-pointer flex-1">
                      <span className="font-medium">{t('pages.settings.notificationSettings.lowStockAlerts')}</span>

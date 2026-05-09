@@ -11,6 +11,10 @@ import { RecipeIngredient } from './RecipeIngredient';
 import { Meal } from './Meal';
 import { ItemMinimum } from './ItemMinimum';
 import { LoyaltyCard } from './LoyaltyCard';
+import { HouseholdSettings } from './HouseholdSettings';
+import { ExpirationNotification } from './ExpirationNotification';
+import { ExpirationNotificationRead } from './ExpirationNotificationRead';
+import { PushSubscription } from './PushSubscription';
 
 // Define associations
 User.hasMany(Household, { foreignKey: 'createdBy', as: 'createdHouseholds' });
@@ -110,6 +114,27 @@ LoyaltyCard.belongsTo(Household, { foreignKey: 'householdId', as: 'household' })
 User.hasMany(LoyaltyCard, { foreignKey: 'createdBy', as: 'createdLoyaltyCards' });
 LoyaltyCard.belongsTo(User, { foreignKey: 'createdBy', as: 'creator' });
 
+// Household Settings associations (one-to-one)
+Household.hasOne(HouseholdSettings, { foreignKey: 'householdId', as: 'settings', onDelete: 'CASCADE' });
+HouseholdSettings.belongsTo(Household, { foreignKey: 'householdId', as: 'household' });
+
+// Expiration Notification associations
+Household.hasMany(ExpirationNotification, { foreignKey: 'householdId', as: 'expirationNotifications', onDelete: 'CASCADE' });
+ExpirationNotification.belongsTo(Household, { foreignKey: 'householdId', as: 'household' });
+
+StoredItem.hasMany(ExpirationNotification, { foreignKey: 'storedItemId', as: 'expirationNotifications', onDelete: 'CASCADE' });
+ExpirationNotification.belongsTo(StoredItem, { foreignKey: 'storedItemId', as: 'storedItem' });
+
+ExpirationNotification.hasMany(ExpirationNotificationRead, { foreignKey: 'notificationId', as: 'reads', onDelete: 'CASCADE' });
+ExpirationNotificationRead.belongsTo(ExpirationNotification, { foreignKey: 'notificationId', as: 'notification' });
+
+User.hasMany(ExpirationNotificationRead, { foreignKey: 'userId', as: 'expirationNotificationReads', onDelete: 'CASCADE' });
+ExpirationNotificationRead.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+// Push Subscription associations
+User.hasMany(PushSubscription, { foreignKey: 'userId', as: 'pushSubscriptions', onDelete: 'CASCADE' });
+PushSubscription.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
 // Export models
 export {
   sequelize,
@@ -124,5 +149,9 @@ export {
   RecipeIngredient,
   Meal,
   ItemMinimum,
-  LoyaltyCard
+  LoyaltyCard,
+  HouseholdSettings,
+  ExpirationNotification,
+  ExpirationNotificationRead,
+  PushSubscription
 };

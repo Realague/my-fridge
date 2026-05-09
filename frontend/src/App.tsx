@@ -13,12 +13,14 @@ import "./i18n/config"; // Initialize i18n
 import { RecipeProvider } from "@/contexts/RecipeContext";
 import { StoreProvider } from "@/components/StoreProvider";
 import { StagingEnvBanner } from "@/components/StagingEnvBanner";
+import { NotificationClickHandler } from "@/components/NotificationClickHandler";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Shopping from "./pages/Shopping";
 import StorageArea from "./pages/StorageArea";
+import MyProducts from "./pages/MyProducts";
 
 import Recipes from "./pages/Recipes";
 import RecipeDetails from "./pages/RecipeDetails";
@@ -57,6 +59,7 @@ function App() {
             <RecipeProvider>
               <BrowserRouter>
                 <StoreProvider>
+                  <NotificationClickHandler />
                   <StagingEnvBanner />
                   <Toaster />
                   <Sonner />
@@ -68,15 +71,16 @@ function App() {
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/shopping" element={<Shopping />} />
                     <Route path="/storage/:id" element={<StorageArea />} />
+                    <Route path="/products" element={<MyProducts />} />
                     <Route path="/recipes" element={<Recipes />} />
                     <Route path="/recipes/:id" element={<RecipeDetails />} />
                     <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />
                     <Route path="/add-recipe" element={<AddRecipe />} />
                     <Route path="/import-recipe" element={<ImportRecipe />} />
-                    <Route path="/recipes/:id/edit" element={<EditRecipe />} />
                     <Route path="/meals" element={<Meals />} />
                     <Route path="/meals/add" element={<RecipeSelector />} />
                     <Route path="/meals/shopping-preview" element={<MealsShoppingPreview />} />
+                    <Route path="/recipes/:id/edit" element={<EditRecipe />} />
                     <Route path="/household" element={<Household />} />
                     <Route path="/household/:id" element={<HouseholdDetails />} />
                     <Route path="/settings" element={<Settings />} />

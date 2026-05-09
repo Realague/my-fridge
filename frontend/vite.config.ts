@@ -26,6 +26,17 @@ export default defineConfig(({ mode }) => {
       componentTagger(),
       VitePWA({
         registerType: 'autoUpdate',
+        strategies: 'injectManifest',
+        srcDir: 'src',
+        filename: 'sw.ts',
+        injectManifest: {
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
+        },
+        devOptions: {
+          enabled: true,
+          type: 'module',
+          navigateFallback: 'index.html',
+        },
         includeAssets: ['favicon.ico', 'icons/*.png'],
         manifest: {
           name: 'MyFridge',

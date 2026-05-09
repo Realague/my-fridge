@@ -33,10 +33,19 @@ self.addEventListener('push', (event: PushEvent) => {
   );
 });
 
+const withNotificationId = (rawUrl: string, notificationId: string | undefined): string => {
+  if (!notificationId) return rawUrl;
+  const [path, query = ''] = rawUrl.split('?');
+  const params = new URLSearchParams(query);
+  if (params.get('notificationId') === notificationId) return rawUrl;
+  params.set('notificationId', notificationId);
+  return `${path}?${params.toString()}`;
+};
+
 self.addEventListener('notificationclick', (event: NotificationEvent) => {
   event.notification.close();
   const data = (event.notification.data || {}) as { url?: string; notificationId?: string };
-  const url = data.url || '/';
+  const url = withNotificationId(data.url || '/', data.notificationId);
   event.waitUntil(
     (async () => {
       const allClients = await self.clients.matchAll({

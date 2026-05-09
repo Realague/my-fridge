@@ -248,9 +248,10 @@ export class ExpirationNotificationService {
     const storageAreaName = notification.storageAreaNameSnapshot ?? '';
     const quantity = notification.quantitySnapshot ?? '';
     const unit = notification.unitSnapshot ?? '';
-    const url = notification.storageAreaIdSnapshot
+    const basePath = notification.storageAreaIdSnapshot
       ? `/storage/${notification.storageAreaIdSnapshot}`
       : '/';
+    const url = `${basePath}?notificationId=${encodeURIComponent(notification.id)}`;
 
     if (notification.phase === 'reminder') {
       return {

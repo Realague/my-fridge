@@ -24,3 +24,6 @@ audit
 *.njsproj
 *.sln
 *.sw?
+
+# Env
+*/.env

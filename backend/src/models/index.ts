@@ -14,6 +14,7 @@ import { LoyaltyCard } from './LoyaltyCard';
 import { HouseholdSettings } from './HouseholdSettings';
 import { ExpirationNotification } from './ExpirationNotification';
 import { ExpirationNotificationRead } from './ExpirationNotificationRead';
+import { PushSubscription } from './PushSubscription';
 
 // Define associations
 User.hasMany(Household, { foreignKey: 'createdBy', as: 'createdHouseholds' });
@@ -130,6 +131,10 @@ ExpirationNotificationRead.belongsTo(ExpirationNotification, { foreignKey: 'noti
 User.hasMany(ExpirationNotificationRead, { foreignKey: 'userId', as: 'expirationNotificationReads', onDelete: 'CASCADE' });
 ExpirationNotificationRead.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
+// Push Subscription associations
+User.hasMany(PushSubscription, { foreignKey: 'userId', as: 'pushSubscriptions', onDelete: 'CASCADE' });
+PushSubscription.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
 // Export models
 export {
   sequelize,
@@ -147,5 +152,6 @@ export {
   LoyaltyCard,
   HouseholdSettings,
   ExpirationNotification,
-  ExpirationNotificationRead
+  ExpirationNotificationRead,
+  PushSubscription
 };

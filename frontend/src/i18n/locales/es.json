@@ -409,7 +409,14 @@
         "viewMore_other": "Ver {{count}} más",
         "discardedToast": "{{name}} retirado del stock",
         "frozenToast": "{{name}} movido a {{freezer}}",
-        "noFreezer": "Añade primero un congelador a tu hogar para poder congelar."
+        "noFreezer": "Añade primero un congelador a tu hogar para poder congelar.",
+        "pushOptIn": {
+          "title": "¿Recibir estas alertas incluso cuando la app esté cerrada?",
+          "activate": "Activar",
+          "later": "Más tarde",
+          "enabledToast": "Notificaciones activadas",
+          "deniedToast": "Permiso denegado. Puedes reactivarlo en los ajustes del navegador."
+        }
       }
     },
     "myProducts": {
@@ -701,6 +708,7 @@
         "description": "Configura cómo recibes alertas.",
         "pushNotifications": "Notificaciones push",
         "pushDescription": "Recibir alertas en tu dispositivo.",
+        "pushDeniedHelp": "Notificaciones bloqueadas en el navegador. Vuelve a autorizarlas desde los ajustes del sistema y recarga la app.",
         "lowStockAlerts": "Alertas de stock bajo",
         "lowStockDescription": "Notificarme cuando los artículos se estén agotando."
       },

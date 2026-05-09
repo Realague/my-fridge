@@ -1,10 +1,12 @@
 import { ExpirationNotificationRepository } from '../repositories/ExpirationNotificationRepository';
 import { HouseholdRepository } from '../repositories/HouseholdRepository';
 import { HouseholdSettingsService } from './HouseholdSettingsService';
+import { PushNotificationService } from './PushNotificationService';
 import { StoredItem } from '../models/StoredItem';
 import { Item } from '../models/Item';
 import { StorageArea } from '../models/StorageArea';
 import { ExpirationNotification } from '../models/ExpirationNotification';
+import { HouseholdMember } from '../models/HouseholdMember';
 import { StorageAreaType } from '../types/enums';
 import { NotFoundError, UnauthorizedError } from '../errors/CustomErrors';
 
@@ -62,7 +64,8 @@ export class ExpirationNotificationService {
   constructor(
     private notificationRepository: ExpirationNotificationRepository,
     private householdRepository: HouseholdRepository,
-    private settingsService: HouseholdSettingsService
+    private settingsService: HouseholdSettingsService,
+    private pushService?: PushNotificationService
   ) {}
 
   async getNotificationsForHousehold(
@@ -207,7 +210,72 @@ export class ExpirationNotificationService {
       }
     }
 
-    await this.notificationRepository.bulkUpsertSkippingConflict(toInsert);
+    const inserted = await this.notificationRepository.bulkUpsertSkippingConflict(toInsert);
+
+    if (inserted.length > 0 && this.pushService) {
+      try {
+        const memberUserIds = await this.getActiveMemberUserIds(householdId);
+        if (memberUserIds.length > 0) {
+          for (const notification of inserted) {
+            const payload = this.buildPushPayload(notification);
+            await this.pushService.sendToUsers(memberUserIds, payload);
+          }
+        }
+      } catch (err) {
+        // Push is best-effort: never let a push failure break the sync.
+        console.error('[ExpirationNotificationService] push send failed', err);
+      }
+    }
+  }
+
+  private async getActiveMemberUserIds(householdId: string): Promise<string[]> {
+    const memberships = await HouseholdMember.findAll({
+      where: { householdId, isActive: true },
+      attributes: ['userId'],
+    });
+    return memberships.map((m) => m.userId);
+  }
+
+  private buildPushPayload(notification: ExpirationNotification): {
+    title: string;
+    body: string;
+    notificationId: string;
+    storedItemId: string | null;
+    storageAreaId: string | null;
+    url: string;
+  } {
+    const itemName = notification.itemNameSnapshot;
+    const storageAreaName = notification.storageAreaNameSnapshot ?? '';
+    const quantity = notification.quantitySnapshot ?? '';
+    const unit = notification.unitSnapshot ?? '';
+    const basePath = notification.storageAreaIdSnapshot
+      ? `/storage/${notification.storageAreaIdSnapshot}`
+      : '/';
+    const url = `${basePath}?notificationId=${encodeURIComponent(notification.id)}`;
+
+    if (notification.phase === 'reminder') {
+      return {
+        title: `${itemName} expire demain`,
+        body: [quantity ? `${quantity} ${unit}`.trim() : null, storageAreaName]
+          .filter(Boolean)
+          .join(' · '),
+        notificationId: notification.id,
+        storedItemId: notification.storedItemId,
+        storageAreaId: notification.storageAreaIdSnapshot,
+        url,
+      };
+    }
+
+    // initial phase
+    const daysUntil = this.diffInDays(notification.expirationDateSnapshot);
+    return {
+      title: `${itemName} expire bientôt`,
+      body: [`Dans ${daysUntil} jours`, storageAreaName].filter(Boolean).join(' · '),
+      notificationId: notification.id,
+      storedItemId: notification.storedItemId,
+      storageAreaId: notification.storageAreaIdSnapshot,
+      url,
+    };
   }
 
   private async loadStoredItems(householdId: string): Promise<StoredItem[]> {

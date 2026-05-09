@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ArrowLeft, LogOut, Copy, Eye, EyeOff, Globe } from 'lucide-react';
@@ -17,14 +17,27 @@ import { useTheme } from 'next-themes';
 import { usePushNotificationsStore } from '@/stores/pushNotificationsStore';
 import { isPushSupported } from '@/utils/pushSubscription';
 
+const SETTINGS_TABS = ['profile', 'notifications', 'appearance'] as const;
+type SettingsTab = (typeof SETTINGS_TABS)[number];
+
 const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t, i18n } = useTranslation();
   const { theme, setTheme } = useTheme();
-  
+  const [searchParams, setSearchParams] = useSearchParams();
+
   // Protected route hook handles auth and household checks
   useProtectedRoute();
+
+  const tabParam = searchParams.get('tab');
+  const activeTab: SettingsTab = SETTINGS_TABS.includes(tabParam as SettingsTab)
+    ? (tabParam as SettingsTab)
+    : 'profile';
+
+  const handleTabChange = (value: string) => {
+    setSearchParams({ tab: value }, { replace: true });
+  };
   
   const [googleToken, setGoogleToken] = useState<string>('');
   const [showToken, setShowToken] = useState(false);
@@ -191,7 +204,7 @@ const Settings = () => {
 
       {/* Content */}
       <div className="container mx-auto px-4 py-6 space-y-6">
-        <Tabs defaultValue="profile" className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-3 gap-1 bg-muted rounded-lg p-1 h-auto">
              <TabsTrigger value="profile" className="min-h-10 w-full">
                {t('pages.settings.tabs.profile')}
@@ -347,7 +360,7 @@ const Settings = () => {
         </Card>
       </div>
 
-      <BottomNavigation currentPage="settings" />
+      <BottomNavigation currentPage="more" />
     </div>
   );
 };

@@ -2,9 +2,11 @@
   "navigation": {
     "home": "Inicio",
     "products": "Productos",
+    "storage": "Almacenamiento",
     "shopping": "Compras",
     "meals": "Comidas",
-    "recipes": "Recetas"
+    "recipes": "Recetas",
+    "more": "Más"
   },
   "cookedMeal": {
     "articleType": {
@@ -403,6 +405,54 @@
     "googleTokenCopied": "El token de Google ha sido copiado al portapapeles para pruebas de API."
   },
   "pages": {
+    "more": {
+      "title": "Más",
+      "sections": {
+        "cooking": "🍳 Cocina",
+        "stock": "📦 Despensa",
+        "shopping": "🛒 Compras",
+        "account": "⚙️ Cuenta"
+      },
+      "storageAreas": {
+        "title": "Almacenamientos",
+        "description": "Consulta tus espacios de almacenamiento",
+        "empty": "Aún no hay almacenamiento"
+      },
+      "features": {
+        "meals": {
+          "title": "Plan de comidas",
+          "description": "Planifica tus comidas"
+        },
+        "itemMinimums": {
+          "title": "Stock mínimo",
+          "description": "Tus artículos para reponer"
+        },
+        "loyaltyCards": {
+          "title": "Tarjetas de fidelidad",
+          "description": "Tus tarjetas de tiendas"
+        },
+        "profile": {
+          "title": "Perfil",
+          "description": "Tu cuenta y preferencias"
+        },
+        "household": {
+          "title": "Hogar",
+          "description": "Miembros y configuración del hogar"
+        },
+        "notifications": {
+          "title": "Notificaciones",
+          "description": "Preferencias de notificaciones"
+        },
+        "preferences": {
+          "title": "Preferencias",
+          "description": "Idioma, tema y más"
+        },
+        "signOut": {
+          "title": "Cerrar sesión",
+          "description": "Cierra sesión en tu cuenta"
+        }
+      }
+    },
     "dashboard": {
       "title": "Tablero",
       "welcome": "Bienvenido a MyFridge",

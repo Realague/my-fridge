@@ -272,7 +272,7 @@ const LoyaltyCards = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <BottomNavigation currentPage="loyalty-cards" />
+      <BottomNavigation currentPage="more" />
     </div>
   );
 };

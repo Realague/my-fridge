@@ -295,7 +295,7 @@ const HouseholdDetails = () => {
           </CardContent>
         </Card>
       </div>
-      <BottomNavigation currentPage="household" />
+      <BottomNavigation currentPage="more" />
     </div>
   );
 };

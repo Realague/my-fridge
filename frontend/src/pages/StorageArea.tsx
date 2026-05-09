@@ -1030,7 +1030,7 @@ const StorageArea = () => {
         </div>
       </div>
 
-      <BottomNavigation currentPage="home" />
+      <BottomNavigation currentPage="storage" />
     </div>
   );
 };

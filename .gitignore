@@ -26,4 +26,6 @@ audit
 *.sw?
 
 # Env
-*/.env
+.env
+.env.*
+!.env.example

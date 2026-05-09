@@ -21,6 +21,7 @@ import {
   PackageOpen,
   Snowflake,
   ChevronDown,
+  Filter,
 } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
@@ -30,7 +31,7 @@ import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { itemService } from '@/services/itemService';
 import { format } from 'date-fns';
-import { Unit, StorageAreaType } from '@/types/enums';
+import { Unit, StorageAreaType, ITEM_CATEGORIES } from '@/types/enums';
 import { Item } from '@/services/itemService';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '@/utils/dateFormatting';
@@ -148,6 +149,7 @@ const StorageArea = () => {
   const [openedDate, setOpenedDate] = useState('');
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [items, setItems] = useState<Record<string, Item>>({});
+  const [categoryFilter, setCategoryFilter] = useState('all');
 
   // Get data from stores
   const area = getStorageAreaById(id || '');
@@ -156,7 +158,10 @@ const StorageArea = () => {
   const { getSort, setCriterion, toggleDirection } =
     useStorageAreaSortPreferences(currentUser?.id);
   const sortState = getSort(areaId);
-  const itemsAfterFilter = storageItems;
+  const itemsAfterFilter = useMemo(() => {
+    if (categoryFilter === 'all') return storageItems;
+    return storageItems.filter((si) => items[si.itemId]?.category === categoryFilter);
+  }, [storageItems, items, categoryFilter]);
 
   const displayRows = useMemo(() => {
     if (!area) return [];
@@ -305,7 +310,7 @@ const StorageArea = () => {
     if (!status || days === null) return null;
     
     const badges = {
-      'expired': <Badge variant="destructive" className="text-xs">{t('storageArea.expired')}</Badge>,
+      'expired': <Badge variant="destructive" className="text-xs">{t('storageArea.expiredSince', { count: Math.abs(days) })}</Badge>,
       'expiring-soon': <Badge variant="destructive" className="text-xs">{t('storageArea.expiresIn', { days })}</Badge>,
       'expiring-week': <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">{t('storageArea.expiresIn', { days })}</Badge>,
       'fresh': <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">{t('storageArea.fresh', { days })}</Badge>
@@ -609,13 +614,6 @@ const StorageArea = () => {
                         )}
                       </span>
                     </div>
-                    {area.type !== StorageAreaType.FREEZER &&
-                      (storageItem.effectiveExpirationDate || storageItem.expirationDate) && (
-                      <div className="flex items-center gap-1">
-                        <AlertTriangle className="h-3 w-3" />
-                        <span>{t('storageArea.expiresIn', { days: getDaysUntilExpiration(storageItem.effectiveExpirationDate || storageItem.expirationDate) })}</span>
-                      </div>
-                    )}
                     {storageItem.isOpened && storageItem.openedDate && (
                       <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
                         <PackageOpen className="h-3 w-3" />
@@ -840,56 +838,69 @@ const StorageArea = () => {
             </Card>
           ) : storageItems.length > 0 ? (
             <>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full sm:w-auto justify-between gap-2 touch-friendly"
-                      aria-label={t('storageArea.sort.ariaOpen')}
-                      title={
-                        sortState.criterion === 'expiration' && sortState.direction === 'asc'
-                          ? t('storageArea.sort.hintExpirationAsc')
-                          : undefined
-                      }
-                    >
-                      <span className="flex items-center gap-2 min-w-0">
-                        <span className="text-muted-foreground shrink-0">
-                          {t('storageArea.sort.labelPrefix')}
-                        </span>
-                        <span className="font-medium truncate">
-                          {t(`storageArea.sort.criterion.${sortState.criterion}`)}
-                        </span>
-                        {sortState.direction === 'asc' ? (
-                          <ArrowUp className="h-4 w-4 shrink-0" aria-hidden />
-                        ) : (
-                          <ArrowDown className="h-4 w-4 shrink-0" aria-hidden />
-                        )}
-                      </span>
-                      <ChevronDown className="h-4 w-4 shrink-0 opacity-60" aria-hidden />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-56">
-                    {STORAGE_SORT_CRITERIA.map((criterion) => (
-                      <DropdownMenuItem
-                        key={criterion}
-                        onClick={() => handleSortOption(criterion)}
-                        className={
-                          sortState.criterion === criterion ? 'bg-accent focus:bg-accent' : ''
-                        }
-                      >
-                        {t(`storageArea.sort.criterion.${criterion}`)}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                {sortState.criterion === 'expiration' && sortState.direction === 'asc' && (
-                  <p className="text-xs text-muted-foreground sm:text-right">
-                    {t('storageArea.sort.hintExpirationAsc')}
-                  </p>
-                )}
-              </div>
+              <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+                <CardContent className="p-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Filter className="h-5 w-5 text-muted-foreground shrink-0" aria-hidden />
+
+                    <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder={t('pages.myProducts.filterByCategory')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{t('items.categories.all')}</SelectItem>
+                        {ITEM_CATEGORIES.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            <span className="inline-flex items-center gap-2">
+                              <CategoryIcon category={category} className="h-4 w-4" />
+                              {t(`items.categories.${category}`)}
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="justify-between gap-2 touch-friendly"
+                          aria-label={t('storageArea.sort.ariaOpen')}
+                        >
+                          <span className="flex items-center gap-2 min-w-0">
+                            <span className="text-muted-foreground shrink-0">
+                              {t('storageArea.sort.labelPrefix')}
+                            </span>
+                            <span className="font-medium truncate">
+                              {t(`storageArea.sort.criterion.${sortState.criterion}`)}
+                            </span>
+                            {sortState.direction === 'asc' ? (
+                              <ArrowUp className="h-4 w-4 shrink-0" aria-hidden />
+                            ) : (
+                              <ArrowDown className="h-4 w-4 shrink-0" aria-hidden />
+                            )}
+                          </span>
+                          <ChevronDown className="h-4 w-4 shrink-0 opacity-60" aria-hidden />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" className="w-56">
+                        {STORAGE_SORT_CRITERIA.map((criterion) => (
+                          <DropdownMenuItem
+                            key={criterion}
+                            onClick={() => handleSortOption(criterion)}
+                            className={
+                              sortState.criterion === criterion ? 'bg-accent focus:bg-accent' : ''
+                            }
+                          >
+                            {t(`storageArea.sort.criterion.${criterion}`)}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </CardContent>
+              </Card>
               <div className="space-y-4">
                 {displayRows.map((row, rowIndex) =>
                   row.kind === 'header' ? (

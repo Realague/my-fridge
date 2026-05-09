@@ -1,6 +1,7 @@
 {
   "navigation": {
     "home": "Home",
+    "products": "Products",
     "shopping": "Shopping",
     "meals": "Meals",
     "recipes": "Recipes"
@@ -65,6 +66,8 @@
     "goToDashboard": "Go to dashboard",
     "expired": "Expired",
     "expiresIn": "Expires in {{days}}d",
+    "expiredSince_one": "Expired {{count}}d ago",
+    "expiredSince_other": "Expired {{count}}d ago",
     "fresh": "Fresh ({{days}}d)",
     "quantity": "Quantity",
     "location": "Location",
@@ -79,7 +82,7 @@
     "addTo": "Add to {{name}}",
     "added": "Added",
     "addedDetails": "Added {{quantity}} {{unit}} of {{item}} to {{area}}",
-    "locationPlaceholder": "e.g., Main shelf, Cupboard",
+    "locationPlaceholder": "e.g., Bottom drawer, Top shelf, Door",
     "mainFridge": "Refrigerator",
     "mainFreezer": "Freezer",
     "mainPantry": "Pantry",
@@ -125,6 +128,20 @@
       "kitchen_cupboard": "Kitchen cupboard",
       "other": "Other"
     }
+  },
+  "addStoredItemDialog": {
+    "title": "Add an item",
+    "description": "Pick the item, then the space to store it in.",
+    "openButton": "Add an item",
+    "storageAreaLabel": "Storage area",
+    "storageAreaPlaceholder": "Select a storage area",
+    "suggestion": "Suggested",
+    "singleAreaHint": "Will be added to {{name}}",
+    "areaDeleted": "This storage area no longer exists. Pick another one.",
+    "toastSuccess": "Item added to {{area}}",
+    "toastView": "View",
+    "noAreaTitle": "No storage area yet",
+    "noAreaDescription": "Create a storage area first so you have somewhere to put your items."
   },
   "storageAreaManager": {
     "title": "Storage areas",
@@ -228,6 +245,16 @@
     "noNotifications": "No notifications",
     "allCaughtUp": "You're all caught up! Check back later for updates."
   },
+  "expirationNotifications": {
+    "titleInitial_one": "{{name}} expires in {{count}} day",
+    "titleInitial_other": "{{name}} expires in {{count}} days",
+    "titleReminder": "{{name}} expires tomorrow",
+    "titleToday": "{{name}} expires today",
+    "titleExpired_one": "{{name}} expired {{count}} day ago",
+    "titleExpired_other": "{{name}} expired {{count}} days ago",
+    "openedDaysAgo_one": "Opened {{count}} day ago",
+    "openedDaysAgo_other": "Opened {{count}} days ago"
+  },
   "recipeSelector": {
     "loadingRecipes": "Loading recipes...",
     "startTyping": "Start typing to search recipes...",
@@ -314,6 +341,7 @@
       "authenticationRequired": "Authentication required. Please log in to continue.",
       "sessionExpired": "Session expired. Please log in again.",
       "requestTimeout": "Request timeout. Please try again.",
+      "requestFailed": "The action failed. Please try again.",
       "failedToCreateItem": "Failed to create item",
       "failedToUpdateItem": "Failed to update item",
       "duplicateItemName": "An item with this name already exists in your household",
@@ -390,7 +418,55 @@
       "itemsTracked_one": "{{count}} item tracked",
       "itemsTracked_other": "{{count}} items tracked",
       "loyaltyCards": "Loyalty cards",
-      "loyaltyCardsDesc": "Your store cards"
+      "loyaltyCardsDesc": "Your store cards",
+      "expiringSoon": {
+        "title": "Eat soon",
+        "subtitle_one": "{{count}} item is approaching its date",
+        "subtitle_other": "{{count}} items are approaching their date",
+        "badgeExpired": "Expired",
+        "badgeToday": "Today",
+        "badgeTomorrow": "Tomorrow",
+        "badgeInDays_one": "In {{count}} day",
+        "badgeInDays_other": "In {{count}} days",
+        "actionDiscard": "Discard",
+        "actionFreeze": "Freeze",
+        "actionRecipes": "Recipes",
+        "openedDaysAgo_one": "Opened {{count}} day ago",
+        "openedDaysAgo_other": "Opened {{count}} days ago",
+        "viewMore_one": "See {{count}} more",
+        "viewMore_other": "See {{count}} more",
+        "discardedToast": "{{name}} removed from stock",
+        "frozenToast": "{{name}} moved to {{freezer}}",
+        "noFreezer": "Add a freezer to your household first to freeze items."
+      }
+    },
+    "myProducts": {
+      "title": "My products",
+      "subtitle_one": "{{count}} product across your household",
+      "subtitle_other": "{{count}} products across your household",
+      "searchPlaceholder": "Search by name…",
+      "filterByCategory": "Filter by category",
+      "filterByArea": "Storage areas",
+      "areasAll": "All storage areas",
+      "areasSelected_one": "{{count}} storage area",
+      "areasSelected_other": "{{count}} storage areas",
+      "groupByArea": "Group by storage area",
+      "areaItems_one": "{{count}} item",
+      "areaItems_other": "{{count}} items",
+      "openedDaysAgo_one": "Opened {{count}} day ago",
+      "openedDaysAgo_other": "Opened {{count}} days ago",
+      "openedToday": "Opened today",
+      "deleteFailed": "Could not delete this item",
+      "empty": {
+        "title": "Your fridge is empty",
+        "description": "Start adding products to keep track of what you have on hand.",
+        "cta": "Add an item"
+      },
+      "noResults": {
+        "title": "No products match your search",
+        "description": "Try a different keyword or reset the filters.",
+        "reset": "Reset filters"
+      }
     },
     "shopping": {
       "title": "Shopping List",
@@ -544,6 +620,7 @@
     },
     "recipes": {
       "title": "Recipes",
+      "filteredByIngredient": "Filtered by: {{name}}",
       "addRecipe": "Add recipe",
       "noRecipes": "No recipes found",
       "ingredients": "Ingredients",
@@ -759,6 +836,15 @@
       "role": {
         "admin": "Admin",
         "member": "Member"
+      },
+      "expirationAlerts": {
+        "title": "Expiration alerts",
+        "description": "Choose how many days in advance your household is notified about items approaching their expiration date.",
+        "label": "Notify me",
+        "option_one": "{{count}} day before expiration",
+        "option_other": "{{count}} days before expiration",
+        "note": "A reminder is automatically sent the day before expiration. Changes apply to new notifications only.",
+        "savedToast": "Alert updated for the whole household."
       }
     },
     "index": {

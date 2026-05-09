@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Plus, Sparkles } from 'lucide-react';
+import { ChefHat, Plus, Sparkles, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -28,11 +28,13 @@ import { QuantitySelector } from '@/components/QuantitySelector';
 import { SelectedItemPreview } from '@/components/SelectedItemPreview';
 
 import { useStoredItemStore } from '@/stores/storedItemStore';
+import { useRecipeStore } from '@/stores/recipeStore';
 import { storedItemService } from '@/services/storedItemService';
 import type { Item } from '@/services/itemService';
 import type { StorageArea } from '@/services/storageAreaService';
-import { StorageAreaType, Unit } from '@/types/enums';
+import { ItemCategory, StorageAreaType, Unit } from '@/types/enums';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { computeCookedMealExpirationISO } from '@/utils/cookedMealDefaults';
 import {
   suggestAreaId,
   type AreaSuggestionMemory,
@@ -52,6 +54,10 @@ interface AddStoredItemDialogProps {
   }) => void;
 }
 
+type ArticleType = 'ingredient' | 'cooked_meal';
+
+const todayIso = () => new Date().toISOString().split('T')[0];
+
 export const AddStoredItemDialog = ({
   open,
   onOpenChange,
@@ -64,6 +70,8 @@ export const AddStoredItemDialog = ({
   const addStoredItemToHousehold = useStoredItemStore(
     (state) => state.addStoredItemToHousehold
   );
+  const recipes = useRecipeStore((state) => state.recipes);
+  const fetchRecipes = useRecipeStore((state) => state.fetchRecipes);
 
   const sortedAreas = useMemo(
     () => [...storageAreas].sort((a, b) => a.sortOrder - b.sortOrder),
@@ -71,65 +79,125 @@ export const AddStoredItemDialog = ({
   );
   const onlyOneArea = sortedAreas.length === 1;
 
+  const [articleType, setArticleType] = useState<ArticleType>('ingredient');
+
+  // Ingredient flow state
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [quantity, setQuantity] = useState('1');
   const [unit, setUnit] = useState('');
-  const [storageAreaId, setStorageAreaId] = useState<string>('');
-  /** True once the user manually picks an area — disables auto-update on category change. */
-  const [areaWasOverridden, setAreaWasOverridden] = useState(false);
-  const [expirationDate, setExpirationDate] = useState('');
-  const [location, setLocation] = useState('');
   const [isOpened, setIsOpened] = useState(false);
   const [openedDate, setOpenedDate] = useState('');
+
+  // Cooked-meal flow state
+  const [dishName, setDishName] = useState('');
+  const [linkedRecipeId, setLinkedRecipeId] = useState<string | null>(null);
+  const [linkRecipe, setLinkRecipe] = useState(true);
+  const [cookedDate, setCookedDate] = useState(todayIso());
+  const [portions, setPortions] = useState('1');
+  const [showRecipeSuggestions, setShowRecipeSuggestions] = useState(false);
+
+  // Shared state
+  const [storageAreaId, setStorageAreaId] = useState<string>('');
+  const [areaWasOverridden, setAreaWasOverridden] = useState(false);
+  const [expirationDate, setExpirationDate] = useState('');
+  const [expirationWasOverridden, setExpirationWasOverridden] = useState(false);
+  const [location, setLocation] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [areaError, setAreaError] = useState<string | null>(null);
 
-  /**
-   * Reset everything on the false→true open transition only — not on every
-   * `sortedAreas`/`suggestionMemory` change while the dialog is open, which would
-   * wipe the user's in-progress form when another tab refetches data.
-   */
   const wasOpenRef = useRef(false);
   useEffect(() => {
     if (open && !wasOpenRef.current) {
+      setArticleType('ingredient');
       setSelectedItem(null);
       setQuantity('1');
       setUnit('');
+      setIsOpened(false);
+      setOpenedDate('');
+      setDishName('');
+      setLinkedRecipeId(null);
+      setLinkRecipe(true);
+      setCookedDate(todayIso());
+      setPortions('1');
+      setShowRecipeSuggestions(false);
       setStorageAreaId(suggestAreaId(null, sortedAreas, suggestionMemory) ?? '');
       setAreaWasOverridden(false);
       setExpirationDate('');
+      setExpirationWasOverridden(false);
       setLocation('');
-      setIsOpened(false);
-      setOpenedDate('');
       setSubmitting(false);
       setAreaError(null);
+      // Pre-load recipes for auto-complete (no-op if already cached)
+      void fetchRecipes();
     }
     wasOpenRef.current = open;
-  }, [open, sortedAreas, suggestionMemory]);
+  }, [open, sortedAreas, suggestionMemory, fetchRecipes]);
 
-  /**
-   * Re-run the suggestion when the item (i.e. its category) changes — but only if the
-   * user hasn't manually picked an area yet. Their explicit choice always wins.
-   */
+  // Re-suggest area on category change (ingredient flow only)
   useEffect(() => {
     if (!open || areaWasOverridden) return;
-    const next = suggestAreaId(selectedItem?.category, sortedAreas, suggestionMemory);
+    const category =
+      articleType === 'cooked_meal' ? ItemCategory.COOKED_MEAL : selectedItem?.category;
+    const next = suggestAreaId(category, sortedAreas, suggestionMemory);
     if (next && next !== storageAreaId) {
       setStorageAreaId(next);
     }
-    /** suggestionMemory is intentionally excluded — we only react to category changes here. */
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
-  }, [open, selectedItem?.category, sortedAreas, areaWasOverridden]);
+  }, [open, articleType, selectedItem?.category, sortedAreas, areaWasOverridden]);
 
   const selectedArea = sortedAreas.find((a) => a.id === storageAreaId) ?? null;
-  const showExpirationField = selectedArea?.type !== StorageAreaType.FREEZER;
-  /**
-   * "Smart" if the resolved area matches the category-driven suggestion. We still surface
-   * the badge whenever the user hasn't overridden, even if a single area exists, because
-   * the system is still doing the choosing on their behalf.
-   */
+  const isFreezer = selectedArea?.type === StorageAreaType.FREEZER;
+  const showExpirationField = !isFreezer;
   const isSuggestionActive =
-    !areaWasOverridden && Boolean(selectedItem) && Boolean(selectedArea);
+    !areaWasOverridden &&
+    Boolean(selectedArea) &&
+    (articleType === 'cooked_meal' || Boolean(selectedItem));
+
+  // Cooked-meal: auto-pre-fill expiration when storage area or cookedDate changes
+  // (only if user hasn't manually edited it).
+  useEffect(() => {
+    if (articleType !== 'cooked_meal') return;
+    if (expirationWasOverridden) return;
+    if (!selectedArea || !cookedDate) return;
+    const iso = computeCookedMealExpirationISO(selectedArea.type, cookedDate);
+    setExpirationDate(iso ?? '');
+  }, [articleType, selectedArea?.type, cookedDate, expirationWasOverridden, selectedArea]);
+
+  // Cooked-meal: auto-complete recipe matching
+  const recipeMatches = useMemo(() => {
+    if (articleType !== 'cooked_meal') return [];
+    const q = dishName.trim().toLowerCase();
+    if (q.length < 2) return [];
+    return recipes
+      .filter((r) => r.title.toLowerCase().includes(q))
+      .slice(0, 5);
+  }, [articleType, dishName, recipes]);
+
+  const linkedRecipe = useMemo(
+    () => (linkedRecipeId ? recipes.find((r) => r.id === linkedRecipeId) ?? null : null),
+    [linkedRecipeId, recipes]
+  );
+
+  const handleArticleTypeChange = (next: ArticleType) => {
+    if (next === articleType) return;
+    setArticleType(next);
+    setAreaWasOverridden(false);
+    setExpirationWasOverridden(false);
+    if (next === 'cooked_meal') {
+      // Reset ingredient fields, keep storage area; expiration will auto-compute.
+      setSelectedItem(null);
+      setUnit(Unit.SERVING);
+      setQuantity('1');
+      setIsOpened(false);
+      setOpenedDate('');
+    } else {
+      // Reset cooked-meal fields.
+      setDishName('');
+      setLinkedRecipeId(null);
+      setLinkRecipe(true);
+      setExpirationDate('');
+    }
+  };
 
   const handleItemSelect = (item: Item | null) => {
     setSelectedItem(item);
@@ -153,19 +221,80 @@ export const AddStoredItemDialog = ({
     setUnit(u);
   };
 
-  const handleSubmit = async () => {
-    if (!selectedItem || !storageAreaId || submitting) return;
+  const handlePickRecipeSuggestion = (recipeId: string, title: string) => {
+    setLinkedRecipeId(recipeId);
+    setLinkRecipe(true);
+    setDishName(title);
+    setShowRecipeSuggestions(false);
+  };
 
-    const numericQuantity = parseFloat(quantity);
-    if (!Number.isFinite(numericQuantity) || numericQuantity <= 0) {
+  const clearRecipeLink = () => {
+    setLinkedRecipeId(null);
+    setLinkRecipe(false);
+  };
+
+  const handleSubmit = async () => {
+    if (!storageAreaId || submitting) return;
+
+    if (articleType === 'ingredient') {
+      if (!selectedItem) return;
+      const numericQuantity = parseFloat(quantity);
+      if (!Number.isFinite(numericQuantity) || numericQuantity <= 0) {
+        toast.error(t('messages.error.invalidQuantity'));
+        return;
+      }
+
+      const stillExists = sortedAreas.some((a) => a.id === storageAreaId);
+      if (!stillExists) {
+        setAreaError(t('addStoredItemDialog.areaDeleted'));
+        return;
+      }
+
+      setSubmitting(true);
+      try {
+        const created = await storedItemService.createStoredItem(householdId, {
+          itemId: selectedItem.id,
+          storageAreaId,
+          quantity: numericQuantity,
+          unit: unit as Unit,
+          expirationDate:
+            showExpirationField && expirationDate ? expirationDate : undefined,
+          location: location.trim() || undefined,
+          isOpened,
+          openedDate: isOpened && openedDate ? openedDate : undefined,
+        });
+
+        addStoredItemToHousehold(created);
+        const areaName = selectedArea?.name ?? '';
+        onItemAdded({
+          storedItemId: created.id,
+          areaId: storageAreaId,
+          areaName,
+          category: selectedItem.category ?? null,
+        });
+        onOpenChange(false);
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : t('messages.error.failedToAddItem');
+        toast.error(message);
+      } finally {
+        setSubmitting(false);
+      }
+      return;
+    }
+
+    // Cooked-meal flow
+    const trimmedName = dishName.trim();
+    if (!trimmedName) {
+      toast.error(t('cookedMeal.dishNameLabel'));
+      return;
+    }
+    const numericPortions = parseFloat(portions);
+    if (!Number.isFinite(numericPortions) || numericPortions <= 0) {
       toast.error(t('messages.error.invalidQuantity'));
       return;
     }
 
-    /**
-     * Re-validate the area against the freshest list — if another household member has
-     * deleted it while the form was open, fail loudly rather than POSTing to a 404.
-     */
     const stillExists = sortedAreas.some((a) => a.id === storageAreaId);
     if (!stillExists) {
       setAreaError(t('addStoredItemDialog.areaDeleted'));
@@ -175,15 +304,16 @@ export const AddStoredItemDialog = ({
     setSubmitting(true);
     try {
       const created = await storedItemService.createStoredItem(householdId, {
-        itemId: selectedItem.id,
+        articleType: 'cooked_meal',
+        name: trimmedName,
+        recipeId: linkRecipe && linkedRecipeId ? linkedRecipeId : null,
+        cookedDate,
         storageAreaId,
-        quantity: numericQuantity,
-        unit: unit as Unit,
+        quantity: numericPortions,
+        unit: Unit.SERVING,
         expirationDate:
           showExpirationField && expirationDate ? expirationDate : undefined,
         location: location.trim() || undefined,
-        isOpened,
-        openedDate: isOpened && openedDate ? openedDate : undefined,
       });
 
       addStoredItemToHousehold(created);
@@ -192,7 +322,7 @@ export const AddStoredItemDialog = ({
         storedItemId: created.id,
         areaId: storageAreaId,
         areaName,
-        category: selectedItem.category ?? null,
+        category: ItemCategory.COOKED_MEAL,
       });
       onOpenChange(false);
     } catch (error) {
@@ -203,6 +333,11 @@ export const AddStoredItemDialog = ({
       setSubmitting(false);
     }
   };
+
+  const submitDisabled =
+    !storageAreaId ||
+    submitting ||
+    (articleType === 'ingredient' ? !selectedItem : !dishName.trim());
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -215,25 +350,161 @@ export const AddStoredItemDialog = ({
         </DialogHeader>
 
         <div className="space-y-4">
+          {/* Article type toggle */}
           <div>
             <Label className="text-sm font-medium mb-2 block">
-              {t('storageArea.selectItem')}
+              {t('cookedMeal.articleType.label')}
             </Label>
-            <ItemSelector
-              onItemSelect={handleItemSelect}
-              placeholder={t('forms.searchOrAddItem')}
-              selectedItem={selectedItem}
-              className="w-full"
-            />
+            <div
+              role="tablist"
+              aria-label={t('cookedMeal.articleType.label')}
+              className="inline-flex rounded-full bg-muted p-1 gap-1"
+            >
+              {(['ingredient', 'cooked_meal'] as const).map((type) => {
+                const active = articleType === type;
+                return (
+                  <button
+                    key={type}
+                    role="tab"
+                    aria-selected={active}
+                    type="button"
+                    onClick={() => handleArticleTypeChange(type)}
+                    className={`px-4 py-1.5 text-sm rounded-full font-medium transition-colors ${
+                      active
+                        ? 'bg-primary text-primary-foreground shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {type === 'ingredient'
+                      ? t('cookedMeal.articleType.ingredient')
+                      : t('cookedMeal.articleType.cookedMeal')}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {selectedItem && (
-            <div className="space-y-4 animate-in fade-in-50 slide-in-from-top-2 duration-300">
-              <SelectedItemPreview
-                item={selectedItem}
-                onClear={() => setSelectedItem(null)}
-              />
+          {articleType === 'ingredient' && (
+            <>
+              <div>
+                <Label className="text-sm font-medium mb-2 block">
+                  {t('storageArea.selectItem')}
+                </Label>
+                <ItemSelector
+                  onItemSelect={handleItemSelect}
+                  placeholder={t('forms.searchOrAddItem')}
+                  selectedItem={selectedItem}
+                  className="w-full"
+                />
+              </div>
 
+              {selectedItem && (
+                <div className="space-y-4 animate-in fade-in-50 slide-in-from-top-2 duration-300">
+                  <SelectedItemPreview
+                    item={selectedItem}
+                    onClear={() => setSelectedItem(null)}
+                  />
+                </div>
+              )}
+            </>
+          )}
+
+          {articleType === 'cooked_meal' && (
+            <div className="space-y-4 animate-in fade-in-50 slide-in-from-top-2 duration-300">
+              <div className="relative">
+                <Label className="text-sm font-medium mb-2 block">
+                  {t('cookedMeal.dishNameLabel')}
+                </Label>
+                <Input
+                  value={dishName}
+                  onChange={(e) => {
+                    const next = e.target.value;
+                    setDishName(next);
+                    setShowRecipeSuggestions(true);
+                    if (linkedRecipe && linkedRecipe.title !== next) {
+                      // Editing the name away from the linked recipe → drop the link.
+                      setLinkedRecipeId(null);
+                    }
+                  }}
+                  onFocus={() => setShowRecipeSuggestions(true)}
+                  onBlur={() => {
+                    // Defer hiding so a click on a suggestion fires first.
+                    setTimeout(() => setShowRecipeSuggestions(false), 150);
+                  }}
+                  placeholder={t('cookedMeal.dishNamePlaceholder')}
+                />
+                {showRecipeSuggestions && recipeMatches.length > 0 && (
+                  <ul
+                    className="absolute z-10 mt-1 w-full rounded-md border bg-popover shadow-md text-sm max-h-56 overflow-y-auto"
+                    role="listbox"
+                  >
+                    {recipeMatches.map((r) => (
+                      <li
+                        key={r.id}
+                        role="option"
+                        aria-selected={linkedRecipeId === r.id}
+                      >
+                        <button
+                          type="button"
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => handlePickRecipeSuggestion(r.id, r.title)}
+                          className="w-full text-left px-3 py-2 hover:bg-accent flex items-center gap-2"
+                        >
+                          <ChefHat className="h-4 w-4 text-muted-foreground" aria-hidden />
+                          <span>{r.title}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {linkedRecipe && linkRecipe && (
+                <div className="flex items-center justify-between rounded-md bg-muted px-3 py-2 text-sm">
+                  <span className="flex items-center gap-2">
+                    <ChefHat className="h-4 w-4" aria-hidden />
+                    {t('cookedMeal.linkRecipeLabel', { title: linkedRecipe.title })}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={clearRecipeLink}
+                    className="text-muted-foreground hover:text-foreground"
+                    aria-label={t('buttons.cancel')}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-sm font-medium mb-2 block">
+                    {t('cookedMeal.cookingDateLabel')}
+                  </Label>
+                  <Input
+                    type="date"
+                    value={cookedDate}
+                    onChange={(e) => setCookedDate(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium mb-2 block">
+                    {t('cookedMeal.portionsLabel')}
+                  </Label>
+                  <Input
+                    type="number"
+                    min={1}
+                    step={1}
+                    value={portions}
+                    onChange={(e) => setPortions(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {(articleType === 'cooked_meal' || selectedItem) && (
+            <>
               {!onlyOneArea && (
                 <div>
                   <div className="flex items-center justify-between mb-2">
@@ -278,19 +549,21 @@ export const AddStoredItemDialog = ({
                 </div>
               )}
 
-              <div>
-                <Label className="text-sm font-medium mb-2 block">
-                  {t('storageArea.addItemInformation', {
-                    item: getItemDisplayName(selectedItem, t),
-                  })}
-                </Label>
-                <QuantitySelector
-                  item={selectedItem}
-                  initialQuantity={quantity}
-                  initialUnit={unit}
-                  onQuantityChange={handleQuantityChange}
-                />
-              </div>
+              {articleType === 'ingredient' && selectedItem && (
+                <div>
+                  <Label className="text-sm font-medium mb-2 block">
+                    {t('storageArea.addItemInformation', {
+                      item: getItemDisplayName(selectedItem, t),
+                    })}
+                  </Label>
+                  <QuantitySelector
+                    item={selectedItem}
+                    initialQuantity={quantity}
+                    initialUnit={unit}
+                    onQuantityChange={handleQuantityChange}
+                  />
+                </div>
+              )}
 
               <div>
                 <Label className="text-sm font-medium mb-2 block">
@@ -317,33 +590,37 @@ export const AddStoredItemDialog = ({
                   <Input
                     type="date"
                     value={expirationDate}
-                    onChange={(e) => setExpirationDate(e.target.value)}
+                    onChange={(e) => {
+                      setExpirationDate(e.target.value);
+                      setExpirationWasOverridden(true);
+                    }}
                   />
                 </div>
               )}
 
-              {selectedItem.daysAfterOpening && (
-                <OpenedStatusToggle
-                  isOpened={isOpened}
-                  openedDate={openedDate}
-                  daysAfterOpening={selectedItem.daysAfterOpening}
-                  effectiveExpirationDate={
-                    isOpened && openedDate
-                      ? new Date(
-                          new Date(openedDate).getTime() +
-                            selectedItem.daysAfterOpening * 24 * 60 * 60 * 1000
-                        )
-                          .toISOString()
-                          .split('T')[0]
-                      : undefined
-                  }
-                  onToggle={(opened, date) => {
-                    setIsOpened(opened);
-                    setOpenedDate(date || '');
-                  }}
-                />
-              )}
-            </div>
+              {articleType === 'ingredient' &&
+                selectedItem?.daysAfterOpening && (
+                  <OpenedStatusToggle
+                    isOpened={isOpened}
+                    openedDate={openedDate}
+                    daysAfterOpening={selectedItem.daysAfterOpening}
+                    effectiveExpirationDate={
+                      isOpened && openedDate
+                        ? new Date(
+                            new Date(openedDate).getTime() +
+                              selectedItem.daysAfterOpening * 24 * 60 * 60 * 1000
+                          )
+                            .toISOString()
+                            .split('T')[0]
+                        : undefined
+                    }
+                    onToggle={(opened, date) => {
+                      setIsOpened(opened);
+                      setOpenedDate(date || '');
+                    }}
+                  />
+                )}
+            </>
           )}
         </div>
 
@@ -358,7 +635,7 @@ export const AddStoredItemDialog = ({
           <Button
             variant="green"
             onClick={handleSubmit}
-            disabled={!selectedItem || !storageAreaId || submitting}
+            disabled={submitDisabled}
           >
             <Plus className="h-4 w-4" />
             {submitting

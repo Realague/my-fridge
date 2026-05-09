@@ -68,6 +68,7 @@ export const getCategoryColor = (category: string): string => {
     'frozen': 'bg-blue-200 text-blue-900',
     'canned': 'bg-gray-100 text-gray-800',
     'meal': 'bg-amber-100 text-amber-800',
+    'cooked_meal': 'bg-lime-100 text-lime-800',
     'preparation': 'bg-rose-100 text-rose-800',
     'cleaning_products': 'bg-teal-100 text-teal-800',
     'bakery': 'bg-orange-200 text-orange-900',

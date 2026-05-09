@@ -17,6 +17,7 @@ export function getRecommendedFreezerDays(category: ItemCategory): number {
     [ItemCategory.FRUITS]: 300, // 8-12 months, using 10 months (300 days)
     [ItemCategory.FROZEN]: 180, // Pre-frozen items, 6 months (180 days)
     [ItemCategory.MEAL]: 90, // Prepared meals, 2-3 months, using 3 months (90 days)
+    [ItemCategory.COOKED_MEAL]: 60, // Home-cooked batches, 2 months
     [ItemCategory.PREPARATION]: 90, // Preparations, 2-3 months, using 3 months (90 days)
     [ItemCategory.GRAINS]: 180, // Grains, 6 months (180 days)
     [ItemCategory.SNACKS]: 180, // Snacks, 6 months (180 days)

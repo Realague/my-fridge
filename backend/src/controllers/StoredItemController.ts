@@ -248,6 +248,35 @@ export class StoredItemController {
     }
   }
 
+  async consumePortion(req: Request, res: Response): Promise<void> {
+    try {
+      const { householdId, id } = req.params;
+
+      if (!householdId || !id) {
+        throw new BadRequestError('Household ID and stored item ID are required');
+      }
+
+      const result = await this.storedItemService.consumePortion(id, householdId);
+
+      if (!result.consumed) {
+        throw new NotFoundError('Stored item not found');
+      }
+
+      const response: ApiResponse = {
+        success: true,
+        message: 'Portion consumed',
+        data: result,
+      };
+
+      res.json(response);
+    } catch (error) {
+      res.status(error instanceof NotFoundError ? 404 : 500).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to consume portion',
+      });
+    }
+  }
+
   async getTotalQuantityByItem(req: Request, res: Response): Promise<void> {
     try {
       const { householdId, itemId } = req.params;

@@ -23,6 +23,7 @@ export enum ItemCategory {
   FROZEN = 'frozen',
   CANNED = 'canned',
   MEAL = 'meal',
+  COOKED_MEAL = 'cooked_meal',
   PREPARATION = 'preparation',
   CLEANING_PRODUCTS = 'cleaning_products',
   OTHER = 'other'
@@ -45,7 +46,7 @@ export enum Unit {
   // Pieces
   PIECE = 'piece',
 
-  // Portion / cooked dish — only meaningful for catalog items in category `meal`.
+  // Portion / cooked dish — only meaningful for catalog items in category `meal` or `cooked_meal`.
   SERVING = 'serving',
 
   // Free-quantity (gestural) units — recipe-only, no numeric quantity

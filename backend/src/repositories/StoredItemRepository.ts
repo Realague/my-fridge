@@ -7,11 +7,12 @@ import { User } from '../models/User';
 import { CreateStoredItemDto, UpdateStoredItemDto, GetStoredItemsQueryDto } from '../types/ItemDto';
 
 export class StoredItemRepository {
-  async create(data: CreateStoredItemDto): Promise<StoredItem> {
+  async create(data: CreateStoredItemDto & { itemId: string; cookedDate?: string | null }): Promise<StoredItem> {
     const createData = {
       ...data,
       expirationDate: data.expirationDate ? new Date(data.expirationDate) : null,
       openedDate: data.openedDate ? new Date(data.openedDate) : null,
+      cookedDate: data.cookedDate ? new Date(data.cookedDate) : null,
     };
     return await StoredItem.create(createData);
   }
@@ -182,14 +183,17 @@ export class StoredItemRepository {
 
     const updateData: any = {
       ...data,
-      expirationDate: data.expirationDate !== undefined 
+      expirationDate: data.expirationDate !== undefined
         ? (data.expirationDate ? new Date(data.expirationDate) : null)
         : undefined,
-      openedDate: data.openedDate !== undefined 
+      openedDate: data.openedDate !== undefined
         ? (data.openedDate ? new Date(data.openedDate) : null)
         : undefined,
       frozenDate: data.frozenDate !== undefined
         ? (data.frozenDate ? new Date(data.frozenDate) : null)
+        : undefined,
+      cookedDate: data.cookedDate !== undefined
+        ? (data.cookedDate ? new Date(data.cookedDate) : null)
         : undefined,
     };
 

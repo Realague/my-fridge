@@ -4,15 +4,26 @@ import { RecipeIngredientRepository } from '../repositories/RecipeIngredientRepo
 import { Recipe } from '../models/Recipe';
 import { RecipeIngredient } from '../models/RecipeIngredient';
 import { Item } from '../models/Item';
-import { 
-  CreateRecipeDto, 
-  UpdateRecipeDto, 
-  RecipeDto, 
-  RecipeListDto, 
+import { StoredItem } from '../models/StoredItem';
+import {
+  CreateRecipeDto,
+  UpdateRecipeDto,
+  RecipeDto,
+  RecipeListDto,
   RecipeSearchParams,
-  RecipeIngredientDto 
+  RecipeIngredientDto
 } from '../types/RecipeDto';
 import { NotFoundError, ValidationError } from '../errors/CustomErrors';
+
+export interface RecipeDeletionImpact {
+  recipeId: string;
+  recipeTitle: string;
+  hasCookedMealItem: boolean;
+  cookedMealItemId: string | null;
+  cookedMealItemName: string | null;
+  storedItemCount: number;
+  totalPortions: number;
+}
 
 export class RecipeService {
   private recipeRepository: RecipeRepository;
@@ -107,9 +118,19 @@ export class RecipeService {
 
       // Update recipe data (excluding ingredients)
       const { ingredients, ...recipeUpdates } = updates;
-      
+
       if (Object.keys(recipeUpdates).length > 0) {
         await this.recipeRepository.update(id, householdId, recipeUpdates, transaction);
+
+        // Sync the linked cooked-meal Item name when the recipe title changes.
+        // The cooked_meal Item is the catalog representation of the recipe — its
+        // name must follow the recipe's title so all in-stock portions reflect it.
+        if (recipeUpdates.title && recipeUpdates.title !== existingRecipe.title) {
+          await Item.update(
+            { name: recipeUpdates.title },
+            { where: { recipeId: id, householdId }, transaction }
+          );
+        }
       }
 
       // Update ingredients if provided
@@ -157,9 +178,25 @@ export class RecipeService {
         throw new NotFoundError('Recipe not found');
       }
 
+      // Cascade: if a cooked-meal Item is linked to this recipe, delete it
+      // (and all its StoredItem batches) before removing the recipe itself.
+      // The frontend has already shown the user a confirmation modal with the
+      // portion impact — we trust it and always cascade here.
+      const linkedItem = await Item.findOne({
+        where: { recipeId: id, householdId },
+        transaction,
+      });
+      if (linkedItem) {
+        await StoredItem.destroy({
+          where: { itemId: linkedItem.id, householdId },
+          transaction,
+        });
+        await linkedItem.destroy({ transaction });
+      }
+
       // Delete ingredients first (due to foreign key constraints)
       await this.recipeIngredientRepository.deleteByRecipeId(id, transaction);
-      
+
       // Delete recipe (this will also delete the image via RecipeRepository)
       await this.recipeRepository.delete(id, householdId, transaction);
 
@@ -168,6 +205,50 @@ export class RecipeService {
       await transaction.rollback();
       throw error;
     }
+  }
+
+  /**
+   * Compute the deletion impact for a recipe — used to warn the user before
+   * deletion when a cooked-meal Item is linked and has portions in stock.
+   */
+  async getDeletionImpact(id: string, householdId: string): Promise<RecipeDeletionImpact> {
+    const recipe = await this.recipeRepository.findById(id, householdId);
+    if (!recipe) {
+      throw new NotFoundError('Recipe not found');
+    }
+
+    const linkedItem = await Item.findOne({
+      where: { recipeId: id, householdId },
+    });
+
+    if (!linkedItem) {
+      return {
+        recipeId: id,
+        recipeTitle: recipe.title,
+        hasCookedMealItem: false,
+        cookedMealItemId: null,
+        cookedMealItemName: null,
+        storedItemCount: 0,
+        totalPortions: 0,
+      };
+    }
+
+    const storedItems = await StoredItem.findAll({
+      where: { itemId: linkedItem.id, householdId },
+      attributes: ['quantity'],
+    });
+
+    const totalPortions = storedItems.reduce((sum, si) => sum + Number(si.quantity), 0);
+
+    return {
+      recipeId: id,
+      recipeTitle: recipe.title,
+      hasCookedMealItem: true,
+      cookedMealItemId: linkedItem.id,
+      cookedMealItemName: linkedItem.name,
+      storedItemCount: storedItems.length,
+      totalPortions,
+    };
   }
 
   async toggleFavorite(id: string, householdId: string): Promise<RecipeDto> {

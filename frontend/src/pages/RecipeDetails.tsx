@@ -8,7 +8,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, ChefHat, ExternalLink, UtensilsCrossed } from 'lucide-react';
 import { ConfirmServingsDialog } from '@/components/meals/ConfirmServingsDialog';
 import { ConsumeIngredientsDialog } from '@/components/ConsumeIngredientsDialog';
-import { useRecipeStore } from '@/stores/recipeStore';
+import { useRecipeStore, type RecipeDeletionImpact } from '@/stores/recipeStore';
+import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useMealStore } from '@/stores/mealStore';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +17,16 @@ import { getItemDisplayName } from '@/utils/itemUtils';
 import { formatQuantityWithUnit, isFreeQuantityUnit } from '@/utils/unitSystem';
 import { Item } from '@/services/itemService';
 import { useAuthStore } from '@/stores/authStore';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const RecipeDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -23,20 +34,25 @@ const RecipeDetails = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
   
-  const { 
-    currentRecipe: recipe, 
-    loading, 
-    error, 
-    fetchRecipeById, 
-    toggleFavorite, 
+  const {
+    currentRecipe: recipe,
+    loading,
+    error,
+    fetchRecipeById,
+    toggleFavorite,
     deleteRecipe,
+    getRecipeDeletionImpact,
     clearCurrentRecipe,
     clearError
   } = useRecipeStore();
+  const removeStoredItemsByItemId = useStoredItemStore((s) => s.removeStoredItemsByItemId);
   const currentUser = useAuthStore((state) => state.user);
-  
+
   const [showAddToMealsDialog, setShowAddToMealsDialog] = useState(false);
   const [showConsumeDialog, setShowConsumeDialog] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletionImpact, setDeletionImpact] = useState<RecipeDeletionImpact | null>(null);
+  const [deletingRecipe, setDeletingRecipe] = useState(false);
   const { addMeal, saving: addingMeal } = useMealStore();
 
   useEffect(() => {
@@ -114,13 +130,35 @@ const RecipeDetails = () => {
 
   const handleDelete = async () => {
     if (!recipe?.id) return;
-    
+
+    // Pre-flight: fetch deletion impact so the modal can warn about
+    // cooked-meal portions that will also be removed.
     try {
+      const impact = await getRecipeDeletionImpact(recipe.id);
+      setDeletionImpact(impact);
+      setDeleteDialogOpen(true);
+    } catch {
+      // If the impact endpoint fails, fall back to plain confirmation.
+      setDeletionImpact(null);
+      setDeleteDialogOpen(true);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!recipe?.id) return;
+    setDeletingRecipe(true);
+    try {
+      const cookedMealItemId = deletionImpact?.cookedMealItemId ?? null;
       await deleteRecipe(recipe.id);
+      // The backend cascade removed the StoredItems too — purge the local cache.
+      if (cookedMealItemId) {
+        removeStoredItemsByItemId(cookedMealItemId);
+      }
       toast({
         title: t('pages.recipes.recipeDeleted'),
         description: t('pages.recipes.recipeRemovedFromCollection'),
       });
+      setDeleteDialogOpen(false);
       navigate('/recipes');
     } catch (error) {
       toast({
@@ -128,6 +166,8 @@ const RecipeDetails = () => {
         description: t('pages.recipes.failedToDeleteRecipe'),
         variant: "destructive",
       });
+    } finally {
+      setDeletingRecipe(false);
     }
   };
 
@@ -465,6 +505,47 @@ const RecipeDetails = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Recipe deletion confirmation modal — warns about cooked-meal portions
+            that will be removed in cascade. */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('cookedMeal.deleteRecipe.title')}</AlertDialogTitle>
+              <AlertDialogDescription className="space-y-2">
+                <span className="block">
+                  {t('cookedMeal.deleteRecipe.intro', { title: recipe?.title ?? '' })}
+                </span>
+                {deletionImpact?.hasCookedMealItem && deletionImpact.totalPortions > 0 && (
+                  <span className="block">
+                    {t('cookedMeal.deleteRecipe.impact', {
+                      count: deletionImpact.totalPortions,
+                      portions: deletionImpact.totalPortions,
+                      dishName: deletionImpact.cookedMealItemName ?? '',
+                    })}
+                  </span>
+                )}
+                {deletionImpact?.hasCookedMealItem && (
+                  <span className="block font-medium text-destructive">
+                    {t('cookedMeal.deleteRecipe.warning')}
+                  </span>
+                )}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={deletingRecipe}>
+                {t('cookedMeal.deleteRecipe.cancel')}
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleConfirmDelete}
+                disabled={deletingRecipe}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {t('cookedMeal.deleteRecipe.confirm')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

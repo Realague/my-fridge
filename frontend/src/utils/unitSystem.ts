@@ -27,7 +27,9 @@ export const VISIBLE_STORAGE_UNITS = STORAGE_UNITS.filter(
 
 /** Pool of units the user can add in the item editor for a given catalog category. */
 export const getStorableUnitOptionsForItemCategory = (category: string): Unit[] =>
-  category === ItemCategory.MEAL ? [...STORAGE_UNITS, Unit.SERVING] : [...STORAGE_UNITS];
+  category === ItemCategory.MEAL || category === ItemCategory.COOKED_MEAL
+    ? [...STORAGE_UNITS, Unit.SERVING]
+    : [...STORAGE_UNITS];
 
 // Recipe units (includes cooking measurements and free-quantity gestural units).
 export const RECIPE_UNITS = [
@@ -108,6 +110,11 @@ export const UNIT_CATEGORIES: Record<string, UnitCategory> = {
     defaultUnit: Unit.PIECE,
     availableUnits: [Unit.PIECE, Unit.SERVING]
   },
+  [ItemCategory.COOKED_MEAL]: {
+    name: 'Cooked Meal',
+    defaultUnit: Unit.SERVING,
+    availableUnits: [Unit.SERVING]
+  },
   [ItemCategory.PREPARATION]: {
     name: 'Preparation',
     defaultUnit: Unit.PIECE,
@@ -133,7 +140,7 @@ export const getUnitsForCategory = (category: string, context: 'storage' | 'reci
 
   const allowedStorage = new Set<Unit>([
     ...VISIBLE_STORAGE_UNITS,
-    ...(category === ItemCategory.MEAL ? [Unit.SERVING] : []),
+    ...(category === ItemCategory.MEAL || category === ItemCategory.COOKED_MEAL ? [Unit.SERVING] : []),
   ]);
 
   if (context === 'storage') {

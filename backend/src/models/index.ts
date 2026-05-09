@@ -87,6 +87,13 @@ Recipe.belongsTo(Household, { foreignKey: 'householdId', as: 'household' });
 Recipe.hasMany(RecipeIngredient, { foreignKey: 'recipeId', as: 'ingredients' });
 RecipeIngredient.belongsTo(Recipe, { foreignKey: 'recipeId', as: 'recipe' });
 
+// Recipe ↔ cooked-meal Item association (1:1 logical, optional).
+// FK is on Item (recipeId). On Recipe delete, the FK is set to NULL by the
+// migration; the service layer is responsible for the full cascade (delete
+// the linked Item and all its StoredItems before deleting the Recipe).
+Recipe.hasOne(Item, { foreignKey: 'recipeId', as: 'cookedMealItem' });
+Item.belongsTo(Recipe, { foreignKey: 'recipeId', as: 'recipe' });
+
 Item.hasMany(RecipeIngredient, { foreignKey: 'itemId', as: 'recipeIngredients' });
 RecipeIngredient.belongsTo(Item, { foreignKey: 'itemId', as: 'item' });
 

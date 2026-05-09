@@ -19,6 +19,7 @@ interface StoredItemStore {
   updateStoredItem: (id: string, data: UpdateStoredItemRequest) => Promise<void>;
   deleteStoredItem: (id: string) => Promise<void>;
   markAsOpened: (id: string, openedDate?: string) => Promise<void>;
+  consumePortion: (id: string) => Promise<{ remaining: StoredItem | null }>;
   
   // Internal actions
   setLoading: (loading: boolean) => void;
@@ -303,6 +304,28 @@ export const useStoredItemStore = create<StoredItemStore>()(
           throw error;
         } finally {
           set({ loading: false });
+        }
+      },
+
+      consumePortion: async (id: string) => {
+        const householdId = getHouseholdId();
+        if (!householdId) {
+          throw new Error('No household ID provided');
+        }
+
+        try {
+          const result = await storedItemService.consumePortion(householdId, id);
+          const store = get();
+          if (result.remaining) {
+            store.updateStoredItemInHousehold(result.remaining);
+          } else {
+            store.removeStoredItemFromHousehold(id);
+          }
+          return { remaining: result.remaining };
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Failed to consume portion';
+          toast.error('Failed to consume portion', { description: message });
+          throw error;
         }
       },
 

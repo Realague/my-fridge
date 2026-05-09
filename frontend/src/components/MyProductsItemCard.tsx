@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, PackageOpen, Snowflake, Trash2 } from 'lucide-react';
+import { Calendar, ChefHat, MapPin, PackageOpen, Snowflake, Trash2, Utensils } from 'lucide-react';
 import type { StoredItem } from '@/services/storedItemService';
 import type { Item } from '@/services/itemService';
 import type { StorageArea } from '@/services/storageAreaService';
@@ -12,7 +12,10 @@ import { ItemImage } from '@/components/ItemImage';
 import { CategoryIcon } from '@/utils/categoryIcons';
 import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
 import { formatQuantityWithUnit } from '@/utils/unitSystem';
-import { StorageAreaType } from '@/types/enums';
+import { ItemCategory, StorageAreaType } from '@/types/enums';
+import { useStoredItemStore } from '@/stores/storedItemStore';
+import { useStorageAreaStore } from '@/stores/storageAreaStore';
+import { toast } from 'sonner';
 
 interface MyProductsItemCardProps {
   storedItem: StoredItem;
@@ -44,6 +47,55 @@ export function MyProductsItemCard({
   const { t } = useTranslation();
   const { formatDate } = useDateFormat();
   const navigate = useNavigate();
+  const consumePortion = useStoredItemStore((s) => s.consumePortion);
+  const updateStoredItem = useStoredItemStore((s) => s.updateStoredItem);
+  const getStorageAreasForHousehold = useStorageAreaStore((s) => s.getStorageAreasForHousehold);
+
+  const isCookedMeal = item?.category === ItemCategory.COOKED_MEAL;
+  const linkedRecipeId = item?.recipeId ?? null;
+  const isInFreezer = area?.type === StorageAreaType.FREEZER;
+
+  const handleOpenRecipe = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (linkedRecipeId) navigate(`/recipes/${linkedRecipeId}`);
+  };
+
+  const handleConsumePortion = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const result = await consumePortion(storedItem.id);
+      const remaining = result.remaining ? Number(result.remaining.quantity) : 0;
+      if (remaining > 0) {
+        toast.success(
+          t('cookedMeal.portionsLeft', {
+            count: remaining,
+            name: item ? getItemDisplayName(item, t) : '',
+          })
+        );
+      }
+    } catch {
+      // toast already raised by store
+    }
+  };
+
+  const handleFreeze = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const freezer = getStorageAreasForHousehold().find((a) => a.type === StorageAreaType.FREEZER);
+    if (!freezer) {
+      toast.error(t('pages.dashboard.expiringSoon.noFreezer'));
+      return;
+    }
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      await updateStoredItem(storedItem.id, {
+        storageAreaId: freezer.id,
+        frozenDate: today,
+        expirationDate: null,
+      });
+    } catch {
+      // toast already raised by store
+    }
+  };
 
   if (!item) {
     return (
@@ -209,6 +261,24 @@ export function MyProductsItemCard({
                   </span>
                 </div>
 
+                {isCookedMeal && storedItem.cookedDate && (
+                  <div className="flex items-center gap-1 text-lime-700 dark:text-lime-400">
+                    <ChefHat className="h-3 w-3" />
+                    <span>
+                      {(() => {
+                        const days = getDaysSince(storedItem.cookedDate);
+                        if (days === 0) return t('cookedMeal.cookedToday');
+                        return t('cookedMeal.cookedAgo', {
+                          when:
+                            days === 1
+                              ? t('pages.myProducts.openedDaysAgo', { count: 1 })
+                              : t('pages.myProducts.openedDaysAgo', { count: days }),
+                        });
+                      })()}
+                    </span>
+                  </div>
+                )}
+
                 {openedDaysAgo !== null && (
                   <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
                     <PackageOpen className="h-3 w-3" />
@@ -219,11 +289,46 @@ export function MyProductsItemCard({
                     </span>
                   </div>
                 )}
+
+                {isCookedMeal && linkedRecipeId && (
+                  <button
+                    type="button"
+                    onClick={handleOpenRecipe}
+                    className="inline-flex items-center gap-1 text-primary hover:underline"
+                  >
+                    <ChefHat className="h-3 w-3" />
+                    <span>{t('cookedMeal.openRecipe')}</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
 
           <div className="flex flex-col items-center gap-2">
+            {isCookedMeal && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleConsumePortion}
+                className="h-8 w-8 p-0"
+                aria-label={t('cookedMeal.consumePortion')}
+                title={t('cookedMeal.consumePortion')}
+              >
+                <Utensils className="h-4 w-4" />
+              </Button>
+            )}
+            {isCookedMeal && !isInFreezer && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleFreeze}
+                className="h-8 w-8 p-0"
+                aria-label={t('pages.dashboard.expiringSoon.actionFreeze')}
+                title={t('pages.dashboard.expiringSoon.actionFreeze')}
+              >
+                <Snowflake className="h-4 w-4" />
+              </Button>
+            )}
             <Button
               variant="deleteTrash"
               size="sm"

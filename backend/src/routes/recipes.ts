@@ -15,6 +15,7 @@ router.get('/households/:householdId/recipes/favorites', recipeController.getFav
 router.get('/households/:householdId/recipes/tags', recipeController.getTags);
 router.get('/households/:householdId/recipes/stats', recipeController.getStats);
 router.get('/households/:householdId/ingredients/stats', recipeController.getIngredientStats);
+router.get('/households/:householdId/recipes/:id/deletion-impact', recipeController.getDeletionImpact);
 router.get('/households/:householdId/recipes/:id', recipeController.getRecipeById);
 router.post('/households/:householdId/recipes/', recipeController.createRecipe);
 router.put('/households/:householdId/recipes/:id', recipeController.updateRecipe);

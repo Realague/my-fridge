@@ -224,7 +224,7 @@ export class RecipeController {
       });
     } catch (error) {
       console.error('deleteRecipe error:', error);
-      
+
       if (error instanceof NotFoundError) {
         res.status(404).json({
           success: false,
@@ -235,6 +235,22 @@ export class RecipeController {
           success: false,
           error: 'Failed to delete recipe'
         });
+      }
+    }
+  };
+
+  // GET /api/households/:householdId/recipes/:id/deletion-impact
+  getDeletionImpact = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { householdId, id } = req.params as { householdId: string, id: string };
+      const impact = await this.recipeService.getDeletionImpact(id, householdId);
+      res.json({ success: true, data: impact });
+    } catch (error) {
+      console.error('getDeletionImpact error:', error);
+      if (error instanceof NotFoundError) {
+        res.status(404).json({ success: false, error: error.message });
+      } else {
+        res.status(500).json({ success: false, error: 'Failed to compute deletion impact' });
       }
     }
   };

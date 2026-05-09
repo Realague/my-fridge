@@ -10,6 +10,7 @@ export interface CreateItemDto {
   imageUrl?: string;
   createdBy: string | null;
   householdId: string | null;
+  recipeId?: string | null;
 }
 
 export interface UpdateItemDto {
@@ -21,6 +22,7 @@ export interface UpdateItemDto {
   pieceAlias?: string | null;
   daysAfterOpening?: number;
   imageUrl?: string;
+  recipeId?: string | null;
 }
 
 export interface ItemDto {
@@ -34,6 +36,8 @@ export interface ItemDto {
   imageUrl: string | null;
   createdBy: string | null;
   householdId: string | null;
+  /** Set only on cooked-meal Items linked to a recipe; absent everywhere else. */
+  recipeId?: string | null;
   createdAt: string;
   updatedAt: string;
   creator?: {
@@ -98,7 +102,9 @@ export interface GetShoppingItemsQueryDto {
 }
 
 export interface CreateStoredItemDto {
-  itemId: string;
+  // For ingredient flow: itemId is required.
+  // For cooked-meal flow: itemId is omitted; articleType + name + (optional recipeId) are used to resolve/create the Item lazily.
+  itemId?: string;
   storageAreaId: string;
   quantity: number;
   unit: Unit;
@@ -108,6 +114,11 @@ export interface CreateStoredItemDto {
   openedDate?: string; // ISO date string
   householdId: string;
   createdBy: string;
+  // Cooked-meal specific
+  articleType?: 'ingredient' | 'cooked_meal';
+  name?: string;
+  recipeId?: string | null;
+  cookedDate?: string; // ISO date string
 }
 
 export interface UpdateStoredItemDto {
@@ -117,6 +128,7 @@ export interface UpdateStoredItemDto {
   location?: string;
   isOpened?: boolean;
   openedDate?: string; // ISO date string
+  cookedDate?: string | null;
   storageAreaId?: string; // Allow moving items between storage areas
 }
 
@@ -131,6 +143,7 @@ export interface StoredItemDto {
   isOpened: boolean;
   openedDate: string | null | undefined;
   frozenDate: string | null | undefined;
+  cookedDate: string | null | undefined;
   householdId: string;
   createdBy: string;
   createdAt: string;

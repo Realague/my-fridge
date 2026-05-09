@@ -36,6 +36,21 @@
       "cancel": "Annuler"
     }
   },
+  "leftoverPortionsDialog": {
+    "kicker": "Batch cooking",
+    "title": "Il te reste des portions ?",
+    "recipeServings_one": "Recette prévue pour {{count}} portion.",
+    "recipeServings_other": "Recette prévue pour {{count}} portions.",
+    "decrement": "Une portion en moins",
+    "increment": "Une portion en plus",
+    "portionsHelper_one": "{{count}} portion à conserver.",
+    "portionsHelper_other": "{{count}} portions à conserver.",
+    "portionsHelperZero": "Rien à garder — appuie sur « Non, rien à garder ».",
+    "storageAreaLabel": "Où stocker ?",
+    "expirationLabel": "Date de péremption",
+    "skip": "Non, rien à garder",
+    "save": "Enregistrer"
+  },
   "buttons": {
     "add": "Ajouter",
     "save": "Enregistrer",
@@ -571,6 +586,7 @@
       "editRecipe": "Modifier la recette",
       "addRecipe": "Ajouter une recette",
       "removeMeal": "Retirer",
+      "cookMeal": "J'ai cuisiné",
       "increaseServings": "Plus une portion",
       "decreaseServings": "Moins une portion",
       "minutes_one": "{{count}} min",
@@ -635,7 +651,10 @@
         "mealRemoved": "Retirée du menu.",
         "shoppingListReady": "Liste prête.",
         "shoppingListReadyDescription_one": "{{count}} article à acheter.",
-        "shoppingListReadyDescription_other": "{{count}} articles à acheter."
+        "shoppingListReadyDescription_other": "{{count}} articles à acheter.",
+        "cookedSavedTitle_one": "{{count}} portion de {{dish}} ajoutée au {{area}}.",
+        "cookedSavedTitle_other": "{{count}} portions de {{dish}} ajoutées au {{area}}.",
+        "cookedSkippedTitle": "{{dish}} marqué comme cuisiné."
       }
     },
     "mealsShopping": {
@@ -791,6 +810,7 @@
         "expired": "Expiré",
         "expiringSoon": "Expire bientôt",
         "confirm": "Confirmer la consommation",
+        "confirmNoDeductions": "Continuer sans déduire",
         "noDeductions": "Aucune déduction sélectionnée",
         "noIngredients": "Cette recette n'a pas d'ingrédients",
         "success": "Ingrédients consommés",

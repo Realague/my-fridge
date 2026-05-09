@@ -65,6 +65,13 @@ router.post(
   mealController.confirmRemoval.bind(mealController)
 );
 
+// Mark a meal as cooked (soft-removal: row stays for stats, meal disappears
+// from the active plan, positions are repacked).
+router.post(
+  '/households/:householdId/meals/:id/mark-cooked',
+  mealController.markCooked.bind(mealController)
+);
+
 // Delete a meal (positions are repacked after deletion)
 router.delete(
   '/households/:householdId/meals/:id',

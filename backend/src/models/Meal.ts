@@ -9,12 +9,13 @@ interface MealAttributes {
   recipeId: string;
   servings: number;
   position: number;
+  cookedAt: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 interface MealCreationAttributes
-  extends Optional<MealAttributes, 'id' | 'position' | 'createdAt' | 'updatedAt'> {}
+  extends Optional<MealAttributes, 'id' | 'position' | 'cookedAt' | 'createdAt' | 'updatedAt'> {}
 
 export class Meal extends Model<MealAttributes, MealCreationAttributes> implements MealAttributes {
   public id!: string;
@@ -22,6 +23,7 @@ export class Meal extends Model<MealAttributes, MealCreationAttributes> implemen
   public recipeId!: string;
   public servings!: number;
   public position!: number;
+  public cookedAt!: Date | null;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -58,6 +60,11 @@ Meal.init(
       allowNull: false,
       defaultValue: 0,
     },
+    cookedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+    },
   },
   {
     sequelize,
@@ -67,6 +74,7 @@ Meal.init(
       { fields: ['householdId'] },
       { fields: ['recipeId'] },
       { fields: ['householdId', 'position'] },
+      { fields: ['householdId', 'cookedAt'] },
     ],
   }
 );

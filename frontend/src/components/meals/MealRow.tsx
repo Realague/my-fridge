@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Clock, Minus, Plus, Trash2 } from 'lucide-react';
+import { ChefHat, Clock, Minus, Plus, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ interface Props {
   onIncrement: () => void;
   onDecrement: () => void;
   onRemove: () => void;
+  onCook: () => void;
 }
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -23,7 +24,14 @@ const CATEGORY_EMOJI: Record<string, string> = {
   other: '🍽️',
 };
 
-export const MealRow = ({ meal, disabled, onIncrement, onDecrement, onRemove }: Props) => {
+export const MealRow = ({
+  meal,
+  disabled,
+  onIncrement,
+  onDecrement,
+  onRemove,
+  onCook,
+}: Props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -101,6 +109,18 @@ export const MealRow = ({ meal, disabled, onIncrement, onDecrement, onRemove }: 
           <Plus className="h-3.5 w-3.5" />
         </Button>
       </div>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={onCook}
+        disabled={disabled}
+        className="h-8 w-8 p-0 shrink-0 text-green-600 hover:text-green-700 hover:bg-green-50"
+        aria-label={t('pages.meals.cookMeal')}
+        title={t('pages.meals.cookMeal')}
+      >
+        <ChefHat className="h-4 w-4" />
+      </Button>
 
       <Button
         variant="ghost"

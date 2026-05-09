@@ -36,6 +36,21 @@
       "cancel": "Cancelar"
     }
   },
+  "leftoverPortionsDialog": {
+    "kicker": "Batch cooking",
+    "title": "¿Te quedan porciones?",
+    "recipeServings_one": "Receta prevista para {{count}} porción.",
+    "recipeServings_other": "Receta prevista para {{count}} porciones.",
+    "decrement": "Una porción menos",
+    "increment": "Una porción más",
+    "portionsHelper_one": "{{count}} porción para guardar.",
+    "portionsHelper_other": "{{count}} porciones para guardar.",
+    "portionsHelperZero": "Nada que guardar — toca «No, nada que guardar».",
+    "storageAreaLabel": "¿Dónde guardar?",
+    "expirationLabel": "Fecha de caducidad",
+    "skip": "No, nada que guardar",
+    "save": "Guardar"
+  },
   "buttons": {
     "add": "Agregar",
     "save": "Guardar",
@@ -549,6 +564,7 @@
       "editRecipe": "Editar receta",
       "addRecipe": "Añadir una receta",
       "removeMeal": "Quitar",
+      "cookMeal": "Lo he cocinado",
       "increaseServings": "Una porción más",
       "decreaseServings": "Una porción menos",
       "minutes_one": "{{count}} min",
@@ -613,7 +629,10 @@
         "mealRemoved": "Fuera del menú.",
         "shoppingListReady": "Lista lista.",
         "shoppingListReadyDescription_one": "{{count}} artículo por comprar.",
-        "shoppingListReadyDescription_other": "{{count}} artículos por comprar."
+        "shoppingListReadyDescription_other": "{{count}} artículos por comprar.",
+        "cookedSavedTitle_one": "{{count}} porción de {{dish}} añadida a {{area}}.",
+        "cookedSavedTitle_other": "{{count}} porciones de {{dish}} añadidas a {{area}}.",
+        "cookedSkippedTitle": "{{dish}} marcado como cocinado."
       }
     },
     "mealsShopping": {
@@ -769,6 +788,7 @@
         "expired": "Caducado",
         "expiringSoon": "Caduca pronto",
         "confirm": "Confirmar consumo",
+        "confirmNoDeductions": "Continuar sin deducir",
         "noDeductions": "No se seleccionaron deducciones",
         "noIngredients": "Esta receta no tiene ingredientes",
         "success": "Ingredientes consumidos",

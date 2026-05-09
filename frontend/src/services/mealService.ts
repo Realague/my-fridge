@@ -25,6 +25,7 @@ export interface MealDto {
   recipeId: string;
   servings: number;
   position: number;
+  cookedAt: string | null;
   createdAt: string;
   updatedAt: string;
   recipe?: MealRecipeSummary;
@@ -236,5 +237,14 @@ export const mealService = {
       method: 'POST',
       body: { actions },
     });
+  },
+
+  async markCooked(householdId: string, mealId: string): Promise<MealDto> {
+    const response = await apiCall(
+      `/api/households/${householdId}/meals/${mealId}/mark-cooked`,
+      { method: 'POST' }
+    );
+    const result: ApiResponse<MealDto> = await response.json();
+    return result.data;
   },
 };

@@ -14,7 +14,7 @@ const RECIPE_INCLUDE = [
 export class MealRepository {
   async findByHousehold(householdId: string): Promise<Meal[]> {
     return await Meal.findAll({
-      where: { householdId },
+      where: { householdId, cookedAt: null },
       include: RECIPE_INCLUDE,
       order: [['position', 'ASC']],
     });
@@ -27,7 +27,10 @@ export class MealRepository {
   }
 
   async getMaxPosition(householdId: string, transaction?: Transaction): Promise<number> {
-    const max = await Meal.max('position', { where: { householdId }, transaction });
+    const max = await Meal.max('position', {
+      where: { householdId, cookedAt: null },
+      transaction,
+    });
     return typeof max === 'number' ? max : 0;
   }
 
@@ -52,21 +55,44 @@ export class MealRepository {
     return await sequelize.transaction(async (transaction) => {
       const deleted = await Meal.destroy({ where: { id, householdId }, transaction });
       if (deleted === 0) return false;
-
-      const remaining = await Meal.findAll({
-        where: { householdId },
-        order: [['position', 'ASC']],
-        transaction,
-      });
-
-      for (let i = 0; i < remaining.length; i++) {
-        const meal = remaining[i]!;
-        if (meal.position !== i + 1) {
-          await meal.update({ position: i + 1 }, { transaction });
-        }
-      }
-
+      await this.repackPositions(householdId, transaction);
       return true;
     });
+  }
+
+  /**
+   * Marks a meal as cooked (soft-removal): keeps the row for stats but the
+   * meal vanishes from the active plan. Positions are repacked so the UI
+   * stays compact.
+   */
+  async markCooked(id: string, householdId: string): Promise<Meal | null> {
+    return await sequelize.transaction(async (transaction) => {
+      const meal = await Meal.findOne({
+        where: { id, householdId },
+        include: RECIPE_INCLUDE,
+        transaction,
+      });
+      if (!meal) return null;
+      if (!meal.cookedAt) {
+        await meal.update({ cookedAt: new Date() }, { transaction });
+        await this.repackPositions(householdId, transaction);
+      }
+      return meal;
+    });
+  }
+
+  private async repackPositions(householdId: string, transaction: Transaction): Promise<void> {
+    const remaining = await Meal.findAll({
+      where: { householdId, cookedAt: null },
+      order: [['position', 'ASC']],
+      transaction,
+    });
+
+    for (let i = 0; i < remaining.length; i++) {
+      const meal = remaining[i]!;
+      if (meal.position !== i + 1) {
+        await meal.update({ position: i + 1 }, { transaction });
+      }
+    }
   }
 }

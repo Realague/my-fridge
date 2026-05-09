@@ -22,6 +22,7 @@ export class RecipeRepository {
       maxTotalTime,
       isFavorite,
       createdBy,
+      itemId,
       limit = 20,
       offset = 0
     } = params;
@@ -70,6 +71,23 @@ export class RecipeRepository {
 
     if (createdBy) {
       whereConditions.createdBy = createdBy;
+    }
+
+    const ingredientInclude: Record<string, unknown> = {
+      model: RecipeIngredient,
+      as: 'ingredients',
+      include: [
+        {
+          model: Item,
+          as: 'item',
+          attributes: ['id', 'name', 'category', 'defaultUnit', 'availableUnits']
+        }
+      ]
+    };
+    if (itemId) {
+      // Filter recipes that contain this ingredient
+      ingredientInclude.where = { itemId };
+      ingredientInclude.required = true;
     }
 
     const { rows: recipes, count: total } = await Recipe.findAndCountAll({

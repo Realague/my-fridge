@@ -89,6 +89,8 @@ jobs:
             VITE_BUILD_DATE=${{ steps.fe_banner.outputs.build_date }}
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,scope=${{ matrix.service }},mode=max
+          provenance: false
+          sbom: false
 
       - name: Compute primary tag
         id: primary_tag

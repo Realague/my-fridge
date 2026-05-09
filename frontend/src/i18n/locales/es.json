@@ -1,6 +1,7 @@
 {
   "navigation": {
     "home": "Inicio",
+    "products": "Productos",
     "shopping": "Compras",
     "meals": "Comidas",
     "recipes": "Recetas"
@@ -62,6 +63,8 @@
     "goToDashboard": "Ir al tablero",
     "expired": "Vencido",
     "expiresIn": "Vence en {{days}}d",
+    "expiredSince_one": "Vencido hace {{count}}d",
+    "expiredSince_other": "Vencido hace {{count}}d",
     "fresh": "Fresco ({{days}}d)",
     "quantity": "Cantidad",
     "location": "Ubicación",
@@ -76,7 +79,7 @@
     "addTo": "Agregar a {{name}}",
     "added": "Agregado",
     "addedDetails": "Agregado {{quantity}} {{unit}} de {{item}} a {{area}}",
-    "locationPlaceholder": "ej., Almacén principal, Alacena",
+    "locationPlaceholder": "ej., Cajón inferior, Estante superior, Puerta",
     "kitchenFridge": "Refrigerador de cocina",
     "coldStorage": "Almacén de frío",
     "chestFreezer": "Congelador de pecho",
@@ -123,6 +126,20 @@
       "kitchen_cupboard": "Alacena de cocina",
       "other": "Otro"
     }
+  },
+  "addStoredItemDialog": {
+    "title": "Añadir un artículo",
+    "description": "Elige el artículo y el espacio donde guardarlo.",
+    "openButton": "Añadir un artículo",
+    "storageAreaLabel": "Espacio de almacenamiento",
+    "storageAreaPlaceholder": "Selecciona un espacio",
+    "suggestion": "Sugerido",
+    "singleAreaHint": "Se añadirá a {{name}}",
+    "areaDeleted": "Este espacio ya no existe. Elige otro espacio.",
+    "toastSuccess": "Artículo añadido a {{area}}",
+    "toastView": "Ver",
+    "noAreaTitle": "Sin espacios de almacenamiento",
+    "noAreaDescription": "Crea primero un espacio para poder guardar tus artículos."
   },
   "storageAreaManager": {
     "title": "Áreas de almacenamiento",
@@ -224,6 +241,16 @@
     "noNotifications": "Sin notificaciones",
     "allCaughtUp": "¡Estás al día! Revisa más tarde para actualizaciones."
   },
+  "expirationNotifications": {
+    "titleInitial_one": "{{name}} caduca en {{count}} día",
+    "titleInitial_other": "{{name}} caduca en {{count}} días",
+    "titleReminder": "{{name}} caduca mañana",
+    "titleToday": "{{name}} caduca hoy",
+    "titleExpired_one": "{{name}} caducó hace {{count}} día",
+    "titleExpired_other": "{{name}} caducó hace {{count}} días",
+    "openedDaysAgo_one": "Abierto hace {{count}} día",
+    "openedDaysAgo_other": "Abierto hace {{count}} días"
+  },
   "recipeSelector": {
     "loadingRecipes": "Cargando recetas...",
     "startTyping": "Comienza a escribir para buscar recetas...",
@@ -288,6 +315,7 @@
       "authenticationRequired": "Autenticación requerida. Por favor inicia sesión para continuar.",
       "sessionExpired": "Sesión expirada. Por favor inicia sesión de nuevo.",
       "requestTimeout": "Tiempo de espera agotado. Por favor inténtalo de nuevo.",
+      "requestFailed": "La acción ha fallado. Por favor inténtalo de nuevo.",
       "failedToCreateItem": "Error al crear artículo",
       "failedToUpdateItem": "Error al actualizar artículo",
       "duplicateItemName": "Ya existe un artículo con este nombre en tu hogar",
@@ -362,7 +390,62 @@
       "itemsTracked_one": "{{count}} artículo rastreado",
       "itemsTracked_other": "{{count}} artículos rastreados",
       "loyaltyCards": "Tarjetas de fidelidad",
-      "loyaltyCardsDesc": "Tus tarjetas de tiendas"
+      "loyaltyCardsDesc": "Tus tarjetas de tiendas",
+      "expiringSoon": {
+        "title": "Consumir pronto",
+        "subtitle_one": "{{count}} artículo se acerca a su fecha",
+        "subtitle_other": "{{count}} artículos se acercan a su fecha",
+        "badgeExpired": "Caducado",
+        "badgeToday": "Hoy",
+        "badgeTomorrow": "Mañana",
+        "badgeInDays_one": "En {{count}} día",
+        "badgeInDays_other": "En {{count}} días",
+        "actionDiscard": "Tirar",
+        "actionFreeze": "Congelar",
+        "actionRecipes": "Recetas",
+        "openedDaysAgo_one": "Abierto hace {{count}} día",
+        "openedDaysAgo_other": "Abierto hace {{count}} días",
+        "viewMore_one": "Ver {{count}} más",
+        "viewMore_other": "Ver {{count}} más",
+        "discardedToast": "{{name}} retirado del stock",
+        "frozenToast": "{{name}} movido a {{freezer}}",
+        "noFreezer": "Añade primero un congelador a tu hogar para poder congelar.",
+        "pushOptIn": {
+          "title": "¿Recibir estas alertas incluso cuando la app esté cerrada?",
+          "activate": "Activar",
+          "later": "Más tarde",
+          "enabledToast": "Notificaciones activadas",
+          "deniedToast": "Permiso denegado. Puedes reactivarlo en los ajustes del navegador."
+        }
+      }
+    },
+    "myProducts": {
+      "title": "Mis productos",
+      "subtitle_one": "{{count}} producto en tu hogar",
+      "subtitle_other": "{{count}} productos en tu hogar",
+      "searchPlaceholder": "Buscar por nombre…",
+      "filterByCategory": "Filtrar por categoría",
+      "filterByArea": "Áreas de almacenamiento",
+      "areasAll": "Todas las áreas",
+      "areasSelected_one": "{{count}} área",
+      "areasSelected_other": "{{count}} áreas",
+      "groupByArea": "Agrupar por área",
+      "areaItems_one": "{{count}} artículo",
+      "areaItems_other": "{{count}} artículos",
+      "openedDaysAgo_one": "Abierto hace {{count}} día",
+      "openedDaysAgo_other": "Abierto hace {{count}} días",
+      "openedToday": "Abierto hoy",
+      "deleteFailed": "No se pudo eliminar este artículo",
+      "empty": {
+        "title": "Tu hogar está vacío",
+        "description": "Empieza a agregar productos para llevar el control de lo que tienes.",
+        "cta": "Agregar un artículo"
+      },
+      "noResults": {
+        "title": "Ningún producto coincide con tu búsqueda",
+        "description": "Prueba con otra palabra clave o restablece los filtros.",
+        "reset": "Restablecer filtros"
+      }
     },
     "shopping": {
       "title": "Lista de Compras",
@@ -569,6 +652,7 @@
     },
     "recipes": {
       "title": "Recetas",
+      "filteredByIngredient": "Filtrado por: {{name}}",
       "addRecipe": "Agregar receta",
       "noRecipes": "No se encontraron recetas",
       "ingredients": "Ingredientes",
@@ -726,6 +810,7 @@
         "description": "Configura cómo recibes alertas.",
         "pushNotifications": "Notificaciones push",
         "pushDescription": "Recibir alertas en tu dispositivo.",
+        "pushDeniedHelp": "Notificaciones bloqueadas en el navegador. Vuelve a autorizarlas desde los ajustes del sistema y recarga la app.",
         "lowStockAlerts": "Alertas de stock bajo",
         "lowStockDescription": "Notificarme cuando los artículos se estén agotando."
       },
@@ -780,6 +865,15 @@
       "role": {
         "admin": "Administrador",
         "member": "Miembro"
+      },
+      "expirationAlerts": {
+        "title": "Alertas de caducidad",
+        "description": "Elige con cuántos días de antelación tu hogar es avisado de los productos que se acercan a su fecha.",
+        "label": "Avisarme",
+        "option_one": "{{count}} día antes de caducar",
+        "option_other": "{{count}} días antes de caducar",
+        "note": "Se envía un recordatorio automático el día antes de la caducidad. Los cambios solo se aplican a las nuevas notificaciones.",
+        "savedToast": "Alerta actualizada para todo el hogar."
       }
     },
     "index": {

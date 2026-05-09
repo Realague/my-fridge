@@ -74,6 +74,7 @@ function App() {
                     <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />
                     <Route path="/add-recipe" element={<AddRecipe />} />
                     <Route path="/import-recipe" element={<ImportRecipe />} />
+                    <Route path="/meals" element={<Meals />} />
                     <Route path="/meals/add" element={<RecipeSelector />} />
                     <Route path="/recipes/:id/edit" element={<EditRecipe />} />
                     <Route path="/household" element={<Household />} />

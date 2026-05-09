@@ -16,6 +16,7 @@ import { ExpirationUrgency, ExpiringNowItem } from '@/types/expirationNotificati
 import { StorageAreaType } from '@/types/enums';
 import { getTranslatedUnitLabel } from '@/utils/unitSystem';
 import { scrollRevealFadeUp } from '@/lib/motion';
+import { PushOptInBanner } from '@/components/PushOptInBanner';
 
 const MAX_VISIBLE = 5;
 
@@ -114,10 +115,8 @@ export const ExpiringSoonCard = ({ householdId }: ExpiringSoonCardProps) => {
   };
 
   const handleRecipes = (item: ExpiringNowItem) => {
-    const params = new URLSearchParams({
-      itemId: item.itemId,
-      itemName: translateItemName(item.itemName, item.itemHouseholdId, t),
-    });
+    const params = new URLSearchParams({ itemId: item.itemId });
+    if (item.itemName) params.set('itemName', item.itemName);
     navigate(`/recipes?${params.toString()}`);
   };
 
@@ -156,6 +155,8 @@ export const ExpiringSoonCard = ({ householdId }: ExpiringSoonCardProps) => {
               />
             </motion.div>
           ))}
+
+          <PushOptInBanner />
 
           {!showAll && hiddenCount > 0 && (
             <Button

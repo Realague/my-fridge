@@ -416,7 +416,14 @@
         "viewMore_other": "Voir les {{count}} autres",
         "discardedToast": "{{name}} retiré du stock",
         "frozenToast": "{{name}} déplacé vers {{freezer}}",
-        "noFreezer": "Ajoutez d'abord un congélateur à votre foyer pour congeler des articles."
+        "noFreezer": "Ajoutez d'abord un congélateur à votre foyer pour congeler des articles.",
+        "pushOptIn": {
+          "title": "Recevoir ces alertes même quand l'app est fermée ?",
+          "activate": "Activer",
+          "later": "Plus tard",
+          "enabledToast": "Notifications activées",
+          "deniedToast": "Permission refusée. Vous pouvez la réactiver dans les paramètres de votre navigateur."
+        }
       }
     },
     "myProducts": {
@@ -757,6 +764,7 @@
         "description": "Configurez comment vous recevez les alertes.",
         "pushNotifications": "Notifications push",
         "pushDescription": "Recevoir des alertes sur votre appareil.",
+        "pushDeniedHelp": "Notifications bloquées dans le navigateur. Réautorisez-les depuis les paramètres système, puis rechargez l'app.",
         "lowStockAlerts": "Alertes de stock faible",
         "lowStockDescription": "Me prévenir quand les articles sont en rupture."
       },

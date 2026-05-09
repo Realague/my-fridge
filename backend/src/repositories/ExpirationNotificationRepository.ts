@@ -23,11 +23,36 @@ export type ExpirationNotificationWithRead = {
 };
 
 export class ExpirationNotificationRepository {
-  async bulkUpsertSkippingConflict(rows: NewNotificationInput[]): Promise<void> {
-    if (rows.length === 0) return;
-    await ExpirationNotification.bulkCreate(rows, {
-      ignoreDuplicates: true,
+  async bulkUpsertSkippingConflict(rows: NewNotificationInput[]): Promise<ExpirationNotification[]> {
+    if (rows.length === 0) return [];
+
+    // Identify pre-existing rows (storedItemId, phase) so we can return only the
+    // notifications actually inserted by this call.
+    const candidateKeys = rows.map((r) => ({ storedItemId: r.storedItemId, phase: r.phase }));
+    const storedItemIds = Array.from(new Set(candidateKeys.map((k) => k.storedItemId)));
+    const phases = Array.from(new Set(candidateKeys.map((k) => k.phase)));
+
+    const existing = await ExpirationNotification.findAll({
+      where: {
+        storedItemId: { [Op.in]: storedItemIds },
+        phase: { [Op.in]: phases },
+      },
+      attributes: ['storedItemId', 'phase'],
     });
+    const existingKeys = new Set(existing.map((e) => `${e.storedItemId}::${e.phase}`));
+
+    await ExpirationNotification.bulkCreate(rows, { ignoreDuplicates: true });
+
+    const newKeys = rows.filter((r) => !existingKeys.has(`${r.storedItemId}::${r.phase}`));
+    if (newKeys.length === 0) return [];
+
+    // Re-query the just-inserted rows by their (storedItemId, phase) tuples.
+    const inserted = await ExpirationNotification.findAll({
+      where: {
+        [Op.or]: newKeys.map((k) => ({ storedItemId: k.storedItemId, phase: k.phase })),
+      },
+    });
+    return inserted;
   }
 
   async listByHouseholdWithReadState(

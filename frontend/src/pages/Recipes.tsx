@@ -249,7 +249,7 @@ const RecipeGrid = ({ activeTab, recipes, onToggleFavorite, getDifficultyColor }
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <CardTitle className="text-lg">{recipe.title}</CardTitle>
+                  <CardTitle as="h3">{recipe.title}</CardTitle>
                   <CardDescription className="text-sm mt-1">
                     {recipe.description}
                   </CardDescription>

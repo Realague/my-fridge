@@ -80,7 +80,7 @@ const Index = () => {
               <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-3">
                 <Users className="h-6 w-6 text-accent-foreground" />
               </div>
-              <CardTitle className="text-lg">{t('pages.index.features.householdSharing')}</CardTitle>
+              <CardTitle>{t('pages.index.features.householdSharing')}</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription>
@@ -94,7 +94,7 @@ const Index = () => {
               <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-3">
                 <Utensils className="h-6 w-6 text-accent-foreground" />
               </div>
-              <CardTitle className="text-lg">{t('pages.index.features.smartInventory')}</CardTitle>
+              <CardTitle>{t('pages.index.features.smartInventory')}</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription>
@@ -108,7 +108,7 @@ const Index = () => {
               <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-3">
                 <ShoppingCart className="h-6 w-6 text-accent-foreground" />
               </div>
-              <CardTitle className="text-lg">{t('pages.index.features.shoppingLists')}</CardTitle>
+              <CardTitle>{t('pages.index.features.shoppingLists')}</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription>
@@ -122,7 +122,7 @@ const Index = () => {
               <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-3">
                 <Clock className="h-6 w-6 text-accent-foreground" />
               </div>
-              <CardTitle className="text-lg">{t('pages.index.features.mealPlanning')}</CardTitle>
+              <CardTitle>{t('pages.index.features.mealPlanning')}</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription>

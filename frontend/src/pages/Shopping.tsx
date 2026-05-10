@@ -798,7 +798,7 @@ const Shopping = () => {
             <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">
+                  <CardTitle>
                     {t('pages.shopping.toBuy')} ({pendingItemsAlpha.length})
                     {categoryFilter !== 'all' && (
                       <span className="text-sm font-normal text-muted-foreground ml-2">
@@ -859,7 +859,7 @@ const Shopping = () => {
             {/* Completed Items (A-Z) */}
             <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                <CardTitle className="text-lg">
+                <CardTitle>
                   {t('pages.shopping.completed')} ({completedItemsAlpha.length})
                   {categoryFilter !== 'all' && (
                     <span className="text-sm font-normal text-muted-foreground ml-2">

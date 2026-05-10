@@ -402,7 +402,7 @@ const RecipeDetails = () => {
         {/* Ingredients */}
         <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
-            <CardTitle className="text-lg">{t('pages.recipes.ingredients')}</CardTitle>
+            <CardTitle>{t('pages.recipes.ingredients')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-3">
@@ -435,7 +435,7 @@ const RecipeDetails = () => {
         {/* Instructions */}
         <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
-            <CardTitle className="text-lg">{t('pages.recipes.instructions')}</CardTitle>
+            <CardTitle>{t('pages.recipes.instructions')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ol className="space-y-4">

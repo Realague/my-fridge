@@ -29,19 +29,29 @@ const CardHeader = React.forwardRef<
 ))
 CardHeader.displayName = "CardHeader"
 
-const CardTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h3
-    ref={ref}
-    className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
-      className
-    )}
-    {...props}
-  />
-))
+// CardTitle is polymorphic: callers pick the heading level that fits the page
+// outline (h1 → h2 → h3 …). Default is h2 because most pages already have a
+// page-level h1 in their header — `<CardTitle>` then naturally lands at h2,
+// fixing the h1 → h3 jumps the original audit flagged on 22 pages.
+//
+// Default styling matches charter heading-2 (text-lg font-semibold) instead of
+// the previous text-2xl which 90 % of consumers were already overriding.
+type CardTitleElement = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
+  as?: CardTitleElement;
+}
+const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
+  ({ className, as: Comp = "h2", ...props }, ref) => (
+    <Comp
+      ref={ref}
+      className={cn(
+        "text-lg font-semibold leading-tight tracking-tight",
+        className
+      )}
+      {...props}
+    />
+  )
+)
 CardTitle.displayName = "CardTitle"
 
 const CardDescription = React.forwardRef<

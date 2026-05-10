@@ -120,7 +120,6 @@ const Recipes = () => {
             <div className="flex gap-2 shrink-0">
               <Button
                 variant="outline"
-                className="touch-friendly"
                 onClick={() => navigate('/import-recipe')}
               >
                 <Download className="h-4 w-4 sm:mr-2" />

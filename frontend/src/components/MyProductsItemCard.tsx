@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardLinkOverlay } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, ChefHat, MapPin, PackageOpen, Snowflake, Trash2, Utensils } from 'lucide-react';
@@ -165,10 +165,14 @@ export function MyProductsItemCard({
     storedItem.isOpened && storedItem.openedDate ? getDaysSince(storedItem.openedDate) : null;
 
   return (
-    <Card
-      className="bg-card backdrop-blur-sm border-0 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200"
-      onClick={goToArea}
-    >
+    <div className="relative isolate">
+      <CardLinkOverlay
+        aria-label={`${getItemDisplayName(item, t)} — ${area?.name ?? ''}`}
+        onClick={goToArea}
+      />
+      <Card
+        className="bg-card backdrop-blur-sm border-0 shadow-lg mf-motion-card hover:shadow-xl pointer-events-none [&_button]:pointer-events-auto [&_button]:relative [&_button]:z-10 [&_a]:pointer-events-auto [&_a]:relative [&_a]:z-10"
+      >
       <CardContent className="p-4">
         <div className="flex items-start justify-between gap-3">
           <ItemImage
@@ -342,6 +346,7 @@ export function MyProductsItemCard({
           </div>
         </div>
       </CardContent>
-    </Card>
+      </Card>
+    </div>
   );
 }

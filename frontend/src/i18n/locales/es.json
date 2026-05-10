@@ -799,6 +799,8 @@
       "title": "Recetas",
       "filteredByIngredient": "Filtrado por: {{name}}",
       "addRecipe": "Agregar receta",
+      "favorite": "Añadir a favoritos",
+      "unfavorite": "Quitar de favoritos",
       "noRecipes": "No se encontraron recetas",
       "ingredients": "Ingredientes",
       "freeQuantity": "Al gusto",

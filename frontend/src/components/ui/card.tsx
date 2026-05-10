@@ -76,4 +76,64 @@ const CardFooter = React.forwardRef<
 ))
 CardFooter.displayName = "CardFooter"
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+// Card rendered as a native <button>: gets focus, Enter/Space activation
+// and screen-reader "button" semantics for free. Use this for cards whose
+// entire surface navigates or triggers a single action AND that have NO
+// nested interactive descendants. For cards with nested buttons/links,
+// use CardLinkOverlay (stretched-link pattern) instead.
+const CardButton = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, type, ...props }, ref) => (
+  <button
+    ref={ref}
+    type={type ?? "button"}
+    className={cn(
+      // Visual parity with Card
+      "block w-full text-left rounded-lg border bg-card text-card-foreground shadow-sm",
+      // Charter motion (translateY + shadow), respects prefers-reduced-motion
+      "mf-motion-card cursor-pointer hover:shadow-xl",
+      // Focus ring (charter-aligned via shadcn ring tokens)
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      // Reset native <button> defaults that fight the layout
+      "appearance-none font-[inherit] disabled:cursor-not-allowed disabled:opacity-60",
+      className
+    )}
+    {...props}
+  />
+))
+CardButton.displayName = "CardButton"
+
+// Stretched-link overlay for cards that contain nested interactive elements
+// (buttons, links). Renders an absolutely-positioned <button> covering the
+// card surface; nested actions stay reachable because they sit on a higher
+// stacking context (use `relative z-10` on action wrappers). Avoids the
+// nested-interactive WCAG violation that role="button" on the wrapper would
+// trigger.
+//
+// Usage:
+//   <div className="relative">
+//     <CardLinkOverlay aria-label={...} onClick={...} />
+//     <Card>
+//       ...content with <button className="relative z-10" />...
+//     </Card>
+//   </div>
+const CardLinkOverlay = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, type, ...props }, ref) => (
+  <button
+    ref={ref}
+    type={type ?? "button"}
+    className={cn(
+      "absolute inset-0 z-0 w-full h-full rounded-lg cursor-pointer",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      "appearance-none border-0 bg-transparent p-0",
+      className
+    )}
+    {...props}
+  />
+))
+CardLinkOverlay.displayName = "CardLinkOverlay"
+
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, CardButton, CardLinkOverlay }

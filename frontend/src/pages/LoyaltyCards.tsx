@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardButton, CardContent } from '@/components/ui/card';
 import { ArrowLeft, Plus, Trash2, CreditCard } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import BarcodeDisplay from '@/components/BarcodeDisplay';
@@ -224,14 +224,16 @@ const LoyaltyCards = () => {
               const cardColor = catalogEntry?.color || card.color || '#6B7280';
 
               return (
-                <Card
+                <CardButton
                   key={card.id}
-                  className="overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02] border-0"
+                  className="overflow-hidden border-0"
                   onClick={() => setSelectedCard(card)}
+                  aria-label={`${card.storeName} — ${card.cardNumber}`}
                 >
                   <div
                     className="h-2"
                     style={{ backgroundColor: cardColor }}
+                    aria-hidden="true"
                   />
                   <CardContent className="p-4 flex items-center gap-4">
                     <CardLogo card={card} />
@@ -242,7 +244,7 @@ const LoyaltyCards = () => {
                       </p>
                     </div>
                   </CardContent>
-                </Card>
+                </CardButton>
               );
             })}
           </div>

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardLinkOverlay, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -230,10 +230,13 @@ const RecipeGrid = ({ activeTab, recipes, onToggleFavorite, getDifficultyColor }
   return (
     <div key={activeTab} className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {recipes.map((recipe) => (
-        <motion.div key={recipe.id} {...scrollRevealFadeUp(prefersReducedMotion)}>
-          <Card
-            className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden"
+        <motion.div key={recipe.id} {...scrollRevealFadeUp(prefersReducedMotion)} className="relative isolate">
+          <CardLinkOverlay
+            aria-label={recipe.title}
             onClick={() => navigate(`/recipes/${recipe.id}`)}
+          />
+          <Card
+            className="bg-card/80 backdrop-blur-sm border-0 shadow-lg mf-motion-card hover:shadow-xl overflow-hidden pointer-events-none [&_button]:pointer-events-auto [&_button]:relative [&_button]:z-10"
           >
             {recipe.imageUrl && (
               <div className="w-full h-40 overflow-hidden bg-muted">
@@ -259,10 +262,11 @@ const RecipeGrid = ({ activeTab, recipes, onToggleFavorite, getDifficultyColor }
                     e.stopPropagation();
                     onToggleFavorite(recipe.id);
                   }}
-                  className="ml-2"
+                  className="ml-2 relative z-10 pointer-events-auto"
+                  aria-label={recipe.isFavorite ? t('pages.recipes.unfavorite') : t('pages.recipes.favorite')}
                 >
-                  <Heart 
-                    className={`h-4 w-4 ${recipe.isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
+                  <Heart
+                    className={`h-4 w-4 ${recipe.isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`}
                   />
                 </Button>
               </div>

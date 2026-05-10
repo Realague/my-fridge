@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardButton, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Settings, Users, Bell, List, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StorageAreaCard from '@/components/StorageAreaCard';
@@ -209,16 +209,17 @@ const Dashboard = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:hidden">
           {quickActions.map((action) => (
             <motion.div key={action.route} {...scrollRevealFadeUp(prefersReducedMotion)}>
-              <Card
-                className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+              <CardButton
+                className="bg-card/80 backdrop-blur-sm border-0 shadow-lg"
                 onClick={() => navigate(action.route)}
+                aria-label={`${action.title} — ${action.description}`}
               >
                 <CardContent className="p-4 text-center">
                   <div className="text-2xl mb-2">{action.emoji}</div>
                   <div className="font-medium text-sm text-foreground">{action.title}</div>
                   <div className="text-xs text-muted-foreground">{action.description}</div>
                 </CardContent>
-              </Card>
+              </CardButton>
             </motion.div>
           ))}
         </div>

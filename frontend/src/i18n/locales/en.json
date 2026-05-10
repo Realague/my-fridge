@@ -842,6 +842,8 @@
       "title": "Recipes",
       "filteredByIngredient": "Filtered by: {{name}}",
       "addRecipe": "Add recipe",
+      "favorite": "Add to favorites",
+      "unfavorite": "Remove from favorites",
       "noRecipes": "No recipes found",
       "ingredients": "Ingredients",
       "freeQuantity": "To taste",

@@ -905,6 +905,7 @@
       "addNewRecipe": "Agregar Nueva Receta",
       "recipeImage": "Imagen de la Receta",
       "recipeImageDescription": "Agrega una imagen de tu plato terminado (opcional)",
+      "uploadImage": "Subir imagen de receta",
       "consume": {
         "button": "Consumir ingredientes",
         "title": "Consumir ingredientes del stock",

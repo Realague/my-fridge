@@ -387,26 +387,6 @@
       "householdJoinedDescription": "You have successfully joined the household.",
       "householdRenamed": "Household renamed!"
     },
-    "itemMinimum": {
-      "title": "Item minimums",
-      "description": "Set minimum stock levels for items",
-      "setMinimum": "Set Minimum",
-      "editMinimum": "Edit Minimum",
-      "removeMinimum": "Remove Minimum",
-      "minimumQuantity": "Minimum Quantity",
-      "currentStock": "Current Stock",
-      "lowStock": "Low Stock",
-      "belowMinimum": "Below Minimum",
-      "quantityNeeded": "Need {{quantity}} {{unit}} more",
-      "noMinimums": "No minimums set",
-      "noMinimumsDescription": "Set minimum stock levels to get alerts when items run low",
-      "minimumSet": "Minimum Set",
-      "minimumSetDescription": "You'll be notified when this item runs low",
-      "addLowStockToShopping": "Add Low Stock to Shopping",
-      "confirmRemove": "Are you sure you want to remove this minimum?",
-      "minimumFor": "Minimum for {{item}}",
-      "manageMinimums": "Manage Minimums"
-    },
     "error": {
       "boundary": {
         "title": "Something broke.",
@@ -561,7 +541,6 @@
       "lowStockItems": "Low stock items",
       "itemsNeedRestock_one": "{{count}} item needs restocking",
       "itemsNeedRestock_other": "{{count}} items need restocking",
-      "noLowStockItems": "All items are well stocked",
       "alreadyInShoppingList": "In shopping list",
       "addedToShoppingList": "Added to shopping list",
       "viewAll": "View all",
@@ -3967,7 +3946,9 @@
     "settingsDescription": "Set and manage minimum stock levels for your items",
     "minimumUpdated": "Minimum updated successfully",
     "minimumSet": "Minimum set successfully",
-    "minimumSetFailed": "Failed to set minimum"
+    "minimumSetFailed": "Failed to set minimum",
+    "minimumDeleted": "Minimum removed",
+    "minimumDeletedFailed": "Failed to remove minimum"
   },
   "loyaltyCards": {
     "title": "Loyalty Cards",

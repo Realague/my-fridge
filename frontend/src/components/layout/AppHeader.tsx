@@ -41,7 +41,7 @@ export const AppHeader = () => {
             >
               <Bell className="h-5 w-5" />
               {unreadCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 p-0 text-[10px] text-white">
+                <Badge className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-mf-danger p-0 text-[10px] text-white">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </Badge>
               )}

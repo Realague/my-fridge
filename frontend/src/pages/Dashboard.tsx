@@ -202,7 +202,7 @@ const Dashboard = () => {
               >
                 <Bell className="h-5 w-5" />
                 {unreadNotifications > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-[10px] bg-rose-500 text-white p-0 rounded-full">
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-[10px] bg-mf-danger text-white p-0 rounded-full">
                     {unreadNotifications > 9 ? '9+' : unreadNotifications}
                   </Badge>
                 )}

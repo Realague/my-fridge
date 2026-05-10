@@ -56,15 +56,15 @@ export const LowStockCard = () => {
   }
 
   return (
-    <Card className="bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-950/20 dark:to-yellow-950/20 border-orange-200 dark:border-orange-800">
+    <Card className="bg-mf-warning-soft border-mf-warning/30">
       <CardHeader className="px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="min-w-0">
-            <CardTitle className="flex items-center gap-2 text-orange-900 dark:text-orange-100">
+            <CardTitle className="flex items-center gap-2 text-mf-warning">
               <AlertCircle className="h-5 w-5 shrink-0" />
               <span className="truncate">{t('pages.dashboard.lowStockItems')}</span>
             </CardTitle>
-            <CardDescription className="text-orange-700 dark:text-orange-300 mt-1">
+            <CardDescription className="text-mf-text-soft mt-1">
               {t('pages.dashboard.itemsNeedRestock', { count: lowStockItems.length })}
             </CardDescription>
           </div>
@@ -72,7 +72,7 @@ export const LowStockCard = () => {
             variant="outline"
             size="sm"
             onClick={() => navigate('/item-minimums')}
-            className="border-orange-300 text-orange-700 hover:bg-orange-100 dark:border-orange-700 dark:text-orange-300 dark:hover:bg-orange-900/20 shrink-0 w-full sm:w-auto"
+            className="border-mf-warning/40 text-mf-warning hover:bg-mf-warning-soft shrink-0 w-full sm:w-auto"
           >
             <Settings className="h-4 w-4 mr-2" />
             {t('itemMinimum.manageMinimums')}
@@ -84,7 +84,7 @@ export const LowStockCard = () => {
           {lowStockItems.slice(0, 3).map((lowStockItem) => (
             <motion.div
               key={lowStockItem.itemMinimum.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-white dark:bg-gray-900 rounded-lg border border-orange-200 dark:border-orange-800"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-card rounded-lg border border-mf-warning/30"
               {...scrollRevealFadeUp(prefersReducedMotion)}
             >
               <div className="min-w-0 flex-1">
@@ -134,7 +134,7 @@ export const LowStockCard = () => {
           {lowStockItems.length > 3 && (
             <Button
               variant="ghost"
-              className="w-full text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/20"
+              className="w-full text-mf-warning hover:bg-mf-warning-soft"
               onClick={() => navigate('/shopping')}
             >
               {t('pages.dashboard.viewAll')} ({lowStockItems.length})

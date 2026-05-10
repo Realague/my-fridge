@@ -1,7 +1,10 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { toast } from 'sonner';
+import i18n from '@/i18n/config';
 import { StoredItem, CreateStoredItemRequest, UpdateStoredItemRequest, GetStoredItemsRequest, storedItemService } from '@/services/storedItemService';
+import { ItemCategory } from '@/types/enums';
+import { getItemDisplayName } from '@/utils/itemUtils';
 import { useHouseholdStore } from './householdStore';
 
 interface StoredItemStore {
@@ -284,23 +287,59 @@ export const useStoredItemStore = create<StoredItemStore>()(
           throw new Error('No household ID provided');
         }
 
+        // Snapshot before deletion so we can restore on undo.
+        const snapshot = get().getStoredItemById(id);
+
         set({ loading: true, error: null });
-        
+
         try {
           await storedItemService.deleteStoredItem(householdId, id);
-          
-          toast.success("Item Removed!", {
-            description: `Item has been removed from storage.`,
+          get().removeStoredItemFromHousehold(id);
+
+          const itemName = snapshot?.item
+            ? getItemDisplayName(snapshot.item as never, i18n.t.bind(i18n))
+            : i18n.t('messages.storedItem.unnamed');
+
+          toast.success(i18n.t('messages.storedItem.deleted', { name: itemName }), {
+            duration: 8000,
+            action: snapshot
+              ? {
+                  label: i18n.t('messages.storedItem.undo'),
+                  onClick: async () => {
+                    try {
+                      const isCookedMeal = snapshot.item?.category === ItemCategory.COOKED_MEAL;
+                      const recreatePayload: CreateStoredItemRequest = {
+                        storageAreaId: snapshot.storageAreaId,
+                        quantity: Number(snapshot.quantity),
+                        unit: snapshot.unit,
+                        expirationDate: snapshot.expirationDate ?? undefined,
+                        location: snapshot.location ?? undefined,
+                        isOpened: snapshot.isOpened,
+                        openedDate: snapshot.openedDate ?? undefined,
+                        cookedDate: snapshot.cookedDate ?? undefined,
+                        ...(isCookedMeal
+                          ? {
+                              articleType: 'cooked_meal',
+                              name: snapshot.item?.name ?? '',
+                              recipeId: snapshot.item?.recipeId ?? null,
+                            }
+                          : { itemId: snapshot.itemId }),
+                      };
+                      const recreated = await storedItemService.createStoredItem(householdId, recreatePayload);
+                      get().addStoredItemToHousehold(recreated);
+                      toast.success(i18n.t('messages.storedItem.restored', { name: itemName }));
+                    } catch (err) {
+                      const m = err instanceof Error ? err.message : '';
+                      toast.error(i18n.t('messages.storedItem.restoreFailed'), { description: m });
+                    }
+                  },
+                }
+              : undefined,
           });
-          
-          const store = get();
-          store.removeStoredItemFromHousehold(id);
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Failed to delete stored item';
+          const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.deleteFailed');
           set({ error: message });
-          toast.error("Delete Failed", {
-            description: message,
-          });
+          toast.error(i18n.t('messages.storedItem.deleteFailed'), { description: message });
           throw error;
         } finally {
           set({ loading: false });

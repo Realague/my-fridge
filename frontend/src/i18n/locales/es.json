@@ -329,6 +329,14 @@
     "noRecipesFound": "No se encontraron recetas coincidiendo con \"{{query}}\"."
   },
   "messages": {
+    "storedItem": {
+      "deleted": "{{name}} eliminado.",
+      "restored": "{{name}} restaurado.",
+      "undo": "Deshacer",
+      "deleteFailed": "No se pudo eliminar.",
+      "restoreFailed": "No se pudo restaurar.",
+      "unnamed": "Artículo"
+    },
     "success": {
       "itemAdded": "{{item}} agregado a la lista.",
       "itemUpdated": "Artículo actualizado exitosamente",
@@ -3948,6 +3956,8 @@
     "optional": "Opcional",
     "addedBy": "Agregado por {{name}}",
     "you": "ti",
-    "back": "Volver"
+    "back": "Volver",
+    "edit": "Editar",
+    "delete": "Eliminar"
   }
 }

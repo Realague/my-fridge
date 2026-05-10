@@ -333,6 +333,14 @@
     "noRecipesFound": "No recipes found matching \"{{query}}\"."
   },
   "messages": {
+    "storedItem": {
+      "deleted": "{{name}} removed.",
+      "restored": "{{name}} restored.",
+      "undo": "Undo",
+      "deleteFailed": "Removal failed.",
+      "restoreFailed": "Restore failed.",
+      "unnamed": "Item"
+    },
     "success": {
       "itemAdded": "Added {{item}} to the list.",
       "itemUpdated": "Item updated successfully",
@@ -3995,6 +4003,8 @@
     "optional": "Optional",
     "addedBy": "Added by {{name}}",
     "you": "you",
-    "back": "Back"
+    "back": "Back",
+    "edit": "Edit",
+    "delete": "Delete"
   }
 }

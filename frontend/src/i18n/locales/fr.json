@@ -333,6 +333,14 @@
     "noRecipesFound": "Aucune recette trouvée correspondant à \"{{query}}\"."
   },
   "messages": {
+    "storedItem": {
+      "deleted": "{{name}} retiré.",
+      "restored": "{{name}} restauré.",
+      "undo": "Annuler",
+      "deleteFailed": "Suppression impossible.",
+      "restoreFailed": "Restauration impossible.",
+      "unnamed": "Article"
+    },
     "success": {
       "itemAdded": "{{item}} ajouté à la liste.",
       "itemUpdated": "Article mis à jour avec succès",
@@ -3975,6 +3983,8 @@
     "optional": "Facultatif",
     "addedBy": "Ajouté par {{name}}",
     "you": "vous",
-    "back": "Retour"
+    "back": "Retour",
+    "edit": "Modifier",
+    "delete": "Supprimer"
   }
 }

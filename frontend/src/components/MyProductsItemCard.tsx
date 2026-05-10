@@ -304,13 +304,13 @@ export function MyProductsItemCard({
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-3">
             {isCookedMeal && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleConsumePortion}
-                className="h-8 w-8 p-0"
+                className="h-10 w-10 sm:h-8 sm:w-8 p-0"
                 aria-label={t('cookedMeal.consumePortion')}
                 title={t('cookedMeal.consumePortion')}
               >
@@ -322,7 +322,7 @@ export function MyProductsItemCard({
                 variant="outline"
                 size="sm"
                 onClick={handleFreeze}
-                className="h-8 w-8 p-0"
+                className="h-10 w-10 sm:h-8 sm:w-8 p-0"
                 aria-label={t('pages.dashboard.expiringSoon.actionFreeze')}
                 title={t('pages.dashboard.expiringSoon.actionFreeze')}
               >
@@ -333,8 +333,9 @@ export function MyProductsItemCard({
               variant="deleteTrash"
               size="sm"
               onClick={handleDelete}
-              className="h-8 w-8 p-0"
+              className="h-10 w-10 sm:h-8 sm:w-8 p-0 mt-1"
               aria-label={t('buttons.delete')}
+              title={t('buttons.delete')}
             >
               <Trash2 className="h-4 w-4" />
             </Button>

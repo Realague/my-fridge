@@ -207,7 +207,7 @@ const Meals = () => {
 
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Liste des repas */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card variant="elevated">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">

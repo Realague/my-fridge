@@ -444,7 +444,7 @@ const MyProducts = () => {
           />
         </div>
 
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card variant="elevated">
           <CardContent className="p-4 space-y-3">
             <div className="flex flex-wrap items-center gap-3">
               <Filter className="h-5 w-5 text-muted-foreground shrink-0" aria-hidden />

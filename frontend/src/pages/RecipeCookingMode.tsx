@@ -238,7 +238,7 @@ const RecipeCookingMode = () => {
 
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Recipe Title & Progress */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg mb-6">
+        <Card variant="elevated" className="mb-6">
           <CardContent className="p-6">
             <h1 className="text-2xl font-bold text-foreground mb-4">{recipe.title}</h1>
             <div className="space-y-2">
@@ -254,7 +254,7 @@ const RecipeCookingMode = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Current Step */}
           <div className="lg:col-span-2">
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card variant="elevated">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-semibold text-foreground">
@@ -343,7 +343,7 @@ const RecipeCookingMode = () => {
 
           {/* Ingredients Sidebar */}
           <div>
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card variant="elevated">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold text-foreground">{t('pages.recipes.allIngredients')}</h3>
@@ -392,7 +392,7 @@ const RecipeCookingMode = () => {
             </Card>
 
             {/* Recipe Info */}
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg mt-4">
+            <Card variant="elevated" className="mt-4">
               <CardContent className="p-4">
                 <h3 className="font-semibold text-foreground mb-3">{t('pages.recipes.basicInformation')}</h3>
                 <div className="space-y-2 text-sm">

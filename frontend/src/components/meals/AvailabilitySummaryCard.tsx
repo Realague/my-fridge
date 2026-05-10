@@ -21,7 +21,7 @@ export const AvailabilitySummaryCard = ({
 
   if (loading && !availability) {
     return (
-      <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+      <Card variant="elevated">
         <CardContent className="p-6">
           <div className="h-16 animate-pulse rounded-md bg-muted" />
         </CardContent>
@@ -37,7 +37,7 @@ export const AvailabilitySummaryCard = ({
   const allCovered = missingCount === 0;
 
   return (
-    <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+    <Card variant="elevated">
       <CardHeader>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>

@@ -787,7 +787,7 @@ const StorageArea = () => {
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Add Item Form */}
         {showAddForm && (
-          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card variant="elevated">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -925,7 +925,7 @@ const StorageArea = () => {
             </Card>
           ) : storageItems.length > 0 ? (
             <>
-              <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+              <Card variant="elevated">
                 <CardContent className="p-4">
                   <div className="flex flex-wrap items-center gap-3">
                     <Filter className="h-5 w-5 text-muted-foreground shrink-0" aria-hidden />

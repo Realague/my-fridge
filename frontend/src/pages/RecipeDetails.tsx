@@ -303,7 +303,7 @@ const RecipeDetails = () => {
 
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Recipe Header */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg overflow-hidden">
+        <Card variant="elevated" className="overflow-hidden">
           {recipe.imageUrl ? (
             <div className="w-full max-h-[400px] overflow-hidden bg-muted">
               <img
@@ -385,13 +385,13 @@ const RecipeDetails = () => {
 
         {/* Times */}
         <div className="grid grid-cols-2 gap-4">
-          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card variant="elevated">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-green-600">{recipe.prepTime}m</div>
               <div className="text-sm text-muted-foreground">{t('pages.recipes.prepTime')}</div>
             </CardContent>
           </Card>
-          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card variant="elevated">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-orange-600">{recipe.cookTime}m</div>
               <div className="text-sm text-muted-foreground">{t('pages.recipes.cookTime')}</div>
@@ -400,7 +400,7 @@ const RecipeDetails = () => {
         </div>
 
         {/* Ingredients */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card variant="elevated">
           <CardHeader>
             <CardTitle>{t('pages.recipes.ingredients')}</CardTitle>
           </CardHeader>
@@ -433,7 +433,7 @@ const RecipeDetails = () => {
         </Card>
 
         {/* Instructions */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card variant="elevated">
           <CardHeader>
             <CardTitle>{t('pages.recipes.instructions')}</CardTitle>
           </CardHeader>
@@ -556,7 +556,7 @@ const RecipeDetailsSkeleton = () => {
   return (
     <div className="space-y-6">
       {/* Recipe Header */}
-      <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg overflow-hidden">
+      <Card variant="elevated" className="overflow-hidden">
         <Skeleton className="w-full max-h-[400px] h-[300px]" />
         <CardHeader>
           <div className="space-y-2">
@@ -586,13 +586,13 @@ const RecipeDetailsSkeleton = () => {
 
       {/* Times */}
       <div className="grid grid-cols-2 gap-4">
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card variant="elevated">
           <CardContent className="p-4 text-center space-y-2">
             <Skeleton className="h-8 w-12 mx-auto" />
             <Skeleton className="h-4 w-16 mx-auto" />
           </CardContent>
         </Card>
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card variant="elevated">
           <CardContent className="p-4 text-center space-y-2">
             <Skeleton className="h-8 w-12 mx-auto" />
             <Skeleton className="h-4 w-16 mx-auto" />
@@ -601,7 +601,7 @@ const RecipeDetailsSkeleton = () => {
       </div>
 
       {/* Ingredients */}
-      <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+      <Card variant="elevated">
         <CardHeader>
           <Skeleton className="h-6 w-24" />
         </CardHeader>
@@ -621,7 +621,7 @@ const RecipeDetailsSkeleton = () => {
       </Card>
 
       {/* Instructions */}
-      <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+      <Card variant="elevated">
         <CardHeader>
           <Skeleton className="h-6 w-28" />
         </CardHeader>

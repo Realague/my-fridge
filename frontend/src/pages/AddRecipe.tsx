@@ -350,7 +350,7 @@ const AddRecipe = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Basic Info */}
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card variant="elevated">
               <CardHeader>
                 <CardTitle>{t('pages.recipes.basicInformation')}</CardTitle>
                 <CardDescription>{t('pages.recipes.basicInformationDescription')}</CardDescription>
@@ -532,7 +532,7 @@ const AddRecipe = () => {
             />
 
             {/* Instructions */}
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card variant="elevated">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -636,7 +636,7 @@ const AddRecipe = () => {
             </Card>
 
             {/* Tags */}
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card variant="elevated">
               <CardHeader>
                 <CardTitle>{t('pages.recipes.tags')}</CardTitle>
                 <CardDescription>{t('pages.recipes.tagsDescription')}</CardDescription>

@@ -22,7 +22,7 @@ const StorageAreaCard = ({ area, onClick }: StorageAreaCardProps) => {
 
   return (
     <CardButton
-      className="bg-card/80 backdrop-blur-sm border-0 shadow-lg"
+      variant="elevated"
       onClick={onClick}
       aria-label={`${area.name} — ${t(`storageArea.types.${area.type}`)} — ${t('storageArea.itemCount', { count: area.itemCount })}${area.lowStockCount > 0 ? `, ${area.lowStockCount} ${t('storageArea.low')}` : ''}`}
     >

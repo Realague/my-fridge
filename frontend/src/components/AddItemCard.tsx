@@ -101,7 +101,7 @@ export const AddItemCard = ({
   };
 
   return (
-    <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+    <Card variant="elevated">
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <Plus className="h-5 w-5 text-green-600" />

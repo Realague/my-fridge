@@ -232,7 +232,7 @@ const ImportRecipe = () => {
 
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* URL Input Card */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card variant="elevated">
           <CardHeader>
             <CardTitle>{t('pages.importRecipe.importFromMarmiton')}</CardTitle>
             <CardDescription>{t('pages.importRecipe.pasteUrl')}</CardDescription>
@@ -275,7 +275,7 @@ const ImportRecipe = () => {
         {/* Recipe Preview */}
         {parsedRecipe && (
           <>
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg overflow-hidden">
+            <Card variant="elevated" className="overflow-hidden">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
@@ -383,7 +383,7 @@ const ImportRecipe = () => {
             )}
 
             {/* Matched Ingredients Card */}
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card variant="elevated">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>

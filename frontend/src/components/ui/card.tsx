@@ -2,19 +2,28 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "rounded-lg border bg-card text-card-foreground shadow-sm",
-      className
-    )}
-    {...props}
-  />
-))
+// `variant="elevated"` collapses the 40+ copy-paste sites of
+// `bg-card/80 backdrop-blur-sm border-0 shadow-lg` into a primitive that
+// also bakes the charter `mf-motion-card` (hover translateY -3px + shadow,
+// honors prefers-reduced-motion). Default keeps the shadcn neutral surface.
+type CardVariant = "default" | "elevated";
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: CardVariant;
+}
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, variant = "default", ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        variant === "elevated"
+          ? "rounded-lg bg-card/80 backdrop-blur-sm border-0 shadow-lg text-card-foreground mf-motion-card hover:shadow-xl"
+          : "rounded-lg border bg-card text-card-foreground shadow-sm",
+        className
+      )}
+      {...props}
+    />
+  )
+)
 Card.displayName = "Card"
 
 const CardHeader = React.forwardRef<
@@ -91,27 +100,36 @@ CardFooter.displayName = "CardFooter"
 // entire surface navigates or triggers a single action AND that have NO
 // nested interactive descendants. For cards with nested buttons/links,
 // use CardLinkOverlay (stretched-link pattern) instead.
-const CardButton = React.forwardRef<
-  HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, type, ...props }, ref) => (
-  <button
-    ref={ref}
-    type={type ?? "button"}
-    className={cn(
-      // Visual parity with Card
-      "block w-full text-left rounded-lg border bg-card text-card-foreground shadow-sm",
-      // Charter motion (translateY + shadow), respects prefers-reduced-motion
-      "mf-motion-card cursor-pointer hover:shadow-xl",
-      // Focus ring (charter-aligned via shadcn ring tokens)
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-      // Reset native <button> defaults that fight the layout
-      "appearance-none font-[inherit] disabled:cursor-not-allowed disabled:opacity-60",
-      className
-    )}
-    {...props}
-  />
-))
+//
+// `variant="elevated"` applies the charter "soft-glass" surface
+// (`bg-card/80 backdrop-blur-sm border-0 shadow-lg`) — same recipe as
+// `<Card variant="elevated">` so a CardButton sits flush next to a Card on
+// pages like Dashboard quick-actions / storage area cards.
+interface CardButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: CardVariant;
+}
+const CardButton = React.forwardRef<HTMLButtonElement, CardButtonProps>(
+  ({ className, type, variant = "default", ...props }, ref) => (
+    <button
+      ref={ref}
+      type={type ?? "button"}
+      className={cn(
+        "block w-full text-left rounded-lg text-card-foreground",
+        variant === "elevated"
+          ? "bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl"
+          : "border bg-card shadow-sm hover:shadow-xl",
+        // Charter motion (translateY + shadow), respects prefers-reduced-motion
+        "mf-motion-card cursor-pointer",
+        // Focus ring (charter-aligned via shadcn ring tokens)
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        // Reset native <button> defaults that fight the layout
+        "appearance-none font-[inherit] disabled:cursor-not-allowed disabled:opacity-60",
+        className
+      )}
+      {...props}
+    />
+  )
+)
 CardButton.displayName = "CardButton"
 
 // Stretched-link overlay for cards that contain nested interactive elements

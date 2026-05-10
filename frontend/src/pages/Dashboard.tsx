@@ -221,7 +221,7 @@ const Dashboard = () => {
           {quickActions.map((action) => (
             <motion.div key={action.route} {...scrollRevealFadeUp(prefersReducedMotion)}>
               <CardButton
-                className="bg-card/80 backdrop-blur-sm border-0 shadow-lg"
+                variant="elevated"
                 onClick={() => navigate(action.route)}
                 aria-label={`${action.title} — ${action.description}`}
               >

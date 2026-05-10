@@ -656,7 +656,7 @@ const Shopping = () => {
         />
 
         {loading && (
-          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card variant="elevated">
             <CardContent className="p-8 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
               <p className="text-muted-foreground">{t('pages.shopping.loadingShoppingList')}</p>
@@ -665,7 +665,7 @@ const Shopping = () => {
         )}
 
         {!loading && !selectedHouseholdId && (
-          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card variant="elevated">
             <CardContent className="p-8 text-center">
               <p className="text-muted-foreground">{t('pages.shopping.selectHouseholdToView')}</p>
             </CardContent>
@@ -675,7 +675,7 @@ const Shopping = () => {
         {!loading && selectedHouseholdId && (
         <>
         {/* Category Filter + View Mode Toggle */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card variant="elevated">
           <CardContent className="p-4">
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-3">
@@ -771,7 +771,7 @@ const Shopping = () => {
                 </DragOverlay>
               </DndContext>
             ) : (
-              <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+              <Card variant="elevated">
                 <CardContent className="p-8 text-center text-muted-foreground">
                   <div className="text-4xl mb-2">
                     {categoryFilter === 'all' ? '🛒' : '📋'}
@@ -795,7 +795,7 @@ const Shopping = () => {
         ) : (
           <>
             {/* Pending Items (A-Z) */}
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card variant="elevated">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>
@@ -857,7 +857,7 @@ const Shopping = () => {
             </Card>
 
             {/* Completed Items (A-Z) */}
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card variant="elevated">
               <CardHeader>
                 <CardTitle>
                   {t('pages.shopping.completed')} ({completedItemsAlpha.length})

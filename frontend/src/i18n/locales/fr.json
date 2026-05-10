@@ -367,6 +367,12 @@
       "itemDeletedDescription": "{{item}} à été supprimé de toutes les zones de stockage, listes de courses et plans de repas."
     },
     "error": {
+      "boundary": {
+        "title": "L'écran a cassé.",
+        "description": "Recharge la page pour repartir.",
+        "reload": "Recharger",
+        "home": "Tableau de bord"
+      },
       "somethingWentWrong": "Quelque chose s'est mal passé",
       "failedToLoad": "Échec du chargement des données, veuillez réessayer.",
       "invalidCredentials": "Identifiants invalides",

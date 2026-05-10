@@ -37,7 +37,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion() ?? false;
-  
+
   // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
   const [showNotifications, setShowNotifications] = useState(false);
   

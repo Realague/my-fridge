@@ -387,6 +387,12 @@
       "manageMinimums": "Manage Minimums"
     },
     "error": {
+      "boundary": {
+        "title": "Something broke.",
+        "description": "Reload the page to recover.",
+        "reload": "Reload",
+        "home": "Dashboard"
+      },
       "somethingWentWrong": "Something went wrong",
       "failedToLoad": "Failed to load data, please try again.",
       "invalidCredentials": "Invalid credentials",

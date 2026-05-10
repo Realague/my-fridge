@@ -361,6 +361,12 @@
       "itemDeletedDescription": "{{item}} ha sido eliminado de todas las áreas de almacenamiento, listas de compras y planes de comida."
     },
     "error": {
+      "boundary": {
+        "title": "La pantalla se rompió.",
+        "description": "Recarga la página para continuar.",
+        "reload": "Recargar",
+        "home": "Panel"
+      },
       "somethingWentWrong": "Algo salió mal",
       "failedToLoad": "Error al cargar datos, por favor inténtalo de nuevo.",
       "invalidCredentials": "Credenciales inválidas",

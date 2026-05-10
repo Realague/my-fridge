@@ -387,7 +387,7 @@ const RecipeDetails = () => {
         <div className="grid grid-cols-2 gap-4">
           <Card variant="elevated">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-green-600">{recipe.prepTime}m</div>
+              <div className="text-2xl font-bold text-primary">{recipe.prepTime}m</div>
               <div className="text-sm text-muted-foreground">{t('pages.recipes.prepTime')}</div>
             </CardContent>
           </Card>
@@ -416,7 +416,7 @@ const RecipeDetails = () => {
                 });
                 return (
                   <li key={ingredient.id} className="flex items-start gap-3 p-2 bg-muted rounded-lg">
-                    <span className="text-green-600 mt-1.5 text-xs">●</span>
+                    <span className="text-primary mt-1.5 text-xs">●</span>
                     <div className="flex-1">
                       <div className="font-medium text-foreground">
                         {label} {itemName}

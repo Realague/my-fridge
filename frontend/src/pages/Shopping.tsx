@@ -509,7 +509,7 @@ const Shopping = () => {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Package className="h-5 w-5 text-green-600" />
+              <Package className="h-5 w-5 text-primary" />
                {t('pages.shopping.addToStorage')}
             </DialogTitle>
           </DialogHeader>
@@ -631,13 +631,13 @@ const Shopping = () => {
                   {t('pages.shopping.itemsCompleted', { completed: completedCount, count: totalItems })}
                 </p>
                 <div className="flex items-center gap-1">
-                  <Users className="h-4 w-4 text-green-600" />
-                  <span className="text-xs text-green-600">{t('pages.shopping.synced')}</span>
+                  <Users className="h-4 w-4 text-primary" />
+                  <span className="text-xs text-primary">{t('pages.shopping.synced')}</span>
                 </div>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-2xl font-bold text-primary">
                 {Math.round((completedCount / totalItems) * 100) || 0}%
               </div>
               <div className="text-xs text-muted-foreground">{t('pages.shopping.complete')}</div>

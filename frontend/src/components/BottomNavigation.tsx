@@ -39,8 +39,11 @@ const BottomNavigation = ({ currentPage }: BottomNavigationProps) => {
                 aria-current={isActive ? 'page' : undefined}
                 className={cn(
                   "flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-all duration-200",
+                  // --primary is now wired to charter pistache, so the active
+                  // state expresses itself in one consistent token (was 3
+                  // stacked greens: text-green-600 bg-green-50 bg-primary/10).
                   isActive
-                    ? "text-mf-green-leaf bg-mf-green-soft"
+                    ? "text-primary bg-primary/10"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )}
               >

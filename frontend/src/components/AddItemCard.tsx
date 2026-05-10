@@ -95,6 +95,11 @@ export const AddItemCard = ({
     }
   };
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleAddItem();
+  };
+
   return (
     <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
       <CardHeader>
@@ -104,66 +109,69 @@ export const AddItemCard = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div>
-          <label className="text-sm font-medium text-muted-foreground mb-2 block">
-            {t('storageArea.selectItem')}
-          </label>
-          <ItemSelector
-            onItemSelect={handleItemSelect}
-            placeholder={placeholder}
-            selectedItem={selectedItem}
-            className="w-full"
-          />
-        </div>
-        
-        {selectedItem && (
-          <div className="space-y-4">
-            {/* Selected Item Preview */}
-            <SelectedItemPreview 
-              item={selectedItem} 
-              onClear={() => setSelectedItem(null)} 
+        <form onSubmit={handleFormSubmit} className="space-y-4">
+          <div>
+            <label className="text-sm font-medium text-muted-foreground mb-2 block">
+              {t('storageArea.selectItem')}
+            </label>
+            <ItemSelector
+              onItemSelect={handleItemSelect}
+              placeholder={placeholder}
+              selectedItem={selectedItem}
+              className="w-full"
+              autoFocus
             />
+          </div>
 
-            {/* Quantity Selection */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground block">
-                {storageAreaName 
-                  ?  t(`storageArea.addItemTo`, { name: storageAreaName })
-                  : t(`storageArea.addItem`)
-                }
-              </label>
-              <div className="flex gap-2 items-end">
-                <div className="flex-1">
-                  <QuantitySelector
-                    item={selectedItem}
-                    initialQuantity={newItemQuantity}
-                    initialUnit={newItemUnit}
-                    onQuantityChange={handleQuantityChange}
-                  />
+          {selectedItem && (
+            <div className="space-y-4">
+              {/* Selected Item Preview */}
+              <SelectedItemPreview
+                item={selectedItem}
+                onClear={() => setSelectedItem(null)}
+              />
+
+              {/* Quantity Selection */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground block">
+                  {storageAreaName
+                    ?  t(`storageArea.addItemTo`, { name: storageAreaName })
+                    : t(`storageArea.addItem`)
+                  }
+                </label>
+                <div className="flex gap-2 items-end">
+                  <div className="flex-1">
+                    <QuantitySelector
+                      item={selectedItem}
+                      initialQuantity={newItemQuantity}
+                      initialUnit={newItemUnit}
+                      onQuantityChange={handleQuantityChange}
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    variant="green"
+                    className="px-6 min-w-[100px]"
+                    disabled={disabled || isSubmitting}
+                    size="lg"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        {t('forms.adding')}
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="h-4 w-4 mr-2" />
+                        {buttonText}
+                      </>
+                    )}
+                  </Button>
                 </div>
-                <Button 
-                  variant="green"
-                  onClick={handleAddItem} 
-                  className="px-6 min-w-[100px]"
-                  disabled={disabled || isSubmitting}
-                  size="lg"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      {t('forms.adding')}
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="h-4 w-4 mr-2" />
-                      {buttonText}
-                    </>
-                  )}
-                </Button>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </form>
       </CardContent>
     </Card>
   );

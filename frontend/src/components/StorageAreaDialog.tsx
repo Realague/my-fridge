@@ -85,33 +85,42 @@ const StorageAreaDialog = ({ isOpen, onClose, onSubmit, mode, initialData }: Sto
     ? t('storageArea.addStorageArea')
     : t('storageAreaManager.updateStorageArea');
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSubmit();
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-h-[85vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 overflow-y-auto flex-1">
+        <form onSubmit={handleFormSubmit} className="space-y-4 overflow-y-auto flex-1">
           <div>
-            <label className="block text-sm font-medium mb-2">{t('forms.name')}</label>
+            <label htmlFor="storage-area-name" className="block text-sm font-medium mb-2">{t('forms.name')}</label>
             <Input
+              id="storage-area-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={t('storageAreaManager.namePlaceholder')}
+              autoFocus
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">{t('storageAreaManager.emoji')}</label>
+            <label htmlFor="storage-area-emoji" className="block text-sm font-medium mb-2">{t('storageAreaManager.emoji')}</label>
             <Input
+              id="storage-area-emoji"
               value={emoji}
               onChange={(e) => setEmoji(e.target.value)}
               placeholder="📦"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">{t('storageArea.type')}</label>
-            <select 
-              value={type} 
+            <label htmlFor="storage-area-type" className="block text-sm font-medium mb-2">{t('storageArea.type')}</label>
+            <select
+              id="storage-area-type"
+              value={type}
               onChange={(e) => setType(e.target.value as StorageAreaType)}
               className="w-full p-2 border rounded-md bg-background"
             >
@@ -152,21 +161,23 @@ const StorageAreaDialog = ({ isOpen, onClose, onSubmit, mode, initialData }: Sto
           </div>
           <div className="flex gap-2 pt-2">
             <Button
+              type="button"
               className="flex-1"
-              variant="outline" 
+              variant="outline"
               onClick={handleClose}
             >
               {t('buttons.cancel')}
             </Button>
-            <Button 
-              onClick={handleSubmit} 
+            <Button
+              type="submit"
               className="flex-1"
               variant="green"
+              disabled={!name.trim()}
             >
               {submitButtonText}
             </Button>
           </div>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

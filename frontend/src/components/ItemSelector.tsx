@@ -27,15 +27,18 @@ interface ItemSelectorProps {
   selectedItem?: Item | null;
   excludedItems?: Item[];
   excludeCleaningProducts?: boolean;
+  /** Focus the search input on mount and whenever `selectedItem` clears. */
+  autoFocus?: boolean;
 }
 
-export const ItemSelector = ({ 
-  onItemSelect, 
-  placeholder, 
+export const ItemSelector = ({
+  onItemSelect,
+  placeholder,
   className,
   selectedItem = null,
   excludedItems = [],
-  excludeCleaningProducts = false
+  excludeCleaningProducts = false,
+  autoFocus = false,
 }: ItemSelectorProps) => {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -69,6 +72,15 @@ export const ItemSelector = ({
   const lastSearchQueryRef = useRef('');
   const householdItemsRef = useRef<Item[]>([]);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // When the parent clears the selection (typically after a successful add),
+  // pull focus back to the search input so the next item can be typed without
+  // re-clicking the field.
+  useEffect(() => {
+    if (autoFocus && !selectedItem) {
+      inputRef.current?.focus();
+    }
+  }, [autoFocus, selectedItem]);
 
   // Load household items only when dropdown is opened (lazy loading)
   const loadHouseholdItemsOnDemand = async () => {
@@ -513,6 +525,7 @@ export const ItemSelector = ({
           onFocus={handleInputFocus}
           placeholder={placeholder}
           className="pr-20"
+          autoFocus={autoFocus}
         />
         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
           {showClearButton && (

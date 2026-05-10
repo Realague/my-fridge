@@ -306,8 +306,8 @@ export const useShoppingStore = create<ShoppingStore>()(
                           toast.success(i18n.t('messages.shoppingItem.restored', { name: itemName }));
                         }
                       } catch (err) {
-                        const m = err instanceof Error ? err.message : '';
-                        toast.error(i18n.t('messages.storedItem.restoreFailed'), { description: m });
+                        console.error('shoppingItem restore failed:', err);
+                        toast.error(i18n.t('messages.storedItem.restoreFailed'));
                       }
                     },
                   }
@@ -322,7 +322,7 @@ export const useShoppingStore = create<ShoppingStore>()(
           const message = error instanceof Error ? error.message : i18n.t('messages.shoppingItem.deleteFailed');
           set({ error: message });
           console.error('deleteShoppingItem: Error:', error);
-          toast.error(i18n.t('messages.shoppingItem.deleteFailed'), { description: message });
+          toast.error(i18n.t('messages.shoppingItem.deleteFailed'));
           return false;
         }
       },

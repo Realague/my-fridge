@@ -43,10 +43,7 @@ const AddStorageAreaDialog = ({ trigger, open: controlledOpen, onOpenChange }: A
       setOpen(false);
     } catch (error) {
       console.error('Failed to create storage area:', error);
-      const message = error instanceof Error ? error.message : t("messages.error.failedToCreateStorageArea");
-      toast.error(t("messages.error.creationFailed"), {
-        description: message,
-      });
+      toast.error(t("messages.error.creationFailed"));
     }
   };
 

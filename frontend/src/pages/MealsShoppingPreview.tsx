@@ -71,7 +71,6 @@ const MealsShoppingPreview = () => {
       .catch((error) => {
         toast({
           title: t('messages.error.somethingWentWrong'),
-          description: error instanceof Error ? error.message : '',
           variant: 'destructive',
         });
       })
@@ -190,7 +189,6 @@ const MealsShoppingPreview = () => {
     } catch (error) {
       toast({
         title: t('messages.error.somethingWentWrong'),
-        description: error instanceof Error ? error.message : '',
         variant: 'destructive',
       });
     } finally {

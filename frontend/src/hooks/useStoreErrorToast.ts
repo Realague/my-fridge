@@ -13,8 +13,11 @@ import { toast } from 'sonner';
  * on the same page (e.g. Dashboard) stack into a single visible toast instead
  * of carpeting the screen.
  *
- * Title is charter-aligned ("Action interrompue. Réessaie."). The store's raw
- * error message is shown as the description so the user gets context.
+ * Title is charter-aligned ("Action interrompue. Réessaie."). We deliberately
+ * do NOT pass the raw error string as a description — most stores throw with
+ * untranslated backend strings ("Failed to fetch storage areas") which would
+ * leak EN under a translated title and violate charter §07 ("le système
+ * constate"). The raw error stays in `console.error` for dev visibility.
  */
 export function useStoreErrorToast(
   error: string | null,
@@ -25,7 +28,6 @@ export function useStoreErrorToast(
     if (!error) return;
     toast.error(t('messages.error.fetchFailed'), {
       id: 'store-fetch-error',
-      description: error,
     });
     setError(null);
   }, [error, setError, t]);

@@ -60,7 +60,6 @@ const Recipes = () => {
     if (error) {
       toast({
         title: t('messages.error.somethingWentWrong'),
-        description: error,
         variant: 'destructive',
       });
       clearError();

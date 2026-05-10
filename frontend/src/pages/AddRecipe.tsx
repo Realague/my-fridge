@@ -320,7 +320,6 @@ const AddRecipe = () => {
       console.error('Recipe creation failed:', error);
       toast({
         title: t('messages.error.somethingWentWrong'),
-          description: error instanceof Error ? error.message : t('messages.error.failedToCreateRecipe'),
           variant: "destructive",
       });
     }

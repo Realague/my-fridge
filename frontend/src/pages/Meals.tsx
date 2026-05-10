@@ -71,7 +71,6 @@ const Meals = () => {
     } catch (error) {
       toast({
         title: t('messages.error.somethingWentWrong'),
-        description: error instanceof Error ? error.message : '',
         variant: 'destructive',
       });
     }
@@ -96,7 +95,6 @@ const Meals = () => {
     } catch (error) {
       toast({
         title: t('messages.error.somethingWentWrong'),
-        description: error instanceof Error ? error.message : '',
         variant: 'destructive',
       });
     }
@@ -114,7 +112,6 @@ const Meals = () => {
     } catch (error) {
       toast({
         title: t('messages.error.somethingWentWrong'),
-        description: error instanceof Error ? error.message : '',
         variant: 'destructive',
       });
     }
@@ -143,7 +140,6 @@ const Meals = () => {
     } catch (error) {
       toast({
         title: t('messages.error.somethingWentWrong'),
-        description: error instanceof Error ? error.message : '',
         variant: 'destructive',
       });
       return;

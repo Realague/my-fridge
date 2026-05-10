@@ -69,7 +69,6 @@ const RecipeDetails = () => {
     if (error) {
       toast({
         title: 'Error',
-        description: error,
         variant: 'destructive',
       });
       clearError();
@@ -231,7 +230,6 @@ const RecipeDetails = () => {
           } catch (error) {
             toast({
               title: t('messages.error.somethingWentWrong'),
-              description: error instanceof Error ? error.message : '',
               variant: 'destructive',
             });
           }

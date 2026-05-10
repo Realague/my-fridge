@@ -40,10 +40,8 @@ const StorageAreaManager = () => {
 
       setIsAddDialogOpen(false);
     } catch (error) {
-      const message = error instanceof Error ? error.message : t("messages.error.failedToCreateStorageArea");
-      toast.error(t("messages.error.creationFailed"), {
-        description: message,
-      });
+      console.error('createStorageArea failed:', error);
+      toast.error(t("messages.error.creationFailed"));
     }
   };
 
@@ -72,10 +70,8 @@ const StorageAreaManager = () => {
       setEditingArea(null);
       setIsEditDialogOpen(false);
     } catch (error) {
-      const message = error instanceof Error ? error.message : t("messages.error.failedToUpdateStorageArea");
-      toast.error(t("messages.error.updateFailed"), {
-        description: message,
-      });
+      console.error('updateStorageArea failed:', error);
+      toast.error(t("messages.error.updateFailed"));
     }
   };
 
@@ -87,10 +83,8 @@ const StorageAreaManager = () => {
         description: t("messages.success.storageAreaDeletedDescription", { name: area.name }),
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : t("messages.error.failedToDeleteStorageArea");
-      toast.error(t("messages.error.deleteFailed"), {
-        description: message,
-      });
+      console.error('deleteStorageArea failed:', error);
+      toast.error(t("messages.error.deleteFailed"));
     }
   };
 

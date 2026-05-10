@@ -35,7 +35,6 @@ const Auth = () => {
         console.error('OAuth error:', error);
         toast.error(t('messages.error.fetchFailed'), {
           id: 'auth-oauth-error',
-          description: error,
         });
         return;
       }
@@ -74,14 +73,12 @@ const Auth = () => {
             console.error('Token exchange failed:', errorData);
             toast.error(t('messages.error.fetchFailed'), {
               id: 'auth-oauth-error',
-              description: errorData?.message || `HTTP ${response.status}`,
             });
           }
         } catch (error) {
           console.error('OAuth callback error:', error);
           toast.error(t('messages.error.fetchFailed'), {
             id: 'auth-oauth-error',
-            description: error instanceof Error ? error.message : '',
           });
         } finally {
           setAuthLoading(false);

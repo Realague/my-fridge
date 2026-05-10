@@ -153,7 +153,6 @@ const Settings = () => {
       console.error('Error updating profile:', error);
       toast({
         title: t('messages.error.updateFailed'),
-        description: error instanceof Error ? error.message : t('messages.error.failedToUpdateProfile'),
         variant: "destructive",
       });
     } finally {
@@ -179,7 +178,6 @@ const Settings = () => {
       console.error('Error updating low stock alerts preference:', error);
       toast({
         title: t('messages.error.updateFailed'),
-        description: error instanceof Error ? error.message : t('messages.error.failedToUpdateProfile'),
         variant: 'destructive',
       });
     } finally {

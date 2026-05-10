@@ -244,7 +244,7 @@ export const useStoredItemStore = create<StoredItemStore>()(
         } catch (error) {
           const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.createFailed');
           set({ error: message });
-          toast.error(i18n.t('messages.storedItem.createFailed'), { description: message });
+          toast.error(i18n.t('messages.storedItem.createFailed'));
           throw error;
         } finally {
           set({ loading: false });
@@ -272,7 +272,7 @@ export const useStoredItemStore = create<StoredItemStore>()(
         } catch (error) {
           const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.updateFailed');
           set({ error: message });
-          toast.error(i18n.t('messages.storedItem.updateFailed'), { description: message });
+          toast.error(i18n.t('messages.storedItem.updateFailed'));
           throw error;
         } finally {
           set({ loading: false });
@@ -327,8 +327,8 @@ export const useStoredItemStore = create<StoredItemStore>()(
                       get().addStoredItemToHousehold(recreated);
                       toast.success(i18n.t('messages.storedItem.restored', { name: itemName }));
                     } catch (err) {
-                      const m = err instanceof Error ? err.message : '';
-                      toast.error(i18n.t('messages.storedItem.restoreFailed'), { description: m });
+                      console.error('storedItem restore failed:', err);
+                      toast.error(i18n.t('messages.storedItem.restoreFailed'));
                     }
                   },
                 }
@@ -337,7 +337,7 @@ export const useStoredItemStore = create<StoredItemStore>()(
         } catch (error) {
           const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.deleteFailed');
           set({ error: message });
-          toast.error(i18n.t('messages.storedItem.deleteFailed'), { description: message });
+          toast.error(i18n.t('messages.storedItem.deleteFailed'));
           throw error;
         } finally {
           set({ loading: false });
@@ -361,7 +361,7 @@ export const useStoredItemStore = create<StoredItemStore>()(
           return { remaining: result.remaining };
         } catch (error) {
           const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.consumePortionFailed');
-          toast.error(i18n.t('messages.storedItem.consumePortionFailed'), { description: message });
+          toast.error(i18n.t('messages.storedItem.consumePortionFailed'));
           throw error;
         }
       },
@@ -392,7 +392,7 @@ export const useStoredItemStore = create<StoredItemStore>()(
         } catch (error) {
           const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.markAsOpenedFailed');
           set({ error: message });
-          toast.error(i18n.t('messages.storedItem.markAsOpenedFailed'), { description: message });
+          toast.error(i18n.t('messages.storedItem.markAsOpenedFailed'));
           throw error;
         } finally {
           set({ loading: false });

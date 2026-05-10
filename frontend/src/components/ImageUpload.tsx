@@ -159,7 +159,6 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       console.error('Image upload error:', error);
       toast({
         title: t('messages.error.uploadFailed'),
-        description: error instanceof Error ? error.message : t('messages.error.failedToUploadImage'),
         variant: 'destructive',
       });
       setPreview(currentImageUrl || null);

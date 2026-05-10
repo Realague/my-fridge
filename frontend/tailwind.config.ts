@@ -93,10 +93,16 @@ export default {
 					'warning-soft': 'var(--mf-warning-soft)',
 				}
 			},
+			// Bridge directly to charter tokens so every `rounded-*` Tailwind
+			// utility resolves to a charter step. Drops the previous
+			// `var(--radius) ± 2px` heuristic that under-rendered controls
+			// (10 → 6 px) and cards (14 → 8 px).
 			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				xs: 'var(--mf-radius-xs)',  // 4 px — micro chips
+				sm: 'var(--mf-radius-sm)',  // 6 px — tags / small inputs
+				md: 'var(--mf-radius-md)',  // 10 px — controls (buttons, inputs)
+				lg: 'var(--mf-radius-lg)',  // 14 px — cards (charter heading)
+				xl: 'var(--mf-radius-xl)',  // 20 px — identities (hero tiles, modals)
 			},
 			keyframes: {
 				'accordion-down': {

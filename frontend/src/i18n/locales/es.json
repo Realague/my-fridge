@@ -382,6 +382,7 @@
         "reload": "Recargar",
         "home": "Panel"
       },
+      "fetchFailed": "Acción interrumpida. Inténtalo de nuevo.",
       "somethingWentWrong": "Algo salió mal",
       "failedToLoad": "Error al cargar datos, por favor inténtalo de nuevo.",
       "invalidCredentials": "Credenciales inválidas",

@@ -10,6 +10,7 @@ import { StoreLogo } from '@/components/StoreSelector';
 import { useLoyaltyCardStore } from '@/stores/loyaltyCardStore';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import { getStoreBySlug } from '@/data/storeCatalog';
@@ -41,6 +42,9 @@ const LoyaltyCards = () => {
     getLoyaltyCardsForHousehold,
     loading,
   } = useLoyaltyCardStore();
+
+  // Surface fetch errors instead of swallowing them silently.
+  useStoreErrorToast(useLoyaltyCardStore((s) => s.error), useLoyaltyCardStore((s) => s.setError));
 
   const selectedHouseholdId = useHouseholdStore((s) => s.selectedHouseholdId);
   const households = useHouseholdStore((s) => s.households);

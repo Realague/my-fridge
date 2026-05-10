@@ -11,6 +11,7 @@ import { ItemImage } from '@/components/ItemImage';
 import { useItemMinimumStore } from '@/stores/itemMinimumStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { getTranslatedUnitLabel } from '@/utils/unitSystem';
@@ -24,13 +25,16 @@ const ItemMinimums = () => {
   const prefersReducedMotion = useReducedMotion() ?? false;
   const { selectedHouseholdId } = useProtectedRoute();
   
-  const { 
-    getItemMinimumsForHousehold, 
-    fetchItemMinimums, 
+  const {
+    getItemMinimumsForHousehold,
+    fetchItemMinimums,
     deleteItemMinimum,
-    loading 
+    loading
   } = useItemMinimumStore();
   const { getStoredItemsByItemAndUnit } = useStoredItemStore();
+
+  // Surface fetch errors instead of swallowing them silently.
+  useStoreErrorToast(useItemMinimumStore((s) => s.error), useItemMinimumStore((s) => s.setError));
   
   const [showDialog, setShowDialog] = useState(false);
   const [editingMinimumId, setEditingMinimumId] = useState<string | null>(null);

@@ -52,6 +52,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { useMyProductsPreferences } from '@/hooks/useMyProductsPreferences';
 import { useStorageAreaSuggestion } from '@/hooks/useStorageAreaSuggestion';
 import { itemService, type Item } from '@/services/itemService';
@@ -88,6 +89,10 @@ const MyProducts = () => {
   const { selectedHouseholdId } = useProtectedRoute();
   const currentUser = useAuthStore((state) => state.user);
   const prefersReducedMotion = useReducedMotion() ?? false;
+
+  // Surface fetch errors instead of swallowing them silently.
+  useStoreErrorToast(useStoredItemStore((s) => s.error), useStoredItemStore((s) => s.setError));
+  useStoreErrorToast(useStorageAreaStore((s) => s.error), useStorageAreaStore((s) => s.setError));
 
   const {
     fetchStoredItems,

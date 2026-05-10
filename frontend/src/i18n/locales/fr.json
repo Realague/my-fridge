@@ -388,6 +388,7 @@
         "reload": "Recharger",
         "home": "Tableau de bord"
       },
+      "fetchFailed": "Action interrompue. Réessaie.",
       "somethingWentWrong": "Quelque chose s'est mal passé",
       "failedToLoad": "Échec du chargement des données, veuillez réessayer.",
       "invalidCredentials": "Identifiants invalides",

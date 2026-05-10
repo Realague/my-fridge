@@ -408,6 +408,7 @@
         "reload": "Reload",
         "home": "Dashboard"
       },
+      "fetchFailed": "Action interrupted. Try again.",
       "somethingWentWrong": "Something went wrong",
       "failedToLoad": "Failed to load data, please try again.",
       "invalidCredentials": "Invalid credentials",

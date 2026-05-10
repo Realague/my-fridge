@@ -5,6 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { getUnauthHeaders, getAuthBaseUrl } from '@/utils/apiHeaders';
 import { getAuthReturnUrl, clearAuthReturnUrl, setAuthReturnUrl } from '@/pages/JoinHousehold';
 
@@ -32,6 +33,10 @@ const Auth = () => {
 
       if (error) {
         console.error('OAuth error:', error);
+        toast.error(t('messages.error.fetchFailed'), {
+          id: 'auth-oauth-error',
+          description: error,
+        });
         return;
       }
 
@@ -39,7 +44,7 @@ const Auth = () => {
         try {
           setAuthLoading(true);
           setLoading(true);
-          
+
           // Exchange the authorization code for tokens
           const response = await fetch(`${getAuthBaseUrl()}/auth/google/exchange`, {
             method: 'POST',
@@ -50,26 +55,34 @@ const Auth = () => {
           if (response.ok) {
             const responseData = await response.json();
             const authData = responseData.data;
-            
+
             // Store the access token and session token
             const tokens = {
               accessToken: authData.accessToken,
               accessTokenExpiresAt: new Date(authData.accessTokenExpiresAt),
               sessionToken: authData.sessionToken
             };
-            
+
             setUser(authData.user);
             setTokens(tokens);
             setAuthenticated(true);
-            
+
             // Clear the URL parameters
             window.history.replaceState({}, document.title, window.location.pathname);
           } else {
-            const errorData = await response.json();
+            const errorData = await response.json().catch(() => ({}));
             console.error('Token exchange failed:', errorData);
+            toast.error(t('messages.error.fetchFailed'), {
+              id: 'auth-oauth-error',
+              description: errorData?.message || `HTTP ${response.status}`,
+            });
           }
         } catch (error) {
           console.error('OAuth callback error:', error);
+          toast.error(t('messages.error.fetchFailed'), {
+            id: 'auth-oauth-error',
+            description: error instanceof Error ? error.message : '',
+          });
         } finally {
           setAuthLoading(false);
           setLoading(false);

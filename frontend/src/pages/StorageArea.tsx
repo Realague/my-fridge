@@ -30,6 +30,7 @@ import { QuantitySelector } from '@/components/QuantitySelector';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { itemService } from '@/services/itemService';
 import { format } from 'date-fns';
 import { Unit, StorageAreaType, ITEM_CATEGORIES, ItemCategory } from '@/types/enums';
@@ -127,6 +128,10 @@ const StorageArea = () => {
   // Store hooks
   const { getStorageAreaById, fetchStorageAreas, getStorageAreasForHousehold } = useStorageAreaStore();
   const storageAreasList = getStorageAreasForHousehold();
+
+  // Surface fetch errors instead of swallowing them silently.
+  useStoreErrorToast(useStoredItemStore((s) => s.error), useStoredItemStore((s) => s.setError));
+  useStoreErrorToast(useStorageAreaStore((s) => s.error), useStorageAreaStore((s) => s.setError));
   const {
     getStoredItemsByStorageArea,
     createStoredItem,

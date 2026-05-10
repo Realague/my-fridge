@@ -22,13 +22,14 @@ import {
   } from "@/components/ui/dropdown-menu";
 import { useAuthStore } from '@/stores/authStore';
 import { useHouseholdStore } from '@/stores/householdStore';
-import { useStorageAreasWithStats } from '@/stores/storageAreaStore';
+import { useStorageAreasWithStats, useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useShoppingStore } from '@/stores/shoppingStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useItemMinimumStore } from '@/stores/itemMinimumStore';
 import { useExpirationNotificationStore } from '@/stores/expirationNotificationStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
 import { scrollRevealFadeUp, scrollRevealSlideRight } from '@/lib/motion';
@@ -51,6 +52,16 @@ const Dashboard = () => {
   const { recipes, fetchRecipes } = useRecipeStore();
   const { getItemMinimumsForHousehold, fetchItemMinimums, fetchLowStockItems } = useItemMinimumStore();
   const fetchNotifications = useExpirationNotificationStore((s) => s.fetchAll);
+
+  // Surface fetch errors as destructive toasts; clear after toasting so the
+  // same failure doesn't re-fire on every re-render. All hooks share the same
+  // sonner id, so simultaneous failures (e.g. offline) collapse into one toast.
+  useStoreErrorToast(useStorageAreaStore((s) => s.error), useStorageAreaStore((s) => s.setError));
+  useStoreErrorToast(useStoredItemStore((s) => s.error), useStoredItemStore((s) => s.setError));
+  useStoreErrorToast(useShoppingStore((s) => s.error), useShoppingStore((s) => s.setError));
+  useStoreErrorToast(useRecipeStore((s) => s.error), useRecipeStore((s) => s.setError));
+  useStoreErrorToast(useItemMinimumStore((s) => s.error), useItemMinimumStore((s) => s.setError));
+  useStoreErrorToast(useExpirationNotificationStore((s) => s.error), useExpirationNotificationStore((s) => s.setError));
   const unreadNotifications = useExpirationNotificationStore((s) =>
     s.notifications.filter((n) => !n.readByCurrentUser).length
   );

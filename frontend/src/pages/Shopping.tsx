@@ -14,6 +14,7 @@ import { useShoppingStore, ShoppingItem } from '@/stores/shoppingStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
@@ -62,6 +63,10 @@ const Shopping = () => {
   
   const { getStorageAreasForHousehold, fetchStorageAreas } = useStorageAreaStore();
   const { createStoredItem } = useStoredItemStore();
+
+  // Surface fetch errors instead of swallowing them silently.
+  useStoreErrorToast(useShoppingStore((s) => s.error), useShoppingStore((s) => s.setError));
+  useStoreErrorToast(useStorageAreaStore((s) => s.error), useStorageAreaStore((s) => s.setError));
   
   const storageAreas = selectedHouseholdId ? getStorageAreasForHousehold() : [];
   const {

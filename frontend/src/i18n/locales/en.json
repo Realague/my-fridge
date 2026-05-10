@@ -1,12 +1,37 @@
 {
   "navigation": {
     "home": "Home",
+    "dashboard": "Dashboard",
     "products": "Products",
     "storage": "Storage",
     "shopping": "Shopping",
+    "shoppingList": "Shopping list",
     "meals": "Meals",
+    "mealPlan": "Meal plan",
     "recipes": "Recipes",
     "more": "More"
+  },
+  "header": {
+    "switchHousehold": "Switch household",
+    "currentHousehold": "Current household",
+    "members_one": "{{count}} member",
+    "members_other": "{{count}} members",
+    "openNotifications": "Open notifications",
+    "openUserMenu": "Open user menu",
+    "userMenu": {
+      "profile": "Profile",
+      "preferences": "Preferences",
+      "notifications": "Notifications",
+      "household": "My household",
+      "signOut": "Sign out"
+    }
+  },
+  "sidebar": {
+    "storageGroup": "Storages",
+    "addStorage": "Add storage",
+    "noStorageAreas": "No storage yet",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar"
   },
   "cookedMeal": {
     "articleType": {

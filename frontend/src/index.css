@@ -79,6 +79,16 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    /* Sidebar tokens — bridge sur la charte v3.0 (mode jour) */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 84% 5%;
+    --sidebar-primary: 142 71% 45%;
+    --sidebar-primary-foreground: 152 76% 4%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222 84% 5%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 142 71% 45%;
   }
 
   .dark {
@@ -133,6 +143,16 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    /* Sidebar tokens — bridge sur la charte v3.0 (mode nuit) */
+    --sidebar-background: 217 32% 11%;
+    --sidebar-foreground: 210 14% 96%;
+    --sidebar-primary: 142 71% 45%;
+    --sidebar-primary-foreground: 152 100% 5%;
+    --sidebar-accent: 217 27% 14%;
+    --sidebar-accent-foreground: 210 14% 96%;
+    --sidebar-border: 217 30% 17%;
+    --sidebar-ring: 142 71% 60%;
   }
 }
 

@@ -1,12 +1,37 @@
 {
   "navigation": {
     "home": "Accueil",
+    "dashboard": "Tableau de bord",
     "products": "Mes produits",
     "storage": "Stockages",
     "shopping": "Courses",
+    "shoppingList": "Liste de courses",
     "meals": "Repas",
+    "mealPlan": "Plan de repas",
     "recipes": "Recettes",
     "more": "Plus"
+  },
+  "header": {
+    "switchHousehold": "Changer de foyer",
+    "currentHousehold": "Foyer en cours",
+    "members_one": "{{count}} membre",
+    "members_other": "{{count}} membres",
+    "openNotifications": "Ouvrir les notifications",
+    "openUserMenu": "Ouvrir le menu utilisateur",
+    "userMenu": {
+      "profile": "Profil",
+      "preferences": "Préférences",
+      "notifications": "Notifications",
+      "household": "Mon foyer",
+      "signOut": "Déconnexion"
+    }
+  },
+  "sidebar": {
+    "storageGroup": "Stockages",
+    "addStorage": "Ajouter un stockage",
+    "noStorageAreas": "Aucun stockage pour l'instant",
+    "collapse": "Réduire la barre latérale",
+    "expand": "Développer la barre latérale"
   },
   "cookedMeal": {
     "articleType": {

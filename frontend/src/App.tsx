@@ -40,6 +40,7 @@ import Settings from "./pages/Settings";
 import ItemMinimums from "./pages/ItemMinimums";
 import LoyaltyCards from "./pages/LoyaltyCards";
 import More from "./pages/More";
+import { AppShell } from "@/components/layout/AppShell";
 
 const queryClient = new QueryClient();
 
@@ -65,30 +66,36 @@ function App() {
                   <Toaster />
                   <Sonner />
                   <Routes>
+                    {/* Public routes — no app shell. */}
                     <Route path="/" element={<Index />} />
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/join" element={<JoinHousehold />} />
                     <Route path="/onboarding" element={<Onboarding />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/shopping" element={<Shopping />} />
-                    <Route path="/storage/:id" element={<StorageArea />} />
-                    <Route path="/products" element={<MyProducts />} />
-                    <Route path="/recipes" element={<Recipes />} />
-                    <Route path="/recipes/:id" element={<RecipeDetails />} />
-                    <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />
-                    <Route path="/add-recipe" element={<AddRecipe />} />
-                    <Route path="/import-recipe" element={<ImportRecipe />} />
-                    <Route path="/meals" element={<Meals />} />
-                    <Route path="/meals/add" element={<RecipeSelector />} />
-                    <Route path="/meals/shopping-preview" element={<MealsShoppingPreview />} />
-                    <Route path="/recipes/:id/edit" element={<EditRecipe />} />
-                    <Route path="/household" element={<Household />} />
-                    <Route path="/household/:id" element={<HouseholdDetails />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="/item-minimums" element={<ItemMinimums />} />
-                    <Route path="/loyalty-cards" element={<LoyaltyCards />} />
-                    <Route path="/more" element={<More />} />
                     <Route path="/demo" element={<Demo />} />
+
+                    {/* Authenticated routes — desktop shell wraps the page. */}
+                    <Route element={<AppShell />}>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/shopping" element={<Shopping />} />
+                      <Route path="/storage/:id" element={<StorageArea />} />
+                      <Route path="/products" element={<MyProducts />} />
+                      <Route path="/recipes" element={<Recipes />} />
+                      <Route path="/recipes/:id" element={<RecipeDetails />} />
+                      <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />
+                      <Route path="/add-recipe" element={<AddRecipe />} />
+                      <Route path="/import-recipe" element={<ImportRecipe />} />
+                      <Route path="/meals" element={<Meals />} />
+                      <Route path="/meals/add" element={<RecipeSelector />} />
+                      <Route path="/meals/shopping-preview" element={<MealsShoppingPreview />} />
+                      <Route path="/recipes/:id/edit" element={<EditRecipe />} />
+                      <Route path="/household" element={<Household />} />
+                      <Route path="/household/:id" element={<HouseholdDetails />} />
+                      <Route path="/settings" element={<Settings />} />
+                      <Route path="/item-minimums" element={<ItemMinimums />} />
+                      <Route path="/loyalty-cards" element={<LoyaltyCards />} />
+                      <Route path="/more" element={<More />} />
+                    </Route>
+
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </StoreProvider>

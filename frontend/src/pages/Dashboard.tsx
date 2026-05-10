@@ -147,9 +147,9 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <div className="bg-card/80 backdrop-blur-sm border-b border-border/20 sticky top-0 z-40">
+    <div className="min-h-screen bg-background pb-20 md:pb-6">
+      {/* Mobile-only header — on desktop, AppHeader (in AppShell) takes over. */}
+      <div className="bg-card/80 backdrop-blur-sm border-b border-border/20 sticky top-0 z-40 md:hidden">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <DropdownMenu>
@@ -205,8 +205,8 @@ const Dashboard = () => {
       </div>
 
       <div className="container mx-auto px-4 py-6 space-y-6">
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {/* Quick Actions — hidden on desktop, the sidebar already exposes these. */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:hidden">
           {quickActions.map((action) => (
             <motion.div key={action.route} {...scrollRevealFadeUp(prefersReducedMotion)}>
               <Card

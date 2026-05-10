@@ -910,6 +910,7 @@
         "expiringSoon": "Expire bientôt",
         "confirm": "Confirmer la consommation",
         "confirmNoDeductions": "Continuer sans déduire",
+        "saveLeftoversLabel": "Garder des portions pour plus tard",
         "noDeductions": "Aucune déduction sélectionnée",
         "noIngredients": "Cette recette n'a pas d'ingrédients",
         "success": "Ingrédients consommés",

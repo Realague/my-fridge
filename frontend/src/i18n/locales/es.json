@@ -888,6 +888,7 @@
         "expiringSoon": "Caduca pronto",
         "confirm": "Confirmar consumo",
         "confirmNoDeductions": "Continuar sin deducir",
+        "saveLeftoversLabel": "Guardar porciones para después",
         "noDeductions": "No se seleccionaron deducciones",
         "noIngredients": "Esta receta no tiene ingredientes",
         "success": "Ingredientes consumidos",

@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
@@ -84,6 +86,9 @@ export const ConsumeIngredientsDialog = ({
   const [expandedIngredients, setExpandedIngredients] = useState<Set<string>>(new Set());
   const [showLeftovers, setShowLeftovers] = useState(false);
   const [cookedServings, setCookedServings] = useState<number>(recipe.servings);
+  // Default to off: most cook flows (eat what you cooked) shouldn't trigger
+  // a second modal asking about leftovers. Users with extra portions opt in.
+  const [saveLeftovers, setSaveLeftovers] = useState(false);
 
   const loadPreview = useCallback(
     async (s: number) => {
@@ -173,12 +178,24 @@ export const ConsumeIngredientsDialog = ({
         unit: d.unit,
       }));
 
+    // Helper: complete the cook flow without showing the leftovers prompt.
+    // Used when the user didn't opt to save leftovers (the common case) so we
+    // don't open a modal-on-modal just to immediately dismiss it.
+    const completeWithoutLeftovers = () => {
+      onCookComplete?.({ outcome: 'skipped' });
+      onClose();
+    };
+
     // Nothing to deduct (no matching stock, or user opted out): skip the API
-    // call and go straight to the leftovers step so the cook flow can still
-    // complete (and the meal can still be marked as cooked).
+    // call so the cook flow can still complete and the meal can still be marked
+    // as cooked.
     if (finalDeductions.length === 0) {
-      setCookedServings(servings);
-      setShowLeftovers(true);
+      if (saveLeftovers) {
+        setCookedServings(servings);
+        setShowLeftovers(true);
+      } else {
+        completeWithoutLeftovers();
+      }
       return;
     }
 
@@ -189,10 +206,15 @@ export const ConsumeIngredientsDialog = ({
         title: t('pages.recipes.consume.success'),
         description: t('pages.recipes.consume.successDescription', { count }),
       });
-      // Hand off to the leftovers step. We keep the consume dialog mounted but
-      // hidden so its state survives if the user dismisses the leftovers sheet.
-      setCookedServings(servings);
-      setShowLeftovers(true);
+      if (saveLeftovers) {
+        // Hand off to the leftovers step. We keep the consume dialog mounted
+        // but hidden so its state survives if the user dismisses the leftovers
+        // sheet.
+        setCookedServings(servings);
+        setShowLeftovers(true);
+      } else {
+        completeWithoutLeftovers();
+      }
     } catch {
       toast({
         title: t('messages.error.somethingWentWrong'),
@@ -440,6 +462,17 @@ export const ConsumeIngredientsDialog = ({
               );
             })
           )}
+        </div>
+
+        <div className="flex items-center gap-2 px-1 pt-2 border-t border-border">
+          <Checkbox
+            id="save-leftovers-toggle"
+            checked={saveLeftovers}
+            onCheckedChange={(v) => setSaveLeftovers(v === true)}
+          />
+          <Label htmlFor="save-leftovers-toggle" className="text-sm cursor-pointer select-none">
+            {t('pages.recipes.consume.saveLeftoversLabel')}
+          </Label>
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">

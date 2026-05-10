@@ -1033,7 +1033,9 @@
       "leaveHouseholdDescription": "Are you sure you want to leave this household? You will lose access to all shared items, recipes, and meal plans.",
       "confirmationMemberRemoval": "Are you sure you want to remove {{name}} from this household?",
       "householdNotFound": "Household not found",
-      "householdNotFoundDescription": "The household you're looking for doesn't exist.",
+      "householdNotFoundDescription": "This household no longer exists or you no longer have access.",
+      "householdLoadFailed": "Loading failed",
+      "householdLoadFailedDescription": "Connection to the household interrupted. Try again in a moment.",
       "backToHouseholds": "Back to households",
       "you": "(You)",
       "setupHousehold": "Set up your household",
@@ -4012,6 +4014,7 @@
     "you": "you",
     "back": "Back",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "retry": "Retry"
   }
 }

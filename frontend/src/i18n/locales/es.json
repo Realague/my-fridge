@@ -989,7 +989,9 @@
       "leaveHouseholdDescription": "¿Estás seguro de que quieres abandonar este hogar? Perderás el acceso a todos los elementos, recetas y planes de comida compartidos.",
       "confirmationMemberRemoval": "¿Estás seguro de que quieres remover a {{name}} de este hogar?",
       "householdNotFound": "Hogar no encontrado",
-      "householdNotFoundDescription": "El hogar que buscas no existe.",
+      "householdNotFoundDescription": "Este hogar ya no existe o ya no tienes acceso.",
+      "householdLoadFailed": "Carga fallida",
+      "householdLoadFailedDescription": "Conexión al hogar interrumpida. Inténtalo en un momento.",
       "backToHouseholds": "Volver a hogares",
       "you": "(Tú)",
       "setupHousehold": "Configurar tu hogar",
@@ -3965,6 +3967,7 @@
     "you": "ti",
     "back": "Volver",
     "edit": "Editar",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "retry": "Reintentar"
   }
 }

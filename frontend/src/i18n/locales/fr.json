@@ -1010,8 +1010,10 @@
       "leaveHousehold": "Quitter le foyer",
       "leaveHouseholdDescription": "Êtes-vous sûr de vouloir quitter ce foyer ? Vous perdrez l'accès à tous les articles, recettes et plans de repas partagés.",
       "confirmationMemberRemoval": "Êtes-vous sûr de vouloir supprimer {{name}} de ce foyer ?",
-      "householdNotFound": "Foyer non trouvé",
-      "householdNotFoundDescription": "Le foyer que vous recherchez n'existe pas.",
+      "householdNotFound": "Foyer introuvable",
+      "householdNotFoundDescription": "Ce foyer n'existe plus ou tu n'y as plus accès.",
+      "householdLoadFailed": "Chargement impossible",
+      "householdLoadFailedDescription": "Connexion au foyer interrompue. Réessaie dans un instant.",
       "backToHouseholds": "Retour aux foyers",
       "you": "(Vous)",
       "setupHousehold": "Configurer votre foyer",
@@ -3992,6 +3994,7 @@
     "you": "vous",
     "back": "Retour",
     "edit": "Modifier",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "retry": "Réessayer"
   }
 }

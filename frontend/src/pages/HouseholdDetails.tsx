@@ -311,9 +311,9 @@ const HouseholdDetails = () => {
             <CardDescription>{t('pages.dashboard.members', { count: members.length })}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button 
+            <Button
               variant="green"
-              className="w-full touch-friendly"
+              className="w-full"
               onClick={handleInviteMember}
             >
               <UserPlus className="h-4 w-4 mr-2" />

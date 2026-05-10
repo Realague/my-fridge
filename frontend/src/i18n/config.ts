@@ -45,4 +45,14 @@ i18n
     })(),
   });
 
+// Keep <html lang> in sync with the active i18n language so screen readers
+// announce content with the right pronunciation rules (WCAG 3.1.1/3.1.2).
+if (typeof document !== 'undefined') {
+  const syncLang = (lng: string) => {
+    document.documentElement.lang = (lng || 'en').split('-')[0];
+  };
+  syncLang(i18n.language);
+  i18n.on('languageChanged', syncLang);
+}
+
 export default i18n;

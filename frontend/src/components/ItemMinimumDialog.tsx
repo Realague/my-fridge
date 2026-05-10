@@ -189,8 +189,8 @@ export const ItemMinimumDialog = ({ open, onOpenChange, itemId, existingMinimumI
                 step="1"
                 value={shoppingQuantity}
                 onChange={(e) => handleShoppingQuantityChange(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter quantity"
+                className="w-full px-3 py-2 border border-input bg-background rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                placeholder={t('itemMinimum.quantityPlaceholder')}
               />
             </div>
           )}

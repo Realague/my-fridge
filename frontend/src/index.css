@@ -60,8 +60,10 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 98%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Pistache charter (#22C55E) bridged to shadcn --primary so bg-primary,
+       text-primary, ring-primary all become brand-correct out of the box. */
+    --primary: 142 71% 45%;
+    --primary-foreground: 145 100% 4%; /* Encre #03150A — AA on pistache (8.26) */
     --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 84% 4.9%;
     --muted: 210 40% 96%;
@@ -78,7 +80,7 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    --radius: 0.875rem; /* 14px — charter --mf-radius-lg */
 
     /* Sidebar tokens — bridge sur la charte v3.0 (mode jour) */
     --sidebar-background: 0 0% 100%;
@@ -125,8 +127,9 @@
     --card-foreground: 210 40% 98%;
     --popover: 217.2 32.6% 17.5%;
     --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Same pistache in dark mode — charter accent is theme-stable. */
+    --primary: 142 71% 45%;
+    --primary-foreground: 145 100% 4%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;

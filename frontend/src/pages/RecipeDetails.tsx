@@ -435,7 +435,7 @@ const RecipeDetails = () => {
         {/* Instructions */}
         <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
-            <CardTitle className="text-lg">Instructions</CardTitle>
+            <CardTitle className="text-lg">{t('pages.recipes.instructions')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ol className="space-y-4">

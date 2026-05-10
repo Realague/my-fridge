@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, ArrowRight, Clock, ChefHat, Eye, EyeOff, ExternalLink, UtensilsCrossed, Minus, Plus } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
+import { useMealStore } from '@/stores/mealStore';
 import { useTimerStore } from '@/stores/timerStore';
 import { useTimerTick } from '@/hooks/useTimerTick';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
@@ -37,7 +38,13 @@ const RecipeCookingMode = () => {
 
   const { selectedHouseholdId } = useProtectedRoute();
   const { currentRecipe: recipe, fetchRecipeById, loading, error } = useRecipeStore();
+  const markMealCooked = useMealStore((s) => s.markMealCooked);
   const timerStore = useTimerStore();
+  // Optional meal-plan binding: when the cook page is reached from a planned
+  // meal, the caller may pass `?mealPlanId=...` so we can mark the meal as
+  // cooked once the consume dialog completes (parity with the Meals dialog
+  // flow).
+  const mealPlanId = searchParams.get('mealPlanId');
 
   // Drive the interval that calls tick()
   useTimerTick();
@@ -452,6 +459,13 @@ const RecipeCookingMode = () => {
           onClose={() => setShowConsumeDialog(false)}
           recipe={recipe}
           initialServings={cookingServings ?? undefined}
+          onCookComplete={mealPlanId ? async () => {
+            try {
+              await markMealCooked(mealPlanId);
+            } catch {
+              // store already toasts on failure
+            }
+          } : undefined}
         />
       </div>
 

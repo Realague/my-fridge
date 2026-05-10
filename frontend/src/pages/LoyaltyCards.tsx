@@ -192,7 +192,7 @@ const LoyaltyCards = () => {
             <h1 className="text-xl font-bold text-foreground">{t('loyaltyCards.title')}</h1>
             <Button
               variant="green"
-              className="touch-friendly shrink-0 flex items-center gap-2"
+              className="shrink-0 flex items-center gap-2"
               onClick={() => setShowForm(true)}
             >
               <Plus className="h-4 w-4" />

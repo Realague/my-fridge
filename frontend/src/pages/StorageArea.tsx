@@ -774,7 +774,7 @@ const StorageArea = () => {
             </div>
             <Button
               onClick={() => setShowAddForm(!showAddForm)}
-              className="flex items-center gap-2 touch-friendly shrink-0"
+              className="flex items-center gap-2 shrink-0"
               variant="green"
             >
               <Plus className="h-4 w-4 sm:mr-0" />

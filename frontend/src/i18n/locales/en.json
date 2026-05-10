@@ -107,6 +107,7 @@
     "householdName": "Household Name",
     "inviteCode": "Invite Code",
     "quantity": "Quantity",
+    "qtyPlaceholder": "Qty",
     "unit": "Unit",
     "category": "Category",
     "location": "Location",
@@ -479,6 +480,9 @@
     "googleTokenCopied": "Google token has been copied to clipboard for API testing."
   },
   "pages": {
+    "notFound": {
+      "message": "Page not found."
+    },
     "more": {
       "title": "More",
       "sections": {
@@ -3942,6 +3946,7 @@
     "selectItem": "Select item",
     "minimumQuantity": "Minimum quantity",
     "shoppingQuantity": "Shopping quantity",
+    "quantityPlaceholder": "Enter a quantity",
     "currentStock": "Current stock",
     "minimum": "Minimum",
     "quantityNeeded": "Need {{quantity}} {{unit}} more",

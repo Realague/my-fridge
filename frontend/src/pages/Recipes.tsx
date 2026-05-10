@@ -128,7 +128,6 @@ const Recipes = () => {
               </Button>
               <Button
                 variant="green"
-                className="touch-friendly"
                 onClick={() => navigate('/add-recipe')}
               >
                 <Plus className="h-4 w-4 sm:mr-2" />

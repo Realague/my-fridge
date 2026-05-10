@@ -283,44 +283,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Recent Activity */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
-          <CardHeader>
-             <CardTitle className="text-lg">{t('pages.dashboard.recentActivity')}</CardTitle>
-             <CardDescription>{t('pages.dashboard.recentActivityDescription')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-accent rounded-lg">
-                <div className="w-8 h-8 bg-accent/50 rounded-full flex items-center justify-center">
-                  <span className="text-sm">🥛</span>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Sarah added milk to the fridge</p>
-                  <p className="text-xs text-muted-foreground">2 hours ago</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-accent rounded-lg">
-                <div className="w-8 h-8 bg-accent/50 rounded-full flex items-center justify-center">
-                  <span className="text-sm">🍞</span>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Low stock: Bread</p>
-                  <p className="text-xs text-muted-foreground">4 hours ago</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-accent rounded-lg">
-                <div className="w-8 h-8 bg-accent/50 rounded-full flex items-center justify-center">
-                  <span className="text-sm">📝</span>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">John completed shopping list</p>
-                  <p className="text-xs text-muted-foreground">Yesterday</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Recent Activity — hidden until a real activity feed exists.
+            Previously rendered hardcoded English mock rows (Sarah / John /
+            Yesterday) which leaked to FR/ES users on the home screen. */}
       </div>
 
       {/* Notification Drawer */}

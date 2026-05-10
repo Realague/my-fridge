@@ -107,6 +107,7 @@
     "householdName": "Nombre del hogar",
     "inviteCode": "Código de invitación",
     "quantity": "Cantidad",
+    "qtyPlaceholder": "Cant.",
     "unit": "Unidad",
     "category": "Categoría",
     "location": "Ubicación",
@@ -452,6 +453,9 @@
     "googleTokenCopied": "El token de Google ha sido copiado al portapapeles para pruebas de API."
   },
   "pages": {
+    "notFound": {
+      "message": "Página no encontrada."
+    },
     "more": {
       "title": "Más",
       "sections": {
@@ -3896,6 +3900,7 @@
     "selectItem": "Seleccionar artículo",
     "minimumQuantity": "Cantidad mínima",
     "shoppingQuantity": "Cantidad de compra",
+    "quantityPlaceholder": "Introduce una cantidad",
     "currentStock": "Stock actual",
     "minimum": "Mínimo",
     "quantityNeeded": "Necesita {{quantity}} {{unit}} más",

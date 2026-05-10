@@ -75,7 +75,7 @@ const Index = () => {
 
         {/* Features Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-3">
               <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-3">
                 <Users className="h-6 w-6 text-accent-foreground" />
@@ -89,7 +89,7 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-3">
               <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-3">
                 <Utensils className="h-6 w-6 text-accent-foreground" />
@@ -103,7 +103,7 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-3">
               <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-3">
                 <ShoppingCart className="h-6 w-6 text-accent-foreground" />
@@ -117,7 +117,7 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-3">
               <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-3">
                 <Clock className="h-6 w-6 text-accent-foreground" />

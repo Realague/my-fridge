@@ -228,7 +228,7 @@ const Auth = () => {
               )}
             </div>
 
-            {!import.meta.env.VITE_GOOGLE_CLIENT_ID && (
+            {import.meta.env.DEV && !import.meta.env.VITE_GOOGLE_CLIENT_ID && (
               <div className="text-sm text-destructive text-center p-3 bg-destructive/10 rounded">
                 {t('pages.auth.googleClientIdNotConfigured')}
               </div>

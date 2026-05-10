@@ -107,6 +107,7 @@
     "householdName": "Nom du foyer",
     "inviteCode": "Code d'invitation",
     "quantity": "Quantité",
+    "qtyPlaceholder": "Qté",
     "unit": "Unité",
     "category": "Catégorie",
     "location": "Emplacement",
@@ -156,10 +157,10 @@
     "locationPlaceholder": "ex., Tiroir du bas, Étagère du haut, Porte",
     "kitchenFridge": "Réfrigérateur de cuisine",
     "coldStorage": "Garde-manger de frigo",
-    "chestFreezer": "Congélateur de pecho",
-    "iceBox": "Cave à vin",
-    "walkInPantry": "Garde-manger de pasillo",
-    "foodCloset": "Garde-manger de alimentos",
+    "chestFreezer": "Congélateur coffre",
+    "iceBox": "Glacière",
+    "walkInPantry": "Cellier",
+    "foodCloset": "Réserve alimentaire",
     "upperCabinets": "Placard de cuisine",
     "lowerCabinets": "Placard de cuisine",
     "spiceCabinet": "Placard de cuisine",
@@ -230,8 +231,8 @@
   "itemEditor": {
     "itemImage": "Image de l'article",
     "itemImageDescription": "Image de l'article (facultatif)",
-    "editItem": "Modifier l'Article",
-    "createNewItem": "Créer un Nouvel Article",
+    "editItem": "Modifier l'article",
+    "createNewItem": "Créer un nouvel article",
     "itemNamePlaceholder": "Nom de l'article",
     "defaultUnit": "Unité par défaut",
     "availableUnits": "Unités disponibles",
@@ -459,6 +460,9 @@
     "googleTokenCopied": "Le jeton Google a été copié dans le presse-papiers pour les tests d'API."
   },
   "pages": {
+    "notFound": {
+      "message": "Page introuvable."
+    },
     "more": {
       "title": "Plus",
       "sections": {
@@ -851,7 +855,7 @@
       "descriptionPlaceholder": "Brève description de la recette…",
       "stepInstructionsPlaceholder": "Étape {{step}} instructions...",
       "recipeNotFound": "Recette non trouvée",
-      "editRecipeTitle": "Modifier la Recette",
+      "editRecipeTitle": "Modifier la recette",
       "recipeImage": "Image de la Recette",
       "recipeImageDescription": "Ajoute une photo du plat terminé (facultatif)",
       "difficultyOptions": {
@@ -3921,6 +3925,7 @@
     "selectItem": "Sélectionner un article",
     "minimumQuantity": "Quantité minimale",
     "shoppingQuantity": "Quantité de commande",
+    "quantityPlaceholder": "Saisis une quantité",
     "currentStock": "Stock actuel",
     "minimum": "Minimum",
     "quantityNeeded": "Besoin de {{quantity}} {{unit}} de plus",

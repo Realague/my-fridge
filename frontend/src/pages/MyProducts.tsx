@@ -420,7 +420,7 @@ const MyProducts = () => {
             <Button
               onClick={handleAddClick}
               variant="green"
-              className="hidden sm:inline-flex shrink-0 touch-friendly"
+              className="hidden sm:inline-flex shrink-0"
               aria-label={t('addStoredItemDialog.openButton')}
             >
               <Plus className="h-4 w-4" />

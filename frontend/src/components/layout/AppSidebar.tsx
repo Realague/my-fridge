@@ -69,32 +69,35 @@ export const AppSidebar = ({
 
       <SidebarContent>
         <SidebarGroup className="px-2">
-          <SidebarMenu>
-            {DESKTOP_NAV_ITEMS.map((item) => {
-              const Icon = item.icon;
-              const label = t(item.labelKey);
-              const active = isItemActive(item.to, item.matchPaths);
-              return (
-                <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton
-                    isActive={active}
-                    tooltip={label}
-                    onClick={() => navigate(item.to)}
-                    aria-label={label}
-                  >
-                    <Icon />
-                    <span>{label}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              );
-            })}
+          <nav aria-label={t('navigation.dashboard')}>
+            <SidebarMenu>
+              {DESKTOP_NAV_ITEMS.map((item) => {
+                const Icon = item.icon;
+                const label = t(item.labelKey);
+                const active = isItemActive(item.to, item.matchPaths);
+                return (
+                  <SidebarMenuItem key={item.id}>
+                    <SidebarMenuButton
+                      isActive={active}
+                      tooltip={label}
+                      onClick={() => navigate(item.to)}
+                      aria-label={label}
+                      aria-current={active ? 'page' : undefined}
+                    >
+                      <Icon />
+                      <span>{label}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
 
-            <SidebarStorageGroup
-              collapsed={collapsed}
-              expanded={storageExpanded}
-              onExpandedChange={onStorageExpandedChange}
-            />
-          </SidebarMenu>
+              <SidebarStorageGroup
+                collapsed={collapsed}
+                expanded={storageExpanded}
+                onExpandedChange={onStorageExpandedChange}
+              />
+            </SidebarMenu>
+          </nav>
         </SidebarGroup>
       </SidebarContent>
 

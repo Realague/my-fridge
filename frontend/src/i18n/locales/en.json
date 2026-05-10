@@ -349,6 +349,11 @@
       "markAsOpenedFailed": "Marking failed.",
       "unnamed": "Item"
     },
+    "shoppingItem": {
+      "deleted": "{{name}} removed from list.",
+      "restored": "{{name}} added back to list.",
+      "deleteFailed": "Removal failed."
+    },
     "success": {
       "itemAdded": "Added {{item}} to the list.",
       "itemUpdated": "Item updated successfully",

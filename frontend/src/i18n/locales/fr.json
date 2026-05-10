@@ -349,6 +349,11 @@
       "markAsOpenedFailed": "Marquage impossible.",
       "unnamed": "Article"
     },
+    "shoppingItem": {
+      "deleted": "{{name}} retiré de la liste.",
+      "restored": "{{name}} ajouté à la liste.",
+      "deleteFailed": "Suppression impossible."
+    },
     "success": {
       "itemAdded": "{{item}} ajouté à la liste.",
       "itemUpdated": "Article mis à jour",

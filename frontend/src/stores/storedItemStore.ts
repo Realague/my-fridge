@@ -229,23 +229,22 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }
 
         set({ loading: true, error: null });
-        
+
         try {
           const createdItem = await storedItemService.createStoredItem(householdId, data);
-          
-          toast.success("Item Added!", {
-            description: `Item has been added to storage successfully.`,
-          });
-          
-          const store = get();
-          store.addStoredItemToHousehold(createdItem);
+
+          const itemName = createdItem.item
+            ? getItemDisplayName(createdItem.item as never, i18n.t.bind(i18n))
+            : i18n.t('messages.storedItem.unnamed');
+
+          toast.success(i18n.t('messages.storedItem.created', { name: itemName }));
+
+          get().addStoredItemToHousehold(createdItem);
           return createdItem;
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Failed to create stored item';
+          const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.createFailed');
           set({ error: message });
-          toast.error("Failed to Add Item", {
-            description: message,
-          });
+          toast.error(i18n.t('messages.storedItem.createFailed'), { description: message });
           throw error;
         } finally {
           set({ loading: false });
@@ -259,22 +258,21 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }
 
         set({ loading: true, error: null });
-        
+
         try {
           const updatedItem = await storedItemService.updateStoredItem(householdId, id, data);
-          
-          toast.success("Item Updated!", {
-            description: `Item has been updated successfully.`,
-          });
-          
-          const store = get();
-          store.updateStoredItemInHousehold(updatedItem);
+
+          const itemName = updatedItem.item
+            ? getItemDisplayName(updatedItem.item as never, i18n.t.bind(i18n))
+            : i18n.t('messages.storedItem.unnamed');
+
+          toast.success(i18n.t('messages.storedItem.updated', { name: itemName }));
+
+          get().updateStoredItemInHousehold(updatedItem);
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Failed to update stored item';
+          const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.updateFailed');
           set({ error: message });
-          toast.error("Update Failed", {
-            description: message,
-          });
+          toast.error(i18n.t('messages.storedItem.updateFailed'), { description: message });
           throw error;
         } finally {
           set({ loading: false });
@@ -362,27 +360,42 @@ export const useStoredItemStore = create<StoredItemStore>()(
           }
           return { remaining: result.remaining };
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Failed to consume portion';
-          toast.error('Failed to consume portion', { description: message });
+          const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.consumePortionFailed');
+          toast.error(i18n.t('messages.storedItem.consumePortionFailed'), { description: message });
           throw error;
         }
       },
 
       markAsOpened: async (id: string, openedDate?: string) => {
-        const store = get();
+        const householdId = getHouseholdId();
+        if (!householdId) {
+          throw new Error('No household ID provided');
+        }
+
         const today = openedDate || new Date().toISOString().split('T')[0];
-        
+
+        set({ loading: true, error: null });
         try {
-          await store.updateStoredItem(id, {
+          // Call the service directly to avoid the duplicate toast that
+          // updateStoredItem would emit; we want a single 'opened' toast here.
+          const updatedItem = await storedItemService.updateStoredItem(householdId, id, {
             isOpened: true,
             openedDate: today,
           });
-          
-          toast.success("Item Marked as Opened", {
-            description: `The item is now tracked with its opened date.`,
-          });
+          get().updateStoredItemInHousehold(updatedItem);
+
+          const itemName = updatedItem.item
+            ? getItemDisplayName(updatedItem.item as never, i18n.t.bind(i18n))
+            : i18n.t('messages.storedItem.unnamed');
+
+          toast.success(i18n.t('messages.storedItem.markedAsOpened', { name: itemName }));
         } catch (error) {
+          const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.markAsOpenedFailed');
+          set({ error: message });
+          toast.error(i18n.t('messages.storedItem.markAsOpenedFailed'), { description: message });
           throw error;
+        } finally {
+          set({ loading: false });
         }
       },
 

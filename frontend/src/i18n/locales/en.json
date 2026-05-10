@@ -334,11 +334,18 @@
   },
   "messages": {
     "storedItem": {
+      "created": "{{name}} added.",
+      "createFailed": "Adding failed.",
+      "updated": "{{name}} updated.",
+      "updateFailed": "Update failed.",
       "deleted": "{{name}} removed.",
       "restored": "{{name}} restored.",
       "undo": "Undo",
       "deleteFailed": "Removal failed.",
       "restoreFailed": "Restore failed.",
+      "consumePortionFailed": "Portion not consumed.",
+      "markedAsOpened": "{{name}} opened.",
+      "markAsOpenedFailed": "Marking failed.",
       "unnamed": "Item"
     },
     "success": {

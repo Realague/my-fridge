@@ -334,11 +334,18 @@
   },
   "messages": {
     "storedItem": {
+      "created": "{{name}} ajouté.",
+      "createFailed": "Ajout impossible.",
+      "updated": "{{name}} mis à jour.",
+      "updateFailed": "Mise à jour impossible.",
       "deleted": "{{name}} retiré.",
       "restored": "{{name}} restauré.",
       "undo": "Annuler",
       "deleteFailed": "Suppression impossible.",
       "restoreFailed": "Restauration impossible.",
+      "consumePortionFailed": "Portion non consommée.",
+      "markedAsOpened": "{{name}} ouvert.",
+      "markAsOpenedFailed": "Marquage impossible.",
       "unnamed": "Article"
     },
     "success": {

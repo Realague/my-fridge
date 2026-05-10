@@ -114,9 +114,9 @@ export const PushOptInBanner = () => {
           </Button>
           <Button
             size="sm"
+            variant="green"
             onClick={handleActivate}
             disabled={isLoading}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white"
           >
             {t('pages.dashboard.expiringSoon.pushOptIn.activate')}
           </Button>

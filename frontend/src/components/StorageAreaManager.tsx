@@ -115,8 +115,9 @@ const StorageAreaManager = () => {
       <CardHeader>
         <CardTitle className="flex items-center justify-between gap-2">
           <span>{t('storageAreaManager.title')}</span>
-          <Button 
-            className="bg-green-600 hover:bg-green-700 text-white shrink-0"
+          <Button
+            variant="green"
+            className="shrink-0"
             onClick={() => setIsAddDialogOpen(true)}
           >
             <Plus className="h-4 w-4 sm:mr-2" />

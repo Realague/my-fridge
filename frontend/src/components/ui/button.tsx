@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        green: "bg-green-600 hover:bg-green-700 text-white",
+        green: "bg-[var(--mf-green)] hover:bg-[var(--mf-green-deep)] text-[#03150A] !rounded-[10px]",
         delete: "border border-red-600 bg-card/90 hover:bg-red-700 hover:text-white text-red-700",
         deleteTrash: "bg-transparent hover:bg-red-700 hover:text-white transition-opacity text-red-500",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",

@@ -362,7 +362,8 @@ const RecipeDetails = () => {
             <div className="pt-4 space-y-3">
               <Button
                 onClick={() => navigate(`/recipes/${recipe.id}/cook?servings=${recipe.servings}`)}
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
+                variant="green"
+                className="w-full"
                 size="lg"
               >
                 <ChefHat className="h-5 w-5 shrink-0 mr-2" />

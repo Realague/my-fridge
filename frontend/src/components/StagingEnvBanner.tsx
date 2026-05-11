@@ -80,14 +80,14 @@ function StagingEnvBannerInner() {
         role="region"
         aria-label={summaryLabel}
         className={cn(
-          "fixed left-0 right-0 top-0 z-40 flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-amber-700/40",
-          "bg-amber-500 px-3 py-2 text-sm font-medium text-amber-950 shadow-sm",
+          "fixed left-0 right-0 top-0 z-40 flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-mf-warning/40",
+          "bg-mf-warning px-3 py-2 text-sm font-medium text-white shadow-sm",
         )}
       >
-        <AlertTriangle className="h-4 w-4 shrink-0 text-amber-950" aria-hidden />
+        <AlertTriangle className="h-4 w-4 shrink-0 text-white" aria-hidden />
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1">
           <span className="shrink-0 font-semibold">STAGING</span>
-          <span className="text-amber-950/70" aria-hidden>
+          <span className="text-white/70" aria-hidden>
             ·
           </span>
           {showBranchTooltip ? (
@@ -109,11 +109,11 @@ function StagingEnvBannerInner() {
               {branchTruncated}
             </span>
           )}
-          <span className="text-amber-950/70" aria-hidden>
+          <span className="text-white/70" aria-hidden>
             ·
           </span>
           <span className="shrink-0 font-mono text-xs sm:text-sm">{sha}</span>
-          <span className="text-amber-950/70" aria-hidden>
+          <span className="text-white/70" aria-hidden>
             ·
           </span>
           <span className="min-w-0 shrink-0">Déployé le {deployLabel}</span>

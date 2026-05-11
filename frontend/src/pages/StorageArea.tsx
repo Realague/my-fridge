@@ -40,6 +40,7 @@ import { useDateFormat } from '@/utils/dateFormatting';
 import { toast } from 'sonner';
 import { SelectedItemPreview } from '@/components/SelectedItemPreview';
 import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
+import { freezerTone, toneBadgeClass, toneTextClass } from '@/lib/tokenMaps';
 import { formatQuantityWithUnit } from '@/utils/unitSystem';
 import { CategoryIcon } from '@/utils/categoryIcons';
 import { OpenedStatusToggle } from '@/components/OpenedStatusToggle';
@@ -68,21 +69,14 @@ const STORAGE_SORT_CRITERIA: StorageAreaSortCriterion[] = [
   'category',
 ];
 
-/** Text/badge color by share of recommended freezer time used (<70% blue, 70–90% orange, >90% red). */
+// Freezer health text/badge classes — share of recommended freezer time used
+// resolved onto charter info/warning/danger via lib/tokenMaps.
 function getFreezerColorClass(daysFrozen: number, recommendedDays: number): string {
-  const total = recommendedDays > 0 ? recommendedDays : 180;
-  const ratio = daysFrozen / total;
-  if (ratio > 0.9) return 'text-red-600 dark:text-red-400';
-  if (ratio >= 0.7) return 'text-orange-600 dark:text-orange-400';
-  return 'text-blue-600 dark:text-blue-400';
+  return toneTextClass(freezerTone(daysFrozen, recommendedDays));
 }
 
 function getFreezerBadgeClassName(daysFrozen: number, recommendedDays: number): string {
-  const total = recommendedDays > 0 ? recommendedDays : 180;
-  const ratio = daysFrozen / total;
-  if (ratio > 0.9) return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
-  if (ratio >= 0.7) return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400';
-  return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+  return toneBadgeClass(freezerTone(daysFrozen, recommendedDays));
 }
 
 /** Show X/Y congélation + tooltip whenever the row is in a freezer zone or has a frozenDate. */
@@ -319,8 +313,8 @@ const StorageArea = () => {
     const badges = {
       'expired': <Badge variant="destructive" className="text-xs">{t('storageArea.expiredSince', { count: Math.abs(days) })}</Badge>,
       'expiring-soon': <Badge variant="destructive" className="text-xs">{t('storageArea.expiresIn', { days })}</Badge>,
-      'expiring-week': <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">{t('storageArea.expiresIn', { days })}</Badge>,
-      'fresh': <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">{t('storageArea.fresh', { days })}</Badge>
+      'expiring-week': <Badge variant="secondary" className="text-xs bg-mf-warning-soft text-mf-warning">{t('storageArea.expiresIn', { days })}</Badge>,
+      'fresh': <Badge variant="secondary" className="text-xs bg-mf-green-soft text-mf-green-deep">{t('storageArea.fresh', { days })}</Badge>
     };
     
     return badges[status];
@@ -485,7 +479,7 @@ const StorageArea = () => {
                   { t(`items.categories.${item.category}`) }
                 </Badge>
                 {storageItem.isOpened && (
-                  <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400">
+                  <Badge variant="secondary" className="text-xs bg-mf-warning-soft text-mf-warning">
                     <PackageOpen className="h-3 w-3 mr-1" />
                     {t('storedItems.opened')}
                   </Badge>
@@ -674,7 +668,7 @@ const StorageArea = () => {
                         );
                       })()}
                     {storageItem.isOpened && storageItem.openedDate && (
-                      <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
+                      <div className="flex items-center gap-1 text-mf-warning">
                         <PackageOpen className="h-3 w-3" />
                         <span>{t('storedItems.openedOn')} {formatDate(new Date(storageItem.openedDate), 'MMM d')}</span>
                       </div>

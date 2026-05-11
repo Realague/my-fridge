@@ -178,7 +178,7 @@ const NotificationRow: React.FC<NotificationRowProps> = ({ notification, onClick
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <h4 className={`font-medium ${isUnread ? 'text-foreground' : 'text-muted-foreground'}`}>{title}</h4>
-              {isUnread && <div className="w-2 h-2 bg-emerald-500 rounded-full" />}
+              {isUnread && <div className="w-2 h-2 bg-mf-green rounded-full" />}
             </div>
             {message && <p className="text-sm text-muted-foreground mb-2">{message}</p>}
             <span className="text-xs text-muted-foreground">

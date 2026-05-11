@@ -42,7 +42,7 @@ const StorageAreaCard = ({ area, onClick }: StorageAreaCardProps) => {
           </div>
           <div className="flex items-center gap-3">
             {area.lowStockCount > 0 && (
-              <Badge variant="destructive" className="bg-orange-500 hover:bg-orange-600">
+              <Badge variant="destructive" className="bg-mf-warning text-white hover:bg-mf-warning/90">
                 {area.lowStockCount} {t('storageArea.low')}
               </Badge>
             )}

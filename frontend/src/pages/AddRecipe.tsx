@@ -486,20 +486,20 @@ const AddRecipe = () => {
 
             {/* Imported Ingredients Reference */}
             {importedIngredients.length > 0 && (
-              <Card className="bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800">
+              <Card className="bg-mf-warning-soft border-mf-warning/30">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base text-amber-800 dark:text-amber-200">
+                  <CardTitle className="text-base text-mf-warning">
                     {t('pages.importRecipe.importedIngredients')}
                   </CardTitle>
-                  <CardDescription className="text-amber-700 dark:text-amber-300">
+                  <CardDescription className="text-mf-warning">
                     {t('pages.importRecipe.importedIngredientsDescription')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-1 text-sm text-amber-800 dark:text-amber-200">
+                  <ul className="space-y-1 text-sm text-mf-warning">
                     {importedIngredients.map((ing, index) => (
                       <li key={index} className="flex items-start gap-2">
-                        <span className="text-amber-600 dark:text-amber-400 mt-0.5">•</span>
+                        <span className="text-mf-warning mt-0.5">•</span>
                         <span>{ing}</span>
                       </li>
                     ))}
@@ -548,7 +548,7 @@ const AddRecipe = () => {
                 {instructions.map((instruction, index) => (
                   <div key={index} className="space-y-3">
                     <div className="flex gap-2">
-                      <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-foreground rounded-full flex items-center justify-center text-sm font-medium mt-2">
+                      <div className="flex-shrink-0 w-6 h-6 bg-mf-green text-white rounded-full flex items-center justify-center text-sm font-medium mt-2">
                         {index + 1}
                       </div>
                       <div className="flex-1 space-y-2">

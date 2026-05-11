@@ -52,7 +52,7 @@ class ErrorBoundaryClass extends Component<BoundaryProps, BoundaryState> {
         role="alert"
         className="flex min-h-[60vh] items-center justify-center bg-background p-6"
       >
-        <div className="w-full max-w-md rounded-[14px] border bg-card/80 backdrop-blur-sm p-8 shadow-lg">
+        <div className="w-full max-w-md rounded-lg border bg-card/80 backdrop-blur-sm p-8 shadow-lg">
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
             <AlertTriangle className="h-6 w-6" aria-hidden="true" />
           </div>

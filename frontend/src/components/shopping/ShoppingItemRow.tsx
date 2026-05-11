@@ -110,7 +110,7 @@ export const ShoppingItemRow = ({
           isCompleted
             ? 'bg-accent opacity-75'
             : isQuickStoring
-              ? 'bg-green-50 dark:bg-green-950/20 rounded-b-none'
+              ? 'bg-mf-green-soft rounded-b-none'
               : 'bg-muted'
         }`}
       >
@@ -118,8 +118,8 @@ export const ShoppingItemRow = ({
           onClick={() => onToggleComplete(shoppingItem.id)}
           className={`flex-shrink-0 w-6 h-6 mt-1 rounded-full flex items-center justify-center transition-colors ${
             isCompleted
-              ? 'bg-green-500'
-              : 'border-2 border-border hover:border-green-500 bg-primary/10'
+              ? 'bg-primary'
+              : 'border-2 border-border hover:border-primary bg-primary/10'
           }`}
         >
           {isCompleted && <Check className="h-4 w-4 text-white" />}
@@ -196,7 +196,7 @@ export const ShoppingItemRow = ({
                       variant="ghost"
                       size="sm"
                       onClick={() => onDelete(shoppingItem.id)}
-                      className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 hover:bg-primary/10"
+                      className="h-8 w-8 p-0 text-mf-danger hover:bg-mf-danger-soft"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -245,10 +245,10 @@ export const ShoppingItemRow = ({
       </div>
 
       {isQuickStoring && (
-        <div className="bg-green-50 dark:bg-green-950/20 border border-t-0 border-green-200 dark:border-green-800 rounded-b-lg px-3 pb-3 pt-1">
+        <div className="bg-mf-green-soft border border-t-0 border-mf-green/30 rounded-b-lg px-3 pb-3 pt-1">
           <div className="flex items-center gap-2 flex-wrap">
             {suggestedArea && (
-              <span className="text-xs font-medium text-green-700 dark:text-green-400">
+              <span className="text-xs font-medium text-mf-green-deep">
                 {t('pages.shopping.suggestedArea', {
                   area: `${suggestedArea.emoji} ${suggestedArea.name}`,
                 })}

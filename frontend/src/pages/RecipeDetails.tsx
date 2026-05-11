@@ -14,6 +14,7 @@ import { useMealStore } from '@/stores/mealStore';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { difficultyTone, toneBadgeClass } from '@/lib/tokenMaps';
 import { formatQuantityWithUnit, isFreeQuantityUnit } from '@/utils/unitSystem';
 import { Item } from '@/services/itemService';
 import { useAuthStore } from '@/stores/authStore';
@@ -118,14 +119,7 @@ const RecipeDetails = () => {
     );
   }
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Easy': return 'bg-green-100 text-green-800';
-      case 'Medium': return 'bg-yellow-100 text-yellow-800';
-      case 'Hard': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const getDifficultyColor = (difficulty: string) => toneBadgeClass(difficultyTone(difficulty));
 
   const handleDelete = async () => {
     if (!recipe?.id) return;
@@ -273,7 +267,7 @@ const RecipeDetails = () => {
                 onClick={handleToggleFavorite}
               >
                 <Heart 
-                  className={`h-4 w-4 ${recipe.isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
+                  className={`h-4 w-4 ${recipe.isFavorite ? 'fill-mf-danger text-mf-danger' : 'text-muted-foreground'}`} 
                 />
               </Button>
               <Dialog>
@@ -391,7 +385,7 @@ const RecipeDetails = () => {
           </Card>
           <Card variant="elevated">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-orange-600">{recipe.cookTime}m</div>
+              <div className="text-2xl font-bold text-mf-warning">{recipe.cookTime}m</div>
               <div className="text-sm text-muted-foreground">{t('pages.recipes.cookTime')}</div>
             </CardContent>
           </Card>
@@ -443,7 +437,7 @@ const RecipeDetails = () => {
                 return (
                   <li key={index} className="flex flex-col gap-3">
                     <div className="flex gap-3">
-                      <span className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                      <span className="flex-shrink-0 w-6 h-6 bg-mf-green text-white rounded-full flex items-center justify-center text-sm font-medium">
                         {index + 1}
                       </span>
                       <span className="text-foreground pt-0.5">{instruction.text}</span>
@@ -467,7 +461,7 @@ const RecipeDetails = () => {
                                 key={ingredient.id ?? ingredientIndex}
                                 className="flex items-center gap-2 text-sm text-muted-foreground"
                               >
-                                <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-mf-green" />
                                 <span>
                                   {label} {itemName}
                                   {ingredient.notes && (
@@ -491,7 +485,7 @@ const RecipeDetails = () => {
         </Card>
 
         {/* Delete Button */}
-        <Card className="bg-primary/10 border-red-600">
+        <Card className="bg-mf-danger-soft border-mf-danger/40">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>

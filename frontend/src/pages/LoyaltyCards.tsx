@@ -127,7 +127,7 @@ const LoyaltyCards = () => {
             variant="ghost"
             size="icon"
             onClick={() => setCardToDelete(selectedCard)}
-            className="text-red-400 hover:text-red-300 hover:bg-white/20"
+            className="text-mf-danger hover:text-mf-danger hover:bg-white/20"
           >
             <Trash2 className="h-5 w-5" />
           </Button>

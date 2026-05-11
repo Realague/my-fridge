@@ -246,21 +246,21 @@ export const ConsumeIngredientsDialog = ({
     }
     if (ingredient.availableStoredItems.length === 0) {
       return (
-        <Badge className="text-xs bg-red-100 text-red-800 hover:bg-red-100">
+        <Badge className="text-xs bg-mf-danger-soft text-mf-danger hover:bg-mf-danger-soft">
           {t('pages.recipes.consume.notInStock')}
         </Badge>
       );
     }
     if (ingredient.hasEnough) {
       return (
-        <Badge className="text-xs bg-green-100 text-green-800 hover:bg-green-100">
+        <Badge className="text-xs bg-mf-green-soft text-mf-green-deep hover:bg-mf-green-soft">
           <Check className="h-3 w-3 mr-1" />
           {t('pages.recipes.consume.sufficient')}
         </Badge>
       );
     }
     return (
-      <Badge className="text-xs bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+      <Badge className="text-xs bg-mf-warning-soft text-mf-warning hover:bg-mf-warning-soft">
         <AlertTriangle className="h-3 w-3 mr-1" />
         {t('pages.recipes.consume.partial')}
       </Badge>
@@ -290,7 +290,7 @@ export const ConsumeIngredientsDialog = ({
                 {si.isExpired ? (
                   <span className="text-destructive">{t('pages.recipes.consume.expired')}</span>
                 ) : si.isExpiringSoon ? (
-                  <span className="text-yellow-600">{t('pages.recipes.consume.expiringSoon')}</span>
+                  <span className="text-mf-warning">{t('pages.recipes.consume.expiringSoon')}</span>
                 ) : null}
               </span>
             )}

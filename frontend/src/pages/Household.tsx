@@ -93,7 +93,7 @@ const Household = () => {
                  </div>
                  <div className="flex items-center gap-2">
                     {currentUser?.selectedHouseholdId === h.id ? (
-                      <Badge variant="default" className="bg-green-600 text-white">
+                      <Badge variant="default" className="bg-primary text-primary-foreground">
                         <CheckCircle className="h-3 w-3 mr-1.5" />
                         {t('pages.household.active')}
                       </Badge>

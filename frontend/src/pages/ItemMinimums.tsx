@@ -186,7 +186,7 @@ const ItemMinimums = () => {
                                   {t('itemMinimum.lowStock')}
                                 </Badge>
                               ) : (
-                                <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                <Badge variant="secondary" className="text-xs bg-mf-green-soft text-mf-green-deep">
                                   <CheckCircle className="h-3 w-3 mr-1" />
                                   {t('itemMinimum.inStock')}
                                 </Badge>
@@ -214,7 +214,7 @@ const ItemMinimums = () => {
                                 </div>
                               )}
                               {lowStock && (
-                                <div className="text-orange-600 dark:text-orange-400">
+                                <div className="text-mf-warning">
                                   {t('itemMinimum.quantityNeeded', {
                                     quantity: (minimum.minimumQuantity - currentStock).toFixed(1),
                                     unit: getTranslatedUnitLabel(

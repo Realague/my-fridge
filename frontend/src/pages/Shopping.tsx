@@ -658,7 +658,7 @@ const Shopping = () => {
         {loading && (
           <Card variant="elevated">
             <CardContent className="p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-mf-green mx-auto mb-4"></div>
               <p className="text-muted-foreground">{t('pages.shopping.loadingShoppingList')}</p>
             </CardContent>
           </Card>
@@ -868,7 +868,7 @@ const Shopping = () => {
                   )}
                   {loadingCompleted && (
                     <div className="inline-flex items-center gap-2 ml-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-mf-green"></div>
                       <span className="text-sm text-muted-foreground">{t('pages.shopping.loading')}</span>
                     </div>
                   )}
@@ -877,7 +877,7 @@ const Shopping = () => {
               <CardContent>
                 {loadingCompleted && completedItemsAlpha.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-mf-green mx-auto mb-4"></div>
                     <p>{t('pages.shopping.loadingCompletedItems')}</p>
                   </div>
                 ) : (

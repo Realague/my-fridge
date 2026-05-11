@@ -145,7 +145,7 @@ export function MyProductsItemCard({
       return (
         <Badge
           variant="secondary"
-          className="text-xs bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400"
+          className="text-xs bg-mf-warning-soft text-mf-warning"
         >
           {t('storageArea.expiresIn', { days: daysUntilExpiration })}
         </Badge>
@@ -154,7 +154,7 @@ export function MyProductsItemCard({
     return (
       <Badge
         variant="secondary"
-        className="text-xs bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
+        className="text-xs bg-mf-green-soft text-mf-green-deep"
       >
         {t('storageArea.fresh', { days: daysUntilExpiration })}
       </Badge>
@@ -210,7 +210,7 @@ export function MyProductsItemCard({
               {storedItem.isOpened && (
                 <Badge
                   variant="secondary"
-                  className="text-xs bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400"
+                  className="text-xs bg-mf-warning-soft text-mf-warning"
                 >
                   <PackageOpen className="h-3 w-3 mr-1" />
                   {t('storedItems.opened')}
@@ -220,7 +220,7 @@ export function MyProductsItemCard({
               {(isFreezerArea || storedItem.frozenDate) && (
                 <Badge
                   variant="secondary"
-                  className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400"
+                  className="text-xs bg-mf-info-soft text-mf-info"
                 >
                   <Snowflake className="h-3 w-3 mr-1" />
                   {t('storedItems.frozen')}
@@ -266,7 +266,7 @@ export function MyProductsItemCard({
                 </div>
 
                 {isCookedMeal && storedItem.cookedDate && (
-                  <div className="flex items-center gap-1 text-lime-700 dark:text-lime-400">
+                  <div className="flex items-center gap-1 text-mf-green-deep">
                     <ChefHat className="h-3 w-3" />
                     <span>
                       {(() => {
@@ -284,7 +284,7 @@ export function MyProductsItemCard({
                 )}
 
                 {openedDaysAgo !== null && (
-                  <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
+                  <div className="flex items-center gap-1 text-mf-warning">
                     <PackageOpen className="h-3 w-3" />
                     <span>
                       {openedDaysAgo === 0

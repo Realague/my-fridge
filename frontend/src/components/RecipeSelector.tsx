@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { RecipeDto } from '@/services/recipeService';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
+import { difficultyTone, toneBadgeClass } from '@/lib/tokenMaps';
 
 interface RecipeSelectorProps {
   onRecipeSelect: (recipe: RecipeDto | null) => void;
@@ -113,14 +114,7 @@ export const RecipeSelector = ({
   const displayValue = selectedRecipe && !query ? selectedRecipe.title : query;
   const showClearButton = selectedRecipe && !query;
 
-  const getDifficultyColor = (difficulty: string) => {
-    const colors: { [key: string]: string } = {
-      'Easy': 'bg-green-100 text-green-800',
-      'Medium': 'bg-yellow-100 text-yellow-800',
-      'Hard': 'bg-red-100 text-red-800',
-    };
-    return colors[difficulty] || colors['Easy'];
-  };
+  const getDifficultyColor = (difficulty: string) => toneBadgeClass(difficultyTone(difficulty));
 
   return (
     <div ref={containerRef} className={cn("relative", className)}>

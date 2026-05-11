@@ -18,6 +18,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { X } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { scrollRevealFadeUp } from '@/lib/motion';
+import { difficultyTone, toneBadgeClass } from '@/lib/tokenMaps';
 
 const Recipes = () => {
   const { t } = useTranslation();
@@ -93,14 +94,7 @@ const Recipes = () => {
     }
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Easy': return 'bg-green-100 text-green-800';
-      case 'Medium': return 'bg-yellow-100 text-yellow-800';
-      case 'Hard': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const getDifficultyColor = (difficulty: string) => toneBadgeClass(difficultyTone(difficulty));
 
   // Note: Household checks are handled by useProtectedRoute hook
 
@@ -264,7 +258,7 @@ const RecipeGrid = ({ activeTab, recipes, onToggleFavorite, getDifficultyColor }
                   aria-label={recipe.isFavorite ? t('pages.recipes.unfavorite') : t('pages.recipes.favorite')}
                 >
                   <Heart
-                    className={`h-4 w-4 ${recipe.isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`}
+                    className={`h-4 w-4 ${recipe.isFavorite ? 'fill-mf-danger text-mf-danger' : 'text-muted-foreground'}`}
                   />
                 </Button>
               </div>

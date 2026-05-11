@@ -52,7 +52,7 @@ export const OpenedStatusToggle = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {isOpened ? (
-            <PackageOpen className="h-4 w-4 text-orange-600" />
+            <PackageOpen className="h-4 w-4 text-mf-warning" />
           ) : (
             <Package className="h-4 w-4 text-muted-foreground" />
           )}
@@ -84,15 +84,15 @@ export const OpenedStatusToggle = ({
 
           {/* Display effective expiration info */}
           {daysAfterOpening && effectiveExpirationDate && (
-            <div className="mt-3 p-3 bg-orange-50 dark:bg-orange-900/10 border border-orange-200 dark:border-orange-800 rounded-lg">
+            <div className="mt-3 p-3 bg-mf-warning-soft border border-mf-warning/30 rounded-lg">
               <div className="flex items-start gap-2">
-                <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+                <Badge variant="secondary" className="bg-mf-warning-soft text-mf-warning">
                   {t('storedItems.opened')}
                 </Badge>
                 <div className="text-xs text-muted-foreground">
                   <p className="font-medium text-foreground">
                     {t('storedItems.consumeBy')}:{' '}
-                    <span className="text-orange-700 dark:text-orange-400">
+                    <span className="text-mf-warning">
                       {formatDate(new Date(effectiveExpirationDate), 'MMM d, yyyy')}
                     </span>
                   </p>

@@ -115,7 +115,7 @@ export const MealRow = ({
         size="sm"
         onClick={onCook}
         disabled={disabled}
-        className="h-8 w-8 p-0 shrink-0 text-green-600 hover:text-green-700 hover:bg-green-50"
+        className="h-8 w-8 p-0 shrink-0 text-mf-green-deep hover:bg-mf-green-soft"
         aria-label={t('pages.meals.cookMeal')}
         title={t('pages.meals.cookMeal')}
       >
@@ -127,7 +127,7 @@ export const MealRow = ({
         size="sm"
         onClick={onRemove}
         disabled={disabled}
-        className="h-8 w-8 p-0 shrink-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+        className="h-8 w-8 p-0 shrink-0 text-mf-danger hover:bg-mf-danger-soft"
         aria-label={t('pages.meals.removeMeal')}
       >
         <Trash2 className="h-4 w-4" />

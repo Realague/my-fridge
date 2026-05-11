@@ -196,7 +196,7 @@ const RecipeSelector = () => {
                       <img
                         src={recipe.imageUrl}
                         alt=""
-                        className="h-14 w-14 flex-shrink-0 rounded-[10px] border border-[color:var(--mf-night-line)] object-cover"
+                        className="h-14 w-14 flex-shrink-0 rounded-md border border-[color:var(--mf-night-line)] object-cover"
                       />
                     ) : (
                       <div className="mf-thumb mf-thumb-lg flex-shrink-0">

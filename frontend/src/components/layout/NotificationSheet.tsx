@@ -76,7 +76,7 @@ export const NotificationSheet: React.FC<NotificationSheetProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={() => householdId && clearAll(householdId)}
-                  className="text-xs text-rose-600 hover:text-rose-700 px-2"
+                  className="text-xs text-mf-danger hover:text-mf-danger px-2"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -142,10 +142,10 @@ const NotificationRow: React.FC<NotificationRowProps> = ({
 
   const bgClass = isUnread
     ? isReminder
-      ? 'bg-rose-50 dark:bg-rose-950/30'
-      : 'bg-amber-50 dark:bg-amber-950/30'
+      ? 'bg-mf-danger-soft'
+      : 'bg-mf-warning-soft'
     : 'bg-muted/40';
-  const accent = isReminder ? 'border-l-rose-500' : 'border-l-amber-500';
+  const accent = isReminder ? 'border-l-mf-danger' : 'border-l-mf-warning';
 
   const diffDays = daysFromToday(notification.expirationDate);
   const title =
@@ -190,7 +190,7 @@ const NotificationRow: React.FC<NotificationRowProps> = ({
               >
                 {title}
               </h4>
-              {isUnread && <div className="w-2 h-2 bg-emerald-500 rounded-full" />}
+              {isUnread && <div className="w-2 h-2 bg-mf-green rounded-full" />}
             </div>
             {message && (
               <p className="text-sm text-muted-foreground mb-2">{message}</p>
@@ -215,7 +215,7 @@ const NotificationRow: React.FC<NotificationRowProps> = ({
             variant="ghost"
             size="sm"
             onClick={onRemove}
-            className="h-8 w-8 p-0 hover:bg-rose-100 text-muted-foreground hover:text-rose-600"
+            className="h-8 w-8 p-0 text-muted-foreground hover:bg-mf-danger-soft hover:text-mf-danger"
           >
             <Trash2 className="h-4 w-4" />
           </Button>

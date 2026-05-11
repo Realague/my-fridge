@@ -126,7 +126,7 @@ const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
           )}
           {error && (
             <div className="text-center text-white">
-              <p className="text-red-400 mb-4">{error}</p>
+              <p className="text-mf-danger mb-4">{error}</p>
               <Button variant="outline" onClick={onClose}>
                 {t('buttons.close')}
               </Button>

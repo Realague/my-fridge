@@ -1,4 +1,5 @@
 import { Item } from '../services/itemService';
+import { categoryTone, toneBadgeClass } from '../lib/tokenMaps';
 
 /**
  * Get the display name for an item.
@@ -49,32 +50,8 @@ export const isUserCreatedItem = (item: Item): boolean => {
   return item.householdId !== null;
 };
 
-/**
- * Get the color classes for a category
- */
+// Charter-mapped category badge classes. Resolves each of the 21 categories
+// onto one of the 4 charter semantic tones via lib/tokenMaps.
 export const getCategoryColor = (category: string): string => {
-  const colors: { [key: string]: string } = {
-    'vegetables': 'bg-green-100 text-green-800',
-    'fruits': 'bg-orange-100 text-orange-800',
-    'meat': 'bg-red-100 text-red-800',
-    'fish': 'bg-sky-100 text-sky-800',
-    'seafood': 'bg-teal-100 text-teal-800',
-    'dairy': 'bg-blue-100 text-blue-800',
-    'grains': 'bg-yellow-100 text-yellow-800',
-    'spices': 'bg-purple-100 text-purple-800',
-    'beverages': 'bg-cyan-100 text-cyan-800',
-    'snacks': 'bg-pink-100 text-pink-800',
-    'condiments': 'bg-indigo-100 text-indigo-800',
-    'frozen': 'bg-blue-200 text-blue-900',
-    'canned': 'bg-gray-100 text-gray-800',
-    'meal': 'bg-amber-100 text-amber-800',
-    'cooked_meal': 'bg-lime-100 text-lime-800',
-    'preparation': 'bg-rose-100 text-rose-800',
-    'cleaning_products': 'bg-teal-100 text-teal-800',
-    'bakery': 'bg-orange-200 text-orange-900',
-    'household': 'bg-teal-100 text-teal-800',
-    'personal': 'bg-pink-200 text-pink-900',
-    'other': 'bg-gray-100 text-gray-700'
-  };
-  return colors[category?.toLowerCase()] || colors['other'];
+  return toneBadgeClass(categoryTone(category));
 };

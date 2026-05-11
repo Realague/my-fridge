@@ -115,14 +115,23 @@ export const ShoppingItemRow = ({
         }`}
       >
         <button
+          type="button"
+          role="checkbox"
+          aria-checked={isCompleted}
+          aria-label={t(isCompleted ? 'a11y.shopping.markIncomplete' : 'a11y.shopping.markComplete', { name: itemName })}
           onClick={() => onToggleComplete(shoppingItem.id)}
-          className={`flex-shrink-0 w-6 h-6 mt-1 rounded-full flex items-center justify-center transition-colors ${
-            isCompleted
-              ? 'bg-primary'
-              : 'border-2 border-border hover:border-primary bg-primary/10'
-          }`}
+          className="group flex-shrink-0 -my-2 -ml-2 sm:-ml-2.5 flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
-          {isCompleted && <Check className="h-4 w-4 text-white" />}
+          <span
+            aria-hidden
+            className={`flex h-6 w-6 items-center justify-center rounded-full transition-colors ${
+              isCompleted
+                ? 'bg-primary'
+                : 'border-2 border-border bg-primary/10 group-hover:border-primary'
+            }`}
+          >
+            {isCompleted && <Check className="h-4 w-4 text-white" />}
+          </span>
         </button>
 
         <ItemImage

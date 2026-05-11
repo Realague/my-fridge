@@ -89,7 +89,7 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ open, onOpenCha
                 </Button>
               )}
               <DrawerClose asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0">
+                <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" aria-label={t('buttons.close')}>
                   <X className="h-4 w-4" />
                 </Button>
               </DrawerClose>

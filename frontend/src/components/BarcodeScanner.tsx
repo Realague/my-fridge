@@ -111,7 +111,13 @@ const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
           <Camera className="h-5 w-5" />
           {t('loyaltyCards.scanner.title')}
         </h2>
-        <Button variant="ghost" size="icon" onClick={onClose} className="text-white hover:bg-white/20">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClose}
+          className="text-white hover:bg-white/20"
+          aria-label={t('buttons.close')}
+        >
           <X className="h-5 w-5" />
         </Button>
       </div>

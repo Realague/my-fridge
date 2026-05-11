@@ -9,7 +9,40 @@
     "meals": "Meals",
     "mealPlan": "Meal plan",
     "recipes": "Recipes",
-    "more": "More"
+    "more": "More",
+    "primary": "Primary navigation"
+  },
+  "a11y": {
+    "timer": {
+      "openNotifications": "Open notifications",
+      "openSettings": "Open settings",
+      "inviteMember": "Invite a member",
+      "removeMember": "Remove {{name}} from household",
+      "subtractMinute": "Subtract 1 minute",
+      "addMinute": "Add 1 minute",
+      "pause": "Pause timer",
+      "resume": "Resume timer",
+      "reset": "Reset timer",
+      "dismiss": "Dismiss alarm",
+      "minutesInput": "Minutes",
+      "secondsInput": "Seconds"
+    },
+    "consume": {
+      "decreaseServings": "Decrease servings",
+      "increaseServings": "Increase servings",
+      "decreaseDeduction": "Take less from {{area}}",
+      "increaseDeduction": "Take more from {{area}}",
+      "toggleIngredient": "Toggle details for {{name}}",
+      "deductionInput": "Amount to take from {{area}}"
+    },
+    "storageArea": {
+      "moveUp": "Move {{name}} up",
+      "moveDown": "Move {{name}} down"
+    },
+    "shopping": {
+      "markComplete": "Mark {{name}} as bought",
+      "markIncomplete": "Mark {{name}} as not bought"
+    }
   },
   "header": {
     "switchHousehold": "Switch household",

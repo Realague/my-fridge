@@ -257,11 +257,16 @@ const HouseholdDetails = () => {
       <div className="bg-card/90 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate(-1)}
+              aria-label={t('common.back')}
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="text-2xl font-bold text-foreground">{t('pages.household.manageHousehold')}</h1>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" aria-label={t('a11y.inviteMember')}>
               <UserPlus className="h-5 w-5" />
             </Button>
           </div>
@@ -280,7 +285,12 @@ const HouseholdDetails = () => {
                   if (open) setNewName(householdDetails?.name || '');
                 }}>
                   <DialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      aria-label={t('pages.household.renameHousehold')}
+                    >
                       <Pencil className="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
@@ -380,14 +390,15 @@ const HouseholdDetails = () => {
                     {member.HouseholdMember.role}
                   </Badge>
                   {isAdmin && member.id !== currentUser?.id && (
-                    <Button 
-                    variant="deleteTrash" 
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => handleRemoveMember(member.id, `${member.firstName || ''} ${member.lastName || ''}`.trim())}
-                  >
-                     <Trash2 className="h-4 w-4" />
-                  </Button>
+                    <Button
+                      variant="deleteTrash"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleRemoveMember(member.id, `${member.firstName || ''} ${member.lastName || ''}`.trim())}
+                      aria-label={t('a11y.removeMember', { name: `${member.firstName || ''} ${member.lastName || ''}`.trim() || member.email || '' })}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   )}
                 </div>
               </div>

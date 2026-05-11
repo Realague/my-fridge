@@ -199,6 +199,7 @@ const Dashboard = () => {
                 size="icon"
                 className="relative"
                 onClick={() => setShowNotifications(true)}
+                aria-label={t('a11y.openNotifications')}
               >
                 <Bell className="h-5 w-5" />
                 {unreadNotifications > 0 && (
@@ -207,7 +208,12 @@ const Dashboard = () => {
                   </Badge>
                 )}
               </Button>
-              <Button variant="ghost" size="icon" onClick={() => navigate('/settings')}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/settings')}
+                aria-label={t('a11y.openSettings')}
+              >
                 <Settings className="h-5 w-5" />
               </Button>
             </div>

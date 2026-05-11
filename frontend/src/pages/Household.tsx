@@ -67,7 +67,12 @@ const Household = () => {
       <div className="bg-card/90 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/dashboard')}
+              aria-label={t('navigation.dashboard')}
+            >
               <Home className="h-5 w-5" />
             </Button>
             <h1 className="text-xl font-bold text-foreground">{t('pages.household.yourHouseholds')}</h1>

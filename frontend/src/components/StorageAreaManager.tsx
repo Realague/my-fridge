@@ -130,6 +130,7 @@ const StorageAreaManager = () => {
                   className="h-6 w-6 p-0"
                   disabled={index === 0}
                   onClick={() => handleMoveArea(index, 'up')}
+                  aria-label={t('a11y.storageArea.moveUp', { name: area.name })}
                 >
                   <ChevronUp className="h-4 w-4" />
                 </Button>
@@ -139,6 +140,7 @@ const StorageAreaManager = () => {
                   className="h-6 w-6 p-0"
                   disabled={index === storageAreas.length - 1}
                   onClick={() => handleMoveArea(index, 'down')}
+                  aria-label={t('a11y.storageArea.moveDown', { name: area.name })}
                 >
                   <ChevronDown className="h-4 w-4" />
                 </Button>
@@ -150,20 +152,22 @@ const StorageAreaManager = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button 
-                variant="editIconButton" 
-                size="icon" 
+              <Button
+                variant="editIconButton"
+                size="icon"
                 onClick={() => handleEditArea(area)}
                 className="h-8 w-8 p-0"
+                aria-label={t('storageAreaManager.editStorageArea')}
               >
                 <Edit className="h-4 w-4" />
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button 
-                    variant="deleteTrash" 
+                  <Button
+                    variant="deleteTrash"
                     size="icon"
                     className="h-8 w-8 p-0"
+                    aria-label={t('storageAreaManager.deleteStorageArea')}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

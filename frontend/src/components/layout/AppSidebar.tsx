@@ -69,7 +69,7 @@ export const AppSidebar = ({
 
       <SidebarContent>
         <SidebarGroup className="px-2">
-          <nav aria-label={t('navigation.dashboard')}>
+          <nav aria-label={t('navigation.primary')}>
             <SidebarMenu>
               {DESKTOP_NAV_ITEMS.map((item) => {
                 const Icon = item.icon;

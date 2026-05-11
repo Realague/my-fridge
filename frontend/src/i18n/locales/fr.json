@@ -9,7 +9,40 @@
     "meals": "Repas",
     "mealPlan": "Plan de repas",
     "recipes": "Recettes",
-    "more": "Plus"
+    "more": "Plus",
+    "primary": "Navigation principale"
+  },
+  "a11y": {
+    "timer": {
+      "openNotifications": "Ouvrir les notifications",
+      "openSettings": "Ouvrir les paramètres",
+      "inviteMember": "Inviter un membre",
+      "removeMember": "Retirer {{name}} du foyer",
+      "subtractMinute": "Retirer 1 minute",
+      "addMinute": "Ajouter 1 minute",
+      "pause": "Mettre en pause",
+      "resume": "Reprendre",
+      "reset": "Réinitialiser",
+      "dismiss": "Couper l'alarme",
+      "minutesInput": "Minutes",
+      "secondsInput": "Secondes"
+    },
+    "consume": {
+      "decreaseServings": "Diminuer les portions",
+      "increaseServings": "Augmenter les portions",
+      "decreaseDeduction": "Prendre moins dans {{area}}",
+      "increaseDeduction": "Prendre plus dans {{area}}",
+      "toggleIngredient": "Afficher les détails de {{name}}",
+      "deductionInput": "Quantité à prendre dans {{area}}"
+    },
+    "storageArea": {
+      "moveUp": "Monter {{name}}",
+      "moveDown": "Descendre {{name}}"
+    },
+    "shopping": {
+      "markComplete": "Marquer {{name}} comme acheté",
+      "markIncomplete": "Marquer {{name}} comme non acheté"
+    }
   },
   "header": {
     "switchHousehold": "Changer de foyer",

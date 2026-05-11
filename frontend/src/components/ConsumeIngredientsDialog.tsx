@@ -310,6 +310,7 @@ export const ConsumeIngredientsDialog = ({
               )
             }
             disabled={currentDeduction <= 0}
+            aria-label={t('a11y.consume.decreaseDeduction', { area: si.storageAreaName })}
           >
             <Minus className="h-3 w-3" />
           </Button>
@@ -324,6 +325,7 @@ export const ConsumeIngredientsDialog = ({
             min={0}
             max={si.quantity}
             step="any"
+            aria-label={t('a11y.consume.deductionInput', { area: si.storageAreaName })}
           />
           <Button
             variant="outline"
@@ -338,6 +340,7 @@ export const ConsumeIngredientsDialog = ({
               )
             }
             disabled={currentDeduction >= si.quantity}
+            aria-label={t('a11y.consume.increaseDeduction', { area: si.storageAreaName })}
           >
             <Plus className="h-3 w-3" />
           </Button>
@@ -376,16 +379,18 @@ export const ConsumeIngredientsDialog = ({
               className="h-8 w-8"
               onClick={() => handleServingsChange(servings - 1)}
               disabled={servings <= 1 || consumeLoading}
+              aria-label={t('a11y.consume.decreaseServings')}
             >
               <Minus className="h-4 w-4" />
             </Button>
-            <span className="w-8 text-center font-medium">{servings}</span>
+            <span className="w-8 text-center font-medium" aria-live="polite">{servings}</span>
             <Button
               variant="outline"
               size="icon"
               className="h-8 w-8"
               onClick={() => handleServingsChange(servings + 1)}
               disabled={consumeLoading}
+              aria-label={t('a11y.consume.increaseServings')}
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -420,7 +425,10 @@ export const ConsumeIngredientsDialog = ({
                     toggleIngredient(ingredient.recipeIngredientId)
                   }
                 >
-                  <CollapsibleTrigger className="w-full">
+                  <CollapsibleTrigger
+                    className="w-full"
+                    aria-label={t('a11y.consume.toggleIngredient', { name: getItemDisplayName(itemAsItem, t) })}
+                  >
                     <div className="flex items-center gap-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                       {isExpanded ? (
                         <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />

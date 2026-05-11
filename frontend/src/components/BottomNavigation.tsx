@@ -21,7 +21,7 @@ const BottomNavigation = ({ currentPage }: BottomNavigationProps) => {
 
   return (
     <nav
-      aria-label={t('navigation.home')}
+      aria-label={t('navigation.primary')}
       className="fixed bottom-0 left-0 right-0 bg-card/90 backdrop-blur-sm border-t border-border z-50 md:hidden"
     >
       <div className="container mx-auto px-4">

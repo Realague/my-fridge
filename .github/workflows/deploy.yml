@@ -106,14 +106,16 @@ jobs:
           VAPID_SUBJECT: ${{ secrets.VAPID_SUBJECT }}
         run: |
           echo "🚀 Déploiement RELEASE ${APP_VERSION}"
+          # GHCR exige des noms d'image en minuscules ; github.repository garde la casse d'origine.
+          REPO_LC="${GITHUB_REPOSITORY,,}"
           docker compose -f docker-compose.yml --profile prod \
             -p my-fridge_prod up -d --remove-orphans
           docker compose -f docker-compose.yml --profile prod \
             -p my-fridge_prod up -d --force-recreate --no-deps backend frontend
-          docker tag ghcr.io/${{ github.repository }}/backend:${APP_VERSION} \
-                     ghcr.io/${{ github.repository }}/backend:last-stable-local
-          docker tag ghcr.io/${{ github.repository }}/frontend:${APP_VERSION} \
-                     ghcr.io/${{ github.repository }}/frontend:last-stable-local
+          docker tag "ghcr.io/${REPO_LC}/backend:${APP_VERSION}" \
+                     "ghcr.io/${REPO_LC}/backend:last-stable-local"
+          docker tag "ghcr.io/${REPO_LC}/frontend:${APP_VERSION}" \
+                     "ghcr.io/${REPO_LC}/frontend:last-stable-local"
           echo "Verifying backend received required env vars..."
           for v in VAPID_PUBLIC_KEY VAPID_PRIVATE_KEY VAPID_SUBJECT CLOUDINARY_CLOUD_NAME CLOUDINARY_API_KEY CLOUDINARY_API_SECRET; do
             val=$(docker compose -f docker-compose.yml -p my-fridge_prod exec -T backend printenv "$v" 2>/dev/null | tr -d '\r\n' || true)

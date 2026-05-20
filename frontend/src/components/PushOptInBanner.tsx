@@ -93,13 +93,13 @@ export const PushOptInBanner = () => {
   };
 
   return (
-    <div className="rounded-lg border border-mf-green/30 bg-mf-green-soft/70 px-4 py-3">
+    <div className="rounded-md bg-mf-green-soft px-4 py-3">
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-        <div className="flex items-start gap-3 flex-1 min-w-0">
-          <div className="mt-0.5 shrink-0 rounded-full bg-mf-green-soft p-2">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <div className="shrink-0 rounded-md bg-mf-night-surface p-2">
             <Bell className="h-4 w-4 text-mf-green-deep" />
           </div>
-          <p className="text-sm text-foreground">
+          <p className="font-display text-sm font-semibold text-mf-green-deep">
             {t('pages.dashboard.expiringSoon.pushOptIn.title')}
           </p>
         </div>
@@ -109,14 +109,15 @@ export const PushOptInBanner = () => {
             size="sm"
             onClick={handleLater}
             disabled={isLoading}
+            className="rounded-full font-display font-semibold text-mf-green-deep hover:bg-mf-green-soft hover:text-mf-green-deep"
           >
             {t('pages.dashboard.expiringSoon.pushOptIn.later')}
           </Button>
           <Button
             size="sm"
-            variant="green"
             onClick={handleActivate}
             disabled={isLoading}
+            className="rounded-full font-display font-bold bg-mf-green text-white hover:bg-mf-green-deep px-4"
           >
             {t('pages.dashboard.expiringSoon.pushOptIn.activate')}
           </Button>

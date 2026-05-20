@@ -42,35 +42,38 @@ export const HouseholdSwitcher = () => {
     }
   };
 
+  // Fresh charter: household chip is a full pill in `sub` cream, with the
+  // initials avatar in solid green-primary (white text) — a colored signal,
+  // not a soft halo.
   const trigger = (
-    <div className="flex items-center gap-3 min-w-0">
-      <Avatar className="h-9 w-9 border border-border">
-        <AvatarFallback className="bg-primary/10 text-sm font-semibold text-foreground">
+    <div className="flex items-center gap-2.5 min-w-0">
+      <Avatar className="h-8 w-8">
+        <AvatarFallback className="bg-mf-green text-xs font-bold text-white">
           {initials}
         </AvatarFallback>
       </Avatar>
-      <div className="flex flex-col min-w-0 text-left">
-        <span className="text-sm font-semibold text-foreground truncate">
+      <div className="flex flex-col min-w-0 text-left leading-tight">
+        <span className="font-display text-sm font-bold text-mf-text truncate">
           {current?.name ?? '—'}
         </span>
         {current ? (
-          <span className="text-xs text-muted-foreground truncate">
+          <span className="text-[11px] text-mf-text-soft truncate">
             {t('header.members', { count: current.memberCount })}
           </span>
         ) : null}
       </div>
       {hasMultiple ? (
-        <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+        <ChevronDown className="h-4 w-4 shrink-0 text-mf-text-soft" aria-hidden="true" />
       ) : null}
     </div>
   );
 
+  const chipClass =
+    'flex items-center gap-2.5 min-w-0 rounded-full bg-mf-night-surface px-3 py-1.5';
+
   if (!hasMultiple) {
     return (
-      <div
-        className="flex items-center gap-3 px-2 py-1 min-w-0"
-        aria-label={t('header.currentHousehold')}
-      >
+      <div className={chipClass} aria-label={t('header.currentHousehold')}>
         {trigger}
       </div>
     );
@@ -81,7 +84,7 @@ export const HouseholdSwitcher = () => {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="h-auto px-2 py-1 -ml-2 hover:bg-muted/70 focus-visible:ring-2 focus-visible:ring-primary"
+          className={`${chipClass} h-auto hover:bg-mf-night-elevated focus-visible:ring-2 focus-visible:ring-mf-green-ring`}
           aria-label={t('header.switchHousehold')}
         >
           {trigger}

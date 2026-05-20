@@ -6,7 +6,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { UserPlus, Trash2, ArrowLeft, LogOut, Pencil } from 'lucide-react';
+import { UserPlus, Trash2, ArrowLeft, LogOut, PenLine } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
 import StorageAreaManager from '@/components/StorageAreaManager';
@@ -291,7 +291,7 @@ const HouseholdDetails = () => {
                       className="h-8 w-8"
                       aria-label={t('pages.household.renameHousehold')}
                     >
-                      <Pencil className="h-4 w-4" />
+                      <PenLine className="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
                   <DialogContent>

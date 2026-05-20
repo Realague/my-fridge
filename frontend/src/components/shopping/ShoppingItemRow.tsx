@@ -5,7 +5,7 @@ import { fr } from 'date-fns/locale';
 import {
   CalendarIcon,
   Check,
-  Edit,
+  PenLine,
   Save,
   Trash2,
   X,
@@ -197,7 +197,7 @@ export const ShoppingItemRow = ({
                       onClick={() => onStartEdit(shoppingItem.id)}
                       className="h-8 w-8 p-0 opacity-70 hover:opacity-100 transition-opacity hover:bg-primary/10"
                     >
-                      <Edit className="h-4 w-4" />
+                      <PenLine className="h-4 w-4" />
                     </Button>
                   )}
                   {!isEditing && !isQuickStoring && (

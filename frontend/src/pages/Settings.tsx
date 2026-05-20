@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, LogOut, Copy, Eye, EyeOff, Globe } from 'lucide-react';
+import { ArrowLeft, LogOut, Copy, Eye, EyeOff, Globe, Lock } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -247,8 +247,22 @@ const Settings = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">{t('forms.email')}</Label>
-                  <Input id="email" type="email" defaultValue={user?.email} readOnly className="bg-muted bg-background" />
-                  <p className="text-xs text-muted-foreground">{t('pages.settings.profileSettings.emailCannotBeChanged')}</p>
+                  <div className="relative">
+                    <Input
+                      id="email"
+                      type="email"
+                      defaultValue={user?.email}
+                      readOnly
+                      tabIndex={-1}
+                      aria-readonly="true"
+                      className="bg-mf-night-elevated text-mf-text-soft border-transparent pr-10 cursor-not-allowed focus-visible:ring-0 focus-visible:ring-offset-0 select-text"
+                    />
+                    <Lock
+                      className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-mf-text-mute"
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <p className="text-xs text-mf-text-mute">{t('pages.settings.profileSettings.emailCannotBeChanged')}</p>
                 </div>
                 <Button 
                   className="w-full sm:w-auto" 

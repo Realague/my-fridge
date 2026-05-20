@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronDown, Plus, Edit, X, Loader2, Trash2 } from 'lucide-react';
+import { ChevronDown, Plus, PenLine, X, Loader2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -625,7 +625,7 @@ export const ItemSelector = ({
                         onClick={(e) => handleEditItem(item, e)}
                         className="h-6 w-6 p-0"
                       >
-                        <Edit className="h-3 w-3" />
+                        <PenLine className="h-3 w-3" />
                       </Button>
                       {isCurrentUserAdmin() && (
                         <Button

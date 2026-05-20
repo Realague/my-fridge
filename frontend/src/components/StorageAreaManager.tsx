@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Plus, Edit3, Trash2, Edit, ChevronUp, ChevronDown } from 'lucide-react';
+import { Plus, PenLine, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import { useStorageAreasWithStats, useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
@@ -159,7 +159,7 @@ const StorageAreaManager = () => {
                 className="h-8 w-8 p-0"
                 aria-label={t('storageAreaManager.editStorageArea')}
               >
-                <Edit className="h-4 w-4" />
+                <PenLine className="h-4 w-4" />
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>

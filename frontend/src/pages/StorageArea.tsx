@@ -14,7 +14,7 @@ import {
   Calendar,
   MapPin,
   AlertTriangle,
-  Edit,
+  PenLine,
   Trash2,
   Save,
   X,
@@ -712,7 +712,7 @@ const StorageArea = () => {
                   aria-label={t('common.edit')}
                   title={t('common.edit')}
                 >
-                  <Edit className="h-4 w-4" />
+                  <PenLine className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="deleteTrash"

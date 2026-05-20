@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Camera, Upload, X, Loader2, Pencil } from 'lucide-react';
+import { Camera, Upload, X, Loader2, PenLine } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { useApiWithAuth } from '@/hooks/useApiWithAuth';
@@ -207,7 +207,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
             >
-              <Pencil className="h-4 w-4" />
+              <PenLine className="h-4 w-4" />
             </Button>
             <Button
               type="button"

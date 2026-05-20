@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Plus, PenLine, Trash2 } from 'lucide-react';
 import { StorageArea } from '@/types/household';
 import { useTranslation } from 'react-i18next';
 import { StorageAreaType, ITEM_CATEGORIES } from '@/types/enums';
@@ -217,7 +217,7 @@ export const OnboardingStorageSelector = ({
                     onClick={() => handleEditArea(index)}
                     className="h-8 w-8 p-0"
                   >
-                    <Edit2 className="h-4 w-4" />
+                    <PenLine className="h-4 w-4" />
                   </Button>
                   <Button
                     size="sm"

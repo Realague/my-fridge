@@ -148,10 +148,11 @@ jobs:
           VAPID_SUBJECT: ${{ secrets.VAPID_SUBJECT }}
         run: |
           echo "🧪 Déploiement STAGING ${APP_VERSION}"
-          docker compose -f docker-compose.yml -p my-fridge_staging \
-            up -d --remove-orphans
-          docker compose -f docker-compose.yml -p my-fridge_staging \
-            up -d --force-recreate --no-deps backend frontend
+          # Staging has no Caddy in front, so we publish the frontend's host port via override.
+          docker compose -f docker-compose.yml -f docker-compose.staging.override.yml \
+            -p my-fridge_staging up -d --remove-orphans
+          docker compose -f docker-compose.yml -f docker-compose.staging.override.yml \
+            -p my-fridge_staging up -d --force-recreate --no-deps backend frontend
           echo "Verifying backend received required env vars..."
           for v in VAPID_PUBLIC_KEY VAPID_PRIVATE_KEY VAPID_SUBJECT CLOUDINARY_CLOUD_NAME CLOUDINARY_API_KEY CLOUDINARY_API_SECRET; do
             val=$(docker compose -f docker-compose.yml -p my-fridge_staging exec -T backend printenv "$v" 2>/dev/null | tr -d '\r\n' || true)

@@ -60,7 +60,11 @@ jobs:
 
       - name: Fix repo ownership (self-hosted)
         working-directory: /home/realague/my-fridge
-        run: sudo chown -R "$USER":"$USER" .
+        run: |
+          # Docker mounts can leave files owned by root; restore ownership to the runner user
+          # via an ephemeral alpine container (avoids needing passwordless sudo on the Pi).
+          docker run --rm -v "$(pwd):/work" alpine \
+            chown -R "$(id -u):$(id -g)" /work
 
       - name: Git pull & checkout
         working-directory: /home/realague/my-fridge

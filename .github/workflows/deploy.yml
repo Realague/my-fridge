@@ -7,15 +7,29 @@ on:
         description: 'Version à déployer (ex: 1.2.3, pr-42)'
         required: true
         default: 'latest'
+  push:
+    tags: ['v*']
 
 jobs:
   deploy:
     runs-on: self-hosted
     steps:
+      - name: Resolve version
+        id: resolve
+        run: |
+          if [ -n "${{ inputs.version }}" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            # Tag push: strip leading 'v' to match build.yml's type=semver,pattern={{version}}
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Resolved version: $VERSION"
+
       - name: Detect deploy type
         id: type
         run: |
-          VERSION="${{ inputs.version }}"
+          VERSION="${{ steps.resolve.outputs.version }}"
           if [[ "$VERSION" =~ ^[0-9]+(\.[0-9]+){0,2}(-.+)?$ ]]; then
             KIND="release"
           else
@@ -55,18 +69,29 @@ jobs:
           git checkout "${{ github.ref_name }}"
           git pull --ff-only origin "${{ github.ref_name }}"
 
-      - name: Pull images
+      - name: Wait for images & pull
         working-directory: /home/realague/my-fridge
         env:
-          APP_VERSION: ${{ inputs.version }}
-        run: docker compose pull backend frontend
+          APP_VERSION: ${{ steps.resolve.outputs.version }}
+        run: |
+          # On tag push, build.yml runs in parallel — poll until both images exist, then pull.
+          for i in $(seq 1 60); do
+            if docker compose pull backend frontend; then
+              echo "Images pulled on attempt $i."
+              exit 0
+            fi
+            echo "Images not ready (attempt $i/60), retrying in 15s..."
+            sleep 15
+          done
+          echo "::error::Timed out waiting for images ${APP_VERSION} on GHCR (15 min)."
+          exit 1
 
       # ---- RELEASE (tag SemVer) ----
       - name: Deploy (release)
         if: steps.type.outputs.kind == 'release'
         working-directory: /home/realague/my-fridge
         env:
-          APP_VERSION: ${{ inputs.version }}
+          APP_VERSION: ${{ steps.resolve.outputs.version }}
           VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
           VITE_GOOGLE_CLIENT_SECRET: ${{ secrets.VITE_GOOGLE_CLIENT_SECRET }}
           CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
@@ -101,7 +126,7 @@ jobs:
         if: steps.type.outputs.kind == 'pr'
         working-directory: /home/realague/my-fridge
         env:
-          APP_VERSION: ${{ inputs.version }}
+          APP_VERSION: ${{ steps.resolve.outputs.version }}
           DB_NAME: my_fridge_db_staging
           DB_PORT: "5433"
           BACKEND_PORT: "3001"
@@ -138,7 +163,7 @@ jobs:
       - name: Status
         working-directory: /home/realague/my-fridge
         env:
-          APP_VERSION: ${{ inputs.version }}
+          APP_VERSION: ${{ steps.resolve.outputs.version }}
         run: docker compose ps
 
       - name: Summary
@@ -146,5 +171,6 @@ jobs:
           echo "### Déploiement terminé" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Type :** \`${{ steps.type.outputs.kind }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Version :** \`${{ inputs.version }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Branche (compose) :** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version :** \`${{ steps.resolve.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger :** \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Ref :** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY

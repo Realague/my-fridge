@@ -654,6 +654,24 @@
         "commitDoneDescription_other": "{{count}} articles traités."
       }
     },
+    "mealRemoval": {
+      "kicker": "Retirer un repas",
+      "title": "Retirer {{title}}",
+      "subtitle": "Voici l'impact sur ta liste de courses.",
+      "subtitleEmpty": "Aucun impact sur ta liste de courses.",
+      "toRemoveTitle": "Retirer de la liste",
+      "toRemoveHint": "Articles utilisés uniquement par cette recette. Décoche pour les garder.",
+      "toReduceTitle": "Réduire les quantités",
+      "toReduceHint": "Articles partagés avec d'autres recettes. La quantité baisse.",
+      "alreadyPurchasedTitle": "Déjà acheté",
+      "alreadyPurchasedHint": "Articles cochés comme achetés. Coche pour les retirer quand même.",
+      "alreadyPurchasedReason": "Coché comme acheté. Coche la case pour le retirer.",
+      "noImpactTitle": "Aucun impact",
+      "noImpactHint": "Articles couverts par le frigo, pas dans la liste.",
+      "sharedReason_one": "Cette recette en utilisait {{count}} {{unit}} · partagé avec {{others}}",
+      "sharedReason_other": "Cette recette en utilisait {{count}} {{unit}} · partagé avec {{others}}",
+      "confirm": "Retirer {{title}}"
+    },
     "recipes": {
       "title": "Recettes",
       "filteredByIngredient": "Filtré par : {{name}}",

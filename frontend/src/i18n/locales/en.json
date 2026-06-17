@@ -675,6 +675,24 @@
         "commitDoneDescription_other": "{{count}} items processed."
       }
     },
+    "mealRemoval": {
+      "kicker": "Remove a meal",
+      "title": "Remove {{title}}",
+      "subtitle": "Here's the impact on your shopping list.",
+      "subtitleEmpty": "No impact on your shopping list.",
+      "toRemoveTitle": "Remove from list",
+      "toRemoveHint": "Items used only by this recipe. Uncheck to keep them.",
+      "toReduceTitle": "Reduce quantities",
+      "toReduceHint": "Items shared with other recipes. The quantity goes down.",
+      "alreadyPurchasedTitle": "Already bought",
+      "alreadyPurchasedHint": "Items marked as bought. Tick to remove them anyway.",
+      "alreadyPurchasedReason": "Marked as bought. Tick the box to remove it.",
+      "noImpactTitle": "No impact",
+      "noImpactHint": "Items covered by the fridge, not on the list.",
+      "sharedReason_one": "This recipe used {{count}} {{unit}} · shared with {{others}}",
+      "sharedReason_other": "This recipe used {{count}} {{unit}} · shared with {{others}}",
+      "confirm": "Remove {{title}}"
+    },
     "recipes": {
       "title": "Recipes",
       "filteredByIngredient": "Filtered by: {{name}}",

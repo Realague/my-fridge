@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
 import { MealService } from '../services/MealService';
-import { CreateMealDto, UpdateMealDto, CommitShoppingItemInputDto } from '../types/MealDto';
+import {
+  CreateMealDto,
+  UpdateMealDto,
+  CommitShoppingItemInputDto,
+  MealRemovalActionDto,
+} from '../types/MealDto';
 import { ApiResponse } from '../types/ApiResponse';
 import { NotFoundError, ValidationError } from '../errors/CustomErrors';
 
@@ -165,6 +170,38 @@ export class MealController {
       res.status(status).json({
         success: false,
         message: error instanceof Error ? error.message : 'Failed to commit shopping list',
+      });
+    }
+  }
+
+  async getRemovalImpact(req: Request, res: Response): Promise<void> {
+    try {
+      const { householdId, id } = req.params as { householdId: string; id: string };
+      const impact = await this.mealService.getRemovalImpact(id, householdId);
+      const response: ApiResponse<typeof impact> = { success: true, data: impact };
+      res.json(response);
+    } catch (error) {
+      console.error('Error getting removal impact:', error);
+      const status = this.statusFromError(error);
+      res.status(status).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to get removal impact',
+      });
+    }
+  }
+
+  async confirmRemoval(req: Request, res: Response): Promise<void> {
+    try {
+      const { householdId, id } = req.params as { householdId: string; id: string };
+      const { actions } = (req.body ?? {}) as { actions?: MealRemovalActionDto[] };
+      await this.mealService.confirmRemoval(id, householdId, actions ?? []);
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error confirming meal removal:', error);
+      const status = this.statusFromError(error);
+      res.status(status).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to remove meal',
       });
     }
   }

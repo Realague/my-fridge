@@ -7,6 +7,8 @@ import {
   ShoppingPreviewDto,
   CommitShoppingItemInputDto,
   CommitShoppingMergeDto,
+  MealRemovalImpactDto,
+  MealRemovalActionDto,
 } from '@/services/mealService';
 import { useHouseholdStore } from './householdStore';
 
@@ -27,6 +29,8 @@ interface MealStore {
   fetchRecipesAvailability: () => Promise<void>;
   fetchShoppingPreview: () => Promise<ShoppingPreviewDto>;
   commitShopping: (items: CommitShoppingItemInputDto[]) => Promise<CommitShoppingMergeDto>;
+  getRemovalImpact: (mealId: string) => Promise<MealRemovalImpactDto>;
+  confirmRemoval: (mealId: string, actions: MealRemovalActionDto[]) => Promise<void>;
 }
 
 const getHouseholdId = (): string | null => {
@@ -151,5 +155,23 @@ export const useMealStore = create<MealStore>((set, get) => ({
     const householdId = getHouseholdId();
     if (!householdId) throw new Error('No household selected');
     return await mealService.commitShopping(householdId, items);
+  },
+
+  getRemovalImpact: async (mealId) => {
+    const householdId = getHouseholdId();
+    if (!householdId) throw new Error('No household selected');
+    return await mealService.getRemovalImpact(householdId, mealId);
+  },
+
+  confirmRemoval: async (mealId, actions) => {
+    const householdId = getHouseholdId();
+    if (!householdId) throw new Error('No household selected');
+    set({ removing: true });
+    try {
+      await mealService.confirmRemoval(householdId, mealId, actions);
+      set({ meals: get().meals.filter((m) => m.id !== mealId) });
+    } finally {
+      set({ removing: false });
+    }
   },
 }));

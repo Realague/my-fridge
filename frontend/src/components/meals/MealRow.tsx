@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { Clock, Minus, Plus, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import type { MealDto } from '@/services/mealService';
 import { getRecipeCategory } from '@/types/recipeCategory';
 
@@ -35,14 +37,11 @@ export const MealRow = ({ meal, disabled, onIncrement, onDecrement, onRemove }: 
   };
 
   return (
-    <div
-      className="flex items-center gap-4 px-5 py-3.5 border-t"
-      style={{ borderColor: 'var(--mf-night-line)' }}
-    >
+    <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg bg-muted hover:bg-accent transition-colors">
       <button
         type="button"
         onClick={openRecipe}
-        className="mf-thumb mf-thumb-lg overflow-hidden p-0"
+        className="flex-shrink-0 w-12 h-12 rounded-md overflow-hidden bg-background flex items-center justify-center text-2xl border border-border"
         aria-label={recipe?.title ?? ''}
       >
         {recipe?.imageUrl ? (
@@ -59,57 +58,60 @@ export const MealRow = ({ meal, disabled, onIncrement, onDecrement, onRemove }: 
       <button
         type="button"
         onClick={openRecipe}
-        className="flex flex-1 min-w-0 flex-col gap-1 text-left"
+        className="flex flex-1 min-w-0 flex-col text-left"
       >
-        <div className="text-[15px] font-semibold text-[color:var(--mf-text)] truncate">
+        <span className="font-medium text-foreground line-clamp-2 sm:line-clamp-1">
           {recipe?.title ?? '—'}
-        </div>
-        <div className="mt-1 flex flex-wrap items-center gap-2 text-[12px] text-[color:var(--mf-text-mute)]">
-          <span className="inline-flex items-center gap-1.5">
-            <Clock className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden />
+        </span>
+        <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+            <Clock className="h-3 w-3" />
             <span className="tabular-nums">{t('pages.meals.minutes', { count: totalTime })}</span>
           </span>
-          {category ? (
-            <span className="mf-badge mf-badge-green">
+          {category && (
+            <Badge variant="secondary" className="text-xs">
               {t(`pages.meals.categories.${category}`)}
-            </span>
-          ) : null}
+            </Badge>
+          )}
         </div>
       </button>
 
-      <div className="flex flex-shrink-0 items-center gap-2">
-        <button
-          type="button"
+      <div className="flex flex-shrink-0 items-center gap-1">
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={onDecrement}
           disabled={disabled || meal.servings <= 1}
-          className="mf-stepper-btn"
+          className="h-8 w-8 p-0"
           aria-label={t('pages.meals.decreaseServings')}
         >
-          <Minus className="h-3.5 w-3.5" strokeWidth={2} />
-        </button>
-        <span className="mf-display tabular-nums min-w-[1.5rem] text-center text-[18px] text-[color:var(--mf-text)]">
+          <Minus className="h-3.5 w-3.5" />
+        </Button>
+        <span className="tabular-nums min-w-[1.5rem] text-center text-base font-semibold text-foreground">
           {meal.servings}
         </span>
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={onIncrement}
           disabled={disabled || meal.servings >= 20}
-          className="mf-stepper-btn"
+          className="h-8 w-8 p-0"
           aria-label={t('pages.meals.increaseServings')}
         >
-          <Plus className="h-3.5 w-3.5" strokeWidth={2} />
-        </button>
+          <Plus className="h-3.5 w-3.5" />
+        </Button>
       </div>
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={onRemove}
         disabled={disabled}
-        className="mf-icon-btn mf-icon-btn-danger flex-shrink-0"
+        className="h-8 w-8 p-0 shrink-0 text-red-500 hover:text-red-700 hover:bg-red-50"
         aria-label={t('pages.meals.removeMeal')}
       >
-        <Trash2 className="h-4 w-4" strokeWidth={1.8} />
-      </button>
+        <Trash2 className="h-4 w-4" />
+      </Button>
     </div>
   );
 };

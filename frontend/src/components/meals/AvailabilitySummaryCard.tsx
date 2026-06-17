@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, CheckCircle2, ShoppingBag } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { MealsAvailabilityDto } from '@/services/mealService';
 
 interface Props {
@@ -19,9 +21,11 @@ export const AvailabilitySummaryCard = ({
 
   if (loading && !availability) {
     return (
-      <div className="mf-card p-6">
-        <div className="h-16 animate-pulse rounded-md bg-[color:var(--mf-night-elevated)]" />
-      </div>
+      <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+        <CardContent className="p-6">
+          <div className="h-16 animate-pulse rounded-md bg-muted" />
+        </CardContent>
+      </Card>
     );
   }
 
@@ -33,59 +37,60 @@ export const AvailabilitySummaryCard = ({
   const allCovered = missingCount === 0;
 
   return (
-    <div className="mf-card p-5 sm:p-6">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <div className="mf-section-title mb-2">
-            {t('pages.meals.availability.kicker')}
+    <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+      <CardHeader>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+              {t('pages.meals.availability.kicker')}
+            </p>
+            <CardTitle className="text-base font-medium">
+              {allCovered
+                ? t('pages.meals.availability.allCoveredHeadline')
+                : t('pages.meals.availability.headline', { count: missingCount })}
+            </CardTitle>
           </div>
-          <div className="text-[15px] text-[color:var(--mf-text)]">
-            {allCovered
-              ? t('pages.meals.availability.allCoveredHeadline')
-              : t('pages.meals.availability.headline', { count: missingCount })}
-          </div>
-        </div>
-        <div className="text-right">
-          <div className="mf-stat" style={!allCovered ? { color: 'var(--mf-warning)' } : undefined}>
-            {missingCount}
-          </div>
-          <div className="mf-caption mt-1">
-            {t('pages.meals.availability.missingCaption')}
-          </div>
-        </div>
-      </div>
-
-      <div
-        className="mt-5 flex items-end justify-between gap-4 border-t pt-4"
-        style={{ borderColor: 'var(--mf-night-line)' }}
-      >
-        <div className="flex flex-col gap-1.5 text-[13px] text-[color:var(--mf-text-soft)]">
-          <div className="flex items-center gap-2">
-            <span className="inline-block h-2 w-2 rounded-full bg-[color:var(--mf-green)]" aria-hidden />
-            {t('pages.meals.availability.inStockLine', { count: inStockCount })}
-          </div>
-          {onShoppingListCount > 0 ? (
-            <div className="flex items-center gap-2">
-              <span
-                className="inline-block h-2 w-2 rounded-full bg-[color:var(--mf-warning)]"
-                aria-hidden
-              />
-              {t('pages.meals.availability.onShoppingListLine', { count: onShoppingListCount })}
+          <div className="text-right">
+            <div
+              className={`text-2xl font-bold ${
+                allCovered ? 'text-green-600' : 'text-yellow-600'
+              }`}
+            >
+              {missingCount}
             </div>
-          ) : null}
+            <div className="text-xs text-muted-foreground">
+              {t('pages.meals.availability.missingCaption')}
+            </div>
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={onPrepareList}
-          disabled={preparingList}
-          className="mf-btn mf-btn-primary"
-        >
-          <ShoppingCart className="h-4 w-4" strokeWidth={2} aria-hidden />
-          {allCovered
-            ? t('pages.meals.availability.reviewList')
-            : t('pages.meals.availability.prepareList')}
-        </button>
-      </div>
-    </div>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-end justify-between gap-4 border-t border-border pt-4 flex-wrap">
+          <div className="flex flex-col gap-1.5 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              {t('pages.meals.availability.inStockLine', { count: inStockCount })}
+            </div>
+            {onShoppingListCount > 0 && (
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="h-4 w-4 text-yellow-600" />
+                {t('pages.meals.availability.onShoppingListLine', { count: onShoppingListCount })}
+              </div>
+            )}
+          </div>
+          <Button
+            variant="green"
+            onClick={onPrepareList}
+            disabled={preparingList}
+            className="gap-1.5"
+          >
+            <ShoppingCart className="h-4 w-4" />
+            {allCovered
+              ? t('pages.meals.availability.reviewList')
+              : t('pages.meals.availability.prepareList')}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };

@@ -91,6 +91,48 @@ export interface CommitShoppingMergeDto {
   alreadyCoveredItems: ShoppingListItemDto[];
 }
 
+// ——— Meal removal impact ———
+
+export interface MealRemovalShoppingItemDto {
+  shoppingItemId: string;
+  itemId: string;
+  itemName: string;
+  itemHouseholdId: string | null;
+  itemImageUrl: string | null;
+  unit: string;
+  currentQuantity: number;
+  reductionQuantity: number;
+  remainingQuantity: number;
+  otherRecipes?: string[];
+  isCompleted?: boolean;
+}
+
+export interface MealRemovalNoImpactItemDto {
+  itemId: string;
+  itemName: string;
+  itemHouseholdId: string | null;
+  itemImageUrl: string | null;
+  needed: number;
+  unit: string;
+}
+
+export interface MealRemovalImpactDto {
+  mealId: string;
+  recipeTitle: string;
+  toRemove: MealRemovalShoppingItemDto[];
+  toReduce: MealRemovalShoppingItemDto[];
+  alreadyPurchased: MealRemovalShoppingItemDto[];
+  noImpact: MealRemovalNoImpactItemDto[];
+}
+
+export type MealRemovalActionType = 'remove' | 'reduce' | 'keep';
+
+export interface MealRemovalActionDto {
+  shoppingItemId: string;
+  action: MealRemovalActionType;
+  newQuantity?: number;
+}
+
 export type RecipeAvailabilityStatus = 'haveAll' | 'missing' | 'usesExpiring';
 
 export interface RecipeAvailabilityDto {
@@ -175,5 +217,24 @@ export const mealService = {
     const response = await apiCall(`/api/households/${householdId}/recipes/availability`);
     const result: ApiResponse<RecipeAvailabilityDto[]> = await response.json();
     return result.data;
+  },
+
+  async getRemovalImpact(householdId: string, mealId: string): Promise<MealRemovalImpactDto> {
+    const response = await apiCall(
+      `/api/households/${householdId}/meals/${mealId}/removal-impact`
+    );
+    const result: ApiResponse<MealRemovalImpactDto> = await response.json();
+    return result.data;
+  },
+
+  async confirmRemoval(
+    householdId: string,
+    mealId: string,
+    actions: MealRemovalActionDto[]
+  ): Promise<void> {
+    await apiCall(`/api/households/${householdId}/meals/${mealId}/confirm-removal`, {
+      method: 'POST',
+      body: { actions },
+    });
   },
 };

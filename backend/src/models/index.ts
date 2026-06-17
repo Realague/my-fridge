@@ -8,7 +8,7 @@ import { ShoppingItem } from './ShoppingItem';
 import { StoredItem } from './StoredItem';
 import { Recipe } from './Recipe';
 import { RecipeIngredient } from './RecipeIngredient';
-import { MealPlan } from './MealPlan';
+import { Meal } from './Meal';
 import { ItemMinimum } from './ItemMinimum';
 import { LoyaltyCard } from './LoyaltyCard';
 import { HouseholdSettings } from './HouseholdSettings';
@@ -90,12 +90,12 @@ RecipeIngredient.belongsTo(Recipe, { foreignKey: 'recipeId', as: 'recipe' });
 Item.hasMany(RecipeIngredient, { foreignKey: 'itemId', as: 'recipeIngredients' });
 RecipeIngredient.belongsTo(Item, { foreignKey: 'itemId', as: 'item' });
 
-// Meal Plan associations
-Household.hasMany(MealPlan, { foreignKey: 'householdId', as: 'mealPlans' });
-MealPlan.belongsTo(Household, { foreignKey: 'householdId', as: 'household' });
+// Meal associations
+Household.hasMany(Meal, { foreignKey: 'householdId', as: 'meals' });
+Meal.belongsTo(Household, { foreignKey: 'householdId', as: 'household' });
 
-Recipe.hasMany(MealPlan, { foreignKey: 'recipeId', as: 'mealPlans' });
-MealPlan.belongsTo(Recipe, { foreignKey: 'recipeId', as: 'recipe' });
+Recipe.hasMany(Meal, { foreignKey: 'recipeId', as: 'meals' });
+Meal.belongsTo(Recipe, { foreignKey: 'recipeId', as: 'recipe' });
 
 // Item Minimum associations
 Item.hasMany(ItemMinimum, { foreignKey: 'itemId', as: 'itemMinimums' });
@@ -147,7 +147,7 @@ export {
   StoredItem,
   Recipe,
   RecipeIngredient,
-  MealPlan,
+  Meal,
   ItemMinimum,
   LoyaltyCard,
   HouseholdSettings,

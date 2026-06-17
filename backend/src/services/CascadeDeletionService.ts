@@ -6,7 +6,7 @@ import {
   ShoppingItem, 
   StorageArea, 
   Item, 
-  MealPlan, 
+  Meal, 
   HouseholdMember 
 } from '../models';
 import sequelize from '../config/database';
@@ -26,8 +26,8 @@ export class CascadeDeletionService {
     const t = transaction || await sequelize.transaction();
     
     try {
-      // Step 1: Delete meal plans (references recipes)
-      await this.deleteMealPlans(householdId, t);
+      // Step 1: Delete meals (references recipes)
+      await this.deleteMeals(householdId, t);
       
       // Step 2: Delete recipe ingredients (references recipes and items)
       await this.deleteRecipeIngredients(householdId, t);
@@ -66,15 +66,15 @@ export class CascadeDeletionService {
   }
   
   /**
-   * Delete all meal plans for the household
+   * Delete all meals for the household
    */
-  private async deleteMealPlans(householdId: string, transaction: Transaction): Promise<void> {
-    const deletedCount = await MealPlan.destroy({
+  private async deleteMeals(householdId: string, transaction: Transaction): Promise<void> {
+    const deletedCount = await Meal.destroy({
       where: { householdId },
       transaction
     });
-    
-    console.log(`Deleted ${deletedCount} meal plans for household ${householdId}`);
+
+    console.log(`Deleted ${deletedCount} meals for household ${householdId}`);
   }
   
   /**
@@ -237,7 +237,7 @@ export class CascadeDeletionService {
    * Get a summary of what would be deleted (for confirmation purposes)
    */
   async getDeletionSummary(householdId: string): Promise<{
-    mealPlans: number;
+    meals: number;
     recipes: number;
     storedItems: number;
     shoppingItems: number;
@@ -246,7 +246,7 @@ export class CascadeDeletionService {
     members: number;
   }> {
     const [
-      mealPlansCount,
+      mealsCount,
       recipesCount,
       storedItemsCount,
       shoppingItemsCount,
@@ -254,7 +254,7 @@ export class CascadeDeletionService {
       customItemsCount,
       membersCount
     ] = await Promise.all([
-      MealPlan.count({ where: { householdId } }),
+      Meal.count({ where: { householdId } }),
       Recipe.count({ where: { householdId } }),
       StoredItem.count({ where: { householdId } }),
       ShoppingItem.count({ where: { householdId } }),
@@ -262,9 +262,9 @@ export class CascadeDeletionService {
       Item.count({ where: { householdId } }),
       HouseholdMember.count({ where: { householdId, isActive: true } })
     ]);
-    
+
     return {
-      mealPlans: mealPlansCount,
+      meals: mealsCount,
       recipes: recipesCount,
       storedItems: storedItemsCount,
       shoppingItems: shoppingItemsCount,

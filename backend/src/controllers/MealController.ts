@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { MealService } from '../services/MealService';
-import { CreateMealDto, UpdateMealDto } from '../types/MealDto';
+import { CreateMealDto, UpdateMealDto, CommitShoppingItemInputDto } from '../types/MealDto';
 import { ApiResponse } from '../types/ApiResponse';
 import { NotFoundError, ValidationError } from '../errors/CustomErrors';
 
@@ -98,7 +98,27 @@ export class MealController {
     }
   }
 
-  async generateShoppingList(req: Request, res: Response): Promise<void> {
+  async getShoppingPreview(req: Request, res: Response): Promise<void> {
+    try {
+      const { householdId } = req.params as { householdId: string };
+      const preview = await this.mealService.getShoppingPreview(householdId);
+      const response: ApiResponse<typeof preview> = { success: true, data: preview };
+      res.json(response);
+    } catch (error) {
+      console.error('Error getting shopping preview:', error);
+      res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to get shopping preview',
+      });
+    }
+  }
+
+  /**
+   * Legacy auto-commit endpoint kept so cached PWA clients (which still hit
+   * `/meals/shopping-list` or `/meal-plans/(generate-)shopping-list`) don't
+   * get a 404. Auto-commits the full preview without showing the recap.
+   */
+  async legacyAutoCommit(req: Request, res: Response): Promise<void> {
     try {
       const { householdId } = req.params as { householdId: string };
       const userId = (req as any).user?.id;
@@ -106,18 +126,45 @@ export class MealController {
         res.status(401).json({ success: false, message: 'User authentication required' });
         return;
       }
-      const list = await this.mealService.generateShoppingList(householdId, userId);
+      const result = await this.mealService.autoCommitFromPreview(householdId, userId);
+      const list = [...result.newItems, ...result.mergedItems];
       const response: ApiResponse<typeof list> = {
         success: true,
         data: list,
-        message: 'Shopping list generated',
+        message: 'Shopping list generated (legacy)',
       };
       res.json(response);
     } catch (error) {
-      console.error('Error generating shopping list:', error);
+      console.error('Error in legacy auto-commit:', error);
       res.status(500).json({
         success: false,
         message: error instanceof Error ? error.message : 'Failed to generate shopping list',
+      });
+    }
+  }
+
+  async commitShopping(req: Request, res: Response): Promise<void> {
+    try {
+      const { householdId } = req.params as { householdId: string };
+      const userId = (req as any).user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, message: 'User authentication required' });
+        return;
+      }
+      const { items } = (req.body ?? {}) as { items?: CommitShoppingItemInputDto[] };
+      const result = await this.mealService.commitShopping(householdId, userId, items ?? []);
+      const response: ApiResponse<typeof result> = {
+        success: true,
+        data: result,
+        message: 'Shopping list updated',
+      };
+      res.json(response);
+    } catch (error) {
+      console.error('Error committing shopping list:', error);
+      const status = this.statusFromError(error);
+      res.status(status).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to commit shopping list',
       });
     }
   }

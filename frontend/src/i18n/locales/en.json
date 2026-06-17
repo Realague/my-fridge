@@ -559,6 +559,7 @@
       "statCaption": "Recipes",
       "sectionPlanned": "On the menu",
       "viewRecipe": "Open recipe",
+      "editRecipe": "Edit recipe",
       "addRecipe": "Add a recipe",
       "removeMeal": "Remove",
       "increaseServings": "One more serving",
@@ -587,7 +588,10 @@
         "missingCaption": "To buy",
         "inStockLine_one": "{{count}} already at home.",
         "inStockLine_other": "{{count}} already at home.",
+        "onShoppingListLine_one": "{{count}} already on the list.",
+        "onShoppingListLine_other": "{{count}} already on the list.",
         "prepareList": "Build the list",
+        "reviewList": "Review",
         "allCovered": "Nothing to buy"
       },
       "selector": {
@@ -623,6 +627,52 @@
         "shoppingListReady": "List ready.",
         "shoppingListReadyDescription_one": "{{count}} item to buy.",
         "shoppingListReadyDescription_other": "{{count}} items to buy."
+      }
+    },
+    "mealsShopping": {
+      "kicker": "Before sending",
+      "title": "Shopping recap",
+      "send": "Send to my list",
+      "selectedCount_one": "{{count}} item selected",
+      "selectedCount_other": "{{count}} items selected",
+      "consolidatedFrom": "Consolidated:",
+      "increaseQty": "More",
+      "decreaseQty": "Less",
+      "basicsTitle": "Basics to check",
+      "basicsHint": "Open and tick whatever you need to restock.",
+      "inStockTitle": "Already in the fridge",
+      "inStockHint": "Enough quantity in stock.",
+      "inStockBadge": "Covered",
+      "inShoppingListTitle": "Already on your shopping list",
+      "inShoppingListHint": "You've already added enough to your list to cover the need.",
+      "inShoppingListBadge": "On the list",
+      "partial": {
+        "have": "{{have}} {{unit}} in stock",
+        "line": "You have {{have}} {{unit}} · missing {{missing}} of {{total}} {{unit}}",
+        "alreadyOnList": "{{qty}} {{unit}} already on your list"
+      },
+      "empty": {
+        "title": "Nothing to prepare.",
+        "subtitle": "No ingredient needed for the planned meals."
+      },
+      "merge": {
+        "kicker": "Confirmation",
+        "title": "Merge with the list",
+        "subtitle_one": "{{count}} item total.",
+        "subtitle_other": "{{count}} items total.",
+        "newSection_one": "{{count}} new",
+        "newSection_other": "{{count}} new",
+        "mergedSection_one": "{{count}} quantity merged",
+        "mergedSection_other": "{{count}} quantities merged",
+        "coveredSection_one": "{{count}} already covered",
+        "coveredSection_other": "{{count}} already covered",
+        "empty": "Nothing to change.",
+        "confirm": "Confirm"
+      },
+      "toasts": {
+        "commitDone": "List updated.",
+        "commitDoneDescription_one": "{{count}} item processed.",
+        "commitDoneDescription_other": "{{count}} items processed."
       }
     },
     "recipes": {

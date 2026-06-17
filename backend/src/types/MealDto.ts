@@ -34,6 +34,41 @@ export interface ShoppingListItemDto {
   recipes: string[];
 }
 
+export interface ShoppingPreviewItemDto {
+  itemId: string;
+  itemName: string;
+  itemCategory: string;
+  itemHouseholdId: string | null;   // null = seeded item (eligible to i18n)
+  itemImageUrl: string | null;      // url Cloudinary de l'image (ou null)
+  needed: number;          // quantité totale demandée par les recettes
+  inStock: number;         // quantité présente dans le stock
+  toBuy: number;           // delta à acheter (max 0, needed - inStock)
+  unit: string;
+  recipes: string[];       // titres des recettes consolidées
+  existingShoppingQty: number;  // quantité déjà présente dans la shopping list active (même unité)
+  shoppingItemId?: string;      // id du ShoppingItem existant si présent
+}
+
+export interface ShoppingPreviewDto {
+  toBuy: ShoppingPreviewItemDto[];           // par défaut cochés
+  inStock: ShoppingPreviewItemDto[];         // déjà couverts par le frigo
+  inShoppingList: ShoppingPreviewItemDto[];  // déjà couverts par la liste de courses
+  basics: ShoppingPreviewItemDto[];          // sel/poivre/huile/etc., décochés par défaut
+}
+
+export interface CommitShoppingItemInputDto {
+  itemId: string;
+  quantity: number;
+  unit: string;
+  recipes: string[];
+}
+
+export interface CommitShoppingMergeDto {
+  newItems: ShoppingListItemDto[];
+  mergedItems: Array<ShoppingListItemDto & { previousQuantity: number }>;
+  alreadyCoveredItems: ShoppingListItemDto[];
+}
+
 export interface MealsAvailabilityItemDto {
   itemId: string;
   itemName: string;
@@ -47,6 +82,7 @@ export interface MealsAvailabilityDto {
   totalIngredients: number;
   missingCount: number;
   inStockCount: number;
+  onShoppingListCount: number;
   expiringSoon: Array<{ itemId: string; itemName: string }>;
   items: MealsAvailabilityItemDto[];
 }

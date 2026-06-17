@@ -26,10 +26,9 @@ const Meals = () => {
     fetchAvailability,
     updateServings,
     removeMeal,
-    generateShoppingList,
   } = useMealStore();
 
-  const [preparingList, setPreparingList] = useState(false);
+  const [preparingList] = useState(false);
 
   useEffect(() => {
     if (selectedHouseholdId) fetchMeals();
@@ -68,24 +67,8 @@ const Meals = () => {
     }
   };
 
-  const prepareList = async () => {
-    setPreparingList(true);
-    try {
-      const items = await generateShoppingList();
-      toast({
-        title: t('pages.meals.toasts.shoppingListReady'),
-        description: t('pages.meals.toasts.shoppingListReadyDescription', { count: items.length }),
-      });
-      navigate('/shopping');
-    } catch (error) {
-      toast({
-        title: t('messages.error.somethingWentWrong'),
-        description: error instanceof Error ? error.message : '',
-        variant: 'destructive',
-      });
-    } finally {
-      setPreparingList(false);
-    }
+  const prepareList = () => {
+    navigate('/meals/shopping-preview');
   };
 
   const count = meals.length;

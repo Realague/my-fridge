@@ -193,6 +193,30 @@ export class ShoppingItemRepository {
     });
   }
 
+  /**
+   * Sum all active (non-completed) ShoppingItem quantities for a given item,
+   * normalized to `targetUnit` when units are convertible. Items in
+   * incompatible units are skipped.
+   */
+  async getActiveQuantityByItem(itemId: string, householdId: string, targetUnit: string): Promise<number> {
+    const items = await ShoppingItem.findAll({
+      where: { itemId, householdId, completed: false },
+      attributes: ['quantity', 'unit'],
+    });
+    if (items.length === 0) return 0;
+
+    const { convertQuantity, getUnitType } = require('../utils/unitConversion');
+    const targetType = getUnitType(targetUnit);
+    let total = 0;
+    for (const item of items) {
+      const itemType = getUnitType(item.unit);
+      if (itemType !== targetType) continue;
+      const converted = convertQuantity(Number(item.quantity), item.unit, targetUnit);
+      if (typeof converted === 'number') total += converted;
+    }
+    return total;
+  }
+
   async getDuplicateShoppingItem(itemId: string, householdId: string, unit: string, completed: boolean, excludeId?: string): Promise<ShoppingItem | null> {
     const whereClause: any = {
       itemId,

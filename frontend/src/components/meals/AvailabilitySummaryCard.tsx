@@ -29,7 +29,7 @@ export const AvailabilitySummaryCard = ({
     return null;
   }
 
-  const { missingCount, inStockCount } = availability;
+  const { missingCount, inStockCount, onShoppingListCount } = availability;
   const allCovered = missingCount === 0;
 
   return (
@@ -56,22 +56,33 @@ export const AvailabilitySummaryCard = ({
       </div>
 
       <div
-        className="mt-5 flex items-center justify-between gap-4 border-t pt-4"
+        className="mt-5 flex items-end justify-between gap-4 border-t pt-4"
         style={{ borderColor: 'var(--mf-night-line)' }}
       >
-        <div className="flex items-center gap-2 text-[13px] text-[color:var(--mf-text-soft)]">
-          <span className="inline-block h-2 w-2 rounded-full bg-[color:var(--mf-green)]" aria-hidden />
-          {t('pages.meals.availability.inStockLine', { count: inStockCount })}
+        <div className="flex flex-col gap-1.5 text-[13px] text-[color:var(--mf-text-soft)]">
+          <div className="flex items-center gap-2">
+            <span className="inline-block h-2 w-2 rounded-full bg-[color:var(--mf-green)]" aria-hidden />
+            {t('pages.meals.availability.inStockLine', { count: inStockCount })}
+          </div>
+          {onShoppingListCount > 0 ? (
+            <div className="flex items-center gap-2">
+              <span
+                className="inline-block h-2 w-2 rounded-full bg-[color:var(--mf-warning)]"
+                aria-hidden
+              />
+              {t('pages.meals.availability.onShoppingListLine', { count: onShoppingListCount })}
+            </div>
+          ) : null}
         </div>
         <button
           type="button"
           onClick={onPrepareList}
-          disabled={allCovered || preparingList}
+          disabled={preparingList}
           className="mf-btn mf-btn-primary"
         >
           <ShoppingCart className="h-4 w-4" strokeWidth={2} aria-hidden />
           {allCovered
-            ? t('pages.meals.availability.allCovered')
+            ? t('pages.meals.availability.reviewList')
             : t('pages.meals.availability.prepareList')}
         </button>
       </div>

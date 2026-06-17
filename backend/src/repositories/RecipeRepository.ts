@@ -135,7 +135,7 @@ export class RecipeRepository {
             {
               model: Item,
               as: 'item',
-              attributes: ['id', 'name', 'category', 'defaultUnit', 'availableUnits', 'pieceAlias', 'householdId']
+              attributes: ['id', 'name', 'category', 'defaultUnit', 'availableUnits', 'pieceAlias', 'householdId', 'imageUrl']
             }
           ]
         }

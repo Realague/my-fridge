@@ -12,6 +12,7 @@ export interface StoredItem {
   isOpened: boolean;
   openedDate: string | null | undefined;
   frozenDate: string | null | undefined;
+  cookedDate: string | null | undefined;
   householdId: string;
   createdBy: string;
   createdAt: string;
@@ -25,6 +26,7 @@ export interface StoredItem {
     daysAfterOpening?: number;
     createdBy: string | null;
     householdId: string | null;
+    recipeId?: string | null;
     imageUrl: string | null;
     createdAt: string;
     updatedAt: string;
@@ -51,7 +53,9 @@ export interface StoredItem {
 }
 
 export interface CreateStoredItemRequest {
-  itemId: string;
+  // Ingredient flow: itemId required.
+  // Cooked-meal flow: omit itemId; pass articleType='cooked_meal' + name (+ optional recipeId).
+  itemId?: string;
   storageAreaId: string;
   quantity: number;
   unit: Unit;
@@ -59,6 +63,11 @@ export interface CreateStoredItemRequest {
   location?: string;
   isOpened?: boolean;
   openedDate?: string;
+  // Cooked-meal specific
+  articleType?: 'ingredient' | 'cooked_meal';
+  name?: string;
+  recipeId?: string | null;
+  cookedDate?: string;
 }
 
 export interface UpdateStoredItemRequest {
@@ -68,8 +77,14 @@ export interface UpdateStoredItemRequest {
   location?: string;
   isOpened?: boolean;
   openedDate?: string;
+  cookedDate?: string | null;
   storageAreaId?: string;
   frozenDate?: string | null;
+}
+
+export interface ConsumePortionResponse {
+  remaining: StoredItem | null;
+  consumed: boolean;
 }
 
 export interface GetStoredItemsRequest {
@@ -226,12 +241,23 @@ const getExpiredItems = async (householdId: string): Promise<StoredItem[]> => {
 const getTotalQuantityByItem = async (householdId: string, itemId: string): Promise<number> => {
   const response = await apiService.get(`/api/households/${householdId}/items/${itemId}/total-quantity`);
   const result: ApiResponse<{ totalQuantity: number }> = await response.json();
-  
+
   if (!result.success) {
     throw new Error(result.error || 'Failed to fetch total quantity');
   }
-  
+
   return result.data?.totalQuantity || 0;
+};
+
+const consumePortion = async (householdId: string, id: string): Promise<ConsumePortionResponse> => {
+  const response = await apiService.post(`/api/households/${householdId}/stored-items/${id}/consume-portion`);
+  const result: ApiResponse<ConsumePortionResponse> = await response.json();
+
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to consume portion');
+  }
+
+  return result.data ?? { remaining: null, consumed: false };
 };
 
 // Export the service methods directly
@@ -245,6 +271,7 @@ export const storedItemService = {
   getExpiringItems,
   getExpiredItems,
   getTotalQuantityByItem,
+  consumePortion,
 };
 
 // Hook that returns the service methods (for backward compatibility)

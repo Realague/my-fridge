@@ -17,12 +17,13 @@ interface ItemAttributes {
   imageUrl: string | null;
   householdId: string | null;
   createdBy: string | null;
+  recipeId: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 // Some attributes are optional in `Item.build()` and `Item.create()`
-interface ItemCreationAttributes extends Optional<ItemAttributes, 'id' | 'defaultUnit' | 'availableUnits' | 'pieceAlias' | 'daysAfterOpening' | 'excludeFromShopping' | 'createdAt' | 'updatedAt'> {}
+interface ItemCreationAttributes extends Optional<ItemAttributes, 'id' | 'defaultUnit' | 'availableUnits' | 'pieceAlias' | 'daysAfterOpening' | 'excludeFromShopping' | 'recipeId' | 'createdAt' | 'updatedAt'> {}
 
 export class Item extends Model<ItemAttributes, ItemCreationAttributes> implements ItemAttributes {
   public id!: string;
@@ -36,6 +37,7 @@ export class Item extends Model<ItemAttributes, ItemCreationAttributes> implemen
   public imageUrl!: string | null;
   public createdBy!: string | null;
   public householdId!: string | null;
+  public recipeId!: string | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
@@ -142,6 +144,14 @@ Item.init(
         key: 'id',
       },
     },
+    recipeId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: 'recipes',
+        key: 'id',
+      },
+    },
   },
   {
     sequelize,
@@ -163,6 +173,9 @@ Item.init(
       {
         fields: ['householdId', 'category'],
       },
+      {
+        fields: ['recipeId'],
+      },
     ],
   }
-); 
+);

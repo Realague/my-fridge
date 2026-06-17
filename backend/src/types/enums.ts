@@ -24,6 +24,7 @@ export enum ItemCategory {
   FROZEN = 'frozen',
   CANNED = 'canned',
   MEAL = 'meal',
+  COOKED_MEAL = 'cooked_meal',
   PREPARATION = 'preparation',
   CLEANING_PRODUCTS = 'cleaning_products',
   OTHER = 'other'
@@ -46,7 +47,7 @@ export enum Unit {
   // Pieces
   PIECE = 'piece',
 
-  // Portion / cooked dish — only valid on catalog `items` in category `meal`.
+  // Portion / cooked dish — only valid on catalog `items` in category `meal` or `cooked_meal`.
   SERVING = 'serving',
 
   // Free-quantity (gestural) units — recipe-only, no numeric quantity
@@ -87,7 +88,7 @@ export const LINE_STORAGE_UNITS: Unit[] = [...CATALOG_BASE_STORAGE_UNITS, Unit.S
 
 export function isCatalogStorageUnitForCategory(unit: Unit, category: ItemCategory | string): boolean {
   if (CATALOG_BASE_STORAGE_UNITS.includes(unit)) return true;
-  return unit === Unit.SERVING && category === ItemCategory.MEAL;
+  return unit === Unit.SERVING && (category === ItemCategory.MEAL || category === ItemCategory.COOKED_MEAL);
 }
 
 // Recipe units — everything a recipe ingredient can use.

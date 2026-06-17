@@ -29,6 +29,9 @@ router.put('/:householdId/stored-items/:id', storedItemController.updateStoredIt
 // DELETE /households/:householdId/stored-items/:id - Delete a stored item
 router.delete('/:householdId/stored-items/:id', storedItemController.deleteStoredItem.bind(storedItemController));
 
+// POST /households/:householdId/stored-items/:id/consume-portion - Consume one portion (cooked meal)
+router.post('/:householdId/stored-items/:id/consume-portion', storedItemController.consumePortion.bind(storedItemController));
+
 // GET /households/:householdId/storage-areas/:storageAreaId/stored-items - Get stored items by storage area
 router.get('/:householdId/storage-areas/:storageAreaId/stored-items', storedItemController.getStoredItemsByStorageArea.bind(storedItemController));
 

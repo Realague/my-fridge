@@ -175,7 +175,15 @@ export const ItemSelector = ({
     if (excludeCleaningProducts && item.category === ItemCategory.CLEANING_PRODUCTS) {
       return false;
     }
-    
+
+    // Cooked meals are managed exclusively via the dedicated cooked-meal flow
+    // (AddStoredItemDialog → "Plat cuisiné" toggle). They must not appear in
+    // the generic catalog selector — neither for shopping list, recipe
+    // ingredients, nor for the "ingredient" branch of the storage form.
+    if (item.category === ItemCategory.COOKED_MEAL) {
+      return false;
+    }
+
     return true;
   });
 

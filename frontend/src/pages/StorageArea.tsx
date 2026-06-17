@@ -22,6 +22,7 @@ import {
   Snowflake,
   ChevronDown,
   Filter,
+  Utensils,
 } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
@@ -31,7 +32,7 @@ import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { itemService } from '@/services/itemService';
 import { format } from 'date-fns';
-import { Unit, StorageAreaType, ITEM_CATEGORIES } from '@/types/enums';
+import { Unit, StorageAreaType, ITEM_CATEGORIES, ItemCategory } from '@/types/enums';
 import { Item } from '@/services/itemService';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '@/utils/dateFormatting';
@@ -127,10 +128,11 @@ const StorageArea = () => {
   const { getStorageAreaById, fetchStorageAreas, getStorageAreasForHousehold } = useStorageAreaStore();
   const storageAreasList = getStorageAreasForHousehold();
   const {
-    getStoredItemsByStorageArea, 
-    createStoredItem, 
-    updateStoredItem, 
+    getStoredItemsByStorageArea,
+    createStoredItem,
+    updateStoredItem,
     deleteStoredItem,
+    consumePortion,
     fetchStoredItemsByStorageArea,
     loading: storedItemsLoading
   } = useStoredItemStore();
@@ -413,11 +415,49 @@ const StorageArea = () => {
 
     const handleDelete = async () => {
       if (!selectedHouseholdId) return;
-      
+
       try {
         await deleteStoredItem(storageItem.id);
       } catch (error) {
         console.error('Failed to delete item:', error);
+      }
+    };
+
+    const isCookedMeal = item?.category === ItemCategory.COOKED_MEAL;
+    const isInFreezer = area.type === StorageAreaType.FREEZER;
+
+    const handleConsumePortion = async () => {
+      try {
+        const result = await consumePortion(storageItem.id);
+        const remaining = result.remaining ? Number(result.remaining.quantity) : 0;
+        if (remaining > 0) {
+          toast.success(
+            t('cookedMeal.portionsLeft', {
+              count: remaining,
+              name: item ? getItemDisplayName(item, t) : '',
+            })
+          );
+        }
+      } catch {
+        // toast already raised by store
+      }
+    };
+
+    const handleFreeze = async () => {
+      const freezer = storageAreasList.find((a) => a.type === StorageAreaType.FREEZER);
+      if (!freezer) {
+        toast.error(t('pages.dashboard.expiringSoon.noFreezer'));
+        return;
+      }
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        await updateStoredItem(storageItem.id, {
+          storageAreaId: freezer.id,
+          frozenDate: today,
+          expirationDate: null,
+        });
+      } catch {
+        // toast already raised by store
       }
     };
 
@@ -641,6 +681,30 @@ const StorageArea = () => {
             
             {!isEditing && (
               <div className="flex flex-col items-center gap-2">
+                {isCookedMeal && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleConsumePortion}
+                    className="h-8 w-8 p-0"
+                    aria-label={t('cookedMeal.consumePortion')}
+                    title={t('cookedMeal.consumePortion')}
+                  >
+                    <Utensils className="h-4 w-4" />
+                  </Button>
+                )}
+                {isCookedMeal && !isInFreezer && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleFreeze}
+                    className="h-8 w-8 p-0"
+                    aria-label={t('pages.dashboard.expiringSoon.actionFreeze')}
+                    title={t('pages.dashboard.expiringSoon.actionFreeze')}
+                  >
+                    <Snowflake className="h-4 w-4" />
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"

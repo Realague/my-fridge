@@ -14,6 +14,16 @@ import {
 import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 import { useHouseholdStore } from './householdStore';
 
+export interface RecipeDeletionImpact {
+  recipeId: string;
+  recipeTitle: string;
+  hasCookedMealItem: boolean;
+  cookedMealItemId: string | null;
+  cookedMealItemName: string | null;
+  storedItemCount: number;
+  totalPortions: number;
+}
+
 // Non-hook API service for use in stores
 const createApiService = () => {
   const makeApiCall = async (url: string, options: { method?: 'GET' | 'POST' | 'PUT' | 'DELETE'; body?: any; headers?: Record<string, string>; } = {}) => {
@@ -86,6 +96,7 @@ interface RecipeState {
   createRecipe: (recipeData: CreateRecipeDto) => Promise<RecipeDto>;
   updateRecipe: (recipeId: string, updates: UpdateRecipeDto) => Promise<RecipeDto>;
   deleteRecipe: (recipeId: string) => Promise<void>;
+  getRecipeDeletionImpact: (recipeId: string) => Promise<RecipeDeletionImpact>;
   toggleFavorite: (recipeId: string) => Promise<RecipeDto>;
   fetchFavoriteRecipes: () => Promise<void>;
   fetchTags: () => Promise<void>;
@@ -290,9 +301,21 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
   },
 
+  getRecipeDeletionImpact: async (recipeId: string) => {
+    const householdId = getHouseholdId();
+    if (!householdId) {
+      throw new Error('No household available');
+    }
+    const response = await apiService.get(
+      `/api/households/${householdId}/recipes/${recipeId}/deletion-impact`
+    );
+    const result = await response.json();
+    return (result.data ?? result) as RecipeDeletionImpact;
+  },
+
   deleteRecipe: async (recipeId: string) => {
     set({ loading: true, error: null });
-    
+
     try {
       const householdId = getHouseholdId();
       if (!householdId) {

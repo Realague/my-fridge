@@ -9,7 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { X, Trash2 } from 'lucide-react';
 import { Item, itemService } from '@/services/itemService';
 import { getUnitsForCategory, getUnitDisplayName, getStorableUnitOptionsForItemCategory } from '@/utils/unitSystem';
-import { ITEM_CATEGORIES } from '@/types/enums';
+import { ITEM_CATEGORIES, ItemCategory } from '@/types/enums';
 import { useTranslation } from 'react-i18next';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -149,14 +149,16 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {ITEM_CATEGORIES.map((itemCategory) => (
-                  <SelectItem key={itemCategory} value={itemCategory}>
-                    <span className="inline-flex items-center gap-2">
-                      <CategoryIcon category={itemCategory} className="h-4 w-4" />
-                      {t(`items.categories.${itemCategory}`)}
-                    </span>
-                  </SelectItem>
-                ))}
+                {ITEM_CATEGORIES
+                  .filter((itemCategory) => itemCategory !== ItemCategory.COOKED_MEAL)
+                  .map((itemCategory) => (
+                    <SelectItem key={itemCategory} value={itemCategory}>
+                      <span className="inline-flex items-center gap-2">
+                        <CategoryIcon category={itemCategory} className="h-4 w-4" />
+                        {t(`items.categories.${itemCategory}`)}
+                      </span>
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>

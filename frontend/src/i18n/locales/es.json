@@ -6,6 +6,36 @@
     "meals": "Comidas",
     "recipes": "Recetas"
   },
+  "cookedMeal": {
+    "articleType": {
+      "label": "Tipo de artículo",
+      "ingredient": "Ingrediente",
+      "cookedMeal": "Plato cocinado"
+    },
+    "badge": "Plato cocinado",
+    "dishNamePlaceholder": "Nombre del plato (ej. Curry, Lasaña…)",
+    "dishNameLabel": "Nombre del plato",
+    "linkRecipeLabel": "Vincular a la receta «{{title}}»",
+    "linkedRecipe": "Receta vinculada",
+    "openRecipe": "Abrir receta",
+    "cookingDateLabel": "Fecha de cocción",
+    "portionsLabel": "Número de porciones",
+    "cookedAgo": "Cocinado {{when}}",
+    "cookedToday": "Cocinado hoy",
+    "portionsLeft_one": "Te queda {{count}} porción de {{name}}",
+    "portionsLeft_other": "Te quedan {{count}} porciones de {{name}}",
+    "consumePortion": "Consumir una porción",
+    "discardDishToast": "Plato descartado",
+    "deleteRecipe": {
+      "title": "¿Eliminar esta receta?",
+      "intro": "Receta: {{title}}",
+      "impact_one": "Esta receta se usa para {{portions}} porción de {{dishName}} actualmente en stock.",
+      "impact_other": "Esta receta se usa para {{portions}} porciones de {{dishName}} actualmente en stock.",
+      "warning": "Eliminar la receta también eliminará el artículo plato cocinado y todas las porciones en stock.",
+      "confirm": "Eliminar de todos modos",
+      "cancel": "Cancelar"
+    }
+  },
   "buttons": {
     "add": "Agregar",
     "save": "Guardar",
@@ -962,6 +992,7 @@
       "frozen": "Congelados",
       "canned": "Enlatados",
       "meal": "Comida",
+      "cooked_meal": "Platos cocinados",
       "preparation": "Preparación",
       "cleaning_products": "Productos de limpieza",
       "other": "Otros"

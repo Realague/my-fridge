@@ -18,6 +18,7 @@ interface StoredItemAttributes {
   isOpened: boolean;
   openedDate: Date | null;
   frozenDate: Date | null;
+  cookedDate: Date | null;
   householdId: string;
   createdBy: string;
   createdAt?: Date;
@@ -25,7 +26,7 @@ interface StoredItemAttributes {
 }
 
 // Some attributes are optional in `StoredItem.build()` and `StoredItem.create()`
-interface StoredItemCreationAttributes extends Optional<StoredItemAttributes, 'id' | 'quantity' | 'unit' | 'expirationDate' | 'location' | 'isOpened' | 'openedDate' | 'frozenDate' | 'createdAt' | 'updatedAt'> {}
+interface StoredItemCreationAttributes extends Optional<StoredItemAttributes, 'id' | 'quantity' | 'unit' | 'expirationDate' | 'location' | 'isOpened' | 'openedDate' | 'frozenDate' | 'cookedDate' | 'createdAt' | 'updatedAt'> {}
 
 export class StoredItem extends Model<StoredItemAttributes, StoredItemCreationAttributes> implements StoredItemAttributes {
   public id!: string;
@@ -38,6 +39,7 @@ export class StoredItem extends Model<StoredItemAttributes, StoredItemCreationAt
   public isOpened!: boolean;
   public openedDate!: Date | null;
   public frozenDate!: Date | null;
+  public cookedDate!: Date | null;
   public householdId!: string;
   public readonly createdBy!: string;
   public readonly createdAt!: Date;
@@ -190,6 +192,10 @@ StoredItem.init(
       allowNull: true,
     },
     frozenDate: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    cookedDate: {
       type: DataTypes.DATEONLY,
       allowNull: true,
     },

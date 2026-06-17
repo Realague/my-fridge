@@ -6,6 +6,36 @@
     "meals": "Meals",
     "recipes": "Recipes"
   },
+  "cookedMeal": {
+    "articleType": {
+      "label": "Article type",
+      "ingredient": "Ingredient",
+      "cookedMeal": "Cooked meal"
+    },
+    "badge": "Cooked meal",
+    "dishNamePlaceholder": "Dish name (e.g. Curry, Lasagna…)",
+    "dishNameLabel": "Dish name",
+    "linkRecipeLabel": "Link to recipe \"{{title}}\"",
+    "linkedRecipe": "Linked recipe",
+    "openRecipe": "Open recipe",
+    "cookingDateLabel": "Cooking date",
+    "portionsLabel": "Number of portions",
+    "cookedAgo": "Cooked {{when}}",
+    "cookedToday": "Cooked today",
+    "portionsLeft_one": "{{count}} portion left of {{name}}",
+    "portionsLeft_other": "{{count}} portions left of {{name}}",
+    "consumePortion": "Consume one portion",
+    "discardDishToast": "Dish discarded",
+    "deleteRecipe": {
+      "title": "Delete this recipe?",
+      "intro": "Recipe: {{title}}",
+      "impact_one": "This recipe is used for {{portions}} portion of {{dishName}} currently in stock.",
+      "impact_other": "This recipe is used for {{portions}} portions of {{dishName}} currently in stock.",
+      "warning": "Deleting the recipe will also delete the cooked-meal article and all portions in stock.",
+      "confirm": "Delete anyway",
+      "cancel": "Cancel"
+    }
+  },
   "buttons": {
     "add": "Add",
     "save": "Save",
@@ -1009,6 +1039,7 @@
       "frozen": "Frozen",
       "canned": "Canned",
       "meal": "Meal",
+      "cooked_meal": "Cooked meals",
       "preparation": "Preparation",
       "cleaning_products": "Cleaning products",
       "other": "Other"

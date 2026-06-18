@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MyFridge — Charte Graphique v3.0 · Mode jour</title>
+  <meta name="description" content="Système de design de l'application MyFridge — palette diurne (papier), typographie, composants signés." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* ——— Surfaces (mode jour) ——— */
+      --mf-paper:          #FFFFFF;   /* fond global */
+      --mf-paper-soft:     #F5F7FA;   /* cartes, panneaux, popovers */
+      --mf-paper-elevated: #EEF1F5;   /* hover, surfaces flottantes */
+      --mf-paper-line:     #E2E8F0;   /* bordures, séparateurs */
+      --mf-paper-line-soft:#EDF1F6;   /* divisions internes très discrètes */
+
+      /* ——— Encre (texte) ——— */
+      --mf-text:      #0B1018;        /* texte principal — encre presque noire */
+      --mf-text-soft: #475569;        /* texte secondaire, méta */
+      --mf-text-mute: #94A3B8;        /* captions, désactivé */
+
+      /* ——— Vert pistache (marque + action) ——— */
+      --mf-green:       #22C55E;
+      --mf-green-deep:  #16A34A;      /* hover/pressed */
+      --mf-green-ink:   #15803D;      /* texte sur fond clair (badges, liens) */
+      --mf-green-soft:  #DCFCE7;      /* fond de badge "Frais" */
+      --mf-green-ring:  rgba(34, 197, 94, .35);
+
+      /* ——— Sémantique ——— */
+      --mf-danger:      #EF4444;
+      --mf-danger-ink:  #B91C1C;      /* texte sur fond clair */
+      --mf-danger-soft: #FEE2E2;
+      --mf-info:        #3B82F6;
+      --mf-info-ink:    #1D4ED8;
+      --mf-info-soft:   #DBEAFE;
+      --mf-warning:     #D97706;      /* en mode jour, orange plus profond pour le contraste */
+      --mf-warning-ink: #92400E;
+      --mf-warning-soft:#FEF3C7;
+
+      /* ——— Tokens système (identiques à v3.0 nuit) ——— */
+      --mf-radius-xs: 4px;
+      --mf-radius-sm: 6px;
+      --mf-radius-md: 10px;
+      --mf-radius-lg: 14px;
+      --mf-radius-xl: 20px;
+      --mf-radius-pill: 999px;
+
+      --mf-shadow-1: 0 1px 2px hsla(220, 30%, 20%, .06);
+      --mf-shadow-2: 0 12px 28px -12px hsla(220, 30%, 20%, .14), 0 2px 6px hsla(220,30%,20%,.06);
+      --mf-shadow-3: 0 28px 56px -20px hsla(220, 30%, 20%, .22), 0 6px 14px hsla(220,30%,20%,.08);
+      --mf-shadow-glow: 0 0 0 1px var(--mf-green-ring), 0 8px 24px -6px rgba(34,197,94,.25);
+
+      --mf-ease:     cubic-bezier(.25, .1, .25, 1);
+      --mf-ease-out: cubic-bezier(.16, 1, .3, 1);
+      --mf-dur:      240ms;
+      --mf-dur-fast: 120ms;
+      --mf-dur-slow: 400ms;
+
+      --mf-font-display: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      --mf-font-body:    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      --mf-font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      background: var(--mf-paper);
+      color: var(--mf-text);
+      font-family: var(--mf-font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "ss01", "cv11";
+      background-image:
+        radial-gradient(1200px 800px at 80% -10%, rgba(34,197,94,.06), transparent 60%),
+        radial-gradient(900px 600px at 0% 40%, rgba(59,130,246,.04), transparent 55%);
+      background-attachment: fixed;
+    }
+
+    ::selection { background: var(--mf-green); color: #FFFFFF; }
+
+    .page { max-width: 1240px; margin: 0 auto; padding: 64px 48px 160px; }
+    @media (max-width: 720px) { .page { padding: 32px 20px 120px; } }
+
+    /* ——— Masthead ——— */
+    .masthead {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--mf-paper-line);
+      margin-bottom: 56px;
+    }
+    .lockup { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+    .wordmark {
+      font-family: var(--mf-font-display);
+      font-weight: 700;
+      letter-spacing: -.03em;
+      font-size: 28px;
+      color: var(--mf-text);
+    }
+    .wordmark .dot { color: var(--mf-green); }
+    .meta { color: var(--mf-text-soft); font-size: 13px; font-family: var(--mf-font-mono); }
+
+    /* ——— Cover ——— */
+    .cover {
+      padding: 72px 0 56px;
+      border-bottom: 1px solid var(--mf-paper-line);
+      margin-bottom: 72px;
+    }
+    .cover h1 {
+      font-family: var(--mf-font-display);
+      font-size: clamp(56px, 9vw, 120px);
+      line-height: .95;
+      letter-spacing: -.04em;
+      font-weight: 800;
+      margin: 0 0 28px;
+    }
+    .cover h1 em { font-style: normal; color: var(--mf-green); }
+    .cover .lede {
+      max-width: 720px;
+      font-size: 19px;
+      line-height: 1.55;
+      color: var(--mf-text-soft);
+      margin: 0;
+    }
+
+    /* ——— Chapters ——— */
+    .chapter { padding: 56px 0; border-bottom: 1px solid var(--mf-paper-line); }
+    .chapter:last-of-type { border-bottom: 0; }
+    .eyebrow {
+      font-family: var(--mf-font-mono);
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--mf-text-mute);
+      margin-bottom: 16px;
+    }
+    .chapter h2 {
+      font-family: var(--mf-font-display);
+      font-size: clamp(32px, 4.5vw, 48px);
+      line-height: 1.05;
+      letter-spacing: -.02em;
+      font-weight: 700;
+      margin: 0 0 20px;
+      max-width: 880px;
+    }
+    .chapter h2 em { font-style: normal; color: var(--mf-green); }
+    .chapter p { color: var(--mf-text-soft); max-width: 720px; }
+    .section-title {
+      font-family: var(--mf-font-mono);
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--mf-text-soft);
+      margin: 40px 0 14px;
+    }
+
+    /* ——— Grid ——— */
+    .grid { display: grid; gap: 20px; }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 720px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    }
+
+    /* ——— Card ——— */
+    .card {
+      background: var(--mf-paper-soft);
+      border: 1px solid var(--mf-paper-line);
+      border-radius: var(--mf-radius-lg);
+      padding: 24px;
+    }
+    .card .label {
+      font-family: var(--mf-font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--mf-text-mute);
+    }
+
+    /* ——— Swatch ——— */
+    .swatch {
+      background: var(--mf-paper-soft);
+      border: 1px solid var(--mf-paper-line);
+      border-radius: var(--mf-radius-lg);
+      overflow: hidden;
+    }
+    .swatch .sample { height: 110px; width: 100%; position: relative; }
+    .swatch .sample .inner-tag {
+      position: absolute; inset: 18px;
+      border-radius: var(--mf-radius-md);
+    }
+    .swatch .body {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .swatch .name { font-weight: 600; font-size: 14px; }
+    .swatch .hex { font-family: var(--mf-font-mono); font-size: 12px; color: var(--mf-text-soft); }
+    .swatch .var { font-family: var(--mf-font-mono); font-size: 11px; color: var(--mf-text-mute); }
+
+    /* ——— Buttons ——— */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      font-family: var(--mf-font-body);
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: var(--mf-radius-md);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background var(--mf-dur) var(--mf-ease-out), color var(--mf-dur) var(--mf-ease-out), border-color var(--mf-dur) var(--mf-ease-out);
+      line-height: 1;
+    }
+    .btn-primary { background: var(--mf-green); color: #FFFFFF; }
+    .btn-primary:hover { background: var(--mf-green-deep); }
+    .btn-ghost {
+      background: var(--mf-paper);
+      color: var(--mf-text);
+      border-color: var(--mf-paper-line);
+    }
+    .btn-ghost:hover { background: var(--mf-paper-elevated); }
+    .btn-ghost.is-active {
+      background: var(--mf-paper-elevated);
+      border-color: var(--mf-paper-line);
+    }
+    .btn-danger { background: var(--mf-danger-soft); color: var(--mf-danger-ink); }
+    .btn-danger:hover { background: var(--mf-danger); color: #FFFFFF; }
+
+    /* ——— Badges ——— */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--mf-radius-pill);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .badge-green   { background: var(--mf-green-soft);   color: var(--mf-green-ink); }
+    .badge-warn    { background: var(--mf-warning-soft); color: var(--mf-warning-ink); }
+    .badge-danger  { background: var(--mf-danger-soft);  color: var(--mf-danger-ink); }
+    .badge-neutral { background: var(--mf-paper-elevated); color: var(--mf-text-soft); }
+
+    /* ——— Input ——— */
+    .input {
+      width: 100%;
+      background: var(--mf-paper);
+      border: 1px solid var(--mf-paper-line);
+      border-radius: var(--mf-radius-md);
+      padding: 12px 14px;
+      color: var(--mf-text);
+      font: inherit;
+      transition: border-color var(--mf-dur) var(--mf-ease), box-shadow var(--mf-dur) var(--mf-ease);
+    }
+    .input::placeholder { color: var(--mf-text-mute); }
+    .input:focus {
+      outline: none;
+      border-color: var(--mf-green);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, .15);
+    }
+
+    /* ——— List signature MyFridge ——— */
+    .list {
+      background: var(--mf-paper-soft);
+      border: 1px solid var(--mf-paper-line);
+      border-radius: var(--mf-radius-lg);
+      overflow: hidden;
+    }
+    .list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--mf-paper-line);
+    }
+    .list-header .title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 15px;
+    }
+    .list-header .title .ico { font-size: 18px; color: var(--mf-green-ink); }
+    .list-header .count { font-size: 13px; color: var(--mf-text-soft); display: inline-flex; align-items: center; gap: 8px; }
+    .list-row {
+      display: grid;
+      grid-template-columns: auto auto 1fr auto;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      border-top: 1px solid var(--mf-paper-line);
+      background: var(--mf-paper);
+    }
+    .checkbox {
+      width: 22px; height: 22px;
+      border-radius: 999px;
+      border: 1.5px solid var(--mf-paper-line);
+      background: transparent;
+      transition: all var(--mf-dur) var(--mf-ease-out);
+    }
+    .checkbox.is-checked {
+      background: var(--mf-green);
+      border-color: var(--mf-green);
+    }
+    .thumb {
+      width: 44px; height: 44px;
+      border-radius: var(--mf-radius-md);
+      background: var(--mf-paper-elevated);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      border: 1px solid var(--mf-paper-line);
+    }
+    .row-text .name { font-weight: 600; font-size: 15px; }
+    .row-text .meta {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--mf-text-mute); margin-top: 6px;
+    }
+    .row-actions { display: flex; gap: 4px; }
+    .icon-btn {
+      width: 32px; height: 32px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: var(--mf-radius-sm);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background var(--mf-dur) var(--mf-ease);
+      font-size: 14px;
+    }
+    .icon-btn:hover { background: var(--mf-paper-elevated); }
+    .icon-btn.edit { color: var(--mf-info-ink); }
+    .icon-btn.danger { color: var(--mf-danger-ink); }
+    .icon-btn.muted { color: var(--mf-text-mute); }
+
+    /* ——— Type ladder ——— */
+    .type-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      align-items: baseline;
+      gap: 24px;
+      padding: 16px 0;
+      border-bottom: 1px dashed var(--mf-paper-line);
+    }
+    .type-row:last-child { border: 0; }
+    .type-row .lbl { color: var(--mf-text-mute); font-family: var(--mf-font-mono); font-size: 12px; }
+    .display-1 { font-family: var(--mf-font-display); font-size: 64px; font-weight: 800; letter-spacing: -.04em; line-height: .95; }
+    .display-2 { font-family: var(--mf-font-display); font-size: 40px; font-weight: 700; letter-spacing: -.025em; }
+    .heading-1 { font-family: var(--mf-font-display); font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+    .heading-2 { font-family: var(--mf-font-display); font-size: 20px; font-weight: 600; }
+    .body-lg   { font-size: 18px; }
+    .body      { font-size: 16px; }
+    .body-sm   { font-size: 14px; color: var(--mf-text-soft); }
+    .caption-text {
+      font-size: 12px; color: var(--mf-text-mute);
+      font-family: var(--mf-font-mono); letter-spacing: .08em; text-transform: uppercase;
+    }
+
+    /* ——— Spacing demo ——— */
+    .spacing { display: flex; align-items: end; gap: 14px; }
+    .spacing .bar {
+      background: linear-gradient(180deg, var(--mf-green) 0%, var(--mf-green-deep) 100%);
+      width: 28px; border-radius: 4px 4px 0 0;
+    }
+    .spacing .bar span {
+      display: block; margin-top: 8px;
+      font-family: var(--mf-font-mono); font-size: 11px; color: var(--mf-text-mute);
+      text-align: center; transform: translateY(8px);
+    }
+
+    /* ——— Motion demo ——— */
+    .motion-card { padding: 20px; transition: transform var(--mf-dur) var(--mf-ease-out), box-shadow var(--mf-dur) var(--mf-ease-out); cursor: pointer; }
+    .motion-card:hover { transform: translateY(-3px); box-shadow: var(--mf-shadow-2); border-color: var(--mf-paper-line); }
+
+    /* ——— Voice ——— */
+    .voice {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 720px) { .voice { grid-template-columns: 1fr; } }
+    .voice .col {
+      padding: 24px;
+      border-radius: var(--mf-radius-lg);
+      border: 1px solid var(--mf-paper-line);
+      background: var(--mf-paper-soft);
+    }
+    .voice .yes { border-color: rgba(34,197,94,.4); background: var(--mf-green-soft); }
+    .voice .no { opacity: .85; }
+    .voice .verdict {
+      font-family: var(--mf-font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      margin-bottom: 16px;
+    }
+    .voice .yes .verdict { color: var(--mf-green-ink); }
+    .voice .no .verdict { color: var(--mf-danger-ink); }
+    .voice p { color: var(--mf-text); margin: 0 0 12px; }
+    .voice p:last-child { margin: 0; }
+
+    /* ——— Code ——— */
+    code, pre { font-family: var(--mf-font-mono); font-size: 13px; }
+    code { color: var(--mf-green-ink); background: var(--mf-green-soft); padding: 2px 6px; border-radius: 4px; }
+    pre {
+      background: var(--mf-paper-soft);
+      border: 1px solid var(--mf-paper-line);
+      border-radius: var(--mf-radius-md);
+      padding: 20px;
+      overflow-x: auto;
+      color: var(--mf-text-soft);
+      line-height: 1.7;
+    }
+    pre .key { color: var(--mf-info-ink); }
+    pre .val { color: var(--mf-green-ink); }
+    pre .com { color: var(--mf-text-mute); font-style: italic; }
+
+    /* ——— Hero stat ——— */
+    .stat {
+      font-family: var(--mf-font-display);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--mf-green-ink);
+      line-height: 1;
+    }
+
+    /* ——— Filter bar ——— */
+    .filter-bar {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px;
+      background: var(--mf-paper-soft);
+      border: 1px solid var(--mf-paper-line);
+      border-radius: var(--mf-radius-lg);
+      flex-wrap: wrap;
+    }
+    .filter-bar .funnel { color: var(--mf-text-mute); }
+    .select-mock {
+      background: var(--mf-paper);
+      border: 1px solid var(--mf-paper-line);
+      border-radius: var(--mf-radius-md);
+      padding: 8px 14px;
+      font-size: 13px;
+      color: var(--mf-text);
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .toggle-group {
+      display: inline-flex;
+      background: var(--mf-paper);
+      border: 1px solid var(--mf-paper-line);
+      border-radius: var(--mf-radius-md);
+      padding: 3px;
+      gap: 2px;
+    }
+    .toggle-group .opt {
+      padding: 6px 12px;
+      font-size: 13px;
+      border-radius: var(--mf-radius-sm);
+      color: var(--mf-text-soft);
+    }
+    .toggle-group .opt.is-active { background: var(--mf-paper-elevated); color: var(--mf-text); }
+
+    /* ——— Mode switch link ——— */
+    .mode-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: var(--mf-radius-pill);
+      background: var(--mf-paper-soft);
+      border: 1px solid var(--mf-paper-line);
+      color: var(--mf-text-soft);
+      font-family: var(--mf-font-mono);
+      font-size: 12px;
+      text-decoration: none;
+      transition: all var(--mf-dur) var(--mf-ease);
+    }
+    .mode-switch:hover { background: var(--mf-paper-elevated); color: var(--mf-text); }
+
+    /* ——— Colophon ——— */
+    .colophon {
+      margin-top: 96px;
+      padding-top: 32px;
+      border-top: 1px solid var(--mf-paper-line);
+      color: var(--mf-text-mute);
+      font-family: var(--mf-font-mono);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <header class="masthead">
+      <div class="lockup">
+        <span class="wordmark">MyFridge<span class="dot">.</span></span>
+        <span class="meta">Charte graphique — v3.0 · Mode jour</span>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <a class="mode-switch" href="charte-graphique.html">☾ Voir mode nuit</a>
+        <span class="meta">2026-04-29</span>
+      </div>
+    </header>
+
+    <!-- COVER -->
+    <section class="cover">
+      <h1>Un système <em>net</em>,<br/>en pleine lumière.</h1>
+      <p class="lede">La version diurne de MyFridge garde le même squelette que le mode nuit — mêmes tokens, mêmes composants, même voix. On retourne juste les surfaces&nbsp;: papier blanc, encre presque noire, et le vert pistache qui reste seul à signer la marque et l'action.</p>
+    </section>
+
+    <!-- 01 — PRINCIPES -->
+    <section class="chapter">
+      <div class="eyebrow">01 — Principes</div>
+      <h2>Mêmes principes, jour ou nuit.</h2>
+      <div class="grid grid-3" style="margin-top:32px;">
+        <div class="card">
+          <div class="label">01</div>
+          <h3 style="margin:8px 0 8px; font-size:18px;">Lisible avant d'être beau.</h3>
+          <p style="font-size:14px; margin:0;">Contraste élevé, hiérarchie claire, densité maîtrisée. Le foyer regarde l'app vite, souvent, parfois mains pleines.</p>
+        </div>
+        <div class="card">
+          <div class="label">02</div>
+          <h3 style="margin:8px 0 8px; font-size:18px;">Un seul accent.</h3>
+          <p style="font-size:14px; margin:0;">Le vert pistache fait tout&nbsp;: marque, action, frais, succès. Les autres couleurs sont des outils sémantiques, pas des décorations.</p>
+        </div>
+        <div class="card">
+          <div class="label">03</div>
+          <h3 style="margin:8px 0 8px; font-size:18px;">L'objet, jamais l'écran.</h3>
+          <p style="font-size:14px; margin:0;">Une carotte est une carotte. Vignette ronde, nom direct, méta discrète. L'app disparaît derrière son contenu.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 — COULEURS -->
+    <section class="chapter">
+      <div class="eyebrow">02 — Couleurs</div>
+      <h2>Papier, encre, et le même vert.</h2>
+      <p>Les surfaces empilées (papier → carte → hover) restent sur l'axe gris très froid, sans virer chaud — ça préserve la cohérence avec le mode nuit. Les variantes "ink" des couleurs sémantiques (vert, rouge, bleu, orange) sont les versions assombries pour le texte sur fond clair, indispensables pour le contraste WCAG AA.</p>
+
+      <div class="section-title">Surfaces</div>
+      <div class="grid grid-4">
+        <div class="swatch"><div class="sample" style="background:#FFFFFF; border-bottom:1px solid var(--mf-paper-line);"></div><div class="body"><span class="name">Paper</span><span class="hex">#FFFFFF</span><span class="var">--mf-paper</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#F5F7FA"></div><div class="body"><span class="name">Paper soft</span><span class="hex">#F5F7FA</span><span class="var">--mf-paper-soft</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#EEF1F5"></div><div class="body"><span class="name">Paper elevated</span><span class="hex">#EEF1F5</span><span class="var">--mf-paper-elevated</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#FFFFFF"><div class="inner-tag" style="border:1px solid #E2E8F0; background:transparent;"></div></div><div class="body"><span class="name">Paper line</span><span class="hex">#E2E8F0</span><span class="var">--mf-paper-line</span></div></div>
+      </div>
+
+      <div class="section-title">Encre (texte)</div>
+      <div class="grid grid-3">
+        <div class="swatch"><div class="sample" style="background:#FFFFFF"><div class="inner-tag" style="background:#0B1018;"></div></div><div class="body"><span class="name">Text</span><span class="hex">#0B1018</span><span class="var">--mf-text</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#FFFFFF"><div class="inner-tag" style="background:#475569;"></div></div><div class="body"><span class="name">Text soft</span><span class="hex">#475569</span><span class="var">--mf-text-soft</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#FFFFFF"><div class="inner-tag" style="background:#94A3B8;"></div></div><div class="body"><span class="name">Text mute</span><span class="hex">#94A3B8</span><span class="var">--mf-text-mute</span></div></div>
+      </div>
+
+      <div class="section-title">Vert pistache — marque, action, frais</div>
+      <div class="grid grid-4">
+        <div class="swatch"><div class="sample" style="background:#22C55E"></div><div class="body"><span class="name">Green</span><span class="hex">#22C55E</span><span class="var">--mf-green</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#16A34A"></div><div class="body"><span class="name">Green deep</span><span class="hex">#16A34A</span><span class="var">--mf-green-deep</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#15803D"></div><div class="body"><span class="name">Green ink</span><span class="hex">#15803D</span><span class="var">--mf-green-ink · texte</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#DCFCE7"></div><div class="body"><span class="name">Green soft</span><span class="hex">#DCFCE7</span><span class="var">--mf-green-soft · badge</span></div></div>
+      </div>
+
+      <div class="section-title">Sémantique (paire <em>color</em> + <em>ink</em>)</div>
+      <div class="grid grid-3">
+        <div class="swatch"><div class="sample" style="background:#EF4444; position:relative;"><div style="position:absolute; inset:0 0 0 50%; background:#B91C1C;"></div></div><div class="body"><span class="name">Danger</span><span class="hex">#EF4444 / #B91C1C</span><span class="var">--mf-danger / --mf-danger-ink</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#3B82F6; position:relative;"><div style="position:absolute; inset:0 0 0 50%; background:#1D4ED8;"></div></div><div class="body"><span class="name">Info</span><span class="hex">#3B82F6 / #1D4ED8</span><span class="var">--mf-info / --mf-info-ink</span></div></div>
+        <div class="swatch"><div class="sample" style="background:#D97706; position:relative;"><div style="position:absolute; inset:0 0 0 50%; background:#92400E;"></div></div><div class="body"><span class="name">Warning</span><span class="hex">#D97706 / #92400E</span><span class="var">--mf-warning / --mf-warning-ink</span></div></div>
+      </div>
+    </section>
+
+    <!-- 03 — TYPOGRAPHIE -->
+    <section class="chapter">
+      <div class="eyebrow">03 — Typographie</div>
+      <h2>Inter, du <em>display</em> au <em>caption</em>.</h2>
+      <p>Identique au mode nuit&nbsp;: une seule famille, Inter, du titre au méta. Les variations sont assurées par la graisse, la taille et l'espacement des lettres. <strong>JetBrains Mono</strong> couvre les unités, codes, dates, identifiants techniques.</p>
+
+      <div class="card" style="margin-top:32px;">
+        <div class="type-row"><span class="lbl">Display 1</span><span class="display-1">Liste de Courses</span></div>
+        <div class="type-row"><span class="lbl">Display 2</span><span class="display-2">Tout ranger</span></div>
+        <div class="type-row"><span class="lbl">Heading 1</span><span class="heading-1">Fruits et légumes</span></div>
+        <div class="type-row"><span class="lbl">Heading 2</span><span class="heading-2">Boucherie et poissonnerie</span></div>
+        <div class="type-row"><span class="lbl">Body Lg</span><span class="body-lg">Le foyer regarde, l'app répond.</span></div>
+        <div class="type-row"><span class="lbl">Body</span><span class="body">Carotte — 15 unités, ajouté par rburn.</span></div>
+        <div class="type-row"><span class="lbl">Body Sm</span><span class="body-sm">0 sur 6 articles terminés · Synchronisé</span></div>
+        <div class="type-row"><span class="lbl">Caption</span><span class="caption-text">RAYONS · MISE À JOUR 14:32</span></div>
+      </div>
+    </section>
+
+    <!-- 04 — ESPACE -->
+    <section class="chapter">
+      <div class="eyebrow">04 — Espace &amp; rayons</div>
+      <h2>Une trame, 4&nbsp;pixels.</h2>
+      <p>Identique au mode nuit. Toutes les distances dérivent de 4&nbsp;px. Trois familles de rayons&nbsp;: contrôles courts (<code>md 10px</code>), cartes (<code>lg 14px</code>), zones d'identité (<code>xl 20px</code>). Les pilules — badges, statuts — restent en pleine arrondie.</p>
+
+      <div class="card" style="margin-top:32px;">
+        <div class="label">Échelle d'espacement (×4&nbsp;px)</div>
+        <div class="spacing" style="margin-top:32px; padding-bottom:32px;">
+          <div class="bar" style="height:4px;"><span>4</span></div>
+          <div class="bar" style="height:8px;"><span>8</span></div>
+          <div class="bar" style="height:12px;"><span>12</span></div>
+          <div class="bar" style="height:16px;"><span>16</span></div>
+          <div class="bar" style="height:24px;"><span>24</span></div>
+          <div class="bar" style="height:32px;"><span>32</span></div>
+          <div class="bar" style="height:48px;"><span>48</span></div>
+          <div class="bar" style="height:64px;"><span>64</span></div>
+          <div class="bar" style="height:96px;"><span>96</span></div>
+        </div>
+
+        <div class="grid grid-4" style="margin-top:32px;">
+          <div><div style="height:80px; background:var(--mf-paper-elevated); border-radius:var(--mf-radius-xs); border:1px solid var(--mf-paper-line);"></div><div class="caption-text" style="margin-top:10px;">XS · 4px</div></div>
+          <div><div style="height:80px; background:var(--mf-paper-elevated); border-radius:var(--mf-radius-md); border:1px solid var(--mf-paper-line);"></div><div class="caption-text" style="margin-top:10px;">MD · 10px · contrôles</div></div>
+          <div><div style="height:80px; background:var(--mf-paper-elevated); border-radius:var(--mf-radius-lg); border:1px solid var(--mf-paper-line);"></div><div class="caption-text" style="margin-top:10px;">LG · 14px · cartes</div></div>
+          <div><div style="height:80px; background:var(--mf-paper-elevated); border-radius:var(--mf-radius-xl); border:1px solid var(--mf-paper-line);"></div><div class="caption-text" style="margin-top:10px;">XL · 20px · identités</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 — MOUVEMENT -->
+    <section class="chapter">
+      <div class="eyebrow">05 — Mouvement</div>
+      <h2>On entre vite, on ne s'agite pas.</h2>
+      <p>Identique au mode nuit. Durée par défaut <code>240&nbsp;ms</code>, easing <code>cubic-bezier(.16, 1, .3, 1)</code>. Hover&nbsp;: élévation discrète et changement de surface. Pas de transitions inutiles sur les couleurs de texte.</p>
+
+      <div class="grid grid-3" style="margin-top:32px;">
+        <div class="card motion-card">
+          <div class="label">HOVER · ÉLÉVATION</div>
+          <p style="margin:12px 0 0; color:var(--mf-text);">Survole-moi.</p>
+        </div>
+        <div class="card">
+          <div class="label">FOCUS · ANNEAU PISTACHE</div>
+          <input class="input" style="margin-top:12px;" placeholder="Cliquer ici" />
+        </div>
+        <div class="card">
+          <div class="label">DURÉES</div>
+          <ul style="list-style:none; padding:0; margin:14px 0 0; color:var(--mf-text-soft); font-size:14px; line-height:2;">
+            <li><code>120ms</code> — micro (toggle, check)</li>
+            <li><code>240ms</code> — par défaut</li>
+            <li><code>400ms</code> — entrée de page</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 — COMPOSANTS -->
+    <section class="chapter">
+      <div class="eyebrow">06 — Composants signés</div>
+      <h2>Mêmes pièces, fond clair.</h2>
+
+      <div class="section-title">Boutons</div>
+      <div class="card">
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
+          <button class="btn btn-primary">+ Tout ranger</button>
+          <button class="btn btn-ghost is-active">Par rayon</button>
+          <button class="btn btn-ghost">A-Z</button>
+          <button class="btn btn-danger">Supprimer</button>
+        </div>
+      </div>
+
+      <div class="section-title">Champs</div>
+      <div class="card">
+        <label class="caption-text">Sélectionner un article</label>
+        <input class="input" style="margin-top:10px;" placeholder="Rechercher ou ajouter un article..." />
+      </div>
+
+      <div class="section-title">Badges</div>
+      <div class="card">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <span class="badge badge-green">🥬 Légumes</span>
+          <span class="badge badge-green">Frais · 3j</span>
+          <span class="badge badge-warn">⚠ Expire bientôt</span>
+          <span class="badge badge-danger">Périmé</span>
+          <span class="badge badge-neutral">15 unités</span>
+        </div>
+      </div>
+
+      <div class="section-title">Filtre &amp; tri</div>
+      <div class="filter-bar">
+        <span class="funnel">▽</span>
+        <span class="select-mock">Tous <span style="color:var(--mf-text-mute);">▾</span></span>
+        <div class="toggle-group">
+          <span class="opt is-active">▦ Par rayon</span>
+          <span class="opt">↕ A-Z</span>
+        </div>
+      </div>
+
+      <div class="section-title">En-tête de page</div>
+      <div class="card" style="display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+        <div>
+          <h2 style="font-size:24px; margin:0; font-weight:700; letter-spacing:-.02em;">Liste de Courses</h2>
+          <div class="body-sm" style="margin-top:6px;">0 sur 6 articles terminés · <span style="color:var(--mf-green-ink);">● Synchronisé</span></div>
+        </div>
+        <div style="text-align:right;">
+          <div class="stat">0%</div>
+          <div class="caption-text">TERMINÉ</div>
+        </div>
+      </div>
+
+      <div class="section-title">Liste de courses (signature)</div>
+      <div class="list">
+        <div class="list-header">
+          <div class="title"><span class="ico">🍎</span> Fruits et légumes</div>
+          <span class="count">0/1 article <span style="color:var(--mf-text-mute);">▾</span></span>
+        </div>
+        <div class="list-row">
+          <span class="checkbox"></span>
+          <span class="thumb">🥕</span>
+          <div class="row-text">
+            <div class="name">Carotte</div>
+            <div style="margin-top:6px;"><span class="badge badge-green">🌿 Légumes</span></div>
+            <div class="meta">15 · Ajouté par rburn</div>
+          </div>
+          <div class="row-actions">
+            <button class="icon-btn edit" title="Éditer">✎</button>
+            <button class="icon-btn danger" title="Supprimer">🗑</button>
+          </div>
+        </div>
+        <div class="list-row">
+          <span class="checkbox is-checked"></span>
+          <span class="thumb">🍎</span>
+          <div class="row-text">
+            <div class="name" style="color:var(--mf-text-mute); text-decoration:line-through;">Pomme</div>
+            <div class="meta">6 · Ajouté par julien</div>
+          </div>
+          <div class="row-actions">
+            <button class="icon-btn muted" title="Éditer">✎</button>
+            <button class="icon-btn danger" title="Supprimer">🗑</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Carte d'article (mode mosaïque)</div>
+      <div class="grid grid-3">
+        <div class="card motion-card">
+          <div style="display:flex; align-items:start; justify-content:space-between;">
+            <div class="thumb" style="width:56px; height:56px; font-size:28px;">🧀</div>
+            <span class="badge badge-warn">⚠ J-2</span>
+          </div>
+          <h3 style="margin:16px 0 4px; font-size:17px;">Comté 18 mois</h3>
+          <p style="margin:0; font-size:13px; color:var(--mf-text-soft);">Frigo · 320&nbsp;g</p>
+        </div>
+        <div class="card motion-card">
+          <div style="display:flex; align-items:start; justify-content:space-between;">
+            <div class="thumb" style="width:56px; height:56px; font-size:28px;">🥬</div>
+            <span class="badge badge-green">Frais</span>
+          </div>
+          <h3 style="margin:16px 0 4px; font-size:17px;">Salade frisée</h3>
+          <p style="margin:0; font-size:13px; color:var(--mf-text-soft);">Frigo · 1 pièce</p>
+        </div>
+        <div class="card motion-card">
+          <div style="display:flex; align-items:start; justify-content:space-between;">
+            <div class="thumb" style="width:56px; height:56px; font-size:28px;">🍞</div>
+            <span class="badge badge-danger">Périmé</span>
+          </div>
+          <h3 style="margin:16px 0 4px; font-size:17px;">Pain de campagne</h3>
+          <p style="margin:0; font-size:13px; color:var(--mf-text-soft);">Pantry · 1 pièce</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 — VOIX -->
+    <section class="chapter">
+      <div class="eyebrow">07 — Voix</div>
+      <h2>On parle au foyer, pas à l'utilisateur.</h2>
+      <p>Phrases courtes, présent simple, verbe d'action en tête. Pas de "votre", pas de "élément", pas d'"opération réussie". Le système constate, il ne se félicite pas.</p>
+
+      <div class="voice" style="margin-top:32px;">
+        <div class="col yes">
+          <div class="verdict">✓ ON DIT</div>
+          <p>"Carotte ajoutée à la liste."</p>
+          <p>"3 articles à finir avant samedi."</p>
+          <p>"Tout est rangé."</p>
+        </div>
+        <div class="col no">
+          <div class="verdict">✕ ON ÉVITE</div>
+          <p>"L'élément Carotte a été ajouté avec succès à votre liste de courses."</p>
+          <p>"Vous avez actuellement 3 items en attente de validation."</p>
+          <p>"Opération réussie."</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 — DU CHARTER AU CODE -->
+    <section class="chapter">
+      <div class="eyebrow">08 — De la charte au code</div>
+      <h2>Tokens, sans détour.</h2>
+      <p>Mêmes structures que le mode nuit, autres valeurs. Le switch jour/nuit se fait via une classe sur <code>&lt;html&gt;</code> ou un <code>media (prefers-color-scheme)</code> qui réécrit les CSS variables — aucun composant ne change.</p>
+<pre><span class="com">/* :root — tokens canoniques (mode jour) */</span>
+<span class="key">--mf-paper</span>:           <span class="val">#FFFFFF</span>;
+<span class="key">--mf-paper-soft</span>:      <span class="val">#F5F7FA</span>;
+<span class="key">--mf-paper-elevated</span>:  <span class="val">#EEF1F5</span>;
+<span class="key">--mf-paper-line</span>:      <span class="val">#E2E8F0</span>;
+
+<span class="key">--mf-text</span>:            <span class="val">#0B1018</span>;
+<span class="key">--mf-text-soft</span>:       <span class="val">#475569</span>;
+<span class="key">--mf-text-mute</span>:       <span class="val">#94A3B8</span>;
+
+<span class="key">--mf-green</span>:           <span class="val">#22C55E</span>;
+<span class="key">--mf-green-deep</span>:      <span class="val">#16A34A</span>;
+<span class="key">--mf-green-ink</span>:       <span class="val">#15803D</span>;     <span class="com">/* texte sur fond clair */</span>
+<span class="key">--mf-green-soft</span>:      <span class="val">#DCFCE7</span>;     <span class="com">/* fond de badge */</span>
+
+<span class="key">--mf-danger</span>:          <span class="val">#EF4444</span>;
+<span class="key">--mf-danger-ink</span>:      <span class="val">#B91C1C</span>;
+<span class="key">--mf-danger-soft</span>:     <span class="val">#FEE2E2</span>;
+
+<span class="key">--mf-info</span>:            <span class="val">#3B82F6</span>;
+<span class="key">--mf-info-ink</span>:        <span class="val">#1D4ED8</span>;
+<span class="key">--mf-info-soft</span>:       <span class="val">#DBEAFE</span>;
+
+<span class="key">--mf-warning</span>:         <span class="val">#D97706</span>;     <span class="com">/* +sombre que le mode nuit pour le contraste */</span>
+<span class="key">--mf-warning-ink</span>:     <span class="val">#92400E</span>;
+<span class="key">--mf-warning-soft</span>:    <span class="val">#FEF3C7</span>;
+
+<span class="key">--mf-radius-md</span>:       <span class="val">10px</span>;
+<span class="key">--mf-radius-lg</span>:       <span class="val">14px</span>;
+<span class="key">--mf-radius-xl</span>:       <span class="val">20px</span>;
+
+<span class="key">--mf-dur</span>:             <span class="val">240ms</span>;
+<span class="key">--mf-ease-out</span>:        <span class="val">cubic-bezier(.16, 1, .3, 1)</span>;
+</pre>
+    </section>
+
+    <footer class="colophon">
+      <span>MyFridge — Charte graphique v3.0 · Mode jour</span>
+      <span>Inter · JetBrains Mono</span>
+      <span>2026-04-29</span>
+    </footer>
+  </div>
+</body>
+</html>

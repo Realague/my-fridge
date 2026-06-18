@@ -1,0 +1,4 @@
+services:
+  frontend:
+    ports:
+      - "${FRONTEND_PORT:-8081}:80"

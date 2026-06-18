@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
@@ -84,6 +86,9 @@ export const ConsumeIngredientsDialog = ({
   const [expandedIngredients, setExpandedIngredients] = useState<Set<string>>(new Set());
   const [showLeftovers, setShowLeftovers] = useState(false);
   const [cookedServings, setCookedServings] = useState<number>(recipe.servings);
+  // Default to off: most cook flows (eat what you cooked) shouldn't trigger
+  // a second modal asking about leftovers. Users with extra portions opt in.
+  const [saveLeftovers, setSaveLeftovers] = useState(false);
 
   const loadPreview = useCallback(
     async (s: number) => {
@@ -173,12 +178,24 @@ export const ConsumeIngredientsDialog = ({
         unit: d.unit,
       }));
 
+    // Helper: complete the cook flow without showing the leftovers prompt.
+    // Used when the user didn't opt to save leftovers (the common case) so we
+    // don't open a modal-on-modal just to immediately dismiss it.
+    const completeWithoutLeftovers = () => {
+      onCookComplete?.({ outcome: 'skipped' });
+      onClose();
+    };
+
     // Nothing to deduct (no matching stock, or user opted out): skip the API
-    // call and go straight to the leftovers step so the cook flow can still
-    // complete (and the meal can still be marked as cooked).
+    // call so the cook flow can still complete and the meal can still be marked
+    // as cooked.
     if (finalDeductions.length === 0) {
-      setCookedServings(servings);
-      setShowLeftovers(true);
+      if (saveLeftovers) {
+        setCookedServings(servings);
+        setShowLeftovers(true);
+      } else {
+        completeWithoutLeftovers();
+      }
       return;
     }
 
@@ -189,10 +206,15 @@ export const ConsumeIngredientsDialog = ({
         title: t('pages.recipes.consume.success'),
         description: t('pages.recipes.consume.successDescription', { count }),
       });
-      // Hand off to the leftovers step. We keep the consume dialog mounted but
-      // hidden so its state survives if the user dismisses the leftovers sheet.
-      setCookedServings(servings);
-      setShowLeftovers(true);
+      if (saveLeftovers) {
+        // Hand off to the leftovers step. We keep the consume dialog mounted
+        // but hidden so its state survives if the user dismisses the leftovers
+        // sheet.
+        setCookedServings(servings);
+        setShowLeftovers(true);
+      } else {
+        completeWithoutLeftovers();
+      }
     } catch {
       toast({
         title: t('messages.error.somethingWentWrong'),
@@ -224,21 +246,21 @@ export const ConsumeIngredientsDialog = ({
     }
     if (ingredient.availableStoredItems.length === 0) {
       return (
-        <Badge className="text-xs bg-red-100 text-red-800 hover:bg-red-100">
+        <Badge className="text-xs bg-mf-danger-soft text-mf-danger hover:bg-mf-danger-soft">
           {t('pages.recipes.consume.notInStock')}
         </Badge>
       );
     }
     if (ingredient.hasEnough) {
       return (
-        <Badge className="text-xs bg-green-100 text-green-800 hover:bg-green-100">
+        <Badge className="text-xs bg-mf-green-soft text-mf-green-deep hover:bg-mf-green-soft">
           <Check className="h-3 w-3 mr-1" />
           {t('pages.recipes.consume.sufficient')}
         </Badge>
       );
     }
     return (
-      <Badge className="text-xs bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+      <Badge className="text-xs bg-mf-warning-soft text-mf-warning hover:bg-mf-warning-soft">
         <AlertTriangle className="h-3 w-3 mr-1" />
         {t('pages.recipes.consume.partial')}
       </Badge>
@@ -268,7 +290,7 @@ export const ConsumeIngredientsDialog = ({
                 {si.isExpired ? (
                   <span className="text-destructive">{t('pages.recipes.consume.expired')}</span>
                 ) : si.isExpiringSoon ? (
-                  <span className="text-yellow-600">{t('pages.recipes.consume.expiringSoon')}</span>
+                  <span className="text-mf-warning">{t('pages.recipes.consume.expiringSoon')}</span>
                 ) : null}
               </span>
             )}
@@ -288,6 +310,7 @@ export const ConsumeIngredientsDialog = ({
               )
             }
             disabled={currentDeduction <= 0}
+            aria-label={t('a11y.consume.decreaseDeduction', { area: si.storageAreaName })}
           >
             <Minus className="h-3 w-3" />
           </Button>
@@ -302,6 +325,7 @@ export const ConsumeIngredientsDialog = ({
             min={0}
             max={si.quantity}
             step="any"
+            aria-label={t('a11y.consume.deductionInput', { area: si.storageAreaName })}
           />
           <Button
             variant="outline"
@@ -316,6 +340,7 @@ export const ConsumeIngredientsDialog = ({
               )
             }
             disabled={currentDeduction >= si.quantity}
+            aria-label={t('a11y.consume.increaseDeduction', { area: si.storageAreaName })}
           >
             <Plus className="h-3 w-3" />
           </Button>
@@ -354,16 +379,18 @@ export const ConsumeIngredientsDialog = ({
               className="h-8 w-8"
               onClick={() => handleServingsChange(servings - 1)}
               disabled={servings <= 1 || consumeLoading}
+              aria-label={t('a11y.consume.decreaseServings')}
             >
               <Minus className="h-4 w-4" />
             </Button>
-            <span className="w-8 text-center font-medium">{servings}</span>
+            <span className="w-8 text-center font-medium" aria-live="polite">{servings}</span>
             <Button
               variant="outline"
               size="icon"
               className="h-8 w-8"
               onClick={() => handleServingsChange(servings + 1)}
               disabled={consumeLoading}
+              aria-label={t('a11y.consume.increaseServings')}
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -398,7 +425,10 @@ export const ConsumeIngredientsDialog = ({
                     toggleIngredient(ingredient.recipeIngredientId)
                   }
                 >
-                  <CollapsibleTrigger className="w-full">
+                  <CollapsibleTrigger
+                    className="w-full"
+                    aria-label={t('a11y.consume.toggleIngredient', { name: getItemDisplayName(itemAsItem, t) })}
+                  >
                     <div className="flex items-center gap-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                       {isExpanded ? (
                         <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
@@ -440,6 +470,17 @@ export const ConsumeIngredientsDialog = ({
               );
             })
           )}
+        </div>
+
+        <div className="flex items-center gap-2 px-1 pt-2 border-t border-border">
+          <Checkbox
+            id="save-leftovers-toggle"
+            checked={saveLeftovers}
+            onCheckedChange={(v) => setSaveLeftovers(v === true)}
+          />
+          <Label htmlFor="save-leftovers-toggle" className="text-sm cursor-pointer select-none">
+            {t('pages.recipes.consume.saveLeftoversLabel')}
+          </Label>
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">

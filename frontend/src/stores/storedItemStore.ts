@@ -1,7 +1,10 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { toast } from 'sonner';
+import i18n from '@/i18n/config';
 import { StoredItem, CreateStoredItemRequest, UpdateStoredItemRequest, GetStoredItemsRequest, storedItemService } from '@/services/storedItemService';
+import { ItemCategory } from '@/types/enums';
+import { getItemDisplayName } from '@/utils/itemUtils';
 import { useHouseholdStore } from './householdStore';
 
 interface StoredItemStore {
@@ -226,23 +229,22 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }
 
         set({ loading: true, error: null });
-        
+
         try {
           const createdItem = await storedItemService.createStoredItem(householdId, data);
-          
-          toast.success("Item Added!", {
-            description: `Item has been added to storage successfully.`,
-          });
-          
-          const store = get();
-          store.addStoredItemToHousehold(createdItem);
+
+          const itemName = createdItem.item
+            ? getItemDisplayName(createdItem.item as never, i18n.t.bind(i18n))
+            : i18n.t('messages.storedItem.unnamed');
+
+          toast.success(i18n.t('messages.storedItem.created', { name: itemName }));
+
+          get().addStoredItemToHousehold(createdItem);
           return createdItem;
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Failed to create stored item';
+          const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.createFailed');
           set({ error: message });
-          toast.error("Failed to Add Item", {
-            description: message,
-          });
+          toast.error(i18n.t('messages.storedItem.createFailed'));
           throw error;
         } finally {
           set({ loading: false });
@@ -256,22 +258,21 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }
 
         set({ loading: true, error: null });
-        
+
         try {
           const updatedItem = await storedItemService.updateStoredItem(householdId, id, data);
-          
-          toast.success("Item Updated!", {
-            description: `Item has been updated successfully.`,
-          });
-          
-          const store = get();
-          store.updateStoredItemInHousehold(updatedItem);
+
+          const itemName = updatedItem.item
+            ? getItemDisplayName(updatedItem.item as never, i18n.t.bind(i18n))
+            : i18n.t('messages.storedItem.unnamed');
+
+          toast.success(i18n.t('messages.storedItem.updated', { name: itemName }));
+
+          get().updateStoredItemInHousehold(updatedItem);
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Failed to update stored item';
+          const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.updateFailed');
           set({ error: message });
-          toast.error("Update Failed", {
-            description: message,
-          });
+          toast.error(i18n.t('messages.storedItem.updateFailed'));
           throw error;
         } finally {
           set({ loading: false });
@@ -284,23 +285,59 @@ export const useStoredItemStore = create<StoredItemStore>()(
           throw new Error('No household ID provided');
         }
 
+        // Snapshot before deletion so we can restore on undo.
+        const snapshot = get().getStoredItemById(id);
+
         set({ loading: true, error: null });
-        
+
         try {
           await storedItemService.deleteStoredItem(householdId, id);
-          
-          toast.success("Item Removed!", {
-            description: `Item has been removed from storage.`,
+          get().removeStoredItemFromHousehold(id);
+
+          const itemName = snapshot?.item
+            ? getItemDisplayName(snapshot.item as never, i18n.t.bind(i18n))
+            : i18n.t('messages.storedItem.unnamed');
+
+          toast.success(i18n.t('messages.storedItem.deleted', { name: itemName }), {
+            duration: 8000,
+            action: snapshot
+              ? {
+                  label: i18n.t('messages.storedItem.undo'),
+                  onClick: async () => {
+                    try {
+                      const isCookedMeal = snapshot.item?.category === ItemCategory.COOKED_MEAL;
+                      const recreatePayload: CreateStoredItemRequest = {
+                        storageAreaId: snapshot.storageAreaId,
+                        quantity: Number(snapshot.quantity),
+                        unit: snapshot.unit,
+                        expirationDate: snapshot.expirationDate ?? undefined,
+                        location: snapshot.location ?? undefined,
+                        isOpened: snapshot.isOpened,
+                        openedDate: snapshot.openedDate ?? undefined,
+                        cookedDate: snapshot.cookedDate ?? undefined,
+                        ...(isCookedMeal
+                          ? {
+                              articleType: 'cooked_meal',
+                              name: snapshot.item?.name ?? '',
+                              recipeId: snapshot.item?.recipeId ?? null,
+                            }
+                          : { itemId: snapshot.itemId }),
+                      };
+                      const recreated = await storedItemService.createStoredItem(householdId, recreatePayload);
+                      get().addStoredItemToHousehold(recreated);
+                      toast.success(i18n.t('messages.storedItem.restored', { name: itemName }));
+                    } catch (err) {
+                      console.error('storedItem restore failed:', err);
+                      toast.error(i18n.t('messages.storedItem.restoreFailed'));
+                    }
+                  },
+                }
+              : undefined,
           });
-          
-          const store = get();
-          store.removeStoredItemFromHousehold(id);
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Failed to delete stored item';
+          const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.deleteFailed');
           set({ error: message });
-          toast.error("Delete Failed", {
-            description: message,
-          });
+          toast.error(i18n.t('messages.storedItem.deleteFailed'));
           throw error;
         } finally {
           set({ loading: false });
@@ -323,27 +360,42 @@ export const useStoredItemStore = create<StoredItemStore>()(
           }
           return { remaining: result.remaining };
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Failed to consume portion';
-          toast.error('Failed to consume portion', { description: message });
+          const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.consumePortionFailed');
+          toast.error(i18n.t('messages.storedItem.consumePortionFailed'));
           throw error;
         }
       },
 
       markAsOpened: async (id: string, openedDate?: string) => {
-        const store = get();
+        const householdId = getHouseholdId();
+        if (!householdId) {
+          throw new Error('No household ID provided');
+        }
+
         const today = openedDate || new Date().toISOString().split('T')[0];
-        
+
+        set({ loading: true, error: null });
         try {
-          await store.updateStoredItem(id, {
+          // Call the service directly to avoid the duplicate toast that
+          // updateStoredItem would emit; we want a single 'opened' toast here.
+          const updatedItem = await storedItemService.updateStoredItem(householdId, id, {
             isOpened: true,
             openedDate: today,
           });
-          
-          toast.success("Item Marked as Opened", {
-            description: `The item is now tracked with its opened date.`,
-          });
+          get().updateStoredItemInHousehold(updatedItem);
+
+          const itemName = updatedItem.item
+            ? getItemDisplayName(updatedItem.item as never, i18n.t.bind(i18n))
+            : i18n.t('messages.storedItem.unnamed');
+
+          toast.success(i18n.t('messages.storedItem.markedAsOpened', { name: itemName }));
         } catch (error) {
+          const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.markAsOpenedFailed');
+          set({ error: message });
+          toast.error(i18n.t('messages.storedItem.markAsOpenedFailed'));
           throw error;
+        } finally {
+          set({ loading: false });
         }
       },
 

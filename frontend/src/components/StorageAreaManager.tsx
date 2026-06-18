@@ -40,10 +40,8 @@ const StorageAreaManager = () => {
 
       setIsAddDialogOpen(false);
     } catch (error) {
-      const message = error instanceof Error ? error.message : t("messages.error.failedToCreateStorageArea");
-      toast.error(t("messages.error.creationFailed"), {
-        description: message,
-      });
+      console.error('createStorageArea failed:', error);
+      toast.error(t("messages.error.creationFailed"));
     }
   };
 
@@ -72,10 +70,8 @@ const StorageAreaManager = () => {
       setEditingArea(null);
       setIsEditDialogOpen(false);
     } catch (error) {
-      const message = error instanceof Error ? error.message : t("messages.error.failedToUpdateStorageArea");
-      toast.error(t("messages.error.updateFailed"), {
-        description: message,
-      });
+      console.error('updateStorageArea failed:', error);
+      toast.error(t("messages.error.updateFailed"));
     }
   };
 
@@ -87,10 +83,8 @@ const StorageAreaManager = () => {
         description: t("messages.success.storageAreaDeletedDescription", { name: area.name }),
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : t("messages.error.failedToDeleteStorageArea");
-      toast.error(t("messages.error.deleteFailed"), {
-        description: message,
-      });
+      console.error('deleteStorageArea failed:', error);
+      toast.error(t("messages.error.deleteFailed"));
     }
   };
 
@@ -115,8 +109,9 @@ const StorageAreaManager = () => {
       <CardHeader>
         <CardTitle className="flex items-center justify-between gap-2">
           <span>{t('storageAreaManager.title')}</span>
-          <Button 
-            className="bg-green-600 hover:bg-green-700 text-white shrink-0"
+          <Button
+            variant="green"
+            className="shrink-0"
             onClick={() => setIsAddDialogOpen(true)}
           >
             <Plus className="h-4 w-4 sm:mr-2" />
@@ -135,6 +130,7 @@ const StorageAreaManager = () => {
                   className="h-6 w-6 p-0"
                   disabled={index === 0}
                   onClick={() => handleMoveArea(index, 'up')}
+                  aria-label={t('a11y.storageArea.moveUp', { name: area.name })}
                 >
                   <ChevronUp className="h-4 w-4" />
                 </Button>
@@ -144,6 +140,7 @@ const StorageAreaManager = () => {
                   className="h-6 w-6 p-0"
                   disabled={index === storageAreas.length - 1}
                   onClick={() => handleMoveArea(index, 'down')}
+                  aria-label={t('a11y.storageArea.moveDown', { name: area.name })}
                 >
                   <ChevronDown className="h-4 w-4" />
                 </Button>
@@ -155,20 +152,22 @@ const StorageAreaManager = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button 
-                variant="editIconButton" 
-                size="icon" 
+              <Button
+                variant="editIconButton"
+                size="icon"
                 onClick={() => handleEditArea(area)}
                 className="h-8 w-8 p-0"
+                aria-label={t('storageAreaManager.editStorageArea')}
               >
                 <Edit className="h-4 w-4" />
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button 
-                    variant="deleteTrash" 
+                  <Button
+                    variant="deleteTrash"
                     size="icon"
                     className="h-8 w-8 p-0"
+                    aria-label={t('storageAreaManager.deleteStorageArea')}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -182,9 +181,9 @@ const StorageAreaManager = () => {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>{t('buttons.cancel')}</AlertDialogCancel>
-                    <AlertDialogAction 
+                    <AlertDialogAction
                       onClick={() => handleDeleteArea(area)}
-                      className="text-foreground bg-red-600 hover:bg-red-700"
+                      className="bg-mf-danger text-white hover:bg-mf-danger/90"
                     >
                       {t('buttons.delete')}
                     </AlertDialogAction>

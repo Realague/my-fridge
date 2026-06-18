@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardLinkOverlay, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,6 +18,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { X } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { scrollRevealFadeUp } from '@/lib/motion';
+import { difficultyTone, toneBadgeClass } from '@/lib/tokenMaps';
 
 const Recipes = () => {
   const { t } = useTranslation();
@@ -60,7 +61,6 @@ const Recipes = () => {
     if (error) {
       toast({
         title: t('messages.error.somethingWentWrong'),
-        description: error,
         variant: 'destructive',
       });
       clearError();
@@ -94,14 +94,7 @@ const Recipes = () => {
     }
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Easy': return 'bg-green-100 text-green-800';
-      case 'Medium': return 'bg-yellow-100 text-yellow-800';
-      case 'Hard': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const getDifficultyColor = (difficulty: string) => toneBadgeClass(difficultyTone(difficulty));
 
   // Note: Household checks are handled by useProtectedRoute hook
 
@@ -120,7 +113,6 @@ const Recipes = () => {
             <div className="flex gap-2 shrink-0">
               <Button
                 variant="outline"
-                className="touch-friendly"
                 onClick={() => navigate('/import-recipe')}
               >
                 <Download className="h-4 w-4 sm:mr-2" />
@@ -128,7 +120,6 @@ const Recipes = () => {
               </Button>
               <Button
                 variant="green"
-                className="touch-friendly"
                 onClick={() => navigate('/add-recipe')}
               >
                 <Plus className="h-4 w-4 sm:mr-2" />
@@ -230,10 +221,14 @@ const RecipeGrid = ({ activeTab, recipes, onToggleFavorite, getDifficultyColor }
   return (
     <div key={activeTab} className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {recipes.map((recipe) => (
-        <motion.div key={recipe.id} {...scrollRevealFadeUp(prefersReducedMotion)}>
-          <Card
-            className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden"
+        <motion.div key={recipe.id} {...scrollRevealFadeUp(prefersReducedMotion)} className="relative isolate">
+          <CardLinkOverlay
+            aria-label={recipe.title}
             onClick={() => navigate(`/recipes/${recipe.id}`)}
+          />
+          <Card
+            variant="elevated"
+            className="overflow-hidden pointer-events-none [&_button]:pointer-events-auto [&_button]:relative [&_button]:z-10"
           >
             {recipe.imageUrl && (
               <div className="w-full h-40 overflow-hidden bg-muted">
@@ -247,7 +242,7 @@ const RecipeGrid = ({ activeTab, recipes, onToggleFavorite, getDifficultyColor }
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <CardTitle className="text-lg">{recipe.title}</CardTitle>
+                  <CardTitle as="h3">{recipe.title}</CardTitle>
                   <CardDescription className="text-sm mt-1">
                     {recipe.description}
                   </CardDescription>
@@ -259,10 +254,11 @@ const RecipeGrid = ({ activeTab, recipes, onToggleFavorite, getDifficultyColor }
                     e.stopPropagation();
                     onToggleFavorite(recipe.id);
                   }}
-                  className="ml-2"
+                  className="ml-2 relative z-10 pointer-events-auto"
+                  aria-label={recipe.isFavorite ? t('pages.recipes.unfavorite') : t('pages.recipes.favorite')}
                 >
-                  <Heart 
-                    className={`h-4 w-4 ${recipe.isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
+                  <Heart
+                    className={`h-4 w-4 ${recipe.isFavorite ? 'fill-mf-danger text-mf-danger' : 'text-muted-foreground'}`}
                   />
                 </Button>
               </div>
@@ -314,7 +310,7 @@ const RecipeGridSkeleton = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {Array.from({ length: 6 }).map((_, index) => (
-        <Card key={index} className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card key={index} variant="elevated">
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">
               <div className="flex-1 space-y-2">

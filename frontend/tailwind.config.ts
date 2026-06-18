@@ -66,12 +66,43 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Charter palette bridged to Tailwind. Use `bg-mf-green`, `text-mf-danger`,
+				// `border-mf-night-line`, etc. instead of raw `green-600` / `red-500` /
+				// `rose-*` / `emerald-*` / `lime-*` so that drift between
+				// look-alike-but-not-identical Tailwind families disappears.
+				mf: {
+					night: 'var(--mf-night)',
+					'night-surface': 'var(--mf-night-surface)',
+					'night-elevated': 'var(--mf-night-elevated)',
+					'night-line': 'var(--mf-night-line)',
+					'night-line-soft': 'var(--mf-night-line-soft)',
+					text: 'var(--mf-text)',
+					'text-soft': 'var(--mf-text-soft)',
+					'text-mute': 'var(--mf-text-mute)',
+					green: 'var(--mf-green)',
+					'green-deep': 'var(--mf-green-deep)',
+					'green-leaf': 'var(--mf-green-leaf)',
+					'green-soft': 'var(--mf-green-soft)',
+					'green-ring': 'var(--mf-green-ring)',
+					danger: 'var(--mf-danger)',
+					'danger-soft': 'var(--mf-danger-soft)',
+					info: 'var(--mf-info)',
+					'info-soft': 'var(--mf-info-soft)',
+					warning: 'var(--mf-warning)',
+					'warning-soft': 'var(--mf-warning-soft)',
 				}
 			},
+			// Bridge directly to charter tokens so every `rounded-*` Tailwind
+			// utility resolves to a charter step. Drops the previous
+			// `var(--radius) ± 2px` heuristic that under-rendered controls
+			// (10 → 6 px) and cards (14 → 8 px).
 			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				xs: 'var(--mf-radius-xs)',  // 4 px — micro chips
+				sm: 'var(--mf-radius-sm)',  // 6 px — tags / small inputs
+				md: 'var(--mf-radius-md)',  // 10 px — controls (buttons, inputs)
+				lg: 'var(--mf-radius-lg)',  // 14 px — cards (charter heading)
+				xl: 'var(--mf-radius-xl)',  // 20 px — identities (hero tiles, modals)
 			},
 			keyframes: {
 				'accordion-down': {

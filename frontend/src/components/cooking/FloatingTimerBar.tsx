@@ -97,13 +97,32 @@ export function FloatingTimerBar() {
             <div className="flex items-center gap-1">
               {!isCompleted && (
                 <>
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => addTime(-60)} disabled={remainingSeconds <= 60}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => addTime(-60)}
+                    disabled={remainingSeconds <= 60}
+                    aria-label={t('a11y.timer.subtractMinute')}
+                  >
                     <Minus className="h-3.5 w-3.5" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => addTime(60)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => addTime(60)}
+                    aria-label={t('a11y.timer.addMinute')}
+                  >
                     <Plus className="h-3.5 w-3.5" />
                   </Button>
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={handleToggle}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={handleToggle}
+                    aria-label={isRunning ? t('a11y.timer.pause') : t('a11y.timer.resume')}
+                  >
                     {isRunning ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
                   </Button>
                 </>
@@ -113,6 +132,7 @@ export function FloatingTimerBar() {
                 size="icon"
                 className="h-8 w-8"
                 onClick={isCompleted ? handleDismiss : reset}
+                aria-label={isCompleted ? t('a11y.timer.dismiss') : t('a11y.timer.reset')}
               >
                 {isCompleted ? <X className="h-3.5 w-3.5" /> : <RotateCcw className="h-3.5 w-3.5" />}
               </Button>
@@ -129,17 +149,19 @@ export function FloatingTimerBar() {
                 type="number"
                 min="0"
                 placeholder="min"
+                aria-label={t('a11y.timer.minutesInput')}
                 value={customMinutes}
                 onChange={(e) => setCustomMinutes(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleStartCustom()}
                 className="w-14 h-7 text-xs text-center"
               />
-              <span className="text-muted-foreground text-xs">:</span>
+              <span className="text-muted-foreground text-xs" aria-hidden>:</span>
               <Input
                 type="number"
                 min="0"
                 max="59"
                 placeholder="sec"
+                aria-label={t('a11y.timer.secondsInput')}
                 value={customSeconds}
                 onChange={(e) => setCustomSeconds(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleStartCustom()}

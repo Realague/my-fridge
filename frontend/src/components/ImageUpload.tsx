@@ -159,7 +159,6 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       console.error('Image upload error:', error);
       toast({
         title: t('messages.error.uploadFailed'),
-        description: error instanceof Error ? error.message : t('messages.error.failedToUploadImage'),
         variant: 'destructive',
       });
       setPreview(currentImageUrl || null);
@@ -227,24 +226,26 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           )}
         </div>
       ) : (
-        <div
+        <button
+          type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="w-full h-48 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors cursor-pointer bg-muted/50 flex flex-col items-center justify-center gap-2"
+          aria-label={description}
+          className="w-full h-48 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-colors cursor-pointer bg-muted/50 flex flex-col items-center justify-center gap-2 appearance-none"
         >
           {uploading ? (
-            <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
+            <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" aria-hidden="true" />
           ) : (
             <>
               <div className="flex gap-4">
-                <Camera className="h-8 w-8 text-muted-foreground" />
-                <Upload className="h-8 w-8 text-muted-foreground" />
+                <Camera className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
+                <Upload className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
               </div>
               <p className="text-sm text-muted-foreground text-center px-4">
                 {description}
               </p>
             </>
           )}
-        </div>
+        </button>
       )}
     </div>
   );

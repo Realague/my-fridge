@@ -82,14 +82,14 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ open, onOpenCha
                   variant="ghost"
                   size="sm"
                   onClick={() => householdId && clearAll(householdId)}
-                  className="text-xs text-rose-600 hover:text-rose-700 px-2"
+                  className="text-xs text-mf-danger hover:text-mf-danger/80 px-2"
                 >
                   <Trash2 className="h-4 w-4" />
                   {t('notifications.clearAll')}
                 </Button>
               )}
               <DrawerClose asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0">
+                <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" aria-label={t('buttons.close')}>
                   <X className="h-4 w-4" />
                 </Button>
               </DrawerClose>
@@ -139,10 +139,10 @@ const NotificationRow: React.FC<NotificationRowProps> = ({ notification, onClick
 
   const bgClass = isUnread
     ? isReminder
-      ? 'bg-rose-50 dark:bg-rose-950/30'
-      : 'bg-amber-50 dark:bg-amber-950/30'
-    : 'bg-stone-50 dark:bg-stone-900/40';
-  const accent = isReminder ? 'border-l-rose-500' : 'border-l-amber-500';
+      ? 'bg-mf-danger-soft'
+      : 'bg-mf-warning-soft'
+    : 'bg-muted';
+  const accent = isReminder ? 'border-l-mf-danger' : 'border-l-mf-warning';
 
   const diffDays = daysFromToday(notification.expirationDate);
   const title =
@@ -178,7 +178,7 @@ const NotificationRow: React.FC<NotificationRowProps> = ({ notification, onClick
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <h4 className={`font-medium ${isUnread ? 'text-foreground' : 'text-muted-foreground'}`}>{title}</h4>
-              {isUnread && <div className="w-2 h-2 bg-emerald-500 rounded-full" />}
+              {isUnread && <div className="w-2 h-2 bg-mf-green rounded-full" />}
             </div>
             {message && <p className="text-sm text-muted-foreground mb-2">{message}</p>}
             <span className="text-xs text-muted-foreground">
@@ -196,7 +196,7 @@ const NotificationRow: React.FC<NotificationRowProps> = ({ notification, onClick
             variant="ghost"
             size="sm"
             onClick={onRemove}
-            className="h-8 w-8 p-0 hover:bg-rose-100 text-stone-400 hover:text-rose-600"
+            className="h-8 w-8 p-0 hover:bg-mf-danger-soft text-muted-foreground hover:text-mf-danger"
           >
             <X className="h-4 w-4" />
           </Button>

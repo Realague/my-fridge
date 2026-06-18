@@ -30,6 +30,7 @@ import { QuantitySelector } from '@/components/QuantitySelector';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { itemService } from '@/services/itemService';
 import { format } from 'date-fns';
 import { Unit, StorageAreaType, ITEM_CATEGORIES, ItemCategory } from '@/types/enums';
@@ -39,6 +40,7 @@ import { useDateFormat } from '@/utils/dateFormatting';
 import { toast } from 'sonner';
 import { SelectedItemPreview } from '@/components/SelectedItemPreview';
 import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
+import { freezerTone, toneBadgeClass, toneTextClass } from '@/lib/tokenMaps';
 import { formatQuantityWithUnit } from '@/utils/unitSystem';
 import { CategoryIcon } from '@/utils/categoryIcons';
 import { OpenedStatusToggle } from '@/components/OpenedStatusToggle';
@@ -67,21 +69,14 @@ const STORAGE_SORT_CRITERIA: StorageAreaSortCriterion[] = [
   'category',
 ];
 
-/** Text/badge color by share of recommended freezer time used (<70% blue, 70–90% orange, >90% red). */
+// Freezer health text/badge classes — share of recommended freezer time used
+// resolved onto charter info/warning/danger via lib/tokenMaps.
 function getFreezerColorClass(daysFrozen: number, recommendedDays: number): string {
-  const total = recommendedDays > 0 ? recommendedDays : 180;
-  const ratio = daysFrozen / total;
-  if (ratio > 0.9) return 'text-red-600 dark:text-red-400';
-  if (ratio >= 0.7) return 'text-orange-600 dark:text-orange-400';
-  return 'text-blue-600 dark:text-blue-400';
+  return toneTextClass(freezerTone(daysFrozen, recommendedDays));
 }
 
 function getFreezerBadgeClassName(daysFrozen: number, recommendedDays: number): string {
-  const total = recommendedDays > 0 ? recommendedDays : 180;
-  const ratio = daysFrozen / total;
-  if (ratio > 0.9) return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
-  if (ratio >= 0.7) return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400';
-  return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+  return toneBadgeClass(freezerTone(daysFrozen, recommendedDays));
 }
 
 /** Show X/Y congélation + tooltip whenever the row is in a freezer zone or has a frozenDate. */
@@ -127,6 +122,10 @@ const StorageArea = () => {
   // Store hooks
   const { getStorageAreaById, fetchStorageAreas, getStorageAreasForHousehold } = useStorageAreaStore();
   const storageAreasList = getStorageAreasForHousehold();
+
+  // Surface fetch errors instead of swallowing them silently.
+  useStoreErrorToast(useStoredItemStore((s) => s.error), useStoredItemStore((s) => s.setError));
+  useStoreErrorToast(useStorageAreaStore((s) => s.error), useStorageAreaStore((s) => s.setError));
   const {
     getStoredItemsByStorageArea,
     createStoredItem,
@@ -314,8 +313,8 @@ const StorageArea = () => {
     const badges = {
       'expired': <Badge variant="destructive" className="text-xs">{t('storageArea.expiredSince', { count: Math.abs(days) })}</Badge>,
       'expiring-soon': <Badge variant="destructive" className="text-xs">{t('storageArea.expiresIn', { days })}</Badge>,
-      'expiring-week': <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">{t('storageArea.expiresIn', { days })}</Badge>,
-      'fresh': <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">{t('storageArea.fresh', { days })}</Badge>
+      'expiring-week': <Badge variant="secondary" className="text-xs bg-mf-warning-soft text-mf-warning">{t('storageArea.expiresIn', { days })}</Badge>,
+      'fresh': <Badge variant="secondary" className="text-xs bg-mf-green-soft text-mf-green-deep">{t('storageArea.fresh', { days })}</Badge>
     };
     
     return badges[status];
@@ -480,7 +479,7 @@ const StorageArea = () => {
                   { t(`items.categories.${item.category}`) }
                 </Badge>
                 {storageItem.isOpened && (
-                  <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400">
+                  <Badge variant="secondary" className="text-xs bg-mf-warning-soft text-mf-warning">
                     <PackageOpen className="h-3 w-3 mr-1" />
                     {t('storedItems.opened')}
                   </Badge>
@@ -669,7 +668,7 @@ const StorageArea = () => {
                         );
                       })()}
                     {storageItem.isOpened && storageItem.openedDate && (
-                      <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
+                      <div className="flex items-center gap-1 text-mf-warning">
                         <PackageOpen className="h-3 w-3" />
                         <span>{t('storedItems.openedOn')} {formatDate(new Date(storageItem.openedDate), 'MMM d')}</span>
                       </div>
@@ -680,13 +679,13 @@ const StorageArea = () => {
             </div>
             
             {!isEditing && (
-              <div className="flex flex-col items-center gap-2">
+              <div className="flex flex-col items-center gap-3">
                 {isCookedMeal && (
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={handleConsumePortion}
-                    className="h-8 w-8 p-0"
+                    className="h-10 w-10 sm:h-8 sm:w-8 p-0"
                     aria-label={t('cookedMeal.consumePortion')}
                     title={t('cookedMeal.consumePortion')}
                   >
@@ -698,7 +697,7 @@ const StorageArea = () => {
                     variant="outline"
                     size="sm"
                     onClick={handleFreeze}
-                    className="h-8 w-8 p-0"
+                    className="h-10 w-10 sm:h-8 sm:w-8 p-0"
                     aria-label={t('pages.dashboard.expiringSoon.actionFreeze')}
                     title={t('pages.dashboard.expiringSoon.actionFreeze')}
                   >
@@ -709,7 +708,9 @@ const StorageArea = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => setEditingItem(storageItem.id)}
-                  className="h-8 w-8 p-0"
+                  className="h-10 w-10 sm:h-8 sm:w-8 p-0"
+                  aria-label={t('common.edit')}
+                  title={t('common.edit')}
                 >
                   <Edit className="h-4 w-4" />
                 </Button>
@@ -717,7 +718,9 @@ const StorageArea = () => {
                   variant="deleteTrash"
                   size="sm"
                   onClick={handleDelete}
-                  className="h-8 w-8 p-0"
+                  className="h-10 w-10 sm:h-8 sm:w-8 p-0 mt-1"
+                  aria-label={t('common.delete')}
+                  title={t('common.delete')}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -765,7 +768,7 @@ const StorageArea = () => {
             </div>
             <Button
               onClick={() => setShowAddForm(!showAddForm)}
-              className="flex items-center gap-2 touch-friendly shrink-0"
+              className="flex items-center gap-2 shrink-0"
               variant="green"
             >
               <Plus className="h-4 w-4 sm:mr-0" />
@@ -778,7 +781,7 @@ const StorageArea = () => {
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Add Item Form */}
         {showAddForm && (
-          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card variant="elevated">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -916,7 +919,7 @@ const StorageArea = () => {
             </Card>
           ) : storageItems.length > 0 ? (
             <>
-              <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+              <Card variant="elevated">
                 <CardContent className="p-4">
                   <div className="flex flex-wrap items-center gap-3">
                     <Filter className="h-5 w-5 text-muted-foreground shrink-0" aria-hidden />

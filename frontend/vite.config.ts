@@ -31,6 +31,9 @@ export default defineConfig(({ mode }) => {
         filename: 'sw.ts',
         injectManifest: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
+          // Default Workbox cap is 2 MiB; the main bundle currently sits just
+          // above it, so raise the limit to keep precaching the full app.
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         },
         devOptions: {
           enabled: true,

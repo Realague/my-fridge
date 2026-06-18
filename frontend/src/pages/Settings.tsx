@@ -153,7 +153,6 @@ const Settings = () => {
       console.error('Error updating profile:', error);
       toast({
         title: t('messages.error.updateFailed'),
-        description: error instanceof Error ? error.message : t('messages.error.failedToUpdateProfile'),
         variant: "destructive",
       });
     } finally {
@@ -179,7 +178,6 @@ const Settings = () => {
       console.error('Error updating low stock alerts preference:', error);
       toast({
         title: t('messages.error.updateFailed'),
-        description: error instanceof Error ? error.message : t('messages.error.failedToUpdateProfile'),
         variant: 'destructive',
       });
     } finally {
@@ -193,7 +191,12 @@ const Settings = () => {
       <div className="bg-card/90 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate(-1)}
+              aria-label={t('common.back')}
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="text-xl font-bold text-foreground">{t('pages.settings.title')}</h1>

@@ -93,11 +93,11 @@ export const PushOptInBanner = () => {
   };
 
   return (
-    <div className="rounded-lg border border-emerald-200 bg-emerald-50/70 dark:border-emerald-900 dark:bg-emerald-950/30 px-4 py-3">
+    <div className="rounded-lg border border-mf-green/30 bg-mf-green-soft/70 px-4 py-3">
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="flex items-start gap-3 flex-1 min-w-0">
-          <div className="mt-0.5 shrink-0 rounded-full bg-emerald-100 dark:bg-emerald-900/60 p-2">
-            <Bell className="h-4 w-4 text-emerald-700 dark:text-emerald-200" />
+          <div className="mt-0.5 shrink-0 rounded-full bg-mf-green-soft p-2">
+            <Bell className="h-4 w-4 text-mf-green-deep" />
           </div>
           <p className="text-sm text-foreground">
             {t('pages.dashboard.expiringSoon.pushOptIn.title')}
@@ -114,9 +114,9 @@ export const PushOptInBanner = () => {
           </Button>
           <Button
             size="sm"
+            variant="green"
             onClick={handleActivate}
             disabled={isLoading}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white"
           >
             {t('pages.dashboard.expiringSoon.pushOptIn.activate')}
           </Button>

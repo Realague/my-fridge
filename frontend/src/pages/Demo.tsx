@@ -52,15 +52,15 @@ const Demo = () => {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span>Milk</span>
-                      <span className="text-orange-600">Expires in 2 days</span>
+                      <span className="text-mf-warning">Expires in 2 days</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Carrots</span>
-                      <span className="text-green-600">Fresh</span>
+                      <span className="text-mf-green">Fresh</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Yogurt</span>
-                      <span className="text-green-600">Fresh</span>
+                      <span className="text-mf-green">Fresh</span>
                     </div>
                   </div>
                 </div>
@@ -76,15 +76,15 @@ const Demo = () => {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span>Ice Cream</span>
-                      <span className="text-green-600">Good</span>
+                      <span className="text-mf-green">Good</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Frozen Peas</span>
-                      <span className="text-green-600">Good</span>
+                      <span className="text-mf-green">Good</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Chicken</span>
-                      <span className="text-green-600">Good</span>
+                      <span className="text-mf-green">Good</span>
                     </div>
                   </div>
                 </div>
@@ -100,15 +100,15 @@ const Demo = () => {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span>Rice</span>
-                      <span className="text-green-600">Plenty</span>
+                      <span className="text-mf-green">Plenty</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Pasta</span>
-                      <span className="text-orange-600">Low stock</span>
+                      <span className="text-mf-warning">Low stock</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Canned Beans</span>
-                      <span className="text-green-600">Good</span>
+                      <span className="text-mf-green">Good</span>
                     </div>
                   </div>
                 </div>
@@ -134,22 +134,22 @@ const Demo = () => {
                   <div className="flex items-center gap-3">
                     <input type="checkbox" className="rounded" />
                     <span>Milk (1 gallon)</span>
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">Auto-added</span>
+                    <span className="text-xs bg-mf-info-soft text-mf-info px-2 py-1 rounded">Auto-added</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <input type="checkbox" className="rounded" />
                     <span>Pasta (2 boxes)</span>
-                    <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded">Low stock</span>
+                    <span className="text-xs bg-mf-warning-soft text-mf-warning px-2 py-1 rounded">Low stock</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <input type="checkbox" checked className="rounded" />
                     <span className="line-through text-muted-foreground">Tomatoes</span>
-                    <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Bought</span>
+                    <span className="text-xs bg-mf-green-soft text-mf-green-deep px-2 py-1 rounded">Bought</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <input type="checkbox" className="rounded" />
                     <span>Bread</span>
-                    <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">Manual</span>
+                    <span className="text-xs bg-mf-info-soft text-mf-info px-2 py-1 rounded">Manual</span>
                   </div>
                 </div>
               </div>
@@ -178,7 +178,7 @@ const Demo = () => {
                     </div>
                     <div className="bg-accent p-3 rounded-lg">
                       <div className="font-medium">Tuesday: Chicken Stir Fry</div>
-                      <div className="text-sm text-orange-700">⚠️ Need: Soy sauce, Ginger</div>
+                      <div className="text-sm text-mf-warning">⚠️ Need: Soy sauce, Ginger</div>
                     </div>
                     <div className="bg-accent p-3 rounded-lg">
                       <div className="font-medium">Wednesday: Veggie Burgers</div>

@@ -111,7 +111,13 @@ const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
           <Camera className="h-5 w-5" />
           {t('loyaltyCards.scanner.title')}
         </h2>
-        <Button variant="ghost" size="icon" onClick={onClose} className="text-white hover:bg-white/20">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClose}
+          className="text-white hover:bg-white/20"
+          aria-label={t('buttons.close')}
+        >
           <X className="h-5 w-5" />
         </Button>
       </div>
@@ -126,7 +132,7 @@ const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
           )}
           {error && (
             <div className="text-center text-white">
-              <p className="text-red-400 mb-4">{error}</p>
+              <p className="text-mf-danger mb-4">{error}</p>
               <Button variant="outline" onClick={onClose}>
                 {t('buttons.close')}
               </Button>

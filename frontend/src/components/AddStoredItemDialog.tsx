@@ -339,6 +339,12 @@ export const AddStoredItemDialog = ({
     submitting ||
     (articleType === 'ingredient' ? !selectedItem : !dishName.trim());
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (submitDisabled) return;
+    handleSubmit();
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl">
@@ -349,7 +355,7 @@ export const AddStoredItemDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <form onSubmit={handleFormSubmit} className="space-y-4">
           {/* Article type toggle */}
           <div>
             <Label className="text-sm font-medium mb-2 block">
@@ -395,6 +401,7 @@ export const AddStoredItemDialog = ({
                   placeholder={t('forms.searchOrAddItem')}
                   selectedItem={selectedItem}
                   className="w-full"
+                  autoFocus
                 />
               </div>
 
@@ -432,6 +439,7 @@ export const AddStoredItemDialog = ({
                     setTimeout(() => setShowRecipeSuggestions(false), 150);
                   }}
                   placeholder={t('cookedMeal.dishNamePlaceholder')}
+                  autoFocus
                 />
                 {showRecipeSuggestions && recipeMatches.length > 0 && (
                   <ul
@@ -622,29 +630,30 @@ export const AddStoredItemDialog = ({
                 )}
             </>
           )}
-        </div>
 
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={submitting}
-          >
-            {t('buttons.cancel')}
-          </Button>
-          <Button
-            variant="green"
-            onClick={handleSubmit}
-            disabled={submitDisabled}
-          >
-            <Plus className="h-4 w-4" />
-            {submitting
-              ? t('forms.adding')
-              : selectedArea
-              ? t('storageArea.addTo', { name: selectedArea.name })
-              : t('storageArea.addItem')}
-          </Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={submitting}
+            >
+              {t('buttons.cancel')}
+            </Button>
+            <Button
+              type="submit"
+              variant="green"
+              disabled={submitDisabled}
+            >
+              <Plus className="h-4 w-4" />
+              {submitting
+                ? t('forms.adding')
+                : selectedArea
+                ? t('storageArea.addTo', { name: selectedArea.name })
+                : t('storageArea.addItem')}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

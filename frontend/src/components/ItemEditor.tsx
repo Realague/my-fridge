@@ -208,7 +208,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
                   {availableUnits.length > 1 && (
                     <button
                       onClick={() => handleRemoveUnit(unit)}
-                      className="ml-1 hover:bg-red-100 rounded"
+                      className="ml-1 hover:bg-mf-danger-soft rounded"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -280,7 +280,7 @@ export const ItemEditor = ({ item, onSave, onCancel, onDelete }: ItemEditorProps
                   <AlertDialogCancel>{t('buttons.cancel')}</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleDelete}
-                    className="bg-red-600 hover:bg-red-700 text-white"
+                    className="bg-mf-danger text-white hover:bg-mf-danger/90"
                   >
                     {t('buttons.delete')}
                   </AlertDialogAction>

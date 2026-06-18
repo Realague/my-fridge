@@ -52,6 +52,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { useMyProductsPreferences } from '@/hooks/useMyProductsPreferences';
 import { useStorageAreaSuggestion } from '@/hooks/useStorageAreaSuggestion';
 import { itemService, type Item } from '@/services/itemService';
@@ -88,6 +89,10 @@ const MyProducts = () => {
   const { selectedHouseholdId } = useProtectedRoute();
   const currentUser = useAuthStore((state) => state.user);
   const prefersReducedMotion = useReducedMotion() ?? false;
+
+  // Surface fetch errors instead of swallowing them silently.
+  useStoreErrorToast(useStoredItemStore((s) => s.error), useStoredItemStore((s) => s.setError));
+  useStoreErrorToast(useStorageAreaStore((s) => s.error), useStorageAreaStore((s) => s.setError));
 
   const {
     fetchStoredItems,
@@ -415,7 +420,7 @@ const MyProducts = () => {
             <Button
               onClick={handleAddClick}
               variant="green"
-              className="hidden sm:inline-flex shrink-0 touch-friendly"
+              className="hidden sm:inline-flex shrink-0"
               aria-label={t('addStoredItemDialog.openButton')}
             >
               <Plus className="h-4 w-4" />
@@ -439,7 +444,7 @@ const MyProducts = () => {
           />
         </div>
 
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card variant="elevated">
           <CardContent className="p-4 space-y-3">
             <div className="flex flex-wrap items-center gap-3">
               <Filter className="h-5 w-5 text-muted-foreground shrink-0" aria-hidden />

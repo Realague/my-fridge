@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardLinkOverlay } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, ChefHat, MapPin, PackageOpen, Snowflake, Trash2, Utensils } from 'lucide-react';
@@ -145,7 +145,7 @@ export function MyProductsItemCard({
       return (
         <Badge
           variant="secondary"
-          className="text-xs bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400"
+          className="text-xs bg-mf-warning-soft text-mf-warning"
         >
           {t('storageArea.expiresIn', { days: daysUntilExpiration })}
         </Badge>
@@ -154,7 +154,7 @@ export function MyProductsItemCard({
     return (
       <Badge
         variant="secondary"
-        className="text-xs bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
+        className="text-xs bg-mf-green-soft text-mf-green-deep"
       >
         {t('storageArea.fresh', { days: daysUntilExpiration })}
       </Badge>
@@ -165,10 +165,14 @@ export function MyProductsItemCard({
     storedItem.isOpened && storedItem.openedDate ? getDaysSince(storedItem.openedDate) : null;
 
   return (
-    <Card
-      className="bg-card backdrop-blur-sm border-0 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200"
-      onClick={goToArea}
-    >
+    <div className="relative isolate">
+      <CardLinkOverlay
+        aria-label={`${getItemDisplayName(item, t)} — ${area?.name ?? ''}`}
+        onClick={goToArea}
+      />
+      <Card
+        className="bg-card backdrop-blur-sm border-0 shadow-lg mf-motion-card hover:shadow-xl pointer-events-none [&_button]:pointer-events-auto [&_button]:relative [&_button]:z-10 [&_a]:pointer-events-auto [&_a]:relative [&_a]:z-10"
+      >
       <CardContent className="p-4">
         <div className="flex items-start justify-between gap-3">
           <ItemImage
@@ -206,7 +210,7 @@ export function MyProductsItemCard({
               {storedItem.isOpened && (
                 <Badge
                   variant="secondary"
-                  className="text-xs bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400"
+                  className="text-xs bg-mf-warning-soft text-mf-warning"
                 >
                   <PackageOpen className="h-3 w-3 mr-1" />
                   {t('storedItems.opened')}
@@ -216,7 +220,7 @@ export function MyProductsItemCard({
               {(isFreezerArea || storedItem.frozenDate) && (
                 <Badge
                   variant="secondary"
-                  className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400"
+                  className="text-xs bg-mf-info-soft text-mf-info"
                 >
                   <Snowflake className="h-3 w-3 mr-1" />
                   {t('storedItems.frozen')}
@@ -262,7 +266,7 @@ export function MyProductsItemCard({
                 </div>
 
                 {isCookedMeal && storedItem.cookedDate && (
-                  <div className="flex items-center gap-1 text-lime-700 dark:text-lime-400">
+                  <div className="flex items-center gap-1 text-mf-green-deep">
                     <ChefHat className="h-3 w-3" />
                     <span>
                       {(() => {
@@ -280,7 +284,7 @@ export function MyProductsItemCard({
                 )}
 
                 {openedDaysAgo !== null && (
-                  <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
+                  <div className="flex items-center gap-1 text-mf-warning">
                     <PackageOpen className="h-3 w-3" />
                     <span>
                       {openedDaysAgo === 0
@@ -304,13 +308,13 @@ export function MyProductsItemCard({
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-3">
             {isCookedMeal && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleConsumePortion}
-                className="h-8 w-8 p-0"
+                className="h-10 w-10 sm:h-8 sm:w-8 p-0"
                 aria-label={t('cookedMeal.consumePortion')}
                 title={t('cookedMeal.consumePortion')}
               >
@@ -322,7 +326,7 @@ export function MyProductsItemCard({
                 variant="outline"
                 size="sm"
                 onClick={handleFreeze}
-                className="h-8 w-8 p-0"
+                className="h-10 w-10 sm:h-8 sm:w-8 p-0"
                 aria-label={t('pages.dashboard.expiringSoon.actionFreeze')}
                 title={t('pages.dashboard.expiringSoon.actionFreeze')}
               >
@@ -333,14 +337,16 @@ export function MyProductsItemCard({
               variant="deleteTrash"
               size="sm"
               onClick={handleDelete}
-              className="h-8 w-8 p-0"
+              className="h-10 w-10 sm:h-8 sm:w-8 p-0 mt-1"
               aria-label={t('buttons.delete')}
+              title={t('buttons.delete')}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
       </CardContent>
-    </Card>
+      </Card>
+    </div>
   );
 }

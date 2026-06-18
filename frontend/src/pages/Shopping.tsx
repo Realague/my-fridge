@@ -14,6 +14,7 @@ import { useShoppingStore, ShoppingItem } from '@/stores/shoppingStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
@@ -62,6 +63,10 @@ const Shopping = () => {
   
   const { getStorageAreasForHousehold, fetchStorageAreas } = useStorageAreaStore();
   const { createStoredItem } = useStoredItemStore();
+
+  // Surface fetch errors instead of swallowing them silently.
+  useStoreErrorToast(useShoppingStore((s) => s.error), useShoppingStore((s) => s.setError));
+  useStoreErrorToast(useStorageAreaStore((s) => s.error), useStorageAreaStore((s) => s.setError));
   
   const storageAreas = selectedHouseholdId ? getStorageAreasForHousehold() : [];
   const {
@@ -504,7 +509,7 @@ const Shopping = () => {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Package className="h-5 w-5 text-green-600" />
+              <Package className="h-5 w-5 text-primary" />
                {t('pages.shopping.addToStorage')}
             </DialogTitle>
           </DialogHeader>
@@ -626,13 +631,13 @@ const Shopping = () => {
                   {t('pages.shopping.itemsCompleted', { completed: completedCount, count: totalItems })}
                 </p>
                 <div className="flex items-center gap-1">
-                  <Users className="h-4 w-4 text-green-600" />
-                  <span className="text-xs text-green-600">{t('pages.shopping.synced')}</span>
+                  <Users className="h-4 w-4 text-primary" />
+                  <span className="text-xs text-primary">{t('pages.shopping.synced')}</span>
                 </div>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-2xl font-bold text-primary">
                 {Math.round((completedCount / totalItems) * 100) || 0}%
               </div>
               <div className="text-xs text-muted-foreground">{t('pages.shopping.complete')}</div>
@@ -651,16 +656,16 @@ const Shopping = () => {
         />
 
         {loading && (
-          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card variant="elevated">
             <CardContent className="p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-mf-green mx-auto mb-4"></div>
               <p className="text-muted-foreground">{t('pages.shopping.loadingShoppingList')}</p>
             </CardContent>
           </Card>
         )}
 
         {!loading && !selectedHouseholdId && (
-          <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card variant="elevated">
             <CardContent className="p-8 text-center">
               <p className="text-muted-foreground">{t('pages.shopping.selectHouseholdToView')}</p>
             </CardContent>
@@ -670,7 +675,7 @@ const Shopping = () => {
         {!loading && selectedHouseholdId && (
         <>
         {/* Category Filter + View Mode Toggle */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card variant="elevated">
           <CardContent className="p-4">
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-3">
@@ -766,7 +771,7 @@ const Shopping = () => {
                 </DragOverlay>
               </DndContext>
             ) : (
-              <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+              <Card variant="elevated">
                 <CardContent className="p-8 text-center text-muted-foreground">
                   <div className="text-4xl mb-2">
                     {categoryFilter === 'all' ? '🛒' : '📋'}
@@ -790,10 +795,10 @@ const Shopping = () => {
         ) : (
           <>
             {/* Pending Items (A-Z) */}
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card variant="elevated">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">
+                  <CardTitle>
                     {t('pages.shopping.toBuy')} ({pendingItemsAlpha.length})
                     {categoryFilter !== 'all' && (
                       <span className="text-sm font-normal text-muted-foreground ml-2">
@@ -852,9 +857,9 @@ const Shopping = () => {
             </Card>
 
             {/* Completed Items (A-Z) */}
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card variant="elevated">
               <CardHeader>
-                <CardTitle className="text-lg">
+                <CardTitle>
                   {t('pages.shopping.completed')} ({completedItemsAlpha.length})
                   {categoryFilter !== 'all' && (
                     <span className="text-sm font-normal text-muted-foreground ml-2">
@@ -863,7 +868,7 @@ const Shopping = () => {
                   )}
                   {loadingCompleted && (
                     <div className="inline-flex items-center gap-2 ml-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-mf-green"></div>
                       <span className="text-sm text-muted-foreground">{t('pages.shopping.loading')}</span>
                     </div>
                   )}
@@ -872,7 +877,7 @@ const Shopping = () => {
               <CardContent>
                 {loadingCompleted && completedItemsAlpha.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-mf-green mx-auto mb-4"></div>
                     <p>{t('pages.shopping.loadingCompletedItems')}</p>
                   </div>
                 ) : (

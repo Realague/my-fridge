@@ -5,16 +5,16 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:bg-muted disabled:text-mf-text-mute disabled:border-transparent [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        green: "bg-green-600 hover:bg-green-700 text-white",
-        delete: "border border-red-600 bg-card/90 hover:bg-red-700 hover:text-white text-red-700",
-        deleteTrash: "bg-transparent hover:bg-red-700 hover:text-white transition-opacity text-red-500",
+        green: "bg-[var(--mf-green)] hover:bg-[var(--mf-green-deep)] text-[#03150A]",
+        delete: "border border-mf-danger bg-card/90 text-mf-danger hover:bg-mf-danger hover:text-white",
+        deleteTrash: "bg-transparent text-mf-danger transition-opacity hover:bg-mf-danger hover:text-white",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         editIconButton: "hover:text-accent-foreground hover:bg-primary/10 transition-opacity",

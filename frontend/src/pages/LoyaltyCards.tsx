@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardButton, CardContent } from '@/components/ui/card';
 import { ArrowLeft, Plus, Trash2, CreditCard } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import BarcodeDisplay from '@/components/BarcodeDisplay';
@@ -10,6 +10,7 @@ import { StoreLogo } from '@/components/StoreSelector';
 import { useLoyaltyCardStore } from '@/stores/loyaltyCardStore';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import { getStoreBySlug } from '@/data/storeCatalog';
@@ -41,6 +42,9 @@ const LoyaltyCards = () => {
     getLoyaltyCardsForHousehold,
     loading,
   } = useLoyaltyCardStore();
+
+  // Surface fetch errors instead of swallowing them silently.
+  useStoreErrorToast(useLoyaltyCardStore((s) => s.error), useLoyaltyCardStore((s) => s.setError));
 
   const selectedHouseholdId = useHouseholdStore((s) => s.selectedHouseholdId);
   const households = useHouseholdStore((s) => s.households);
@@ -123,7 +127,7 @@ const LoyaltyCards = () => {
             variant="ghost"
             size="icon"
             onClick={() => setCardToDelete(selectedCard)}
-            className="text-red-400 hover:text-red-300 hover:bg-white/20"
+            className="text-mf-danger hover:text-mf-danger hover:bg-white/20"
           >
             <Trash2 className="h-5 w-5" />
           </Button>
@@ -188,7 +192,7 @@ const LoyaltyCards = () => {
             <h1 className="text-xl font-bold text-foreground">{t('loyaltyCards.title')}</h1>
             <Button
               variant="green"
-              className="touch-friendly shrink-0 flex items-center gap-2"
+              className="shrink-0 flex items-center gap-2"
               onClick={() => setShowForm(true)}
             >
               <Plus className="h-4 w-4" />
@@ -224,14 +228,16 @@ const LoyaltyCards = () => {
               const cardColor = catalogEntry?.color || card.color || '#6B7280';
 
               return (
-                <Card
+                <CardButton
                   key={card.id}
-                  className="overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02] border-0"
+                  className="overflow-hidden border-0"
                   onClick={() => setSelectedCard(card)}
+                  aria-label={`${card.storeName} — ${card.cardNumber}`}
                 >
                   <div
                     className="h-2"
                     style={{ backgroundColor: cardColor }}
+                    aria-hidden="true"
                   />
                   <CardContent className="p-4 flex items-center gap-4">
                     <CardLogo card={card} />
@@ -242,7 +248,7 @@ const LoyaltyCards = () => {
                       </p>
                     </div>
                   </CardContent>
-                </Card>
+                </CardButton>
               );
             })}
           </div>

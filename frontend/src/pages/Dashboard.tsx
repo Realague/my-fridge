@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardButton, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Settings, Users, Bell, List, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StorageAreaCard from '@/components/StorageAreaCard';
@@ -22,13 +22,14 @@ import {
   } from "@/components/ui/dropdown-menu";
 import { useAuthStore } from '@/stores/authStore';
 import { useHouseholdStore } from '@/stores/householdStore';
-import { useStorageAreasWithStats } from '@/stores/storageAreaStore';
+import { useStorageAreasWithStats, useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useShoppingStore } from '@/stores/shoppingStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useItemMinimumStore } from '@/stores/itemMinimumStore';
 import { useExpirationNotificationStore } from '@/stores/expirationNotificationStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
 import { scrollRevealFadeUp, scrollRevealSlideRight } from '@/lib/motion';
@@ -37,7 +38,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion() ?? false;
-  
+
   // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
   const [showNotifications, setShowNotifications] = useState(false);
   
@@ -51,6 +52,16 @@ const Dashboard = () => {
   const { recipes, fetchRecipes } = useRecipeStore();
   const { getItemMinimumsForHousehold, fetchItemMinimums, fetchLowStockItems } = useItemMinimumStore();
   const fetchNotifications = useExpirationNotificationStore((s) => s.fetchAll);
+
+  // Surface fetch errors as destructive toasts; clear after toasting so the
+  // same failure doesn't re-fire on every re-render. All hooks share the same
+  // sonner id, so simultaneous failures (e.g. offline) collapse into one toast.
+  useStoreErrorToast(useStorageAreaStore((s) => s.error), useStorageAreaStore((s) => s.setError));
+  useStoreErrorToast(useStoredItemStore((s) => s.error), useStoredItemStore((s) => s.setError));
+  useStoreErrorToast(useShoppingStore((s) => s.error), useShoppingStore((s) => s.setError));
+  useStoreErrorToast(useRecipeStore((s) => s.error), useRecipeStore((s) => s.setError));
+  useStoreErrorToast(useItemMinimumStore((s) => s.error), useItemMinimumStore((s) => s.setError));
+  useStoreErrorToast(useExpirationNotificationStore((s) => s.error), useExpirationNotificationStore((s) => s.setError));
   const unreadNotifications = useExpirationNotificationStore((s) =>
     s.notifications.filter((n) => !n.readByCurrentUser).length
   );
@@ -101,8 +112,8 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('common.loading')}</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-mf-green mx-auto mb-4"></div>
+          <p className="text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -147,9 +158,9 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <div className="bg-card/80 backdrop-blur-sm border-b border-border/20 sticky top-0 z-40">
+    <div className="min-h-screen bg-background pb-20 md:pb-6">
+      {/* Mobile-only header — on desktop, AppHeader (in AppShell) takes over. */}
+      <div className="bg-card/80 backdrop-blur-sm border-b border-border/20 sticky top-0 z-40 md:hidden">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <DropdownMenu>
@@ -188,15 +199,21 @@ const Dashboard = () => {
                 size="icon"
                 className="relative"
                 onClick={() => setShowNotifications(true)}
+                aria-label={t('a11y.openNotifications')}
               >
                 <Bell className="h-5 w-5" />
                 {unreadNotifications > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-[10px] bg-rose-500 text-white p-0 rounded-full">
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-[10px] bg-mf-danger text-white p-0 rounded-full">
                     {unreadNotifications > 9 ? '9+' : unreadNotifications}
                   </Badge>
                 )}
               </Button>
-              <Button variant="ghost" size="icon" onClick={() => navigate('/settings')}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/settings')}
+                aria-label={t('a11y.openSettings')}
+              >
                 <Settings className="h-5 w-5" />
               </Button>
             </div>
@@ -205,20 +222,21 @@ const Dashboard = () => {
       </div>
 
       <div className="container mx-auto px-4 py-6 space-y-6">
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {/* Quick Actions — hidden on desktop, the sidebar already exposes these. */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:hidden">
           {quickActions.map((action) => (
             <motion.div key={action.route} {...scrollRevealFadeUp(prefersReducedMotion)}>
-              <Card
-                className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+              <CardButton
+                variant="elevated"
                 onClick={() => navigate(action.route)}
+                aria-label={`${action.title} — ${action.description}`}
               >
                 <CardContent className="p-4 text-center">
                   <div className="text-2xl mb-2">{action.emoji}</div>
                   <div className="font-medium text-sm text-foreground">{action.title}</div>
                   <div className="text-xs text-muted-foreground">{action.description}</div>
                 </CardContent>
-              </Card>
+              </CardButton>
             </motion.div>
           ))}
         </div>
@@ -271,44 +289,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Recent Activity */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
-          <CardHeader>
-             <CardTitle className="text-lg">{t('pages.dashboard.recentActivity')}</CardTitle>
-             <CardDescription>{t('pages.dashboard.recentActivityDescription')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-accent rounded-lg">
-                <div className="w-8 h-8 bg-accent/50 rounded-full flex items-center justify-center">
-                  <span className="text-sm">🥛</span>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Sarah added milk to the fridge</p>
-                  <p className="text-xs text-muted-foreground">2 hours ago</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-accent rounded-lg">
-                <div className="w-8 h-8 bg-accent/50 rounded-full flex items-center justify-center">
-                  <span className="text-sm">🍞</span>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Low stock: Bread</p>
-                  <p className="text-xs text-muted-foreground">4 hours ago</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-accent rounded-lg">
-                <div className="w-8 h-8 bg-accent/50 rounded-full flex items-center justify-center">
-                  <span className="text-sm">📝</span>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">John completed shopping list</p>
-                  <p className="text-xs text-muted-foreground">Yesterday</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Recent Activity — hidden until a real activity feed exists.
+            Previously rendered hardcoded English mock rows (Sarah / John /
+            Yesterday) which leaked to FR/ES users on the home screen. */}
       </div>
 
       {/* Notification Drawer */}

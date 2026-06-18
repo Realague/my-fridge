@@ -276,7 +276,7 @@ const ActionRow = ({
         <img
           src={item.itemImageUrl}
           alt=""
-          className="h-9 w-9 flex-shrink-0 rounded-[8px] border border-[color:var(--mf-night-line)] object-cover"
+          className="h-9 w-9 flex-shrink-0 rounded-sm border border-[color:var(--mf-night-line)] object-cover"
         />
       ) : null}
 
@@ -348,7 +348,7 @@ const NoImpactRow = ({ item }: { item: MealRemovalNoImpactItemDto }) => {
         <img
           src={item.itemImageUrl}
           alt=""
-          className="h-9 w-9 flex-shrink-0 rounded-[8px] border border-[color:var(--mf-night-line)] object-cover"
+          className="h-9 w-9 flex-shrink-0 rounded-sm border border-[color:var(--mf-night-line)] object-cover"
         />
       ) : null}
       <div className="flex-1 min-w-0">

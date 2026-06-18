@@ -71,7 +71,6 @@ const MealsShoppingPreview = () => {
       .catch((error) => {
         toast({
           title: t('messages.error.somethingWentWrong'),
-          description: error instanceof Error ? error.message : '',
           variant: 'destructive',
         });
       })
@@ -190,7 +189,6 @@ const MealsShoppingPreview = () => {
     } catch (error) {
       toast({
         title: t('messages.error.somethingWentWrong'),
-        description: error instanceof Error ? error.message : '',
         variant: 'destructive',
       });
     } finally {
@@ -307,7 +305,7 @@ const MealsShoppingPreview = () => {
                         <img
                           src={item.itemImageUrl}
                           alt=""
-                          className="h-11 w-11 flex-shrink-0 rounded-[10px] border border-[color:var(--mf-night-line)] object-cover"
+                          className="h-11 w-11 flex-shrink-0 rounded-md border border-[color:var(--mf-night-line)] object-cover"
                         />
                       ) : (
                         <span className="mf-thumb">{categoryEmoji(item.itemCategory)}</span>
@@ -348,7 +346,7 @@ const MealsShoppingPreview = () => {
                         <img
                           src={item.itemImageUrl}
                           alt=""
-                          className="h-11 w-11 flex-shrink-0 rounded-[10px] border border-[color:var(--mf-night-line)] object-cover"
+                          className="h-11 w-11 flex-shrink-0 rounded-md border border-[color:var(--mf-night-line)] object-cover"
                         />
                       ) : (
                         <span className="mf-thumb">{categoryEmoji(item.itemCategory)}</span>
@@ -504,7 +502,7 @@ const PreviewRow = ({
         <img
           src={item.itemImageUrl}
           alt=""
-          className="h-11 w-11 flex-shrink-0 rounded-[10px] border border-[color:var(--mf-night-line)] object-cover"
+          className="h-11 w-11 flex-shrink-0 rounded-md border border-[color:var(--mf-night-line)] object-cover"
         />
       ) : (
         <span className="mf-thumb">{categoryEmoji(item.itemCategory)}</span>

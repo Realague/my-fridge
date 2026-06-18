@@ -207,7 +207,7 @@ const Row = ({ name, imageUrl, children }: RowProps) => (
         <img
           src={imageUrl}
           alt=""
-          className="h-8 w-8 flex-shrink-0 rounded-[8px] border border-[color:var(--mf-night-line)] object-cover"
+          className="h-8 w-8 flex-shrink-0 rounded-sm border border-[color:var(--mf-night-line)] object-cover"
         />
       ) : null}
       <span className="text-[14px] text-[color:var(--mf-text)] truncate">{name}</span>

@@ -20,23 +20,27 @@ const BottomNavigation = ({ currentPage }: BottomNavigationProps) => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-card/90 backdrop-blur-sm border-t border-border z-50">
+    <nav
+      aria-label={t('navigation.primary')}
+      className="fixed bottom-0 left-0 right-0 bg-card/90 backdrop-blur-sm border-t border-border z-50 md:hidden"
+    >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-around py-2">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentPage === item.id;
-            
+
             return (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => navigate(item.route)}
                 aria-label={item.label}
+                aria-current={isActive ? 'page' : undefined}
                 className={cn(
                   "flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-all duration-200",
                   isActive
-                    ? "text-green-600 bg-green-50 bg-primary/10"
+                    ? "text-primary bg-primary/10"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )}
               >
@@ -47,7 +51,7 @@ const BottomNavigation = ({ currentPage }: BottomNavigationProps) => {
           })}
         </div>
       </div>
-    </div>
+    </nav>
   );
 };
 

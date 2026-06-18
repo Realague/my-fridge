@@ -126,7 +126,7 @@ export function BulkStorageDialog({
       <DialogContent className="sm:max-w-lg max-h-[85vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <PackageCheck className="h-5 w-5 text-green-600" />
+            <PackageCheck className="h-5 w-5 text-mf-green" />
             {t('pages.shopping.bulkStorageTitle')}
           </DialogTitle>
         </DialogHeader>
@@ -153,7 +153,7 @@ export function BulkStorageDialog({
                 key={bulkItem.shoppingItem.id}
                 className={`rounded-lg border p-3 transition-colors ${
                   bulkItem.selected
-                    ? 'border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-950/20'
+                    ? 'border-mf-green/30 bg-mf-green-soft/60'
                     : 'border-border bg-muted/30 opacity-60'
                 }`}
               >

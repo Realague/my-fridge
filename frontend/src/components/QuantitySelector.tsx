@@ -161,7 +161,7 @@ export const QuantitySelector = ({
             type="number"
             value={quantity}
             onChange={(e) => handleQuantityChange(e.target.value)}
-            placeholder="Qty"
+            placeholder={t('forms.qtyPlaceholder')}
             className="w-20"
             min="0"
             step="1"

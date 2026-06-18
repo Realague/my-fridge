@@ -21,7 +21,7 @@ export const AvailabilitySummaryCard = ({
 
   if (loading && !availability) {
     return (
-      <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+      <Card variant="elevated">
         <CardContent className="p-6">
           <div className="h-16 animate-pulse rounded-md bg-muted" />
         </CardContent>
@@ -37,7 +37,7 @@ export const AvailabilitySummaryCard = ({
   const allCovered = missingCount === 0;
 
   return (
-    <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+    <Card variant="elevated">
       <CardHeader>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
@@ -53,7 +53,7 @@ export const AvailabilitySummaryCard = ({
           <div className="text-right">
             <div
               className={`text-2xl font-bold ${
-                allCovered ? 'text-green-600' : 'text-yellow-600'
+                allCovered ? 'text-mf-green' : 'text-mf-warning'
               }`}
             >
               {missingCount}
@@ -68,12 +68,12 @@ export const AvailabilitySummaryCard = ({
         <div className="flex items-end justify-between gap-4 border-t border-border pt-4 flex-wrap">
           <div className="flex flex-col gap-1.5 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <CheckCircle2 className="h-4 w-4 text-mf-green" />
               {t('pages.meals.availability.inStockLine', { count: inStockCount })}
             </div>
             {onShoppingListCount > 0 && (
               <div className="flex items-center gap-2">
-                <ShoppingBag className="h-4 w-4 text-yellow-600" />
+                <ShoppingBag className="h-4 w-4 text-mf-warning" />
                 {t('pages.meals.availability.onShoppingListLine', { count: onShoppingListCount })}
               </div>
             )}

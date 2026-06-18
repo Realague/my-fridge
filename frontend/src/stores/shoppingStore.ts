@@ -1,5 +1,8 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { toast } from 'sonner';
+import i18n from '@/i18n/config';
+import { getItemDisplayName } from '@/utils/itemUtils';
 import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 import { useHouseholdStore } from './householdStore';
 
@@ -263,7 +266,11 @@ export const useShoppingStore = create<ShoppingStore>()(
 
       deleteShoppingItem: async (id: string) => {
         set({ error: null });
-        
+
+        // Snapshot the item before delete so the undo path can recreate it
+        // verbatim. Mirrors storedItemStore.deleteStoredItem (Fix #2).
+        const snapshot = get().items.find((it) => it.id === id);
+
         try {
           const householdId = getHouseholdId();
           if (!householdId) {
@@ -272,19 +279,50 @@ export const useShoppingStore = create<ShoppingStore>()(
 
           const response = await apiService.delete(`/api/households/${householdId}/shopping/${id}`);
           const result = await response.json();
-          
+
           if (result.success) {
             set(state => ({
               items: state.items.filter(item => item.id !== id)
             }));
+
+            const itemName = snapshot?.item
+              ? getItemDisplayName(snapshot.item as never, i18n.t.bind(i18n))
+              : i18n.t('messages.storedItem.unnamed');
+
+            toast.success(i18n.t('messages.shoppingItem.deleted', { name: itemName }), {
+              duration: 8000,
+              action: snapshot && snapshot.item
+                ? {
+                    label: i18n.t('messages.storedItem.undo'),
+                    onClick: async () => {
+                      try {
+                        const recreated = await get().createShoppingItem({
+                          itemId: snapshot.item!.id,
+                          quantity: snapshot.quantity,
+                          unit: snapshot.unit,
+                          priority: snapshot.priority,
+                        });
+                        if (recreated) {
+                          toast.success(i18n.t('messages.shoppingItem.restored', { name: itemName }));
+                        }
+                      } catch (err) {
+                        console.error('shoppingItem restore failed:', err);
+                        toast.error(i18n.t('messages.storedItem.restoreFailed'));
+                      }
+                    },
+                  }
+                : undefined,
+            });
+
             return true;
           } else {
             throw new Error(result.error || 'Failed to delete shopping item');
           }
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Failed to delete shopping item';
+          const message = error instanceof Error ? error.message : i18n.t('messages.shoppingItem.deleteFailed');
           set({ error: message });
           console.error('deleteShoppingItem: Error:', error);
+          toast.error(i18n.t('messages.shoppingItem.deleteFailed'));
           return false;
         }
       },

@@ -121,15 +121,15 @@ export const ExpiringSoonCard = ({ householdId }: ExpiringSoonCardProps) => {
   };
 
   return (
-    <Card className="border-rose-200 bg-gradient-to-br from-rose-50 to-amber-50 dark:from-rose-950/20 dark:to-amber-950/20 dark:border-rose-900">
+    <Card className="border-mf-danger/30 bg-mf-danger-soft">
       <CardHeader className="px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div className="min-w-0">
-            <CardTitle className="flex items-center gap-2 text-rose-900 dark:text-rose-100">
+            <CardTitle className="flex items-center gap-2 text-mf-danger">
               <AlertCircle className="h-5 w-5 shrink-0" />
               <span className="truncate">{t('pages.dashboard.expiringSoon.title')}</span>
             </CardTitle>
-            <CardDescription className="text-rose-700 dark:text-rose-300 mt-1">
+            <CardDescription className="text-mf-text-soft mt-1">
               {t('pages.dashboard.expiringSoon.subtitle', { count: sortedItems.length })}
             </CardDescription>
           </div>
@@ -161,7 +161,7 @@ export const ExpiringSoonCard = ({ householdId }: ExpiringSoonCardProps) => {
           {!showAll && hiddenCount > 0 && (
             <Button
               variant="ghost"
-              className="w-full text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/20"
+              className="w-full text-mf-danger hover:bg-mf-danger-soft"
               onClick={() => setShowAll(true)}
             >
               {t('pages.dashboard.expiringSoon.viewMore', { count: hiddenCount })}
@@ -188,11 +188,11 @@ const ExpiringSoonRow = ({ item, pending, onDiscard, onFreeze, onRecipes }: RowP
   const isTomorrow = item.urgency === 'tomorrow';
 
   const containerClasses = [
-    'rounded-lg border bg-white dark:bg-gray-900 transition-colors',
-    isExpired ? 'border-rose-300 bg-rose-50 dark:bg-rose-950/40 dark:border-rose-800' : '',
-    !isExpired && isToday ? 'border-l-4 border-l-rose-500 border-rose-200 dark:border-rose-900' : '',
-    !isExpired && isTomorrow ? 'border-l-4 border-l-amber-500 border-amber-200 dark:border-amber-900' : '',
-    !isExpired && !isToday && !isTomorrow ? 'border-stone-200 dark:border-stone-800' : '',
+    'rounded-lg border bg-card transition-colors',
+    isExpired ? 'border-mf-danger/40 bg-mf-danger-soft' : '',
+    !isExpired && isToday ? 'border-l-4 border-l-mf-danger border-mf-danger/30' : '',
+    !isExpired && isTomorrow ? 'border-l-4 border-l-mf-warning border-mf-warning/30' : '',
+    !isExpired && !isToday && !isTomorrow ? 'border-mf-night-line' : '',
   ]
     .filter(Boolean)
     .join(' ');

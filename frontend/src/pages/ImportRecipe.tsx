@@ -16,6 +16,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { ItemSelector } from '@/components/ItemSelector';
 import { Item } from '@/services/itemService';
 import { getItemDisplayName } from '@/utils/itemUtils';
+import { difficultyTone, confidenceTone, toneBadgeClass } from '@/lib/tokenMaps';
 
 interface SelectedIngredient {
   originalText: string;
@@ -171,11 +172,7 @@ const ImportRecipe = () => {
     });
   };
 
-  const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.8) return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-    if (confidence >= 0.5) return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-    return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
-  };
+  const getConfidenceColor = (confidence: number) => toneBadgeClass(confidenceTone(confidence));
 
   const getConfidenceLabel = (confidence: number) => {
     if (confidence >= 0.8) return t('pages.importRecipe.highConfidence');
@@ -183,14 +180,7 @@ const ImportRecipe = () => {
     return t('pages.importRecipe.lowConfidence');
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Easy': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'Medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-      case 'Hard': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200';
-    }
-  };
+  const getDifficultyColor = (difficulty: string) => toneBadgeClass(difficultyTone(difficulty));
 
   const getDifficultyLabel = (difficulty: string) => {
     switch (difficulty) {
@@ -232,7 +222,7 @@ const ImportRecipe = () => {
 
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* URL Input Card */}
-        <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card variant="elevated">
           <CardHeader>
             <CardTitle>{t('pages.importRecipe.importFromMarmiton')}</CardTitle>
             <CardDescription>{t('pages.importRecipe.pasteUrl')}</CardDescription>
@@ -275,7 +265,7 @@ const ImportRecipe = () => {
         {/* Recipe Preview */}
         {parsedRecipe && (
           <>
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg overflow-hidden">
+            <Card variant="elevated" className="overflow-hidden">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
@@ -332,7 +322,7 @@ const ImportRecipe = () => {
                   <ol className="space-y-3">
                     {parsedRecipe.instructions.map((instruction, index) => (
                       <li key={index} className="flex gap-3">
-                        <span className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                        <span className="flex-shrink-0 w-6 h-6 bg-mf-green text-white rounded-full flex items-center justify-center text-sm font-medium">
                           {index + 1}
                         </span>
                         <span className="text-muted-foreground">{instruction.text}</span>
@@ -345,26 +335,26 @@ const ImportRecipe = () => {
 
             {/* Summary Card - Unmatched Ingredients */}
             {unmatchedCount > 0 && (
-              <Card className="bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800">
+              <Card className="bg-mf-warning-soft border-mf-warning/30">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base text-orange-800 dark:text-orange-200 flex items-center gap-2">
+                  <CardTitle className="text-base text-mf-warning flex items-center gap-2">
                     <AlertCircle className="h-5 w-5" />
                     {t('pages.importRecipe.unmatchedIngredients')} ({unmatchedCount})
                   </CardTitle>
-                  <CardDescription className="text-orange-700 dark:text-orange-300">
+                  <CardDescription className="text-mf-warning">
                     {t('pages.importRecipe.unmatchedIngredientsDescription')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-1 text-sm text-orange-800 dark:text-orange-200">
+                  <ul className="space-y-1 text-sm text-mf-warning">
                     {unmatchedIngredients.map(({ parsed, index }) => (
                       <li key={index} className="flex items-center gap-2">
-                        <span className="text-orange-600 dark:text-orange-400">•</span>
+                        <span className="text-mf-warning">•</span>
                         <span className="flex-1">{parsed.originalText}</span>
                         <Button
                           variant="outline"
                           size="sm"
-                          className="h-7 text-xs border-orange-300 dark:border-orange-700 hover:bg-orange-100 dark:hover:bg-orange-900"
+                          className="h-7 text-xs border-mf-warning/40 hover:bg-mf-warning-soft"
                           onClick={() => {
                             setSearchingIndex(index);
                             setExpandedIngredients(prev => new Set([...prev, index]));
@@ -383,13 +373,13 @@ const ImportRecipe = () => {
             )}
 
             {/* Matched Ingredients Card */}
-            <Card className="bg-card/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card variant="elevated">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="flex items-center gap-2">
                       {t('pages.importRecipe.matchedIngredients')}
-                      <Badge variant="secondary" className={`ml-2 ${matchedCount === totalCount ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : ''}`}>
+                      <Badge variant="secondary" className={`ml-2 ${matchedCount === totalCount ? 'bg-mf-green-soft text-mf-green-deep' : ''}`}>
                         {matchedCount}/{totalCount}
                       </Badge>
                     </CardTitle>
@@ -412,9 +402,9 @@ const ImportRecipe = () => {
                           key={index}
                           id={`ingredient-${index}`}
                           className={`border rounded-lg p-4 transition-colors ${
-                            selected?.itemId 
-                              ? 'border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-950/30'
-                              : 'border-orange-200 bg-orange-50/50 dark:border-orange-800 dark:bg-orange-950/30'
+                            selected?.itemId
+                              ? 'border-mf-green/30 bg-mf-green-soft/60'
+                              : 'border-mf-warning/30 bg-mf-warning-soft/60'
                           }`}
                         >
                           {/* Original ingredient text */}
@@ -474,7 +464,7 @@ const ImportRecipe = () => {
                                       <span className="text-sm truncate">
                                         {selected.translatedName}
                                       </span>
-                                      <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                                      <Check className="h-4 w-4 text-mf-green flex-shrink-0" />
                                     </div>
                                     {matchedIng.bestMatch && (
                                       <Tooltip>
@@ -514,13 +504,13 @@ const ImportRecipe = () => {
                                 ) : (
                                   <div className="flex-1 flex items-center gap-2">
                                     <div 
-                                      className="flex-1 bg-background border border-orange-300 dark:border-orange-700 rounded-md px-3 py-2 h-9 flex items-center gap-2 cursor-pointer hover:bg-orange-50 dark:hover:bg-orange-950/50"
+                                      className="flex-1 bg-background border border-mf-warning/40 rounded-md px-3 py-2 h-9 flex items-center gap-2 cursor-pointer hover:bg-mf-warning-soft"
                                       onClick={() => {
                                         setSearchingIndex(index);
                                         setExpandedIngredients(prev => new Set([...prev, index]));
                                       }}
                                     >
-                                      <AlertCircle className="h-4 w-4 text-orange-500" />
+                                      <AlertCircle className="h-4 w-4 text-mf-warning" />
                                       <span className="text-sm text-muted-foreground">
                                         {t('pages.importRecipe.noMatch')} - {t('pages.importRecipe.clickToSearch')}
                                       </span>

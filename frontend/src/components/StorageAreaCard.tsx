@@ -1,4 +1,4 @@
-import { Card, CardContent } from '@/components/ui/card';
+import { CardButton, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -21,9 +21,10 @@ const StorageAreaCard = ({ area, onClick }: StorageAreaCardProps) => {
   const { t } = useTranslation();
 
   return (
-    <Card
-      className="bg-card/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-102 cursor-pointer"
+    <CardButton
+      variant="elevated"
       onClick={onClick}
+      aria-label={`${area.name} — ${t(`storageArea.types.${area.type}`)} — ${t('storageArea.itemCount', { count: area.itemCount })}${area.lowStockCount > 0 ? `, ${area.lowStockCount} ${t('storageArea.low')}` : ''}`}
     >
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
@@ -41,7 +42,7 @@ const StorageAreaCard = ({ area, onClick }: StorageAreaCardProps) => {
           </div>
           <div className="flex items-center gap-3">
             {area.lowStockCount > 0 && (
-              <Badge variant="destructive" className="bg-orange-500 hover:bg-orange-600">
+              <Badge variant="destructive" className="bg-mf-warning text-white hover:bg-mf-warning/90">
                 {area.lowStockCount} {t('storageArea.low')}
               </Badge>
             )}
@@ -49,7 +50,7 @@ const StorageAreaCard = ({ area, onClick }: StorageAreaCardProps) => {
           </div>
         </div>
       </CardContent>
-    </Card>
+    </CardButton>
   );
 };
 

@@ -11,6 +11,7 @@ import { ItemImage } from '@/components/ItemImage';
 import { useItemMinimumStore } from '@/stores/itemMinimumStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { getTranslatedUnitLabel } from '@/utils/unitSystem';
@@ -24,13 +25,16 @@ const ItemMinimums = () => {
   const prefersReducedMotion = useReducedMotion() ?? false;
   const { selectedHouseholdId } = useProtectedRoute();
   
-  const { 
-    getItemMinimumsForHousehold, 
-    fetchItemMinimums, 
+  const {
+    getItemMinimumsForHousehold,
+    fetchItemMinimums,
     deleteItemMinimum,
-    loading 
+    loading
   } = useItemMinimumStore();
   const { getStoredItemsByItemAndUnit } = useStoredItemStore();
+
+  // Surface fetch errors instead of swallowing them silently.
+  useStoreErrorToast(useItemMinimumStore((s) => s.error), useItemMinimumStore((s) => s.setError));
   
   const [showDialog, setShowDialog] = useState(false);
   const [editingMinimumId, setEditingMinimumId] = useState<string | null>(null);
@@ -182,7 +186,7 @@ const ItemMinimums = () => {
                                   {t('itemMinimum.lowStock')}
                                 </Badge>
                               ) : (
-                                <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                <Badge variant="secondary" className="text-xs bg-mf-green-soft text-mf-green-deep">
                                   <CheckCircle className="h-3 w-3 mr-1" />
                                   {t('itemMinimum.inStock')}
                                 </Badge>
@@ -210,7 +214,7 @@ const ItemMinimums = () => {
                                 </div>
                               )}
                               {lowStock && (
-                                <div className="text-orange-600 dark:text-orange-400">
+                                <div className="text-mf-warning">
                                   {t('itemMinimum.quantityNeeded', {
                                     quantity: (minimum.minimumQuantity - currentStock).toFixed(1),
                                     unit: getTranslatedUnitLabel(

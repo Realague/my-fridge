@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Plus, UtensilsCrossed, Users } from 'lucide-react';
+import { toast as sonnerToast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -10,8 +11,10 @@ import BottomNavigation from '@/components/BottomNavigation';
 import { MealRow } from '@/components/meals/MealRow';
 import { AvailabilitySummaryCard } from '@/components/meals/AvailabilitySummaryCard';
 import { MealRemovalImpactDialog } from '@/components/meals/MealRemovalImpactDialog';
+import { ConsumeIngredientsDialog } from '@/components/ConsumeIngredientsDialog';
 import { useMealStore } from '@/stores/mealStore';
-import type { MealRemovalImpactDto } from '@/services/mealService';
+import { useRecipeStore } from '@/stores/recipeStore';
+import type { MealDto, MealRemovalImpactDto } from '@/services/mealService';
 import { motion, useReducedMotion } from 'framer-motion';
 import { scrollRevealFadeUp } from '@/lib/motion';
 
@@ -35,11 +38,14 @@ const Meals = () => {
     removeMeal,
     getRemovalImpact,
     confirmRemoval,
+    markMealCooked,
   } = useMealStore();
+  const fetchRecipes = useRecipeStore((s) => s.fetchRecipes);
 
   const [preparingList] = useState(false);
   const [removalImpact, setRemovalImpact] = useState<MealRemovalImpactDto | null>(null);
   const [pendingRemovalId, setPendingRemovalId] = useState<string | null>(null);
+  const [cookingMeal, setCookingMeal] = useState<MealDto | null>(null);
 
   useEffect(() => {
     if (selectedHouseholdId) fetchMeals();
@@ -48,6 +54,12 @@ const Meals = () => {
   useEffect(() => {
     if (selectedHouseholdId) fetchAvailability();
   }, [selectedHouseholdId, meals, fetchAvailability]);
+
+  // Recipes are needed by the leftovers dialog autocomplete inside the cook
+  // flow (recipe link). Pre-fetch lazily on first render.
+  useEffect(() => {
+    if (selectedHouseholdId) void fetchRecipes();
+  }, [selectedHouseholdId, fetchRecipes]);
 
   const adjust = async (id: string, delta: number) => {
     const meal = meals.find((m) => m.id === id);
@@ -110,6 +122,55 @@ const Meals = () => {
 
   const prepareList = () => {
     navigate('/meals/shopping-preview');
+  };
+
+  const handleCook = (meal: MealDto) => {
+    if (!meal.recipe) return;
+    setCookingMeal(meal);
+  };
+
+  const handleCookComplete = async (result: {
+    outcome: 'saved' | 'skipped';
+    portions?: number;
+    areaId?: string;
+    areaName?: string;
+  }) => {
+    const meal = cookingMeal;
+    if (!meal) return;
+
+    try {
+      await markMealCooked(meal.id);
+    } catch (error) {
+      toast({
+        title: t('messages.error.somethingWentWrong'),
+        description: error instanceof Error ? error.message : '',
+        variant: 'destructive',
+      });
+      return;
+    } finally {
+      setCookingMeal(null);
+    }
+
+    const recipeTitle = meal.recipe?.title ?? '';
+    if (result.outcome === 'saved' && result.portions && result.areaId && result.areaName) {
+      sonnerToast.success(
+        t('pages.meals.toasts.cookedSavedTitle', {
+          count: result.portions,
+          dish: recipeTitle,
+          area: result.areaName,
+        }),
+        {
+          action: {
+            label: t('addStoredItemDialog.toastView'),
+            onClick: () => navigate(`/storage/${result.areaId}`),
+          },
+        }
+      );
+    } else {
+      sonnerToast.success(
+        t('pages.meals.toasts.cookedSkippedTitle', { dish: recipeTitle })
+      );
+    }
   };
 
   const count = meals.length;
@@ -178,6 +239,7 @@ const Meals = () => {
                       onIncrement={() => adjust(meal.id, 1)}
                       onDecrement={() => adjust(meal.id, -1)}
                       onRemove={() => handleRemove(meal.id)}
+                      onCook={() => handleCook(meal)}
                     />
                   </motion.div>
                 ))}
@@ -220,6 +282,20 @@ const Meals = () => {
         saving={removing}
         onConfirm={handleRemovalConfirm}
       />
+
+      {cookingMeal?.recipe && (
+        <ConsumeIngredientsDialog
+          isOpen={!!cookingMeal}
+          onClose={() => setCookingMeal(null)}
+          recipe={{
+            id: cookingMeal.recipe.id,
+            title: cookingMeal.recipe.title,
+            servings: cookingMeal.recipe.servings,
+          }}
+          initialServings={cookingMeal.servings}
+          onCookComplete={handleCookComplete}
+        />
+      )}
 
       <BottomNavigation currentPage="meals" />
     </div>

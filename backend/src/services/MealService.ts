@@ -102,6 +102,21 @@ export class MealService {
     await this.mealRepository.deleteAndRepack(id, householdId);
   }
 
+  /**
+   * Marks a meal as cooked. The row stays in the table (for stats) but the
+   * meal disappears from the active plan. Idempotent: marking an already
+   * cooked meal is a no-op that still returns the dto.
+   */
+  async markMealCooked(id: string, householdId: string): Promise<MealDto> {
+    const meal = await this.mealRepository.findById(id, false);
+    if (!meal || meal.householdId !== householdId) {
+      throw new NotFoundError('Meal not found');
+    }
+    const updated = await this.mealRepository.markCooked(id, householdId);
+    if (!updated) throw new NotFoundError('Meal not found');
+    return this.transformToDto(updated);
+  }
+
   async getAvailability(householdId: string): Promise<MealsAvailabilityDto> {
     const totals = await this.aggregateNeeds(householdId);
     const expiringItemIds = await this.findExpiringItemIds(householdId);
@@ -692,6 +707,7 @@ export class MealService {
       recipeId: meal.recipeId,
       servings: meal.servings,
       position: meal.position,
+      cookedAt: meal.cookedAt ? meal.cookedAt.toISOString() : null,
       createdAt: meal.createdAt.toISOString(),
       updatedAt: meal.updatedAt.toISOString(),
       recipe: recipe

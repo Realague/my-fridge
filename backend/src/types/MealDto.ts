@@ -13,6 +13,7 @@ export interface MealDto {
   recipeId: string;
   servings: number;
   position: number;
+  cookedAt: string | null;
   createdAt: string;
   updatedAt: string;
   recipe?: {

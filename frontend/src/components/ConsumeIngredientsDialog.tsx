@@ -17,6 +17,8 @@ import {
 } from '@/components/ui/collapsible';
 import { Minus, Plus, ChevronDown, ChevronRight, AlertTriangle, Check, Package } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
+import { useHouseholdStore } from '@/stores/householdStore';
+import { useAuthStore } from '@/stores/authStore';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName } from '@/utils/itemUtils';
@@ -27,12 +29,26 @@ import {
   ConsumeDeduction,
   RecipeDto,
 } from '@/services/recipeService';
+import {
+  LeftoverPortionsDialog,
+  type LeftoverPortionsResult,
+} from '@/components/meals/LeftoverPortionsDialog';
+import { useStorageAreaSuggestion } from '@/hooks/useStorageAreaSuggestion';
+import { ItemCategory } from '@/types/enums';
+
+type ConsumeRecipeArg = Pick<RecipeDto, 'id' | 'title' | 'servings'>;
 
 interface ConsumeIngredientsDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  recipe: RecipeDto;
+  recipe: ConsumeRecipeArg;
   initialServings?: number;
+  /**
+   * Fires once the full cook flow (deduction + leftovers prompt) completes.
+   * Called for both 'saved' and 'skipped' outcomes. Use this to mark a meal
+   * as cooked or otherwise reflect that the recipe was made.
+   */
+  onCookComplete?: (result: LeftoverPortionsResult) => void;
 }
 
 interface DeductionMap {
@@ -47,6 +63,7 @@ export const ConsumeIngredientsDialog = ({
   onClose,
   recipe,
   initialServings,
+  onCookComplete,
 }: ConsumeIngredientsDialogProps) => {
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -57,10 +74,16 @@ export const ConsumeIngredientsDialog = ({
     consumeIngredients,
     clearConsumePreview,
   } = useRecipeStore();
+  const selectedHouseholdId = useHouseholdStore((s) => s.selectedHouseholdId);
+  const userId = useAuthStore((s) => s.user?.id);
+  const { memory: suggestionMemory, recordUsage: recordAreaUsage } =
+    useStorageAreaSuggestion(userId);
 
   const [servings, setServings] = useState(recipe.servings);
   const [deductions, setDeductions] = useState<DeductionMap>({});
   const [expandedIngredients, setExpandedIngredients] = useState<Set<string>>(new Set());
+  const [showLeftovers, setShowLeftovers] = useState(false);
+  const [cookedServings, setCookedServings] = useState<number>(recipe.servings);
 
   const loadPreview = useCallback(
     async (s: number) => {
@@ -77,8 +100,10 @@ export const ConsumeIngredientsDialog = ({
     if (isOpen) {
       const s = initialServings ?? recipe.servings;
       setServings(s);
+      setCookedServings(s);
       setDeductions({});
       setExpandedIngredients(new Set());
+      setShowLeftovers(false);
       loadPreview(s);
     } else {
       clearConsumePreview();
@@ -148,11 +173,12 @@ export const ConsumeIngredientsDialog = ({
         unit: d.unit,
       }));
 
+    // Nothing to deduct (no matching stock, or user opted out): skip the API
+    // call and go straight to the leftovers step so the cook flow can still
+    // complete (and the meal can still be marked as cooked).
     if (finalDeductions.length === 0) {
-      toast({
-        title: t('pages.recipes.consume.noDeductions'),
-        variant: 'destructive',
-      });
+      setCookedServings(servings);
+      setShowLeftovers(true);
       return;
     }
 
@@ -163,7 +189,10 @@ export const ConsumeIngredientsDialog = ({
         title: t('pages.recipes.consume.success'),
         description: t('pages.recipes.consume.successDescription', { count }),
       });
-      onClose();
+      // Hand off to the leftovers step. We keep the consume dialog mounted but
+      // hidden so its state survives if the user dismisses the leftovers sheet.
+      setCookedServings(servings);
+      setShowLeftovers(true);
     } catch {
       toast({
         title: t('messages.error.somethingWentWrong'),
@@ -171,6 +200,15 @@ export const ConsumeIngredientsDialog = ({
         variant: 'destructive',
       });
     }
+  };
+
+  const handleLeftoverComplete = (result: LeftoverPortionsResult) => {
+    if (result.outcome === 'saved' && result.areaId) {
+      recordAreaUsage(result.areaId, ItemCategory.COOKED_MEAL);
+    }
+    onCookComplete?.(result);
+    setShowLeftovers(false);
+    onClose();
   };
 
   const hasAnyDeduction = Object.values(deductions).some((d) => d.quantity > 0);
@@ -288,7 +326,16 @@ export const ConsumeIngredientsDialog = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <>
+    <Dialog
+      open={isOpen && !showLeftovers}
+      onOpenChange={(open) => {
+        // Defensive: if Radix fires a close event while we're handing off to
+        // the leftovers step (open prop transitioned to false because we set
+        // showLeftovers), don't bubble it up as a user-initiated close.
+        if (!open && !showLeftovers) onClose();
+      }}
+    >
       <DialogContent className="max-w-lg max-h-[85vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>{t('pages.recipes.consume.title')}</DialogTitle>
@@ -401,15 +448,38 @@ export const ConsumeIngredientsDialog = ({
           </Button>
           <Button
             onClick={handleConfirm}
-            disabled={!hasAnyDeduction || consumeLoading}
+            disabled={consumeLoading}
             variant="green"
           >
             {consumeLoading
               ? t('common.loading')
-              : t('pages.recipes.consume.confirm')}
+              : hasAnyDeduction
+              ? t('pages.recipes.consume.confirm')
+              : t('pages.recipes.consume.confirmNoDeductions')}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
+
+    {selectedHouseholdId && (
+      <LeftoverPortionsDialog
+        open={showLeftovers}
+        onOpenChange={(open) => {
+          // The dialog itself reports skip via onComplete when closed; we just
+          // hide it here to avoid re-firing.
+          if (!open) setShowLeftovers(false);
+        }}
+        householdId={selectedHouseholdId}
+        recipe={{
+          id: recipe.id,
+          title: recipe.title,
+          servings: recipe.servings,
+        }}
+        defaultPortions={cookedServings}
+        suggestionMemory={suggestionMemory}
+        onComplete={handleLeftoverComplete}
+      />
+    )}
+    </>
   );
 };

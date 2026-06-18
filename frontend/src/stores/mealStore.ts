@@ -25,6 +25,7 @@ interface MealStore {
   addMeal: (recipeId: string, servings?: number) => Promise<MealDto | null>;
   updateServings: (id: string, servings: number) => Promise<void>;
   removeMeal: (id: string) => Promise<void>;
+  markMealCooked: (id: string) => Promise<void>;
   fetchAvailability: () => Promise<void>;
   fetchRecipesAvailability: () => Promise<void>;
   fetchShoppingPreview: () => Promise<ShoppingPreviewDto>;
@@ -104,6 +105,19 @@ export const useMealStore = create<MealStore>((set, get) => ({
       set({ meals: get().meals.filter((m) => m.id !== id) });
     } finally {
       set({ removing: false });
+    }
+  },
+
+  markMealCooked: async (id) => {
+    const householdId = getHouseholdId();
+    if (!householdId) throw new Error('No household selected');
+    set({ saving: true });
+    try {
+      await mealService.markCooked(householdId, id);
+      // Cooked meals disappear from the active plan.
+      set({ meals: get().meals.filter((m) => m.id !== id) });
+    } finally {
+      set({ saving: false });
     }
   },
 

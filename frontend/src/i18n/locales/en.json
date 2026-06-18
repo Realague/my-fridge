@@ -36,6 +36,21 @@
       "cancel": "Cancel"
     }
   },
+  "leftoverPortionsDialog": {
+    "kicker": "Batch cooking",
+    "title": "Got leftover portions?",
+    "recipeServings_one": "Recipe planned for {{count}} serving.",
+    "recipeServings_other": "Recipe planned for {{count}} servings.",
+    "decrement": "One less portion",
+    "increment": "One more portion",
+    "portionsHelper_one": "{{count}} portion to keep.",
+    "portionsHelper_other": "{{count}} portions to keep.",
+    "portionsHelperZero": "Nothing to keep — tap “No, nothing to keep”.",
+    "storageAreaLabel": "Where to store?",
+    "expirationLabel": "Expiration date",
+    "skip": "No, nothing to keep",
+    "save": "Save"
+  },
   "buttons": {
     "add": "Add",
     "save": "Save",
@@ -592,6 +607,7 @@
       "editRecipe": "Edit recipe",
       "addRecipe": "Add a recipe",
       "removeMeal": "Remove",
+      "cookMeal": "I cooked it",
       "increaseServings": "One more serving",
       "decreaseServings": "One less serving",
       "minutes_one": "{{count}} min",
@@ -656,7 +672,10 @@
         "mealRemoved": "Off the menu.",
         "shoppingListReady": "List ready.",
         "shoppingListReadyDescription_one": "{{count}} item to buy.",
-        "shoppingListReadyDescription_other": "{{count}} items to buy."
+        "shoppingListReadyDescription_other": "{{count}} items to buy.",
+        "cookedSavedTitle_one": "{{count}} portion of {{dish}} added to {{area}}.",
+        "cookedSavedTitle_other": "{{count}} portions of {{dish}} added to {{area}}.",
+        "cookedSkippedTitle": "{{dish}} marked as cooked."
       }
     },
     "mealsShopping": {
@@ -813,6 +832,7 @@
         "expired": "Expired",
         "expiringSoon": "Expiring soon",
         "confirm": "Confirm consumption",
+        "confirmNoDeductions": "Continue without deducting",
         "noDeductions": "No deductions selected",
         "noIngredients": "This recipe has no ingredients",
         "success": "Ingredients consumed",

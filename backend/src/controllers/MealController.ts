@@ -190,6 +190,26 @@ export class MealController {
     }
   }
 
+  async markCooked(req: Request, res: Response): Promise<void> {
+    try {
+      const { householdId, id } = req.params as { householdId: string; id: string };
+      const meal = await this.mealService.markMealCooked(id, householdId);
+      const response: ApiResponse<typeof meal> = {
+        success: true,
+        data: meal,
+        message: 'Meal marked as cooked',
+      };
+      res.json(response);
+    } catch (error) {
+      console.error('Error marking meal as cooked:', error);
+      const status = this.statusFromError(error);
+      res.status(status).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to mark meal as cooked',
+      });
+    }
+  }
+
   async confirmRemoval(req: Request, res: Response): Promise<void> {
     try {
       const { householdId, id } = req.params as { householdId: string; id: string };

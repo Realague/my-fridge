@@ -281,7 +281,7 @@ const ItemMinimums = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <BottomNavigation currentPage="settings" />
+      <BottomNavigation currentPage="more" />
     </div>
   );
 };

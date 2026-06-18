@@ -297,7 +297,7 @@ const Meals = () => {
         />
       )}
 
-      <BottomNavigation currentPage="meals" />
+      <BottomNavigation currentPage="more" />
     </div>
   );
 };

@@ -2,9 +2,56 @@
   "navigation": {
     "home": "Inicio",
     "products": "Productos",
+    "storage": "Almacenamiento",
     "shopping": "Compras",
     "meals": "Comidas",
-    "recipes": "Recetas"
+    "recipes": "Recetas",
+    "more": "Más"
+  },
+  "cookedMeal": {
+    "articleType": {
+      "label": "Tipo de artículo",
+      "ingredient": "Ingrediente",
+      "cookedMeal": "Plato cocinado"
+    },
+    "badge": "Plato cocinado",
+    "dishNamePlaceholder": "Nombre del plato (ej. Curry, Lasaña…)",
+    "dishNameLabel": "Nombre del plato",
+    "linkRecipeLabel": "Vincular a la receta «{{title}}»",
+    "linkedRecipe": "Receta vinculada",
+    "openRecipe": "Abrir receta",
+    "cookingDateLabel": "Fecha de cocción",
+    "portionsLabel": "Número de porciones",
+    "cookedAgo": "Cocinado {{when}}",
+    "cookedToday": "Cocinado hoy",
+    "portionsLeft_one": "Te queda {{count}} porción de {{name}}",
+    "portionsLeft_other": "Te quedan {{count}} porciones de {{name}}",
+    "consumePortion": "Consumir una porción",
+    "discardDishToast": "Plato descartado",
+    "deleteRecipe": {
+      "title": "¿Eliminar esta receta?",
+      "intro": "Receta: {{title}}",
+      "impact_one": "Esta receta se usa para {{portions}} porción de {{dishName}} actualmente en stock.",
+      "impact_other": "Esta receta se usa para {{portions}} porciones de {{dishName}} actualmente en stock.",
+      "warning": "Eliminar la receta también eliminará el artículo plato cocinado y todas las porciones en stock.",
+      "confirm": "Eliminar de todos modos",
+      "cancel": "Cancelar"
+    }
+  },
+  "leftoverPortionsDialog": {
+    "kicker": "Batch cooking",
+    "title": "¿Te quedan porciones?",
+    "recipeServings_one": "Receta prevista para {{count}} porción.",
+    "recipeServings_other": "Receta prevista para {{count}} porciones.",
+    "decrement": "Una porción menos",
+    "increment": "Una porción más",
+    "portionsHelper_one": "{{count}} porción para guardar.",
+    "portionsHelper_other": "{{count}} porciones para guardar.",
+    "portionsHelperZero": "Nada que guardar — toca «No, nada que guardar».",
+    "storageAreaLabel": "¿Dónde guardar?",
+    "expirationLabel": "Fecha de caducidad",
+    "skip": "No, nada que guardar",
+    "save": "Guardar"
   },
   "cookedMeal": {
     "articleType": {
@@ -403,6 +450,54 @@
     "googleTokenCopied": "El token de Google ha sido copiado al portapapeles para pruebas de API."
   },
   "pages": {
+    "more": {
+      "title": "Más",
+      "sections": {
+        "cooking": "🍳 Cocina",
+        "stock": "📦 Despensa",
+        "shopping": "🛒 Compras",
+        "account": "⚙️ Cuenta"
+      },
+      "storageAreas": {
+        "title": "Almacenamientos",
+        "description": "Consulta tus espacios de almacenamiento",
+        "empty": "Aún no hay almacenamiento"
+      },
+      "features": {
+        "meals": {
+          "title": "Plan de comidas",
+          "description": "Planifica tus comidas"
+        },
+        "itemMinimums": {
+          "title": "Stock mínimo",
+          "description": "Tus artículos para reponer"
+        },
+        "loyaltyCards": {
+          "title": "Tarjetas de fidelidad",
+          "description": "Tus tarjetas de tiendas"
+        },
+        "profile": {
+          "title": "Perfil",
+          "description": "Tu cuenta y preferencias"
+        },
+        "household": {
+          "title": "Hogar",
+          "description": "Miembros y configuración del hogar"
+        },
+        "notifications": {
+          "title": "Notificaciones",
+          "description": "Preferencias de notificaciones"
+        },
+        "preferences": {
+          "title": "Preferencias",
+          "description": "Idioma, tema y más"
+        },
+        "signOut": {
+          "title": "Cerrar sesión",
+          "description": "Cierra sesión en tu cuenta"
+        }
+      }
+    },
     "dashboard": {
       "title": "Tablero",
       "welcome": "Bienvenido a MyFridge",

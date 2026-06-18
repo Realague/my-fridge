@@ -727,7 +727,7 @@ const MyProducts = () => {
 
       <AddStorageAreaDialog open={addAreaOpen} onOpenChange={setAddAreaOpen} />
 
-      <BottomNavigation currentPage="products" />
+      <BottomNavigation currentPage="storage" />
     </div>
   );
 };

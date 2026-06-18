@@ -53,6 +53,51 @@
     "skip": "Non, rien à garder",
     "save": "Enregistrer"
   },
+  "cookedMeal": {
+    "articleType": {
+      "label": "Type d'article",
+      "ingredient": "Ingrédient",
+      "cookedMeal": "Plat cuisiné"
+    },
+    "badge": "Plat cuisiné",
+    "dishNamePlaceholder": "Nom du plat (ex. Curry, Lasagnes…)",
+    "dishNameLabel": "Nom du plat",
+    "linkRecipeLabel": "Lier à la recette « {{title}} »",
+    "linkedRecipe": "Recette liée",
+    "openRecipe": "Voir la recette",
+    "cookingDateLabel": "Date de cuisson",
+    "portionsLabel": "Nombre de portions",
+    "cookedAgo": "Cuisiné {{when}}",
+    "cookedToday": "Cuisiné aujourd'hui",
+    "portionsLeft_one": "Il te reste {{count}} portion de {{name}}",
+    "portionsLeft_other": "Il te reste {{count}} portions de {{name}}",
+    "consumePortion": "Consommer une portion",
+    "discardDishToast": "Plat jeté",
+    "deleteRecipe": {
+      "title": "Supprimer cette recette ?",
+      "intro": "Recette : {{title}}",
+      "impact_one": "Cette recette est utilisée pour {{portions}} portion de {{dishName}} actuellement en stock.",
+      "impact_other": "Cette recette est utilisée pour {{portions}} portions de {{dishName}} actuellement en stock.",
+      "warning": "Supprimer la recette supprimera aussi l'article plat cuisiné et toutes les portions en stock.",
+      "confirm": "Supprimer quand même",
+      "cancel": "Annuler"
+    }
+  },
+  "leftoverPortionsDialog": {
+    "kicker": "Batch cooking",
+    "title": "Il te reste des portions ?",
+    "recipeServings_one": "Recette prévue pour {{count}} portion.",
+    "recipeServings_other": "Recette prévue pour {{count}} portions.",
+    "decrement": "Une portion en moins",
+    "increment": "Une portion en plus",
+    "portionsHelper_one": "{{count}} portion à conserver.",
+    "portionsHelper_other": "{{count}} portions à conserver.",
+    "portionsHelperZero": "Rien à garder — appuie sur « Non, rien à garder ».",
+    "storageAreaLabel": "Où stocker ?",
+    "expirationLabel": "Date de péremption",
+    "skip": "Non, rien à garder",
+    "save": "Enregistrer"
+  },
   "buttons": {
     "add": "Ajouter",
     "save": "Enregistrer",

@@ -53,6 +53,51 @@
     "skip": "No, nada que guardar",
     "save": "Guardar"
   },
+  "cookedMeal": {
+    "articleType": {
+      "label": "Tipo de artículo",
+      "ingredient": "Ingrediente",
+      "cookedMeal": "Plato cocinado"
+    },
+    "badge": "Plato cocinado",
+    "dishNamePlaceholder": "Nombre del plato (ej. Curry, Lasaña…)",
+    "dishNameLabel": "Nombre del plato",
+    "linkRecipeLabel": "Vincular a la receta «{{title}}»",
+    "linkedRecipe": "Receta vinculada",
+    "openRecipe": "Abrir receta",
+    "cookingDateLabel": "Fecha de cocción",
+    "portionsLabel": "Número de porciones",
+    "cookedAgo": "Cocinado {{when}}",
+    "cookedToday": "Cocinado hoy",
+    "portionsLeft_one": "Te queda {{count}} porción de {{name}}",
+    "portionsLeft_other": "Te quedan {{count}} porciones de {{name}}",
+    "consumePortion": "Consumir una porción",
+    "discardDishToast": "Plato descartado",
+    "deleteRecipe": {
+      "title": "¿Eliminar esta receta?",
+      "intro": "Receta: {{title}}",
+      "impact_one": "Esta receta se usa para {{portions}} porción de {{dishName}} actualmente en stock.",
+      "impact_other": "Esta receta se usa para {{portions}} porciones de {{dishName}} actualmente en stock.",
+      "warning": "Eliminar la receta también eliminará el artículo plato cocinado y todas las porciones en stock.",
+      "confirm": "Eliminar de todos modos",
+      "cancel": "Cancelar"
+    }
+  },
+  "leftoverPortionsDialog": {
+    "kicker": "Batch cooking",
+    "title": "¿Te quedan porciones?",
+    "recipeServings_one": "Receta prevista para {{count}} porción.",
+    "recipeServings_other": "Receta prevista para {{count}} porciones.",
+    "decrement": "Una porción menos",
+    "increment": "Una porción más",
+    "portionsHelper_one": "{{count}} porción para guardar.",
+    "portionsHelper_other": "{{count}} porciones para guardar.",
+    "portionsHelperZero": "Nada que guardar — toca «No, nada que guardar».",
+    "storageAreaLabel": "¿Dónde guardar?",
+    "expirationLabel": "Fecha de caducidad",
+    "skip": "No, nada que guardar",
+    "save": "Guardar"
+  },
   "buttons": {
     "add": "Agregar",
     "save": "Guardar",

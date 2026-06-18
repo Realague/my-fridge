@@ -67,8 +67,10 @@ services:
   frontend:
     image: ghcr.io/realague/my-fridge/frontend:${APP_VERSION:-latest}
     restart: unless-stopped
-    ports:
-      - "${FRONTEND_PORT:-80}:80"
+    # No host port: Caddy proxies frontend:80 via the internal Docker network in prod.
+    # The staging deploy adds a host binding via docker-compose.staging.override.yml.
+    expose:
+      - "80"
 
 volumes:
   pgdata:

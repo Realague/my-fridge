@@ -54,6 +54,8 @@
     --mf-purple:      #8C6DF0;            /* surgelés */
     --mf-purple-soft: #E4DAFA;
     --mf-purple-deep: #6C50D0;
+    --mf-brown:       #9C6B43;            /* garde-manger */
+    --mf-brown-soft:  #EADBC8;
 
     /* Rayons — échelle Fresh 10/14/18/24 + pill */
     --mf-radius-xs:  8px;                 /* micro chips, retained as smallest */
@@ -177,6 +179,8 @@
     --mf-purple:      #A48CFF;
     --mf-purple-soft: #2E2350;
     --mf-purple-deep: #A48CFF;
+    --mf-brown:       #C89B72;
+    --mf-brown-soft:  #3A2A1A;
 
     /* Shadows plus marquées sur dark — charte §11 */
     --mf-shadow-1: 0 4px 10px rgba(0,0,0,.35);

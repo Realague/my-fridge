@@ -12,6 +12,7 @@ import { fr } from 'date-fns/locale';
 import { ShoppingItem } from '@/stores/shoppingStore';
 import { StorageArea } from '@/services/storageAreaService';
 import { getSuggestedStorageAreaId } from '@/utils/categoryStorageMapping';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { formatQuantityWithUnit } from '@/utils/unitSystem';
 import { ItemImage } from '@/components/ItemImage';
@@ -113,7 +114,7 @@ export function BulkStorageDialog({
 
   const getStorageAreaName = (storageAreaId: string): string => {
     const area = storageAreas.find(a => a.id === storageAreaId);
-    return area ? `${area.emoji} ${area.name}` : '';
+    return area ? area.name : '';
   };
 
   const isFreezer = (storageAreaId: string): boolean => {
@@ -195,7 +196,7 @@ export function BulkStorageDialog({
                         {storageAreas.map(area => (
                           <SelectItem key={area.id} value={area.id}>
                             <span className="flex items-center gap-1.5">
-                              <span>{area.emoji}</span>
+                              <StorageAreaIcon type={area.type} className="h-3.5 w-3.5" />
                               <span>{area.name}</span>
                             </span>
                           </SelectItem>

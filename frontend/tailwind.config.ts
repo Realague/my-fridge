@@ -109,6 +109,8 @@ export default {
 					purple: 'var(--mf-purple)',
 					'purple-soft': 'var(--mf-purple-soft)',
 					'purple-deep': 'var(--mf-purple-deep)',
+					brown: 'var(--mf-brown)',
+					'brown-soft': 'var(--mf-brown-soft)',
 				}
 			},
 			// Bridge directly to Fresh charter tokens so every `rounded-*` Tailwind

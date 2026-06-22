@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { StorageAreaType, ITEM_CATEGORIES } from '@/types/enums';
 import { getCategoryColor } from '@/utils/itemUtils';
 import { CategoryIcon } from '@/utils/categoryIcons';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { getDefaultCategoriesForStorageType } from '@/utils/categoryStorageMapping';
 
 interface StorageAreaDialogProps {
@@ -108,16 +109,11 @@ const StorageAreaDialog = ({ isOpen, onClose, onSubmit, mode, initialData }: Sto
             />
           </div>
           <div>
-            <label htmlFor="storage-area-emoji" className="block text-sm font-medium mb-2">{t('storageAreaManager.emoji')}</label>
-            <Input
-              id="storage-area-emoji"
-              value={emoji}
-              onChange={(e) => setEmoji(e.target.value)}
-              placeholder="📦"
-            />
-          </div>
-          <div>
             <label htmlFor="storage-area-type" className="block text-sm font-medium mb-2">{t('storageArea.type')}</label>
+            <div className="flex items-center gap-2">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white">
+                <StorageAreaIcon type={type} className="h-5 w-5" />
+              </span>
             <select
               id="storage-area-type"
               value={type}
@@ -130,6 +126,7 @@ const StorageAreaDialog = ({ isOpen, onClose, onSubmit, mode, initialData }: Sto
               <option value={StorageAreaType.KITCHEN_CUPBOARD}>{t('storageArea.types.kitchen_cupboard')}</option>
               <option value={StorageAreaType.OTHER}>{t('storageArea.types.other')}</option>
             </select>
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">{t('storageArea.defaultCategories')}</label>

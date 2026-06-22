@@ -18,6 +18,7 @@ import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { formatQuantityWithUnit } from '@/utils/unitSystem';
 import { CategoryIcon } from '@/utils/categoryIcons';
 import { StorageAreaType } from '@/types/enums';
@@ -220,7 +221,7 @@ const Shopping = () => {
 
       if (updateSuccess) {
         const itemName = item.item ? getItemDisplayName(item.item, t) : '';
-        const areaName = suggestedArea ? `${suggestedArea.emoji} ${suggestedArea.name}` : '';
+        const areaName = suggestedArea ? suggestedArea.name : '';
 
         toast.success(t('pages.shopping.itemAddedQuick', { item: itemName, area: areaName }), {
           action: {
@@ -542,7 +543,7 @@ const Shopping = () => {
                     {storageAreas.map((area) => (
                       <SelectItem key={area.id} value={area.id}>
                         <div className="flex items-center gap-2">
-                          <span>{area.emoji}</span>
+                          <StorageAreaIcon type={area.type} className="h-4 w-4" />
                           <span>{area.name}</span>
                         </div>
                       </SelectItem>

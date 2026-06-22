@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Plus, PenLine, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { useStorageAreasWithStats, useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
@@ -145,7 +146,7 @@ const StorageAreaManager = () => {
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </div>
-              <span className="text-2xl">{area.emoji}</span>
+              <StorageAreaIcon type={area.type} className="h-6 w-6" />
               <div>
                 <p className="font-semibold">{area.name}</p>
                 <p className="text-sm">{t(`storageArea.types.${area.type}`)}</p>

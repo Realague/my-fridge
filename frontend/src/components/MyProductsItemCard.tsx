@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '@/utils/dateFormatting';
 import { ItemImage } from '@/components/ItemImage';
 import { CategoryIcon } from '@/utils/categoryIcons';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
 import { formatQuantityWithUnit } from '@/utils/unitSystem';
 import { ItemCategory, StorageAreaType } from '@/types/enums';
@@ -200,7 +201,7 @@ export function MyProductsItemCard({
                   className="inline-flex items-center gap-1 rounded-md border border-border/60 bg-muted px-2 py-0.5 text-xs font-medium text-foreground hover:bg-muted/80 transition-colors"
                   aria-label={`${t('pages.myProducts.filterByArea')} — ${area.name}`}
                 >
-                  <span aria-hidden>{area.emoji}</span>
+                  <StorageAreaIcon type={area.type} className="h-3.5 w-3.5" />
                   <span className="truncate max-w-[10rem]">{area.name}</span>
                 </button>
               )}

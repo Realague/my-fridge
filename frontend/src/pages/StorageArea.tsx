@@ -34,6 +34,7 @@ import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { itemService } from '@/services/itemService';
 import { format } from 'date-fns';
 import { Unit, StorageAreaType, ITEM_CATEGORIES, ItemCategory } from '@/types/enums';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { Item } from '@/services/itemService';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '@/utils/dateFormatting';
@@ -513,7 +514,7 @@ const StorageArea = () => {
                         {sortedStorageAreas.map((sa) => (
                           <SelectItem key={sa.id} value={sa.id}>
                             <span className="flex items-center gap-2">
-                              <span aria-hidden>{sa.emoji}</span>
+                              <StorageAreaIcon type={sa.type} className="h-4 w-4" />
                               <span>{sa.name}</span>
                             </span>
                           </SelectItem>
@@ -758,7 +759,7 @@ const StorageArea = () => {
               </Button>
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl shrink-0">{area.emoji}</span>
+                  <StorageAreaIcon type={area.type} className="h-6 w-6 shrink-0" />
                   <h1 className="text-xl font-bold text-foreground truncate">{area.name}</h1>
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -1016,7 +1017,7 @@ const StorageArea = () => {
           ) : (
             <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
               <CardContent className="p-8 text-center">
-                <div className="text-4xl mb-4">{area.emoji}</div>
+                <StorageAreaIcon type={area.type} className="mx-auto mb-4 h-12 w-12" />
                 <h3 className="text-lg font-medium text-white mb-2">
                   {t('storageArea.emptyArea', { name: area.name })}
                 </h3>

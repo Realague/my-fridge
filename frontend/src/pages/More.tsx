@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Boxes, ChevronDown, ChevronRight } from 'lucide-react';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 
 import BottomNavigation from '@/components/BottomNavigation';
 import { Card, CardContent } from '@/components/ui/card';
@@ -218,15 +219,13 @@ const StorageAreasRow = () => {
                   <button
                     type="button"
                     onClick={() => navigate(`/storage/${area.id}`)}
-                    aria-label={`${area.emoji ?? ''} ${area.name}`.trim()}
+                    aria-label={area.name}
                     className={cn(
                       'group flex w-full items-center gap-3 px-4 py-2.5 pl-[4.25rem] text-left transition-colors',
                       'hover:bg-muted focus:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
                     )}
                   >
-                    <span className="text-lg shrink-0" aria-hidden="true">
-                      {area.emoji || '📦'}
-                    </span>
+                    <StorageAreaIcon type={area.type} className="h-5 w-5 shrink-0" />
                     <span className="flex-1 truncate text-sm font-medium text-foreground">
                       {area.name}
                     </span>

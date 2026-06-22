@@ -259,7 +259,7 @@ export const ShoppingItemRow = ({
             {suggestedArea && (
               <span className="text-xs font-medium text-mf-green-deep">
                 {t('pages.shopping.suggestedArea', {
-                  area: `${suggestedArea.emoji} ${suggestedArea.name}`,
+                  area: suggestedArea.name,
                 })}
               </span>
             )}

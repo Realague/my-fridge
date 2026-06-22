@@ -1,5 +1,6 @@
 import { CardButton, CardContent } from '@/components/ui/card';
 import { useTranslation } from 'react-i18next';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 
 interface StorageArea {
   id: string;
@@ -29,8 +30,8 @@ const StorageAreaCard = ({ area, onClick }: StorageAreaCardProps) => {
       aria-label={`${area.name} — ${t(`storageArea.types.${area.type}`)} — ${t('storageArea.itemCount', { count: area.itemCount })}${area.lowStockCount > 0 ? `, ${area.lowStockCount} ${t('storageArea.low')}` : ''}`}
     >
       <CardContent className="p-3 flex items-center gap-3">
-        <div className="relative h-11 w-11 shrink-0 rounded-md bg-mf-night-surface flex items-center justify-center">
-          <span className="text-2xl leading-none" aria-hidden="true">{area.emoji}</span>
+        <div className="relative h-11 w-11 shrink-0 rounded-md bg-white flex items-center justify-center">
+          <StorageAreaIcon type={area.type} className="h-6 w-6" />
           {area.lowStockCount > 0 && (
             <span
               className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 inline-flex items-center justify-center rounded-full bg-mf-warning text-white font-display text-[10px] font-bold leading-none ring-2 ring-mf-night-elevated"

@@ -337,6 +337,7 @@
     "addIngredient": "Add ingredient",
     "noIngredients": "No ingredients added yet",
     "clickToAdd": "Click \"Add ingredient\" to get started",
+    "emptyState": "No ingredients yet — tap “+ Add” to get started.",
     "item": "Item",
     "selectIngredient": "Select ingredient...",
     "quantityAndUnit": "Quantity & unit",
@@ -3993,6 +3994,10 @@
       "title": "No loyalty cards",
       "description": "Add your cards to always have them with you",
       "addFirst": "Add a card"
+    },
+    "addTile": {
+      "title": "Add a card",
+      "subtitle": "Scan or enter"
     },
     "messages": {
       "created": "Card added",

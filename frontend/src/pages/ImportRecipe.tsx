@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ArrowLeft, Download, Clock, Users, ChefHat, ExternalLink, Loader2, Check, X, ChevronDown, ChevronUp, AlertCircle, Search } from 'lucide-react';
+import { ArrowLeft, Download, Clock, Users, ChefHat, ExternalLink, Loader2, Check, X, ChevronDown, ChevronUp, AlertCircle, Search, Link } from 'lucide-react';
 import { useRecipeService, ParsedMarmitonRecipe, MatchedIngredient, IngredientMatch } from '@/services/recipeService';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
@@ -224,7 +224,12 @@ const ImportRecipe = () => {
         {/* URL Input Card */}
         <Card variant="elevated">
           <CardHeader>
-            <CardTitle>{t('pages.importRecipe.importFromMarmiton')}</CardTitle>
+            <CardTitle className="flex items-center gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-mf-orange-soft">
+                <Link className="h-5 w-5 text-mf-orange" />
+              </span>
+              {t('pages.importRecipe.importFromMarmiton')}
+            </CardTitle>
             <CardDescription>{t('pages.importRecipe.pasteUrl')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

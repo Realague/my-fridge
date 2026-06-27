@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Users, Filter, Package, PackageCheck, CalendarIcon } from 'lucide-react';
+import { Users, Filter, Package, PackageCheck, CalendarIcon, ShoppingCart } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { AddItemCard } from '@/components/AddItemCard';
 import { Item } from '@/services/itemService';
@@ -626,7 +626,7 @@ const Shopping = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-foreground">{t('pages.shopping.title')}</h1>
+              <h1 className="text-xl font-bold text-foreground flex items-center gap-2"><ShoppingCart className="h-5 w-5 text-primary shrink-0" aria-hidden />{t('pages.shopping.title')}</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-sm text-muted-foreground">
                   {t('pages.shopping.itemsCompleted', { completed: completedCount, count: totalItems })}
@@ -799,7 +799,8 @@ const Shopping = () => {
             <Card variant="elevated">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <ShoppingCart className="h-5 w-5 text-foreground" />
                     {t('pages.shopping.toBuy')} ({pendingItemsAlpha.length})
                     {categoryFilter !== 'all' && (
                       <span className="text-sm font-normal text-muted-foreground ml-2">

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, LogOut, Copy, Eye, EyeOff, Globe, Lock } from 'lucide-react';
+import { ArrowLeft, LogOut, Copy, Eye, EyeOff, Globe, Lock, User, Bell, Palette } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -223,7 +223,12 @@ const Settings = () => {
           <TabsContent value="profile" className="mt-4">
             <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                 <CardTitle>{t('pages.settings.profileSettings.title')}</CardTitle>
+                 <CardTitle className="flex items-center gap-3">
+                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-mf-green-soft">
+                     <User className="h-5 w-5 text-mf-green-deep" />
+                   </span>
+                   {t('pages.settings.profileSettings.title')}
+                 </CardTitle>
                  <CardDescription>{t('pages.settings.profileSettings.description')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -279,7 +284,12 @@ const Settings = () => {
           <TabsContent value="notifications" className="mt-4">
             <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                 <CardTitle>{t('pages.settings.notificationSettings.title')}</CardTitle>
+                 <CardTitle className="flex items-center gap-3">
+                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-mf-info-soft">
+                     <Bell className="h-5 w-5 text-mf-info" />
+                   </span>
+                   {t('pages.settings.notificationSettings.title')}
+                 </CardTitle>
                  <CardDescription>{t('pages.settings.notificationSettings.description')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -322,7 +332,12 @@ const Settings = () => {
           <TabsContent value="appearance" className="mt-4">
             <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>{t('pages.settings.appearance')}</CardTitle>
+                <CardTitle className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-mf-purple-soft">
+                    <Palette className="h-5 w-5 text-mf-purple" />
+                  </span>
+                  {t('pages.settings.appearance')}
+                </CardTitle>
                 <CardDescription>{t('pages.settings.appearanceSettings.description')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">

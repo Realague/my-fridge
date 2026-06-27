@@ -143,7 +143,7 @@ export const SidebarStorageGroup = ({
             <button
               type="button"
               onClick={handleAddStorage}
-              className="mt-2 flex w-full items-center gap-2 rounded-md border border-dashed border-border px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
+              className="mt-2 flex w-full items-center gap-2 rounded-md border border-dashed border-mf-green/40 px-2 py-1.5 text-sm font-medium text-mf-green-deep transition-colors hover:border-mf-green hover:text-mf-green-deep"
             >
               <Plus className="h-4 w-4" />
               <span>{addLabel}</span>
@@ -191,11 +191,14 @@ export const SidebarStorageGroup = ({
             </ScrollArea>
           )}
           <SidebarMenuSubItem>
-            <SidebarMenuSubButton asChild>
+            <SidebarMenuSubButton
+              asChild
+              className="font-medium text-mf-green-deep hover:text-mf-green-deep"
+            >
               <button
                 type="button"
                 onClick={handleAddStorage}
-                className="flex w-full items-center gap-2 text-muted-foreground hover:text-foreground"
+                className="flex w-full items-center gap-2"
               >
                 <Plus className="h-4 w-4" />
                 <span>{addLabel}</span>

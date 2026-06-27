@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { ArrowLeft, Plus, PenLine, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Plus, PenLine, Trash2, AlertCircle, CheckCircle, PackageMinus } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemMinimumDialog } from '@/components/ItemMinimumDialog';
 import { ItemImage } from '@/components/ItemImage';
@@ -106,7 +106,7 @@ const ItemMinimums = () => {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <div className="min-w-0">
-                <h1 className="text-xl font-bold text-foreground truncate">{t('itemMinimum.title')}</h1>
+                <h1 className="text-xl font-bold text-foreground truncate flex items-center gap-2"><PackageMinus className="h-5 w-5 text-primary shrink-0" aria-hidden />{t('itemMinimum.title')}</h1>
                 <p className="text-sm text-muted-foreground">
                   {t('itemMinimum.description')}
                 </p>

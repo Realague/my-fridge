@@ -3,12 +3,27 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useTranslation } from 'react-i18next';
 import { StorageAreaType, ITEM_CATEGORIES } from '@/types/enums';
 import { getCategoryColor } from '@/utils/itemUtils';
 import { CategoryIcon } from '@/utils/categoryIcons';
 import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { getDefaultCategoriesForStorageType } from '@/utils/categoryStorageMapping';
+
+const STORAGE_AREA_TYPE_OPTIONS: StorageAreaType[] = [
+  StorageAreaType.FRIDGE,
+  StorageAreaType.FREEZER,
+  StorageAreaType.PANTRY,
+  StorageAreaType.KITCHEN_CUPBOARD,
+  StorageAreaType.OTHER,
+];
 
 interface StorageAreaDialogProps {
   isOpen: boolean;
@@ -97,7 +112,7 @@ const StorageAreaDialog = ({ isOpen, onClose, onSubmit, mode, initialData }: Sto
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleFormSubmit} className="space-y-4 overflow-y-auto flex-1">
+        <form onSubmit={handleFormSubmit} className="space-y-4 overflow-y-auto flex-1 px-1 -mx-1 py-1 -my-1">
           <div>
             <label htmlFor="storage-area-name" className="block text-sm font-medium mb-2">{t('forms.name')}</label>
             <Input
@@ -110,23 +125,21 @@ const StorageAreaDialog = ({ isOpen, onClose, onSubmit, mode, initialData }: Sto
           </div>
           <div>
             <label htmlFor="storage-area-type" className="block text-sm font-medium mb-2">{t('storageArea.type')}</label>
-            <div className="flex items-center gap-2">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white">
-                <StorageAreaIcon type={type} className="h-5 w-5" />
-              </span>
-            <select
-              id="storage-area-type"
-              value={type}
-              onChange={(e) => setType(e.target.value as StorageAreaType)}
-              className="w-full p-2 border rounded-md bg-background"
-            >
-              <option value={StorageAreaType.FRIDGE}>{t('storageArea.types.fridge')}</option>
-              <option value={StorageAreaType.FREEZER}>{t('storageArea.types.freezer')}</option>
-              <option value={StorageAreaType.PANTRY}>{t('storageArea.types.pantry')}</option>
-              <option value={StorageAreaType.KITCHEN_CUPBOARD}>{t('storageArea.types.kitchen_cupboard')}</option>
-              <option value={StorageAreaType.OTHER}>{t('storageArea.types.other')}</option>
-            </select>
-            </div>
+            <Select value={type} onValueChange={(value) => setType(value as StorageAreaType)}>
+              <SelectTrigger id="storage-area-type">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STORAGE_AREA_TYPE_OPTIONS.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    <span className="flex items-center gap-2">
+                      <StorageAreaIcon type={option} className="h-4 w-4 shrink-0" />
+                      {t(`storageArea.types.${option}`)}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">{t('storageArea.defaultCategories')}</label>

@@ -337,6 +337,7 @@
     "addIngredient": "Ajouter un ingrédient",
     "noIngredients": "Aucun ingrédient ajouté pour le moment",
     "clickToAdd": "Touche \"Ajouter un ingrédient\" pour commencer",
+    "emptyState": "Aucun ingrédient pour l'instant — clique sur « + Ajouter » pour commencer.",
     "item": "Article",
     "selectIngredient": "Sélectionner un ingrédient...",
     "quantityAndUnit": "Quantité et unité",
@@ -3993,6 +3994,10 @@
       "title": "Aucune carte de fidélité",
       "description": "Ajoute tes cartes pour les avoir toujours sur toi",
       "addFirst": "Ajouter une carte"
+    },
+    "addTile": {
+      "title": "Ajouter une carte",
+      "subtitle": "Scanner ou saisir"
     },
     "messages": {
       "created": "Carte ajoutée",

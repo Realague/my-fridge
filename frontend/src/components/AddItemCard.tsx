@@ -103,7 +103,7 @@ export const AddItemCard = ({
   return (
     <Card variant="elevated">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
+        <CardTitle className="text-lg flex items-center gap-3 text-primary">
           <Plus className="h-5 w-5 text-primary" />
           {title}
         </CardTitle>

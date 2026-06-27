@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ArrowLeft, Plus, X, Clock, ChevronDown, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, X, Clock, ChevronDown, Trash2, SquarePen, ListOrdered, Tags } from 'lucide-react';
 import { useRecipeStore } from '@/stores/recipeStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
@@ -351,7 +351,12 @@ const AddRecipe = () => {
             {/* Basic Info */}
             <Card variant="elevated">
               <CardHeader>
-                <CardTitle>{t('pages.recipes.basicInformation')}</CardTitle>
+                <CardTitle className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-mf-pink-soft">
+                    <SquarePen className="h-5 w-5 text-mf-pink" />
+                  </span>
+                  {t('pages.recipes.basicInformation')}
+                </CardTitle>
                 <CardDescription>{t('pages.recipes.basicInformationDescription')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -535,10 +540,20 @@ const AddRecipe = () => {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>{t('pages.recipes.instructions')}</CardTitle>
+                    <CardTitle className="flex items-center gap-3">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-mf-info-soft">
+                        <ListOrdered className="h-5 w-5 text-mf-info" />
+                      </span>
+                      {t('pages.recipes.instructions')}
+                    </CardTitle>
                     <CardDescription>{t('pages.recipes.instructionsDescription')}</CardDescription>
                   </div>
-                  <Button variant="outline" type="button" onClick={addInstruction} size="sm">
+                  <Button
+                    type="button"
+                    onClick={addInstruction}
+                    size="sm"
+                    className="rounded-full bg-mf-green-soft font-display font-semibold text-mf-green-deep hover:bg-mf-green-soft/70"
+                  >
                     <Plus className="h-4 w-4 mr-1" />
                     {t('buttons.add')}
                   </Button>
@@ -637,7 +652,12 @@ const AddRecipe = () => {
             {/* Tags */}
             <Card variant="elevated">
               <CardHeader>
-                <CardTitle>{t('pages.recipes.tags')}</CardTitle>
+                <CardTitle className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-mf-purple-soft">
+                    <Tags className="h-5 w-5 text-mf-purple" />
+                  </span>
+                  {t('pages.recipes.tags')}
+                </CardTitle>
                 <CardDescription>{t('pages.recipes.tagsDescription')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -650,10 +670,10 @@ const AddRecipe = () => {
                     className="flex-1"
                   />
                   <Button
-                    variant="outline"
                     type="button"
                     onClick={addTag}
-                    className="shrink-0"
+                    disabled={!newTag.trim()}
+                    className="shrink-0 rounded-full bg-mf-green-soft font-display font-semibold text-mf-green-deep hover:bg-mf-green-soft/70"
                     aria-label={t('pages.recipes.addTag')}
                   >
                     <Plus className="h-4 w-4 sm:mr-2" />

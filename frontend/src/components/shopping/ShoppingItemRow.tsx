@@ -106,7 +106,7 @@ export const ShoppingItemRow = ({
   return (
     <div className="space-y-0">
       <div
-        className={`flex items-start gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg hover:bg-accent transition-colors ${
+        className={`flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg hover:bg-accent transition-colors ${
           isCompleted
             ? 'bg-accent opacity-75'
             : isQuickStoring
@@ -127,7 +127,7 @@ export const ShoppingItemRow = ({
             className={`flex h-6 w-6 items-center justify-center rounded-full transition-colors ${
               isCompleted
                 ? 'bg-primary'
-                : 'border-2 border-border bg-primary/10 group-hover:border-primary'
+                : 'border-2 border-border bg-card group-hover:border-primary'
             }`}
           >
             {isCompleted && <Check className="h-4 w-4 text-white" />}
@@ -137,82 +137,33 @@ export const ShoppingItemRow = ({
         <ItemImage
           src={shoppingItem.item?.imageUrl}
           alt={itemName}
-          containerClassName="w-10 h-10 rounded-md shrink-0 mt-0.5"
-          fallbackIconSize={40}
+          containerClassName="w-10 h-10 rounded-md shrink-0"
+          fallbackIconSize={22}
           category={shoppingItem.item?.category}
         />
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0 flex-1">
-              <span
-                className={`font-medium line-clamp-2 sm:line-clamp-1 ${
-                  isCompleted
-                    ? 'text-muted-foreground line-through'
-                    : 'text-foreground'
-                }`}
-              >
-                {itemName}
-              </span>
-              <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                <Badge
-                  className={`${getCategoryColor(
-                    shoppingItem.item?.category
-                  )} inline-flex items-center gap-1`}
-                >
-                  <CategoryIcon
-                    category={shoppingItem.item?.category}
-                    className="h-3.5 w-3.5"
-                  />
-                  {categoryLabel}
-                </Badge>
-              </div>
-            </div>
-            <div className="flex items-center gap-1 shrink-0">
-              {isEditing ? (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSave}
-                    className="h-8 px-2"
-                  >
-                    <Save className="h-3 w-3" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCancel}
-                    className="h-8 px-2"
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                </>
-              ) : (
-                <>
-                  {!isCompleted && !isQuickStoring && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onStartEdit(shoppingItem.id)}
-                      className="h-8 w-8 p-0 opacity-70 hover:opacity-100 transition-opacity hover:bg-primary/10"
-                    >
-                      <PenLine className="h-4 w-4" />
-                    </Button>
-                  )}
-                  {!isEditing && !isQuickStoring && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onDelete(shoppingItem.id)}
-                      className="h-8 w-8 p-0 text-mf-danger hover:bg-mf-danger-soft"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
-                </>
-              )}
-            </div>
+          <div className="min-w-0 flex items-center gap-2 flex-wrap">
+            <span
+              className={`font-medium line-clamp-2 sm:line-clamp-1 ${
+                isCompleted
+                  ? 'text-muted-foreground line-through'
+                  : 'text-foreground'
+              }`}
+            >
+              {itemName}
+            </span>
+            <Badge
+              className={`${getCategoryColor(
+                shoppingItem.item?.category
+              )} inline-flex items-center gap-1 shrink-0`}
+            >
+              <CategoryIcon
+                category={shoppingItem.item?.category}
+                className="h-3.5 w-3.5"
+              />
+              {categoryLabel}
+            </Badge>
           </div>
           <div className="text-sm text-muted-foreground mt-1">
             {isEditing ? (
@@ -250,6 +201,52 @@ export const ShoppingItemRow = ({
               </div>
             )}
           </div>
+        </div>
+
+        <div className="flex items-center gap-1 shrink-0 self-center">
+          {isEditing ? (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSave}
+                className="h-8 px-2"
+              >
+                <Save className="h-3 w-3" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCancel}
+                className="h-8 px-2"
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </>
+          ) : (
+            <>
+              {!isCompleted && !isQuickStoring && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onStartEdit(shoppingItem.id)}
+                  className="h-8 w-8 p-0 opacity-70 hover:opacity-100 transition-opacity hover:bg-primary/10"
+                >
+                  <PenLine className="h-4 w-4" />
+                </Button>
+              )}
+              {!isEditing && !isQuickStoring && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onDelete(shoppingItem.id)}
+                  className="h-8 w-8 p-0 text-mf-danger hover:bg-mf-danger-soft"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
+            </>
+          )}
         </div>
       </div>
 

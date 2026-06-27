@@ -600,7 +600,7 @@ export const ItemSelector = ({
                       src={item.imageUrl}
                       alt={getItemDisplayName(item, t)}
                       containerClassName="w-10 h-10 rounded-md"
-                      fallbackIconSize={40}
+                      fallbackIconSize={22}
                       category={item.category}
                     />
                     <div className="flex-1 min-w-0">

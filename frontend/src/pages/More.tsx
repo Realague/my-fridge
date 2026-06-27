@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Boxes, ChevronDown, ChevronRight } from 'lucide-react';
+import { Boxes, ChevronDown, ChevronRight, LayoutGrid } from 'lucide-react';
 import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 
 import BottomNavigation from '@/components/BottomNavigation';
@@ -44,7 +44,8 @@ const More = () => {
     <div className="min-h-screen bg-background pb-20">
       <header className="bg-card/90 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
-          <h1 className="text-xl font-bold text-foreground">
+          <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <LayoutGrid className="h-5 w-5 text-primary shrink-0" aria-hidden />
             {t('pages.more.title')}
           </h1>
         </div>

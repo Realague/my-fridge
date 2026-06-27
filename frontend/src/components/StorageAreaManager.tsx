@@ -122,7 +122,7 @@ const StorageAreaManager = () => {
       </CardHeader>
       <CardContent className="space-y-3">
         {storageAreas.map((area, index) => (
-          <div key={area.id} className="flex items-center justify-between p-4 bg-primary/10 rounded-xl shadow-sm border">
+          <div key={area.id} className="flex items-center justify-between p-4 bg-muted rounded-xl shadow-sm border">
             <div className="flex items-center gap-3">
               <div className="flex flex-col gap-0.5">
                 <Button
@@ -146,7 +146,9 @@ const StorageAreaManager = () => {
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </div>
-              <StorageAreaIcon type={area.type} className="h-6 w-6" />
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-card">
+                <StorageAreaIcon type={area.type} className="h-5 w-5" />
+              </span>
               <div>
                 <p className="font-semibold">{area.name}</p>
                 <p className="text-sm">{t(`storageArea.types.${area.type}`)}</p>

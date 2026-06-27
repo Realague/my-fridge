@@ -178,7 +178,7 @@ const Meals = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
-              <h1 className="text-xl font-bold text-foreground">{t('pages.meals.title')}</h1>
+              <h1 className="text-xl font-bold text-foreground flex items-center gap-2"><UtensilsCrossed className="h-5 w-5 text-primary shrink-0" aria-hidden />{t('pages.meals.title')}</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-sm text-muted-foreground">
                   {count === 0
@@ -206,8 +206,10 @@ const Meals = () => {
         <Card variant="elevated">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <span aria-hidden>🍽️</span>
+              <CardTitle className="text-lg flex items-center gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-mf-pink-soft">
+                  <UtensilsCrossed className="h-5 w-5 text-mf-pink" />
+                </span>
                 {t('pages.meals.sectionPlanned')}
               </CardTitle>
               <Button

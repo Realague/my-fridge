@@ -367,10 +367,10 @@ const HouseholdDetails = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             {members.map((member) => (
-              <div key={member.id} className="flex items-center justify-between p-4 bg-primary/10 rounded-xl border border-border">
+              <div key={member.id} className="flex items-center justify-between p-4 bg-muted rounded-xl border border-border">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <Avatar className="h-12 w-12 flex-shrink-0">
-                    <AvatarFallback className="bg-accent text-accent-foreground font-semibold">
+                    <AvatarFallback className="rounded-full bg-card text-foreground font-semibold">
                       {(member.firstName?.charAt(0) || '') + (member.lastName?.charAt(0) || '')}
                     </AvatarFallback>
                   </Avatar>

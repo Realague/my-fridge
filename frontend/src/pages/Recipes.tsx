@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Plus, Search, Heart, Clock, Users, ChefHat, Download } from 'lucide-react';
+import { Plus, Search, Heart, Clock, Users, ChefHat, Download, BookOpen } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useRecipeStore } from '@/stores/recipeStore';
@@ -105,7 +105,7 @@ const Recipes = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
-              <h1 className="text-xl font-bold text-foreground">{t('pages.recipes.title')}</h1>
+              <h1 className="text-xl font-bold text-foreground flex items-center gap-2"><BookOpen className="h-5 w-5 text-primary shrink-0" aria-hidden />{t('pages.recipes.title')}</h1>
               <p className="text-sm text-muted-foreground">
                 {loading ? t('common.loading') : t('pages.recipes.recipeSaved', { count: total || 0 })}
               </p>

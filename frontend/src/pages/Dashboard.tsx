@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardButton, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Settings, Users, Bell, List, ChevronDown, Refrigerator } from 'lucide-react';
+import { Settings, Users, Bell, Menu, ChevronDown, Refrigerator } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StorageAreaCard from '@/components/StorageAreaCard';
 import BottomNavigation from '@/components/BottomNavigation';
@@ -41,10 +41,10 @@ const Dashboard = () => {
 
   // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
   const [showNotifications, setShowNotifications] = useState(false);
-  
+
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId, isLoading: authLoading, isAuthenticated, hasHousehold } = useProtectedRoute();
-  
+
   // Zustand stores - selective subscriptions for better performance
   const { user: currentUser, setUser } = useAuthStore();
   const { getPendingItems, fetchShoppingItems } = useShoppingStore();
@@ -65,15 +65,15 @@ const Dashboard = () => {
   const unreadNotifications = useExpirationNotificationStore((s) =>
     s.notifications.filter((n) => !n.readByCurrentUser).length
   );
-  
+
   // Household store - only re-renders when these specific values change
   const households = useHouseholdStore(state => state.households);
-  
+
   // Actions - these don't cause re-renders
   const getCurrentHousehold = useHouseholdStore(state => state.getCurrentHousehold);
   const fetchHouseholds = useHouseholdStore(state => state.fetchHouseholds);
   const selectHousehold = useHouseholdStore(state => state.selectHousehold);
-  
+
   // Storage areas for current household - pass null if no household to prevent API calls
   const {
     storageAreasWithStats,
@@ -82,7 +82,7 @@ const Dashboard = () => {
 
   // Load households when authenticated
   useEffect(() => {
-    fetchHouseholds();  
+    fetchHouseholds();
   }, [selectedHouseholdId, authLoading]);
 
   // Load storage areas and stored items when household changes
@@ -148,7 +148,7 @@ const Dashboard = () => {
   */
 
   const itemMinimums = getItemMinimumsForHousehold();
-  
+
   const quickActions = [
     { title: t('pages.shopping.title'), description: t('pages.dashboard.itemsPending', { count: getPendingItems().length }), emoji: '🛒', route: '/shopping' },
     { title: t('pages.meals.title'), description: t('pages.dashboard.planThisWeek'), emoji: '📅', route: '/meals' },
@@ -192,7 +192,7 @@ const Dashboard = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            
+
             <div className="flex items-center gap-1 sm:gap-3">
               <Button
                 variant="ghost"
@@ -275,7 +275,7 @@ const Dashboard = () => {
                   onClick={() => navigate(`/household/${getCurrentHousehold()?.id}`)}
                   className="rounded-full bg-mf-night-elevated text-mf-text hover:bg-mf-night-line font-display font-semibold"
                 >
-                  <List className="h-4 w-4 sm:mr-1.5" />
+                  <Menu className="h-4 w-4 sm:mr-1.5" />
                   <span className="hidden sm:inline">{t('pages.dashboard.manage')}</span>
                 </Button>
               </div>
@@ -287,7 +287,7 @@ const Dashboard = () => {
                 <p className="text-mf-text-soft mb-4">{t('pages.dashboard.noStorageAreas')}</p>
                 <AddStorageAreaDialog
                   trigger={
-                    <Button variant="green" className="rounded-full font-display font-bold">
+                    <Button variant="green" className="font-display font-bold">
                       {t('pages.dashboard.addFirstStorageArea')}
                     </Button>
                   }

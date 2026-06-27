@@ -337,6 +337,7 @@
     "addIngredient": "Agregar ingrediente",
     "noIngredients": "Aún no se han agregado ingredientes",
     "clickToAdd": "Haz clic en \"Agregar ingrediente\" para comenzar",
+    "emptyState": "Aún no hay ingredientes — toca «+ Agregar» para empezar.",
     "item": "Artículo",
     "selectIngredient": "Seleccionar ingrediente...",
     "quantityAndUnit": "Cantidad y unidad",
@@ -3993,6 +3994,10 @@
       "title": "Sin tarjetas de fidelidad",
       "description": "Agrega tus tarjetas para tenerlas siempre contigo",
       "addFirst": "Agregar una tarjeta"
+    },
+    "addTile": {
+      "title": "Agregar una tarjeta",
+      "subtitle": "Escanear o escribir"
     },
     "messages": {
       "created": "Tarjeta añadida",

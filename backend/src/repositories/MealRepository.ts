@@ -34,6 +34,17 @@ export class MealRepository {
     return typeof max === 'number' ? max : 0;
   }
 
+  /**
+   * Finds the ACTIVE meal (cookedAt IS NULL) for this (household, recipe) pair,
+   * if any. A recipe can have at most one active meal (enforced by the partial
+   * unique index), plus any number of cooked history rows. Callers check this
+   * before inserting so re-adding an already-planned recipe updates it instead
+   * of hitting the unique index.
+   */
+  async findActiveByHouseholdAndRecipe(householdId: string, recipeId: string): Promise<Meal | null> {
+    return await Meal.findOne({ where: { householdId, recipeId, cookedAt: null } });
+  }
+
   async create(data: MealCreationAttributes): Promise<Meal> {
     return await sequelize.transaction(async (transaction) => {
       const maxPosition = await this.getMaxPosition(data.householdId, transaction);

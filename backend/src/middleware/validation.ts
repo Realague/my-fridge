@@ -146,8 +146,8 @@ function validateSchema(data: any, schema: any): string[] {
       errors.push('Recipe ID is required and must be a string');
     }
     if (data.servings !== undefined) {
-      if (typeof data.servings !== 'number' || data.servings < 1 || data.servings > 20) {
-        errors.push('Servings must be a number between 1 and 20');
+      if (typeof data.servings !== 'number' || data.servings < 1 || data.servings > 100) {
+        errors.push('Servings must be a number between 1 and 100');
       }
     }
     if (data.notes !== undefined && data.notes !== null) {
@@ -163,8 +163,8 @@ function validateSchema(data: any, schema: any): string[] {
   if (schema.name === 'UpdateMealDto') {
     if (data.servings === undefined) {
       errors.push('servings is required');
-    } else if (typeof data.servings !== 'number' || data.servings < 1 || data.servings > 20) {
-      errors.push('Servings must be a number between 1 and 20');
+    } else if (typeof data.servings !== 'number' || data.servings < 1 || data.servings > 100) {
+      errors.push('Servings must be a number between 1 and 100');
     }
   }
    

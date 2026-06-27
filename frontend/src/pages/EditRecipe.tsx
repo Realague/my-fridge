@@ -297,13 +297,13 @@ const EditRecipe = () => {
       <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate(`/recipes/${recipe.id}`)}
+            <Button
+              variant="ghost"
+              onClick={() => navigate(-1)}
               className="text-muted-foreground"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('buttons.back')}
+              <ArrowLeft className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">{t('buttons.back')}</span>
             </Button>
             <h1 className="text-xl font-bold text-foreground">{t('pages.recipes.editRecipeTitle')}</h1>
             <div className="w-20"></div>

@@ -92,7 +92,7 @@ const RecipeSelector = () => {
 
   return (
     <div className="mf-page min-h-screen pb-24">
-      <div className="mx-auto max-w-3xl px-4 pt-6 sm:px-8 sm:pt-10">
+      <div className="px-4 pt-6 sm:px-8 sm:pt-10">
 
         <header className="mf-card flex items-center gap-4 p-4">
           <button

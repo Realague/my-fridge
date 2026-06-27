@@ -30,7 +30,7 @@ const StorageAreaCard = ({ area, onClick }: StorageAreaCardProps) => {
       aria-label={`${area.name} — ${t(`storageArea.types.${area.type}`)} — ${t('storageArea.itemCount', { count: area.itemCount })}${area.lowStockCount > 0 ? `, ${area.lowStockCount} ${t('storageArea.low')}` : ''}`}
     >
       <CardContent className="p-3 flex items-center gap-3">
-        <div className="relative h-11 w-11 shrink-0 rounded-md bg-white flex items-center justify-center">
+        <div className="relative h-11 w-11 shrink-0 rounded-md bg-white dark:bg-mf-night flex items-center justify-center">
           <StorageAreaIcon type={area.type} className="h-6 w-6" />
           {area.lowStockCount > 0 && (
             <span

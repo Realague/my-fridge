@@ -66,10 +66,25 @@ export class MealService {
       throw new NotFoundError('Recipe not found or does not belong to this household');
     }
 
+    const servings = data.servings ?? recipe.servings;
+
+    // A recipe can have at most one ACTIVE meal (partial unique index on
+    // cookedAt IS NULL); cooked history rows don't block re-adding. Make "add
+    // to plan" idempotent: if the recipe is already in the active plan, just
+    // update its servings instead of inserting a conflicting row.
+    const existingActive = await this.mealRepository.findActiveByHouseholdAndRecipe(
+      householdId,
+      data.recipeId
+    );
+    if (existingActive) {
+      const updated = await this.mealRepository.updateServings(existingActive.id, servings);
+      return this.transformToDto(updated!);
+    }
+
     const meal = await this.mealRepository.create({
       householdId,
       recipeId: data.recipeId,
-      servings: data.servings ?? recipe.servings,
+      servings,
     });
 
     const reloaded = await this.mealRepository.findById(meal.id, true);
@@ -85,8 +100,8 @@ export class MealService {
     if (data.servings === undefined) {
       throw new ValidationError('Nothing to update');
     }
-    if (data.servings < 1 || data.servings > 20) {
-      throw new ValidationError('Servings must be between 1 and 20');
+    if (data.servings < 1 || data.servings > 100) {
+      throw new ValidationError('Servings must be between 1 and 100');
     }
 
     const updated = await this.mealRepository.updateServings(id, data.servings);
@@ -694,8 +709,8 @@ export class MealService {
     if (!data.recipeId) {
       throw new ValidationError('recipeId is required');
     }
-    if (data.servings !== undefined && (data.servings < 1 || data.servings > 20)) {
-      throw new ValidationError('Servings must be between 1 and 20');
+    if (data.servings !== undefined && (data.servings < 1 || data.servings > 100)) {
+      throw new ValidationError('Servings must be between 1 and 100');
     }
   }
 

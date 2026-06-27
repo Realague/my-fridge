@@ -263,6 +263,8 @@
     width: 48px; height: 48px; border-radius: 50%;
     background: var(--green); color: #fff;
     font-size: 22px; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    line-height: 1;
     box-shadow: 0 6px 16px rgba(43,182,115,.35);
   }
 
@@ -1077,7 +1079,7 @@
         <div style="background: var(--sub); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
           <div style="position: relative;">
             <div style="width: 72px; height: 72px; border-radius: 18px; background: var(--green-soft); display: flex; align-items: center; justify-content: center;">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--green-deep)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a8 8 0 0 0 8-8c0-4-3-7-8-7s-8 3-8 7a8 8 0 0 0 8 8Z"/><path d="M12 6c0-2 1-4 4-4"/></svg>
+              <i data-lucide="carrot" width="36" height="36" stroke-width="1.8" style="width: 36px; height: 36px; color: var(--green-deep);"></i>
             </div>
             <span style="position: absolute; top: -8px; right: -8px; background: var(--ink); color: var(--bg); width: 22px; height: 22px; border-radius: 50%; font-family: var(--font-display); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;">2</span>
           </div>
@@ -1090,7 +1092,7 @@
         <div style="background: var(--sub); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
           <div style="position: relative;">
             <div style="width: 72px; height: 72px; border-radius: 18px; background: var(--card); border: 1.5px dashed var(--rule); display: flex; align-items: center; justify-content: center;">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 11h6M12 8v8"/></svg>
+              <i data-lucide="package" width="28" height="28" stroke-width="1.8" style="width: 28px; height: 28px; color: var(--ink-3);"></i>
             </div>
             <span style="position: absolute; top: -8px; right: -8px; background: var(--ink-3); color: var(--card); width: 22px; height: 22px; border-radius: 50%; font-family: var(--font-display); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;">3</span>
           </div>
@@ -1106,86 +1108,175 @@
     <div class="card" style="margin-bottom: 18px;">
       <h3 class="display" style="margin-bottom: 6px;">Icônes placeholder par catégorie</h3>
       <p style="color: var(--ink-2); font-size: 13.5px; margin: 0 0 14px;">
-        SVG line, 1.8px stroke, coins arrondis. Couleur du trait = version
+        Icônes <b>Lucide</b>, trait 1.8px, coins arrondis. Couleur du trait = version
         <em>deep</em> / accent ; fond = version <em>soft</em>. Jamais d'emoji
         système pour les aliments.
       </p>
       <div class="grid grid-4" style="gap: 12px;">
         <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
           <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--green-soft); display: inline-flex; align-items: center; justify-content: center;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1f9c5e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13c2-1 4-1 6 0s4 1 6 0 4-1 6 0"/><path d="M3 17c2-1 4-1 6 0s4 1 6 0 4-1 6 0"/><path d="M12 4v5"/><path d="M9 6c1.5 0 3 1 3 3 0-2 1.5-3 3-3"/></svg>
+            <i data-lucide="carrot" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #1f9c5e;"></i>
           </span>
           <div>
             <div class="display" style="font-size: 12.5px; font-weight: 700;">Légumes</div>
-            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">green</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">vegetables · Carrot</div>
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
           <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--pink-soft); display: inline-flex; align-items: center; justify-content: center;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d04475" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="7"/><path d="M12 7c0-2 1-4 3-4"/></svg>
+            <i data-lucide="apple" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #d04475;"></i>
           </span>
           <div>
             <div class="display" style="font-size: 12.5px; font-weight: 700;">Fruits</div>
-            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">pink</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">fruits · Apple</div>
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
           <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--red-soft); display: inline-flex; align-items: center; justify-content: center;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c83a48" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10c0-2 2-3 4-3h8c2 0 4 1 4 3v2H4Z"/><path d="M5 12v4c0 2 1 3 3 3h8c2 0 3-1 3-3v-4"/></svg>
+            <i data-lucide="beef" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #c83a48;"></i>
           </span>
           <div>
-            <div class="display" style="font-size: 12.5px; font-weight: 700;">Viandes</div>
-            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">red</div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Viande</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">meat · Beef</div>
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
           <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--blue-soft); display: inline-flex; align-items: center; justify-content: center;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3a72d9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8l-1 4v12c0 .5-.5 1-1 1h-4c-.5 0-1-.5-1-1V8Z"/><path d="M8 8h8"/></svg>
+            <i data-lucide="fish" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #3a72d9;"></i>
           </span>
           <div>
-            <div class="display" style="font-size: 12.5px; font-weight: 700;">Laitages</div>
-            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">blue</div>
-          </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
-          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--yellow-soft); display: inline-flex; align-items: center; justify-content: center;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b88a14" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14c0-5 4-9 9-9 4 0 7 3 7 7 0 4-4 8-9 8-4 0-7-2-7-6Z"/><circle cx="9" cy="13" r="1"/><circle cx="14" cy="11" r="1"/><circle cx="14" cy="16" r="1"/></svg>
-          </span>
-          <div>
-            <div class="display" style="font-size: 12.5px; font-weight: 700;">Fromages</div>
-            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">yellow</div>
-          </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
-          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--orange-soft); display: inline-flex; align-items: center; justify-content: center;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d65a1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8c0-2 2-3 4-3h6c2 0 4 1 4 3v2H5Z"/><path d="M5 10v6c0 2 1 3 3 3h8c2 0 3-1 3-3v-6"/><path d="M9 13h6"/></svg>
-          </span>
-          <div>
-            <div class="display" style="font-size: 12.5px; font-weight: 700;">Épicerie</div>
-            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">orange</div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Poisson</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">fish · Fish</div>
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
           <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--purple-soft); display: inline-flex; align-items: center; justify-content: center;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6c50d0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v16H5Z"/><path d="M9 4v16M15 4v16M5 9h14M5 15h14"/></svg>
+            <i data-lucide="shell" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #6c50d0;"></i>
           </span>
           <div>
-            <div class="display" style="font-size: 12.5px; font-weight: 700;">Surgelés</div>
-            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">purple</div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Fruits de mer</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">seafood · Shell</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--blue-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="milk" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #3a72d9;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Produits laitiers</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">dairy · Milk</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--yellow-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="wheat" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #b88a14;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Céréales</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">grains · Wheat</div>
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
           <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--orange-soft); display: inline-flex; align-items: center; justify-content: center;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a87530" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14c2-7 14-7 16 0-2 6-14 6-16 0Z"/><path d="M6 11c1-2 4-2 5 0"/></svg>
+            <i data-lucide="flame" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #d65a1f;"></i>
           </span>
           <div>
-            <div class="display" style="font-size: 12.5px; font-weight: 700;">Boulangerie</div>
-            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">orange</div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Épices</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">spices · Flame</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--blue-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="cup-soda" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #3a72d9;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Boissons</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">beverages · CupSoda</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--orange-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="cookie" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #a87530;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Snacks</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">snacks · Cookie</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--red-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="soup" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #c83a48;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Condiments</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">condiments · Soup</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--purple-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="snowflake" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #6c50d0;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Surgelés</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">frozen · Snowflake</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--yellow-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="archive" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #b88a14;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Conserves</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">canned · Archive</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--pink-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="utensils-crossed" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #d04475;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Plat</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">meal · UtensilsCrossed</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--green-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="salad" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #1f9c5e;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Plat cuisiné</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">cooked_meal · Salad</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--purple-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="chef-hat" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #6c50d0;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Préparation</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">preparation · ChefHat</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--blue-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="spray-can" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #3a72d9;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Produits ménagers</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">cleaning_products · SprayCan</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: #e9ecf1; display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="package" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #717784;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Autre</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">other · Package</div>
           </div>
         </div>
       </div>
     </div>
-
     <!-- Item rows comparison -->
     <h3 class="display" style="margin-bottom: 14px;">Dans un item row</h3>
     <div class="card" style="margin-bottom: 18px;">
@@ -1207,7 +1298,7 @@
           <div style="font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em;">Sans image — fallback</div>
           <div class="item-card">
             <div class="ico" style="background: var(--green-soft);">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1f9c5e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13c2-1 4-1 6 0s4 1 6 0 4-1 6 0"/><path d="M3 17c2-1 4-1 6 0s4 1 6 0 4-1 6 0"/><path d="M12 4v5"/></svg>
+              <i data-lucide="carrot" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #1f9c5e;"></i>
             </div>
             <div class="body">
               <div class="nm">Épinards</div>
@@ -1221,7 +1312,7 @@
           <div style="font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em;">Catégorie inconnue</div>
           <div class="item-card">
             <div class="ico" style="background: var(--card); border: 1.5px dashed var(--rule);">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 11h6M12 8v8"/></svg>
+              <i data-lucide="package" width="20" height="20" stroke-width="1.8" style="width: 20px; height: 20px; color: var(--ink-3);"></i>
             </div>
             <div class="body">
               <div class="nm">Produit inconnu</div>
@@ -1743,5 +1834,7 @@
   </div>
 
 </div>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script>window.lucide && lucide.createIcons();</script>
 </body>
 </html>

@@ -115,6 +115,7 @@ export const PushOptInBanner = () => {
           </Button>
           <Button
             size="sm"
+            variant="green"
             onClick={handleActivate}
             disabled={isLoading}
             className="rounded-full font-display font-bold bg-mf-green text-white hover:bg-mf-green-deep px-4"

@@ -15,6 +15,7 @@ import { HouseholdSettings } from './HouseholdSettings';
 import { ExpirationNotification } from './ExpirationNotification';
 import { ExpirationNotificationRead } from './ExpirationNotificationRead';
 import { PushSubscription } from './PushSubscription';
+import { Brand } from './Brand';
 
 // Define associations
 User.hasMany(Household, { foreignKey: 'createdBy', as: 'createdHouseholds' });
@@ -142,6 +143,8 @@ ExpirationNotificationRead.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 User.hasMany(PushSubscription, { foreignKey: 'userId', as: 'pushSubscriptions', onDelete: 'CASCADE' });
 PushSubscription.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
+// Brand is a global referential — no associations
+
 // Export models
 export {
   sequelize,
@@ -160,5 +163,6 @@ export {
   HouseholdSettings,
   ExpirationNotification,
   ExpirationNotificationRead,
-  PushSubscription
+  PushSubscription,
+  Brand
 };

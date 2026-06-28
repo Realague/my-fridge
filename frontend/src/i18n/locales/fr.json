@@ -4028,7 +4028,14 @@
       "search": "Rechercher une enseigne...",
       "other": "Autre enseigne",
       "customStore": "Enseigne personnalisée",
-      "enterStoreName": "Nom de l'enseigne"
+      "enterStoreName": "Nom de l'enseigne",
+      "website": "Site web (facultatif)",
+      "websitePlaceholder": "ex. carrefour.fr",
+      "loading": "Chargement des enseignes…",
+      "error": "Impossible de charger les enseignes.",
+      "noResults": "Aucune enseigne trouvée.",
+      "creating": "Création…",
+      "createError": "Impossible de créer l'enseigne."
     },
     "scanner": {
       "title": "Scanner le code-barres",

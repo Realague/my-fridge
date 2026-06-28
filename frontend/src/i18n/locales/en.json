@@ -4028,7 +4028,14 @@
       "search": "Search for a store...",
       "other": "Other store",
       "customStore": "Custom store",
-      "enterStoreName": "Store name"
+      "enterStoreName": "Store name",
+      "website": "Website (optional)",
+      "websitePlaceholder": "e.g. carrefour.fr",
+      "loading": "Loading stores…",
+      "error": "Could not load stores.",
+      "noResults": "No store found.",
+      "creating": "Creating…",
+      "createError": "Could not create the store."
     },
     "scanner": {
       "title": "Scan barcode",

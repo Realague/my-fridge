@@ -18,7 +18,7 @@ passe par `POST /api/brands` (dédupliquée côté backend).
 
 ## Périmètre
 
-**Inclus (frontend uniquement)** : service + hook React Query pour `/api/brands`,
+**Inclus (frontend uniquement)** : service + store Zustand pour `/api/brands`,
 nouveau composant `BrandLogo`, refonte de `StoreSelector` (fetch + création custom
 avec domaine optionnel), adaptation de `LoyaltyCardForm` et `LoyaltyCards`,
 suppression de `storeCatalog.ts`.
@@ -40,7 +40,11 @@ backend (déjà livré) ; migration des données de cartes existantes.
 4. **Le sélecteur renvoie toujours un `Brand`** : le chemin « custom » crée un vrai
    Brand via l'API (au lieu d'un simple nom libre), ce qui unifie le flux.
 5. **Suppression complète de `storeCatalog.ts`** ; les consommateurs de
-   `getStoreBySlug` passent par la map `bySlug` du hook `useBrands`.
+   `getStoreBySlug` passent par le sélecteur `getBrandBySlug` du `brandStore`.
+6. **Couche données = store Zustand** (convention de l'app : React Query est
+   fourni mais non utilisé ailleurs ; les données passent par des stores Zustand).
+   On suit le pattern service canonique (`makeAuthenticatedApiCall`), **sans** la
+   DI legacy `initialize*`.
 
 ## Architecture & composants
 
@@ -75,14 +79,21 @@ interface CreateCustomBrandRequest { name: string; domain?: string }
 [frontend/src/types/enums.ts](../../../frontend/src/types/enums.ts) (livré au
 ticket backend).
 
-### `useBrands()` (nouveau hook React Query)
+### `brandStore.ts` (nouveau store Zustand)
 
-- `useQuery({ queryKey: ['brands'], queryFn: brandService.getBrands, staleTime: 5*60*1000 })`.
-- Renvoie `{ brands, bySlug, isLoading, isError, refetch }` où `bySlug` est une
-  `Map<string, Brand>` (ou record) construite depuis `brands`, pour résoudre un
-  `card.storeSlug` en O(1).
-- Une mutation de création (inline `useMutation` dans `StoreSelector` ou hook
-  `useCreateBrand`) invalide `['brands']` au succès.
+Suit la convention de l'app (`useLoyaltyCardStore` & co) mais utilise directement
+`brandService` (pas de DI `initialize*`) :
+
+- State : `{ brands: Brand[]; loaded: boolean; loading: boolean; error: string | null }`.
+- Actions :
+  - `fetchBrands(force?: boolean)` — appelle `brandService.getBrands` ; no-op si
+    `loaded` et `!force` (les enseignes changent rarement) ; gère loading/error.
+  - `createBrand(data)` — appelle `brandService.createBrand`, ajoute/merge le
+    `Brand` renvoyé dans `brands` (remplace si l'id existe déjà, cas dédup), le
+    retourne.
+- Sélecteur : `getBrandBySlug(slug)` → `Brand | undefined` (lookup dans `brands`).
+- Le store n'est pas câblé dans `StoreProvider` (pattern service direct). Les
+  composants appellent `fetchBrands()` au montage si `!loaded`.
 
 ### `BrandLogo` (remplace `StoreLogo`)
 
@@ -95,8 +106,9 @@ ticket backend).
 
 ### `StoreSelector` (refonte)
 
-- Récupère les enseignes via `useBrands`. États : **loading** (skeleton/spinner),
-  **erreur** (message + retry via `refetch`), **liste vide** gérée.
+- Récupère les enseignes via `useBrandStore` (`fetchBrands()` au montage si
+  `!loaded`). États : **loading** (skeleton/spinner), **erreur** (message + retry
+  via `fetchBrands(true)`), **liste vide** gérée.
 - Recherche : filtre client-side sur `brand.name` (insensible à la casse), comme
   aujourd'hui.
 - Grille de boutons → `onSelect(brand)` ; chaque bouton affiche `BrandLogo` + nom.
@@ -119,7 +131,8 @@ ticket backend).
 
 ### `LoyaltyCards` (affichage)
 
-- Utilise `useBrands().bySlug` pour résoudre `card.storeSlug` → `Brand`.
+- `fetchBrands()` au montage si `!loaded` ; utilise `getBrandBySlug(card.storeSlug)`
+  pour résoudre `card.storeSlug` → `Brand`.
 - Logo : `BrandLogo` avec `{ name: card.storeName, logoPath: brand?.logoPath ?? null, color: brand?.color ?? card.color }`.
 - Couleur de fond : `brand?.color ?? card.color ?? '#6B7280'` (fallback inchangé).
 - Remplace les imports `StoreLogo`/`getStoreBySlug` par `BrandLogo` + la map.
@@ -127,18 +140,19 @@ ticket backend).
 ## Flux de données
 
 ```
-useBrands ──GET /api/brands──> [Brand]  ─┬─> StoreSelector (grille + recherche)
-                                         └─> LoyaltyCards (bySlug → logo/couleur)
+brandStore.fetchBrands ──GET /api/brands──> [Brand] ─┬─> StoreSelector (grille + recherche)
+                                                     └─> LoyaltyCards (getBrandBySlug → logo/couleur)
 
-StoreSelector "Autre" ──POST /api/brands──> Brand ──> onSelect ──> LoyaltyCardForm
+StoreSelector "Autre" ──brandStore.createBrand──POST /api/brands──> Brand ──> onSelect ──> LoyaltyCardForm
 LoyaltyCardForm submit ──POST loyalty-cards (storeSlug=brand.id)──> usageCount++ (backend)
 ```
 
 ## Gestion des erreurs
 
 - **Fetch brands en échec** : `StoreSelector` affiche un message d'erreur + bouton
-  réessayer ; la création custom reste possible (elle ne dépend pas de la liste).
-  `LoyaltyCards` tombe sur le fallback couleur+initiale (pas de blocage).
+  réessayer (`fetchBrands(true)`) ; la création custom reste possible (elle ne
+  dépend pas de la liste). `LoyaltyCards` tombe sur le fallback couleur+initiale
+  (pas de blocage).
 - **Création custom en échec** : message inline dans le sous-formulaire, l'état
   saisi est conservé.
 

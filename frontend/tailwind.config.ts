@@ -19,9 +19,10 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				display: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+				// Fresh charter — DM Sans display, Inter body
+				display: ['"DM Sans"', 'Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
 				sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
-				mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+				mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -67,16 +68,19 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Charter palette bridged to Tailwind. Use `bg-mf-green`, `text-mf-danger`,
-				// `border-mf-night-line`, etc. instead of raw `green-600` / `red-500` /
-				// `rose-*` / `emerald-*` / `lime-*` so that drift between
-				// look-alike-but-not-identical Tailwind families disappears.
+				// Fresh charter palette bridged to Tailwind. Use `bg-mf-green`,
+				// `text-mf-danger`, `border-mf-night-line`, etc. instead of raw
+				// `green-600` / `red-500` / `rose-*` / `emerald-*` / `lime-*` so that
+				// drift between look-alike-but-not-identical Tailwind families
+				// disappears. Names `night/*` are kept as surface aliases (now
+				// resolve to Fresh cream tones) so existing components keep working.
 				mf: {
 					night: 'var(--mf-night)',
 					'night-surface': 'var(--mf-night-surface)',
 					'night-elevated': 'var(--mf-night-elevated)',
 					'night-line': 'var(--mf-night-line)',
 					'night-line-soft': 'var(--mf-night-line-soft)',
+					'page-bg': 'var(--mf-page-bg)',
 					text: 'var(--mf-text)',
 					'text-soft': 'var(--mf-text-soft)',
 					'text-mute': 'var(--mf-text-mute)',
@@ -91,18 +95,32 @@ export default {
 					'info-soft': 'var(--mf-info-soft)',
 					warning: 'var(--mf-warning)',
 					'warning-soft': 'var(--mf-warning-soft)',
+					yellow: 'var(--mf-yellow)',
+					'yellow-soft': 'var(--mf-yellow-soft)',
+					orange: 'var(--mf-orange)',
+					'orange-soft': 'var(--mf-orange-soft)',
+					red: 'var(--mf-red)',
+					'red-soft': 'var(--mf-red-soft)',
+					blue: 'var(--mf-blue)',
+					'blue-soft': 'var(--mf-blue-soft)',
+					pink: 'var(--mf-pink)',
+					'pink-soft': 'var(--mf-pink-soft)',
+					'pink-deep': 'var(--mf-pink-deep)',
+					purple: 'var(--mf-purple)',
+					'purple-soft': 'var(--mf-purple-soft)',
+					'purple-deep': 'var(--mf-purple-deep)',
+					brown: 'var(--mf-brown)',
+					'brown-soft': 'var(--mf-brown-soft)',
 				}
 			},
-			// Bridge directly to charter tokens so every `rounded-*` Tailwind
-			// utility resolves to a charter step. Drops the previous
-			// `var(--radius) ± 2px` heuristic that under-rendered controls
-			// (10 → 6 px) and cards (14 → 8 px).
+			// Bridge directly to Fresh charter tokens so every `rounded-*` Tailwind
+			// utility resolves to a charter step. Fresh scale: 10/14/18/24 + pill.
 			borderRadius: {
-				xs: 'var(--mf-radius-xs)',  // 4 px — micro chips
-				sm: 'var(--mf-radius-sm)',  // 6 px — tags / small inputs
-				md: 'var(--mf-radius-md)',  // 10 px — controls (buttons, inputs)
-				lg: 'var(--mf-radius-lg)',  // 14 px — cards (charter heading)
-				xl: 'var(--mf-radius-xl)',  // 20 px — identities (hero tiles, modals)
+				xs: 'var(--mf-radius-xs)',  //  8 px — micro chips
+				sm: 'var(--mf-radius-sm)',  // 10 px — tags / small inputs
+				md: 'var(--mf-radius-md)',  // 14 px — items list, integrated icons, controls
+				lg: 'var(--mf-radius-lg)',  // 18 px — cards mobiles / secondaires
+				xl: 'var(--mf-radius-xl)',  // 24 px — cards desktop / hero
 			},
 			keyframes: {
 				'accordion-down': {

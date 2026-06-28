@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Home, Plus, Users, CheckCircle, ArrowRight } from 'lucide-react';
+import { Home, Plus, Users, CheckCircle, ArrowRight, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useHouseholdStore } from '@/stores/householdStore';
@@ -13,17 +12,17 @@ import { useTranslation } from 'react-i18next';
 const Household = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  
+
   // Protected route hook handles auth and household checks
   useProtectedRoute();
-  
+
   const { user: currentUser, setUser } = useAuthStore();
-  
+
   // Zustand store - selective subscriptions
   const households = useHouseholdStore(state => state.households);
   const fetchHouseholds = useHouseholdStore(state => state.fetchHouseholds);
   const selectHousehold = useHouseholdStore(state => state.selectHousehold);
-  
+
   const [switchingHousehold, setSwitchingHousehold] = useState<string | null>(null);
 
   // Load households on mount
@@ -34,7 +33,7 @@ const Household = () => {
   const handleCreateNew = () => {
     navigate('/onboarding?step=2'); // Go directly to the "Create Your Household" step
   };
-  
+
   const handleJoin = () => {
     navigate('/onboarding?step=4'); // Go directly to the "Join a Household" step
   };
@@ -42,9 +41,9 @@ const Household = () => {
   const handleSwitch = async (householdId: string) => {
     try {
       setSwitchingHousehold(householdId);
-      
+
       const user = await selectHousehold(householdId);
-      
+
       if (user) {
         setUser(user);
       } else {
@@ -83,7 +82,7 @@ const Household = () => {
 
       {/* Content */}
       <div className="container mx-auto px-4 py-6 space-y-6">
-        
+
         <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle>{t('pages.household.switchOrManage')}</CardTitle>
@@ -91,21 +90,28 @@ const Household = () => {
           </CardHeader>
           <CardContent className="space-y-3">
                          {households.map((h) => (
-               <div key={h.id} className="flex items-center bg-accent justify-between p-3 rounded-lg border border-border/50">
+               <div
+                 key={h.id}
+                 className={`flex items-center justify-between p-3 rounded-lg border ${
+                   currentUser?.selectedHouseholdId === h.id
+                     ? 'bg-mf-green-soft border-mf-green/30'
+                     : 'bg-accent border-border/50'
+                 }`}
+               >
                  <div className="flex-1 min-w-0">
                    <p className="font-semibold text-foreground">{h.name}</p>
                    <p className="text-sm text-muted-foreground">{t('pages.dashboard.members', { count: h.memberCount })} • {h.userRole}</p>
                  </div>
                  <div className="flex items-center gap-2">
                     {currentUser?.selectedHouseholdId === h.id ? (
-                      <Badge variant="default" className="bg-primary text-primary-foreground">
-                        <CheckCircle className="h-3 w-3 mr-1.5" />
+                      <span className="flex items-center gap-1.5 text-sm font-semibold text-mf-green-deep">
+                        <Check className="h-4 w-4" />
                         {t('pages.household.active')}
-                      </Badge>
+                      </span>
                    ) : (
-                     <Button 
-                       variant="outline" 
-                       size="sm" 
+                     <Button
+                       variant="outline"
+                       size="sm"
                        onClick={() => handleSwitch(h.id)}
                        disabled={switchingHousehold === h.id}
                      >
@@ -137,7 +143,7 @@ const Household = () => {
             </Button>
           </CardContent>
         </Card>
-        
+
       </div>
       <BottomNavigation currentPage="more" />
     </div>

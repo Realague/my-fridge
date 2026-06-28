@@ -33,6 +33,7 @@ import { storedItemService } from '@/services/storedItemService';
 import type { Item } from '@/services/itemService';
 import type { StorageArea } from '@/services/storageAreaService';
 import { ItemCategory, StorageAreaType, Unit } from '@/types/enums';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { computeCookedMealExpirationISO } from '@/utils/cookedMealDefaults';
 import {
@@ -536,7 +537,7 @@ export const AddStoredItemDialog = ({
                       {sortedAreas.map((area) => (
                         <SelectItem key={area.id} value={area.id}>
                           <span className="flex items-center gap-2">
-                            <span aria-hidden>{area.emoji}</span>
+                            <StorageAreaIcon type={area.type} className="h-4 w-4" />
                             <span>{area.name}</span>
                           </span>
                         </SelectItem>
@@ -552,7 +553,7 @@ export const AddStoredItemDialog = ({
               {onlyOneArea && selectedArea && (
                 <div className="text-xs text-muted-foreground">
                   {t('addStoredItemDialog.singleAreaHint', {
-                    name: `${selectedArea.emoji} ${selectedArea.name}`,
+                    name: selectedArea.name,
                   })}
                 </div>
               )}

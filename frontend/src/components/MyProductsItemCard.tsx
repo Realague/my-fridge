@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardLinkOverlay } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, ChefHat, MapPin, PackageOpen, Snowflake, Trash2, Utensils } from 'lucide-react';
+import { Calendar, ChefHat, Clock, MapPin, PackageOpen, Snowflake, Trash2, Utensils } from 'lucide-react';
 import type { StoredItem } from '@/services/storedItemService';
 import type { Item } from '@/services/itemService';
 import type { StorageArea } from '@/services/storageAreaService';
@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '@/utils/dateFormatting';
 import { ItemImage } from '@/components/ItemImage';
 import { CategoryIcon } from '@/utils/categoryIcons';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
 import { formatQuantityWithUnit } from '@/utils/unitSystem';
 import { ItemCategory, StorageAreaType } from '@/types/enums';
@@ -125,39 +126,37 @@ export function MyProductsItemCard({
   const isFreezerArea = area?.type === StorageAreaType.FREEZER;
   const daysUntilExpiration = getDaysUntilExpiration(expirationSource);
 
+  // Fresh charter — pill plein pour les états critiques (expired/2j) pour
+  // qu'ils crient ; pill soft pour "use soon" et "fresh" (info plus calme).
   const expirationBadge = (() => {
     if (isFreezerArea || daysUntilExpiration === null) return null;
+    const base =
+      'inline-flex items-center rounded-full px-2.5 py-1 font-display text-[11px] font-bold uppercase tracking-wider leading-none';
     if (daysUntilExpiration < 0) {
       return (
-        <Badge variant="destructive" className="text-xs">
+        <span className={`${base} bg-mf-danger text-white`}>
           {t('storageArea.expired')}
-        </Badge>
+        </span>
       );
     }
     if (daysUntilExpiration <= 2) {
       return (
-        <Badge variant="destructive" className="text-xs">
+        <span className={`${base} bg-mf-danger text-white`}>
           {t('storageArea.expiresIn', { days: daysUntilExpiration })}
-        </Badge>
+        </span>
       );
     }
     if (daysUntilExpiration <= 7) {
       return (
-        <Badge
-          variant="secondary"
-          className="text-xs bg-mf-warning-soft text-mf-warning"
-        >
+        <span className={`${base} bg-mf-warning-soft text-mf-warning`}>
           {t('storageArea.expiresIn', { days: daysUntilExpiration })}
-        </Badge>
+        </span>
       );
     }
     return (
-      <Badge
-        variant="secondary"
-        className="text-xs bg-mf-green-soft text-mf-green-deep"
-      >
+      <span className={`${base} bg-mf-green-soft text-mf-green-deep`}>
         {t('storageArea.fresh', { days: daysUntilExpiration })}
-      </Badge>
+      </span>
     );
   })();
 
@@ -178,8 +177,8 @@ export function MyProductsItemCard({
           <ItemImage
             src={item.imageUrl}
             alt={getItemDisplayName(item, t)}
-            containerClassName="w-16 h-16 rounded-lg"
-            fallbackIconSize={48}
+            containerClassName="w-20 h-20 rounded-lg"
+            fallbackIconSize={40}
             category={item.category}
           />
 
@@ -202,7 +201,7 @@ export function MyProductsItemCard({
                   className="inline-flex items-center gap-1 rounded-md border border-border/60 bg-muted px-2 py-0.5 text-xs font-medium text-foreground hover:bg-muted/80 transition-colors"
                   aria-label={`${t('pages.myProducts.filterByArea')} — ${area.name}`}
                 >
-                  <span aria-hidden>{area.emoji}</span>
+                  <StorageAreaIcon type={area.type} className="h-3.5 w-3.5" />
                   <span className="truncate max-w-[10rem]">{area.name}</span>
                 </button>
               )}
@@ -246,24 +245,35 @@ export function MyProductsItemCard({
                 )}
               </div>
 
-              {storedItem.creator && (
-                <p className="text-xs text-muted-foreground">
-                  {t('common.addedBy', {
-                    name:
-                      storedItem.creator.id === currentUserId
-                        ? t('common.you')
-                        : storedItem.creator.displayName,
-                  })}
-                </p>
-              )}
-
               <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
                 <div className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
                   <span>
-                    {t('storageArea.added')} {formatDate(new Date(storedItem.createdAt), 'MMM d')}
+                    {storedItem.creator
+                      ? t('common.addedByOn', {
+                          name:
+                            storedItem.creator.id === currentUserId
+                              ? t('common.you')
+                              : storedItem.creator.displayName,
+                          date: formatDate(new Date(storedItem.createdAt), 'MMM d'),
+                        })
+                      : `${t('storageArea.added')} ${formatDate(new Date(storedItem.createdAt), 'MMM d')}`}
                   </span>
                 </div>
+
+                {expirationSource && !isFreezerArea && (
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    <span>
+                      {t(
+                        daysUntilExpiration !== null && daysUntilExpiration < 0
+                          ? 'storageArea.expiredOn'
+                          : 'storageArea.expiresOn',
+                        { date: formatDate(new Date(expirationSource), 'MMM d') },
+                      )}
+                    </span>
+                  </div>
+                )}
 
                 {isCookedMeal && storedItem.cookedDate && (
                   <div className="flex items-center gap-1 text-mf-green-deep">

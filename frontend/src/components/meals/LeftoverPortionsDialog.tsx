@@ -23,6 +23,7 @@ import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { storedItemService } from '@/services/storedItemService';
 import { ItemCategory, StorageAreaType, Unit } from '@/types/enums';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { computeCookedMealExpirationISO } from '@/utils/cookedMealDefaults';
 import {
   suggestAreaId,
@@ -274,7 +275,7 @@ export const LeftoverPortionsDialog = ({
                     {sortedAreas.map((area) => (
                       <SelectItem key={area.id} value={area.id}>
                         <span className="flex items-center gap-2">
-                          <span aria-hidden>{area.emoji}</span>
+                          <StorageAreaIcon type={area.type} className="h-4 w-4" />
                           <span>{area.name}</span>
                         </span>
                       </SelectItem>
@@ -287,7 +288,7 @@ export const LeftoverPortionsDialog = ({
             {onlyOneArea && selectedArea && (
               <div className="text-xs text-[color:var(--mf-text-mute)]">
                 {t('addStoredItemDialog.singleAreaHint', {
-                  name: `${selectedArea.emoji} ${selectedArea.name}`,
+                  name: selectedArea.name,
                 })}
               </div>
             )}

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { ArrowLeft, Plus, Edit, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Plus, PenLine, Trash2, AlertCircle, CheckCircle, PackageMinus } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemMinimumDialog } from '@/components/ItemMinimumDialog';
 import { ItemImage } from '@/components/ItemImage';
@@ -106,7 +106,7 @@ const ItemMinimums = () => {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <div className="min-w-0">
-                <h1 className="text-xl font-bold text-foreground truncate">{t('itemMinimum.title')}</h1>
+                <h1 className="text-xl font-bold text-foreground truncate flex items-center gap-2"><PackageMinus className="h-5 w-5 text-primary shrink-0" aria-hidden />{t('itemMinimum.title')}</h1>
                 <p className="text-sm text-muted-foreground">
                   {t('itemMinimum.description')}
                 </p>
@@ -169,8 +169,8 @@ const ItemMinimums = () => {
                       <ItemImage
                         src={item.imageUrl}
                         alt={getItemDisplayName(item, t)}
-                        containerClassName="w-10 h-10 sm:w-12 sm:h-12 rounded-lg shrink-0"
-                        fallbackIconSize={32}
+                        containerClassName="w-20 h-20 rounded-lg shrink-0"
+                        fallbackIconSize={40}
                         category={item.category}
                       />
                       <div className="flex-1 min-w-0">
@@ -192,7 +192,7 @@ const ItemMinimums = () => {
                                 </Badge>
                               )}
                             </div>
-                            <div className="space-y-1 text-sm text-muted-foreground">
+                            <div className="space-y-0.5 text-xs text-mf-text-soft">
                               <div>
                                 <span className="font-medium text-foreground">
                                   {t('itemMinimum.currentStock')}:
@@ -227,23 +227,23 @@ const ItemMinimums = () => {
                               )}
                             </div>
                           </div>
-                          <div className="flex items-center gap-1 shrink-0">
-                            <Button
-                              variant="ghost"
-                              size="sm"
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button
+                              type="button"
                               onClick={() => handleEdit(minimum.id)}
-                              className="h-8 w-8 p-0"
+                              aria-label={t('common.edit')}
+                              className="h-9 w-9 rounded-md flex items-center justify-center bg-mf-night-elevated text-mf-text hover:bg-mf-night-line transition-colors"
                             >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="deleteTrash"
-                              size="sm"
+                              <PenLine className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
                               onClick={() => setDeleteConfirmId(minimum.id)}
-                              className="h-8 w-8 p-0"
+                              aria-label={t('common.delete')}
+                              className="h-9 w-9 rounded-md flex items-center justify-center bg-mf-danger-soft text-mf-danger hover:bg-mf-danger hover:text-white transition-colors"
                             >
                               <Trash2 className="h-4 w-4" />
-                            </Button>
+                            </button>
                           </div>
                         </div>
                       </div>

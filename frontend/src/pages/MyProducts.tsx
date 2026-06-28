@@ -62,6 +62,7 @@ import {
   type StorageAreaSortCriterion,
 } from '@/utils/storageAreaSort';
 import { CategoryIcon } from '@/utils/categoryIcons';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { ITEM_CATEGORIES, StorageAreaType } from '@/types/enums';
 import { scrollRevealFadeUp } from '@/lib/motion';
@@ -77,7 +78,6 @@ const SORT_CRITERIA: StorageAreaSortCriterion[] = [
 interface AreaSection {
   areaId: string | null;
   areaName: string;
-  areaEmoji: string;
   areaType: StorageAreaType;
   rows: StorageAreaListRow[];
   itemCount: number;
@@ -302,7 +302,6 @@ const MyProducts = () => {
         result.push({
           areaId: area.id,
           areaName: area.name,
-          areaEmoji: area.emoji,
           areaType: area.type,
           rows,
           itemCount: list.length,
@@ -328,7 +327,6 @@ const MyProducts = () => {
       {
         areaId: null,
         areaName: '',
-        areaEmoji: '',
         areaType: StorageAreaType.OTHER,
         rows,
         itemCount: filteredItems.length,
@@ -488,7 +486,7 @@ const MyProducts = () => {
                                 checked={checked}
                                 onCheckedChange={() => toggleArea(area.id)}
                               />
-                              <span aria-hidden>{area.emoji}</span>
+                              <StorageAreaIcon type={area.type} className="h-4 w-4" />
                               <span className="flex-1 truncate text-sm font-medium">
                                 {area.name}
                               </span>
@@ -654,9 +652,7 @@ const MyProducts = () => {
                           }`}
                           aria-hidden
                         />
-                        <span className="text-lg" aria-hidden>
-                          {section.areaEmoji}
-                        </span>
+                        <StorageAreaIcon type={section.areaType} className="h-5 w-5 shrink-0" />
                         <h2 className="font-semibold text-sm sm:text-base text-foreground truncate">
                           {section.areaName}
                         </h2>

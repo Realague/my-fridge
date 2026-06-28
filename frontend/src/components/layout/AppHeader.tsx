@@ -23,7 +23,7 @@ export const AppHeader = () => {
   return (
     <>
       <header
-        className="sticky top-0 z-40 h-14 w-full border-b border-border bg-card/80 backdrop-blur-sm"
+        className="sticky top-0 z-40 h-14 w-full border-b border-mf-night-line bg-mf-night/85 backdrop-blur-sm"
         role="banner"
       >
         <div className="flex h-full items-center justify-between gap-3 px-4 md:px-6">
@@ -35,13 +35,13 @@ export const AppHeader = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="relative"
+              className="relative h-9 w-9 rounded-full bg-mf-night-surface text-mf-text hover:bg-mf-night-elevated"
               onClick={() => setNotifOpen(true)}
               aria-label={t('header.openNotifications')}
             >
-              <Bell className="h-5 w-5" />
+              <Bell className="h-[18px] w-[18px]" />
               {unreadCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-mf-danger p-0 text-[10px] text-white">
+                <Badge className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-mf-danger p-0 px-1 text-[9px] font-bold text-white ring-2 ring-mf-night">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </Badge>
               )}

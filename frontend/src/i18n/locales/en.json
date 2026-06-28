@@ -179,6 +179,8 @@
     "location": "Location",
     "moveToStorage": "Storage location",
     "expirationDate": "Expiration date",
+    "expiresOn": "Expires on {{date}}",
+    "expiredOn": "Expired since {{date}}",
     "addItem": "Add item",
     "addItemTo": "Add item to {{name}}",
     "selectItem": "Select item",
@@ -335,6 +337,7 @@
     "addIngredient": "Add ingredient",
     "noIngredients": "No ingredients added yet",
     "clickToAdd": "Click \"Add ingredient\" to get started",
+    "emptyState": "No ingredients yet — tap “+ Add” to get started.",
     "item": "Item",
     "selectIngredient": "Select ingredient...",
     "quantityAndUnit": "Quantity & unit",
@@ -559,6 +562,8 @@
       "recentActivityDescription": "What's happening in your household",
       "switchHousehold": "Switch Household",
       "manageHouseholds": "Manage Households",
+      "storageAreasActive_one": "{{count}} active location",
+      "storageAreasActive_other": "{{count}} active locations",
       "noStorageAreas": "No storage areas yet",
       "addFirstStorageArea": "Add Your First Storage Area",
       "manage": "Manage",
@@ -3990,6 +3995,10 @@
       "description": "Add your cards to always have them with you",
       "addFirst": "Add a card"
     },
+    "addTile": {
+      "title": "Add a card",
+      "subtitle": "Scan or enter"
+    },
     "messages": {
       "created": "Card added",
       "deleted": "Card deleted",
@@ -4039,6 +4048,7 @@
     "next": "Next",
     "optional": "Optional",
     "addedBy": "Added by {{name}}",
+    "addedByOn": "Added by {{name}} on {{date}}",
     "you": "you",
     "back": "Back",
     "edit": "Edit",

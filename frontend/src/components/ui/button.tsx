@@ -11,8 +11,8 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        green: "bg-[var(--mf-green)] hover:bg-[var(--mf-green-deep)] text-[#03150A]",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-full font-display font-bold px-4",
+        green: "bg-[var(--mf-green)] hover:bg-[var(--mf-green-deep)] text-white rounded-full font-display font-bold px-4",
         delete: "border border-mf-danger bg-card/90 text-mf-danger hover:bg-mf-danger hover:text-white",
         deleteTrash: "bg-transparent text-mf-danger transition-opacity hover:bg-mf-danger hover:text-white",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",

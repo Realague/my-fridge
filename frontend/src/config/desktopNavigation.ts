@@ -6,8 +6,8 @@ import {
   CreditCard,
   LayoutDashboard,
   Package,
+  PackageMinus,
   ShoppingCart,
-  SlidersHorizontal,
 } from 'lucide-react';
 
 export interface DesktopNavItem {
@@ -56,7 +56,7 @@ export const DESKTOP_NAV_ITEMS: DesktopNavItem[] = [
   {
     id: 'item-minimums',
     labelKey: 'pages.more.features.itemMinimums.title',
-    icon: SlidersHorizontal,
+    icon: PackageMinus,
     to: '/item-minimums',
   },
   {

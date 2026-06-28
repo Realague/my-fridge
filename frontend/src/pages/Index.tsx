@@ -49,26 +49,18 @@ const Index = () => {
               <img src="/favicon.ico" alt="MyFridge" className="inline-flex items-center justify-center w-20 h-20" />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-4">
-            My<span className="text-primary">Fridge</span>
+            My<span className="text-[#2BB673]">Fridge</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             {t('pages.index.subtitle')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="bg-primary/10 text-primary hover:bg-primary/15 px-8 py-3 rounded-xl"
               onClick={() => navigate('/auth')}
             >
               {t('pages.index.getStarted')} <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="border-primary/10 text-primary hover:bg-primary/10 px-8 py-3 rounded-xl"
-              onClick={() => navigate('/demo')}
-            >
-              {t('pages.index.seeDemo')}
             </Button>
           </div>
         </div>
@@ -132,41 +124,6 @@ const Index = () => {
           </Card>
         </div>
 
-        {/* Demo Preview */}
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-foreground mb-8">{t('pages.index.demoSection.title')}</h2>
-          <div className="bg-card rounded-2xl shadow-2xl p-8 max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-green-600 rounded-xl mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-2xl">🥬</span>
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">{t('pages.index.demoSection.trackInventory')}</h3>
-                <p className="text-muted-foreground text-sm">
-                  {t('pages.index.demoSection.trackInventoryDescription')}
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-orange-400 to-orange-600 rounded-xl mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-2xl">📝</span>
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">{t('pages.index.demoSection.planTogether')}</h3>
-                <p className="text-muted-foreground text-sm">
-                  {t('pages.index.demoSection.planTogetherDescription')}
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-2xl">🛒</span>
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">{t('pages.index.demoSection.shopSmart')}</h3>
-                <p className="text-muted-foreground text-sm">
-                  {t('pages.index.demoSection.shopSmartDescription')}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Footer */}

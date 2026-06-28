@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardButton, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Settings, Users, Bell, List, ChevronDown } from 'lucide-react';
+import { Settings, Users, Bell, Menu, ChevronDown, Refrigerator } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StorageAreaCard from '@/components/StorageAreaCard';
 import BottomNavigation from '@/components/BottomNavigation';
@@ -41,10 +41,10 @@ const Dashboard = () => {
 
   // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
   const [showNotifications, setShowNotifications] = useState(false);
-  
+
   // Protected route hook handles auth and household checks
   const { selectedHouseholdId, isLoading: authLoading, isAuthenticated, hasHousehold } = useProtectedRoute();
-  
+
   // Zustand stores - selective subscriptions for better performance
   const { user: currentUser, setUser } = useAuthStore();
   const { getPendingItems, fetchShoppingItems } = useShoppingStore();
@@ -65,15 +65,15 @@ const Dashboard = () => {
   const unreadNotifications = useExpirationNotificationStore((s) =>
     s.notifications.filter((n) => !n.readByCurrentUser).length
   );
-  
+
   // Household store - only re-renders when these specific values change
   const households = useHouseholdStore(state => state.households);
-  
+
   // Actions - these don't cause re-renders
   const getCurrentHousehold = useHouseholdStore(state => state.getCurrentHousehold);
   const fetchHouseholds = useHouseholdStore(state => state.fetchHouseholds);
   const selectHousehold = useHouseholdStore(state => state.selectHousehold);
-  
+
   // Storage areas for current household - pass null if no household to prevent API calls
   const {
     storageAreasWithStats,
@@ -82,7 +82,7 @@ const Dashboard = () => {
 
   // Load households when authenticated
   useEffect(() => {
-    fetchHouseholds();  
+    fetchHouseholds();
   }, [selectedHouseholdId, authLoading]);
 
   // Load storage areas and stored items when household changes
@@ -148,7 +148,7 @@ const Dashboard = () => {
   */
 
   const itemMinimums = getItemMinimumsForHousehold();
-  
+
   const quickActions = [
     { title: t('pages.shopping.title'), description: t('pages.dashboard.itemsPending', { count: getPendingItems().length }), emoji: '🛒', route: '/shopping' },
     { title: t('pages.meals.title'), description: t('pages.dashboard.planThisWeek'), emoji: '📅', route: '/meals' },
@@ -192,7 +192,7 @@ const Dashboard = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            
+
             <div className="flex items-center gap-1 sm:gap-3">
               <Button
                 variant="ghost"
@@ -247,47 +247,73 @@ const Dashboard = () => {
         {/* Low Stock Alert */}
         <LowStockCard />
 
-        {/* Storage Areas */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-xl font-bold text-foreground shrink-0">{t('pages.dashboard.storageAreas')}</h2>
-            <div className="flex gap-2 shrink-0">
-              <AddStorageAreaDialog />
-              <Button
-                variant="green"
-                size="sm"
-                onClick={() => navigate(`/household/${getCurrentHousehold()?.id}`)}
-              >
-                <List className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">{t('pages.dashboard.manage')}</span>
-              </Button>
+        {/* Storage Areas — Fresh "card with header + grid" pattern */}
+        <Card className="border-0 bg-mf-night-surface shadow-none">
+          <CardHeader className="px-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="min-w-0 flex items-start gap-3">
+                <span
+                  aria-hidden="true"
+                  className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-mf-blue-soft text-mf-blue"
+                >
+                  <Refrigerator className="h-5 w-5" strokeWidth={2} />
+                </span>
+                <div className="min-w-0">
+                  <CardTitle className="font-display text-mf-text">
+                    <span className="truncate">{t('pages.dashboard.storageAreas')}</span>
+                  </CardTitle>
+                  <CardDescription className="text-mf-text-soft mt-1">
+                    {t('pages.dashboard.storageAreasActive', { count: storageAreasWithStats.length })}
+                  </CardDescription>
+                </div>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <AddStorageAreaDialog />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate(`/household/${getCurrentHousehold()?.id}`)}
+                  className="rounded-full bg-mf-night-elevated text-mf-text hover:bg-mf-night-line font-display font-semibold"
+                >
+                  <Menu className="h-4 w-4 sm:mr-1.5" />
+                  <span className="hidden sm:inline">{t('pages.dashboard.manage')}</span>
+                </Button>
+              </div>
             </div>
-          </div>
-
-          <div className="space-y-3">
+          </CardHeader>
+          <CardContent className="px-4 sm:px-6">
             {storageAreasWithStats.length === 0 ? (
               <div className="text-center py-8">
-                 <p className="text-gray-500 mb-4">{t('pages.dashboard.noStorageAreas')}</p>
-                 <AddStorageAreaDialog 
-                   trigger={
-                     <Button variant="green">
-                       {t('pages.dashboard.addFirstStorageArea')}
-                     </Button>
-                   }
-                 />
+                <p className="text-mf-text-soft mb-4">{t('pages.dashboard.noStorageAreas')}</p>
+                <AddStorageAreaDialog
+                  trigger={
+                    <Button variant="green" className="font-display font-bold">
+                      {t('pages.dashboard.addFirstStorageArea')}
+                    </Button>
+                  }
+                />
               </div>
             ) : (
-              storageAreasWithStats.map((area) => (
-                <motion.div key={area.id} {...scrollRevealSlideRight(prefersReducedMotion)}>
-                  <StorageAreaCard
-                    area={area}
-                    onClick={() => navigate(`/storage/${area.id}`)}
-                  />
-                </motion.div>
-              ))
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
+                {storageAreasWithStats.map((area, idx) => (
+                  <motion.div
+                    key={area.id}
+                    {...scrollRevealSlideRight(prefersReducedMotion)}
+                    transition={{
+                      ...scrollRevealSlideRight(prefersReducedMotion).transition,
+                      delay: prefersReducedMotion ? 0 : idx * 0.03,
+                    }}
+                  >
+                    <StorageAreaCard
+                      area={area}
+                      onClick={() => navigate(`/storage/${area.id}`)}
+                    />
+                  </motion.div>
+                ))}
+              </div>
             )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Recent Activity — hidden until a real activity feed exists.
             Previously rendered hardcoded English mock rows (Sarah / John /

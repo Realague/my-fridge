@@ -5,9 +5,9 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { toast } from 'sonner';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, ChefHat, Snowflake, Trash2 } from 'lucide-react';
+import { ItemImage } from '@/components/ItemImage';
+import { AlertTriangle, ChefHat, Snowflake, Trash2 } from 'lucide-react';
 
 import { useExpirationNotificationStore } from '@/stores/expirationNotificationStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
@@ -121,22 +121,29 @@ export const ExpiringSoonCard = ({ householdId }: ExpiringSoonCardProps) => {
   };
 
   return (
-    <Card className="border-mf-danger/30 bg-mf-danger-soft">
+    <Card className="border-0 bg-mf-night-surface shadow-none">
       <CardHeader className="px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <div className="min-w-0">
-            <CardTitle className="flex items-center gap-2 text-mf-danger">
-              <AlertCircle className="h-5 w-5 shrink-0" />
-              <span className="truncate">{t('pages.dashboard.expiringSoon.title')}</span>
-            </CardTitle>
-            <CardDescription className="text-mf-text-soft mt-1">
-              {t('pages.dashboard.expiringSoon.subtitle', { count: sortedItems.length })}
-            </CardDescription>
+          <div className="min-w-0 flex items-start gap-3">
+            <span
+              aria-hidden="true"
+              className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-mf-danger-soft text-mf-danger"
+            >
+              <AlertTriangle className="h-5 w-5" strokeWidth={2} />
+            </span>
+            <div className="min-w-0">
+              <CardTitle className="font-display text-mf-text">
+                <span className="truncate">{t('pages.dashboard.expiringSoon.title')}</span>
+              </CardTitle>
+              <CardDescription className="text-mf-text-soft mt-1">
+                {t('pages.dashboard.expiringSoon.subtitle', { count: sortedItems.length })}
+              </CardDescription>
+            </div>
           </div>
         </div>
       </CardHeader>
       <CardContent className="px-4 sm:px-6">
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {visibleItems.map((item, index) => (
             <motion.div
               key={item.storedItemId}
@@ -161,7 +168,7 @@ export const ExpiringSoonCard = ({ householdId }: ExpiringSoonCardProps) => {
           {!showAll && hiddenCount > 0 && (
             <Button
               variant="ghost"
-              className="w-full text-mf-danger hover:bg-mf-danger-soft"
+              className="w-full rounded-full text-mf-danger hover:bg-mf-danger-soft"
               onClick={() => setShowAll(true)}
             >
               {t('pages.dashboard.expiringSoon.viewMore', { count: hiddenCount })}
@@ -187,32 +194,50 @@ const ExpiringSoonRow = ({ item, pending, onDiscard, onFreeze, onRecipes }: RowP
   const isToday = item.urgency === 'today';
   const isTomorrow = item.urgency === 'tomorrow';
 
-  const containerClasses = [
-    'rounded-lg border bg-card transition-colors',
-    isExpired ? 'border-mf-danger/40 bg-mf-danger-soft' : '',
-    !isExpired && isToday ? 'border-l-4 border-l-mf-danger border-mf-danger/30' : '',
-    !isExpired && isTomorrow ? 'border-l-4 border-l-mf-warning border-mf-warning/30' : '',
-    !isExpired && !isToday && !isTomorrow ? 'border-mf-night-line' : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
+  // Fresh: rows sit on `sub` cream surfaces, urgency is signalled by the badge
+  // pill + the action button — not by tinting the whole row.
+  const containerClasses = 'rounded-md bg-mf-night-elevated transition-colors';
 
   const badge = isExpired
-    ? { variant: 'destructive' as const, label: t('pages.dashboard.expiringSoon.badgeExpired') }
+    ? { tone: 'danger' as const, label: t('pages.dashboard.expiringSoon.badgeExpired') }
     : isToday
-    ? { variant: 'destructive' as const, label: t('pages.dashboard.expiringSoon.badgeToday') }
+    ? { tone: 'danger' as const, label: t('pages.dashboard.expiringSoon.badgeToday') }
     : isTomorrow
-    ? { variant: 'secondary' as const, label: t('pages.dashboard.expiringSoon.badgeTomorrow') }
+    ? { tone: 'warn' as const, label: t('pages.dashboard.expiringSoon.badgeTomorrow') }
     : {
-        variant: 'secondary' as const,
+        tone: 'neutral' as const,
         label: t('pages.dashboard.expiringSoon.badgeInDays', { count: item.daysUntilExpiration }),
       };
 
+  // Critical = pill plein qui crie ; warn/neutral = soft (info plus calme).
+  // Cohérent avec MyProductsItemCard et la charte §02 "couleur = info".
+  const badgeClass =
+    badge.tone === 'danger'
+      ? 'bg-mf-danger text-white'
+      : badge.tone === 'warn'
+      ? 'bg-mf-warning-soft text-mf-warning'
+      : 'bg-mf-night-elevated text-mf-text-soft';
+
   const action = isExpired
-    ? { icon: <Trash2 className="h-4 w-4" />, label: t('pages.dashboard.expiringSoon.actionDiscard'), onClick: onDiscard }
+    ? {
+        icon: <Trash2 className="h-4 w-4" />,
+        label: t('pages.dashboard.expiringSoon.actionDiscard'),
+        onClick: onDiscard,
+        className: 'bg-mf-danger text-white hover:bg-mf-danger/90',
+      }
     : isToday
-    ? { icon: <Snowflake className="h-4 w-4" />, label: t('pages.dashboard.expiringSoon.actionFreeze'), onClick: onFreeze }
-    : { icon: <ChefHat className="h-4 w-4" />, label: t('pages.dashboard.expiringSoon.actionRecipes'), onClick: onRecipes };
+    ? {
+        icon: <Snowflake className="h-4 w-4" />,
+        label: t('pages.dashboard.expiringSoon.actionFreeze'),
+        onClick: onFreeze,
+        className: 'bg-mf-night-elevated text-mf-text hover:bg-mf-night-line',
+      }
+    : {
+        icon: <ChefHat className="h-4 w-4" />,
+        label: t('pages.dashboard.expiringSoon.actionRecipes'),
+        onClick: onRecipes,
+        className: 'bg-mf-night-elevated text-mf-text hover:bg-mf-night-line',
+      };
 
   const openedSubline = item.isOpened && item.openedDate
     ? t('pages.dashboard.expiringSoon.openedDaysAgo', { count: daysSince(item.openedDate) })
@@ -220,31 +245,45 @@ const ExpiringSoonRow = ({ item, pending, onDiscard, onFreeze, onRecipes }: RowP
 
   const quantityLabel = `${formatQuantity(item.quantity)} ${getTranslatedUnitLabel(item.unit, item.quantity, t)}`;
 
+  const displayName = translateItemName(item.itemName, item.itemHouseholdId, t);
+
   return (
     <div className={`${containerClasses} p-3 flex flex-col sm:flex-row sm:items-center gap-3`}>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="font-medium text-foreground truncate">
-            {translateItemName(item.itemName, item.itemHouseholdId, t)}
-          </span>
-          <Badge variant={badge.variant} className="shrink-0">{badge.label}</Badge>
+      <div className="flex items-center gap-3 flex-1 min-w-0">
+        <ItemImage
+          src={item.itemImageUrl}
+          alt={displayName}
+          fallbackIconSize={24}
+          containerClassName="h-11 w-11 rounded-md bg-mf-night-surface"
+        />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <span className="font-display font-bold text-mf-text truncate">
+              {displayName}
+            </span>
+            <span
+              className={`shrink-0 inline-flex items-center rounded-full px-2.5 py-1 font-display text-[11px] font-bold uppercase tracking-wider leading-none ${badgeClass}`}
+            >
+              {badge.label}
+            </span>
+          </div>
+          <div className="text-xs text-mf-text-soft">
+            {quantityLabel} · {item.storageAreaName}
+          </div>
+          {openedSubline && (
+            <div className="text-[11px] text-mf-text-mute mt-0.5">{openedSubline}</div>
+          )}
         </div>
-        <div className="text-sm text-muted-foreground">
-          {quantityLabel} · {item.storageAreaName}
-        </div>
-        {openedSubline && (
-          <div className="text-xs text-muted-foreground mt-0.5">{openedSubline}</div>
-        )}
       </div>
       <Button
         size="sm"
-        variant={isExpired ? 'destructive' : 'outline'}
+        variant="ghost"
         onClick={action.onClick}
         disabled={pending}
-        className="shrink-0 self-start sm:self-auto"
+        className={`shrink-0 self-start sm:self-auto rounded-full font-display font-bold px-4 ${action.className}`}
       >
         {action.icon}
-        <span className="ml-2">{action.label}</span>
+        <span className="ml-1.5">{action.label}</span>
       </Button>
     </div>
   );

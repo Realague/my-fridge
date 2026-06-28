@@ -5,157 +5,226 @@
 
 @layer base {
   :root {
-    /* MyFridge — Charte v3.0 · Mode clair (par défaut) */
-    --mf-night:          #F8FAFC;
-    --mf-night-surface:  #FFFFFF;
-    --mf-night-elevated: #F1F5F9;
-    --mf-night-line:     #E2E8F0;
-    --mf-night-line-soft:#EEF2F6;
+    /* ───────────────────────────────────────────────────────────────────────
+       MyFridge — Charte Fresh · Mode clair (par défaut)
+       Tokens remappés sur Fresh tout en gardant les noms `--mf-*` existants
+       pour que tous les composants migrent d'un seul coup.
+       ─────────────────────────────────────────────────────────────────────── */
 
-    --mf-text:      #0B1018;
-    --mf-text-soft: #475569;
-    --mf-text-mute: #94A3B8;
+    /* Surfaces — crème chaud / card / sub / page */
+    --mf-night:          #F4E8C9;   /* bg principal — crème chaud Fresh */
+    --mf-night-surface:  #FBF4E0;   /* surfaces card */
+    --mf-night-elevated: #ECE0BF;   /* sub — items list, filtres */
+    --mf-night-line:     #ECE4D2;   /* rule — séparateurs */
+    --mf-night-line-soft:#F1EADA;   /* rule encore plus doux */
+    --mf-page-bg:        #E8E0CF;   /* fond périphérique desktop */
 
-    --mf-green:       #22C55E;
-    --mf-green-deep:  #16A34A;
-    --mf-green-leaf:  #15803D;       /* texte sur badge clair → contraste */
-    --mf-green-soft:  rgba(34, 197, 94, .14);
-    --mf-green-ring:  rgba(34, 197, 94, .35);
+    /* Encre */
+    --mf-text:      #1A1D1A;
+    --mf-text-soft: #5E6760;
+    --mf-text-mute: #9BA59F;
 
-    --mf-danger:      #DC2626;
-    --mf-danger-soft: rgba(220, 38, 38, .12);
-    --mf-info:        #2563EB;
-    --mf-info-soft:   rgba(37, 99, 235, .12);
-    --mf-warning:     #D97706;
-    --mf-warning-soft:rgba(245, 158, 11, .18);
+    /* Accent primaire — vert frais */
+    --mf-green:       #2BB673;
+    --mf-green-deep:  #1F9C5E;
+    --mf-green-leaf:  #1F9C5E;            /* texte sur fond green-soft → AA */
+    --mf-green-soft:  #D6F3E3;
+    --mf-green-ring:  rgba(43, 182, 115, .35);
 
-    --mf-radius-xs:  4px;
-    --mf-radius-sm:  6px;
-    --mf-radius-md:  10px;
-    --mf-radius-lg:  14px;
-    --mf-radius-xl:  20px;
+    /* Sémantique urgence Fresh */
+    --mf-danger:      #EF4A5A;            /* expired/rouge */
+    --mf-danger-soft: #FFD9DE;
+    --mf-info:        #4F8EF5;            /* frigo/info/liens — bleu Fresh */
+    --mf-info-soft:   #DAE9FF;
+    --mf-warning:     #FF7A3A;            /* use soon — orange Fresh (alerte chaude) */
+    --mf-warning-soft:#FFE0CC;
+
+    /* Accents secondaires Fresh */
+    --mf-yellow:      #FFC839;            /* good — 3-7j */
+    --mf-yellow-soft: #FFF1C4;
+    --mf-orange:      #FF7A3A;            /* alias use-soon */
+    --mf-orange-soft: #FFE0CC;
+    --mf-red:         #EF4A5A;            /* alias expired */
+    --mf-red-soft:    #FFD9DE;
+    --mf-blue:        #4F8EF5;            /* alias info */
+    --mf-blue-soft:   #DAE9FF;
+    --mf-pink:        #FF6F9C;            /* repas / favoris */
+    --mf-pink-soft:   #FFD9E6;
+    --mf-pink-deep:   #D04475;
+    --mf-purple:      #8C6DF0;            /* surgelés */
+    --mf-purple-soft: #E4DAFA;
+    --mf-purple-deep: #6C50D0;
+    --mf-brown:       #9C6B43;            /* garde-manger */
+    --mf-brown-soft:  #EADBC8;
+
+    /* Rayons — échelle Fresh 10/14/18/24 + pill */
+    --mf-radius-xs:  8px;                 /* micro chips, retained as smallest */
+    --mf-radius-sm:  10px;                /* badges, small inputs */
+    --mf-radius-md:  14px;                /* contrôles, items list, icônes intégrées */
+    --mf-radius-lg:  18px;                /* cards mobiles / secondaires */
+    --mf-radius-xl:  24px;                /* cards desktop / hero */
     --mf-radius-pill:999px;
 
-    --mf-shadow-1: 0 1px 2px hsla(220, 20%, 30%, .06);
-    --mf-shadow-2: 0 12px 28px -12px hsla(220, 20%, 30%, .12), 0 2px 6px hsla(220,20%,30%,.06);
-    --mf-shadow-3: 0 28px 56px -20px hsla(220, 20%, 30%, .22), 0 6px 14px hsla(220,20%,30%,.10);
-    --mf-shadow-glow: 0 0 0 1px var(--mf-green-ring), 0 8px 24px -6px rgba(34,197,94,.25);
+    /* Ombres Fresh — basses, légères (jamais "agressives") */
+    --mf-shadow-1: 0 4px 10px rgba(0,0,0,.04);
+    --mf-shadow-2: 0 4px 12px rgba(0,0,0,.04);
+    --mf-shadow-3: 0 12px 30px rgba(0,0,0,.06);
+    --mf-shadow-glow: 0 0 0 1px var(--mf-green-ring), 0 8px 24px -6px rgba(43,182,115,.25);
 
-    --mf-page-glow-1: rgba(34,197,94,.06);
-    --mf-page-glow-2: rgba(59,130,246,.05);
+    /* Halos page — quasi-imperceptibles pour garder la respiration */
+    --mf-page-glow-1: rgba(43,182,115,.05);
+    --mf-page-glow-2: rgba(255,200,57,.04);
 
+    /* Motion */
     --mf-ease:     cubic-bezier(.25, .1, .25, 1);
     --mf-ease-out: cubic-bezier(.16, 1, .3, 1);
     --mf-dur:      240ms;
     --mf-dur-fast: 120ms;
     --mf-dur-slow: 400ms;
 
-    --mf-font-display: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    /* Typographie Fresh — DM Sans display + Inter body */
+    --mf-font-display: "DM Sans", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     --mf-font-body:    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     --mf-font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 96%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 98%;
-    --popover-foreground: 222.2 84% 4.9%;
-    /* Pistache charter (#22C55E) bridged to shadcn --primary so bg-primary,
-       text-primary, ring-primary all become brand-correct out of the box. */
-    --primary: 142 71% 45%;
-    --primary-foreground: 145 100% 4%; /* Encre #03150A — AA on pistache (8.26) */
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.875rem; /* 14px — charter --mf-radius-lg */
+    /* ─── Bridge shadcn / radix ─────────────────────────────────────────── */
+    --background: 44 64% 87%;          /* #F4E8C9 */
+    --foreground: 120 6% 11%;          /* #1A1D1A */
+    --card: 47 70% 93%;                /* #FBF4E0 */
+    --card-foreground: 120 6% 11%;
+    --popover: 47 70% 93%;
+    --popover-foreground: 120 6% 11%;
+    /* Fresh green bridged to shadcn --primary */
+    --primary: 152 62% 44%;            /* #2BB673 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 44 47% 84%;           /* #ECE0BF */
+    --secondary-foreground: 120 6% 11%;
+    --muted: 44 47% 84%;
+    --muted-foreground: 124 5% 39%;    /* #5E6760 */
+    --accent: 44 47% 84%;
+    --accent-foreground: 120 6% 11%;
+    --destructive: 354 84% 62%;        /* #EF4A5A */
+    --destructive-foreground: 0 0% 100%;
+    --border: 42 39% 87%;              /* #ECE4D2 */
+    --input: 42 39% 87%;
+    --ring: 152 62% 44%;
+    --chart-1: 152 62% 44%;            /* green */
+    --chart-2: 217 90% 64%;            /* blue */
+    --chart-3: 44 100% 61%;            /* yellow */
+    --chart-4: 17 100% 62%;            /* orange */
+    --chart-5: 343 100% 72%;           /* pink */
+    --radius: 0.875rem;                /* 14px — charter --mf-radius-md */
 
-    /* Sidebar tokens — bridge sur la charte v3.0 (mode jour) */
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 84% 5%;
-    --sidebar-primary: 142 71% 45%;
-    --sidebar-primary-foreground: 152 76% 4%;
-    --sidebar-accent: 210 40% 96%;
-    --sidebar-accent-foreground: 222 84% 5%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 142 71% 45%;
+    /* Sidebar — bridge sur Fresh (mode clair) */
+    --sidebar-background: 47 70% 93%;
+    --sidebar-foreground: 120 6% 11%;
+    --sidebar-primary: 152 62% 44%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 44 47% 84%;
+    --sidebar-accent-foreground: 120 6% 11%;
+    --sidebar-border: 42 39% 87%;
+    --sidebar-ring: 152 62% 44%;
   }
 
   .dark {
-    /* MyFridge — Mode nuit (override) */
-    --mf-night:          #0B1018;
-    --mf-night-surface:  #0F1620;
-    --mf-night-elevated: #141C28;
-    --mf-night-line:     #1E2A3B;
-    --mf-night-line-soft:#162033;
+    /* ───────────────────────────────────────────────────────────────────────
+       Mode nuit — Fresh §11 (Dark theme).
+       Valeurs canoniques de la charte. Trois choix forts :
+       1. Accents PLUS SATURÉS/LUMINEUX qu'en light (pas juste blue/pink/purple
+          — TOUS y compris green/yellow/orange/red).
+       2. Softs OPAQUES (teintes sombres pures, pas rgba) — couleur de panneau
+          coloré profond, pas un voile.
+       3. green-deep devient PLUS CLAIR que green (inversion : c'est le pair
+          de contraste qui se pose sur green-soft).
+       ─────────────────────────────────────────────────────────────────────── */
 
-    --mf-text:      #F5F7FA;
-    --mf-text-soft: #9CA3AF;
-    --mf-text-mute: #5B6675;
+    --mf-night:          #10131A;   /* bg — légèrement assombri vs charte (#15181B) pour creuser la distance avec card */
+    --mf-night-surface:  #1F2326;   /* card */
+    --mf-night-elevated: #272C30;   /* sub */
+    --mf-night-line:     #2E3439;   /* rule */
+    --mf-night-line-soft:#272C30;
+    --mf-page-bg:        #0A0C0D;   /* page-bg — plus profond pour cadrer */
 
-    --mf-green-leaf:  #86EFAC;
-    --mf-green-soft:  rgba(34, 197, 94, .12);
-    --mf-danger:      #EF4444;
-    --mf-danger-soft: rgba(239, 68, 68, .12);
-    --mf-info:        #3B82F6;
-    --mf-info-soft:   rgba(59, 130, 246, .12);
-    --mf-warning:     #F59E0B;
-    --mf-warning-soft:rgba(245, 158, 11, .14);
+    /* Encre crème — inversion du light */
+    --mf-text:      #F4EDE0;
+    --mf-text-soft: #A8B0A8;
+    --mf-text-mute: #6A7370;
 
-    --mf-shadow-1: 0 1px 2px hsla(220, 50%, 4%, .35);
-    --mf-shadow-2: 0 12px 28px -12px hsla(220, 50%, 4%, .55), 0 2px 6px hsla(220,50%,4%,.35);
-    --mf-shadow-3: 0 28px 56px -20px hsla(220, 60%, 4%, .65), 0 6px 14px hsla(220,50%,4%,.45);
+    /* Green — saturé. green-deep est la version CLAIRE pour texte sur green-soft */
+    --mf-green:       #34C97F;
+    --mf-green-deep:  #5EE4A0;
+    --mf-green-leaf:  #5EE4A0;       /* alias = green-deep dark */
+    --mf-green-soft:  #1D3A2C;       /* OPAQUE deep forest */
+    --mf-green-ring:  rgba(52, 201, 127, .45);
 
-    --mf-page-glow-1: rgba(34,197,94,.08);
-    --mf-page-glow-2: rgba(59,130,246,.06);
+    /* Sémantique urgence — saturés + softs OPAQUES */
+    --mf-danger:      #FF6071;
+    --mf-danger-soft: #4A1D24;
+    --mf-info:        #6AA3FF;
+    --mf-info-soft:   #1C2E4D;
+    --mf-warning:     #FF8A4F;
+    --mf-warning-soft:#4A2A1A;
 
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 217.2 32.6% 17.5%;
-    --card-foreground: 210 40% 98%;
-    --popover: 217.2 32.6% 17.5%;
-    --popover-foreground: 210 40% 98%;
-    /* Same pistache in dark mode — charter accent is theme-stable. */
-    --primary: 142 71% 45%;
-    --primary-foreground: 145 100% 4%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --mf-yellow:      #FFD158;
+    --mf-yellow-soft: #423318;
+    --mf-orange:      #FF8A4F;
+    --mf-orange-soft: #4A2A1A;
+    --mf-red:         #FF6071;
+    --mf-red-soft:    #4A1D24;
+    --mf-blue:        #6AA3FF;
+    --mf-blue-soft:   #1C2E4D;
+    --mf-pink:        #FF85AB;
+    --mf-pink-soft:   #4A1F30;
+    --mf-pink-deep:   #FF85AB;
+    --mf-purple:      #A48CFF;
+    --mf-purple-soft: #2E2350;
+    --mf-purple-deep: #A48CFF;
+    --mf-brown:       #C89B72;
+    --mf-brown-soft:  #3A2A1A;
 
-    /* Sidebar tokens — bridge sur la charte v3.0 (mode nuit) */
-    --sidebar-background: 217 32% 11%;
-    --sidebar-foreground: 210 14% 96%;
-    --sidebar-primary: 142 71% 45%;
-    --sidebar-primary-foreground: 152 100% 5%;
-    --sidebar-accent: 217 27% 14%;
-    --sidebar-accent-foreground: 210 14% 96%;
-    --sidebar-border: 217 30% 17%;
-    --sidebar-ring: 142 71% 60%;
+    /* Shadows plus marquées sur dark — charte §11 */
+    --mf-shadow-1: 0 4px 10px rgba(0,0,0,.35);
+    --mf-shadow-2: 0 6px 16px rgba(0,0,0,.45);
+    --mf-shadow-3: 0 14px 32px rgba(0,0,0,.55);
+
+    --mf-page-glow-1: rgba(52,201,127,.10);
+    --mf-page-glow-2: rgba(255,209,88,.05);
+
+    /* shadcn bridge — Fresh dark canoniques en HSL */
+    --background: 222 12% 8%;         /* #10131A — bg légèrement assombri */
+    --foreground: 36 53% 92%;         /* #F4EDE0 */
+    --card: 206 8% 14%;               /* #1F2326 */
+    --card-foreground: 36 53% 92%;
+    --popover: 206 8% 14%;
+    --popover-foreground: 36 53% 92%;
+    --primary: 150 56% 50%;           /* #34C97F */
+    --primary-foreground: 210 11% 10%;
+    --secondary: 210 9% 17%;          /* #272C30 */
+    --secondary-foreground: 36 53% 92%;
+    --muted: 210 9% 17%;
+    --muted-foreground: 120 5% 67%;   /* #A8B0A8 */
+    --accent: 210 9% 17%;
+    --accent-foreground: 36 53% 92%;
+    --destructive: 353 100% 69%;      /* #FF6071 */
+    --destructive-foreground: 210 11% 10%;
+    --border: 210 10% 20%;            /* #2E3439 */
+    --input: 210 10% 20%;
+    --ring: 150 56% 60%;
+    --chart-1: 150 56% 60%;
+    --chart-2: 217 100% 71%;
+    --chart-3: 44 100% 67%;
+    --chart-4: 19 100% 65%;
+    --chart-5: 340 100% 76%;
+
+    /* Sidebar = card (parité avec le light où sidebar = #FBF4E0 = card) */
+    --sidebar-background: 206 8% 14%;       /* #1F2326 = card */
+    --sidebar-foreground: 36 53% 92%;
+    --sidebar-primary: 150 56% 50%;
+    --sidebar-primary-foreground: 210 11% 10%;
+    --sidebar-accent: 210 9% 17%;            /* #272C30 = sub */
+    --sidebar-accent-foreground: 36 53% 92%;
+    --sidebar-border: 210 10% 20%;
+    --sidebar-ring: 150 56% 60%;
   }
 }
 
@@ -165,6 +234,9 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--mf-font-body);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
   }
 }
 
@@ -173,52 +245,64 @@
     @apply min-h-[44px] text-base;
   }
 
-  /* ——— Composants signés MyFridge v3.0 — Mode nuit ——— */
+  /* ──────────────────────────────────────────────────────────────────────
+     Composants signés MyFridge — Charte Fresh
+     ────────────────────────────────────────────────────────────────────── */
   .mf-page {
     background: var(--mf-night);
     color: var(--mf-text);
     font-family: var(--mf-font-body);
     font-feature-settings: "ss01", "cv11";
+    /* Halos ultra-discrets — la respiration crème est la signature, pas les glows */
     background-image:
       radial-gradient(1200px 800px at 80% -10%, var(--mf-page-glow-1), transparent 60%),
       radial-gradient(900px 600px at 0% 40%, var(--mf-page-glow-2), transparent 55%);
     background-attachment: fixed;
   }
 
-  .mf-display { font-family: var(--mf-font-display); font-weight: 700; letter-spacing: -.025em; }
-  .mf-mono    { font-family: var(--mf-font-mono); }
+  .mf-display {
+    font-family: var(--mf-font-display);
+    font-weight: 700;
+    letter-spacing: -.025em;
+  }
+  .mf-mono { font-family: var(--mf-font-mono); }
+
+  /* Eyebrow Fresh — DM Sans 700, UPPER, tracking large */
   .mf-eyebrow {
-    font-family: var(--mf-font-mono);
-    font-size: 12px;
-    letter-spacing: .14em;
+    font-family: var(--mf-font-display);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .08em;
     text-transform: uppercase;
-    color: var(--mf-text-mute);
+    color: var(--mf-text-soft);
   }
   .mf-caption {
     font-family: var(--mf-font-mono);
-    font-size: 12px;
-    letter-spacing: .08em;
-    text-transform: uppercase;
+    font-size: 11.5px;
+    letter-spacing: .04em;
     color: var(--mf-text-mute);
   }
   .mf-section-title {
-    font-family: var(--mf-font-mono);
+    font-family: var(--mf-font-display);
     font-size: 12px;
-    letter-spacing: .14em;
+    font-weight: 700;
+    letter-spacing: .08em;
     text-transform: uppercase;
     color: var(--mf-text-soft);
   }
 
-  /* Surfaces */
+  /* Surfaces card Fresh — crème claire, radius généreux, ombre quasi-nulle */
   .mf-card {
     background: var(--mf-night-surface);
     border: 1px solid var(--mf-night-line);
     border-radius: var(--mf-radius-lg);
+    box-shadow: var(--mf-shadow-1);
   }
   .mf-card-elevated {
-    background: var(--mf-night-elevated);
+    background: var(--mf-night-surface);
     border: 1px solid var(--mf-night-line);
-    border-radius: var(--mf-radius-lg);
+    border-radius: var(--mf-radius-xl);
+    box-shadow: var(--mf-shadow-2);
   }
   .mf-motion-card {
     transition: transform var(--mf-dur) var(--mf-ease-out),
@@ -226,11 +310,11 @@
                 border-color var(--mf-dur) var(--mf-ease-out);
   }
   .mf-motion-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     box-shadow: var(--mf-shadow-2);
   }
 
-  /* List signature */
+  /* List signature — sub pour les rangées, radius card */
   .mf-list {
     background: var(--mf-night-surface);
     border: 1px solid var(--mf-night-line);
@@ -255,13 +339,17 @@
   .mf-thumb {
     width: 44px; height: 44px;
     border-radius: var(--mf-radius-md);
-    background: var(--mf-night-elevated);
-    border: 1px solid var(--mf-night-line);
+    background: var(--mf-green-soft);
+    color: var(--mf-green-deep);
+    border: 0;
     display: flex; align-items: center; justify-content: center;
     font-size: 22px;
     flex-shrink: 0;
   }
-  .mf-thumb-lg { width: 56px; height: 56px; font-size: 28px; }
+  .mf-thumb-lg {
+    width: 56px; height: 56px; font-size: 28px;
+    border-radius: var(--mf-radius-lg);
+  }
 
   .mf-checkbox {
     width: 22px; height: 22px;
@@ -276,73 +364,78 @@
     border-color: var(--mf-green);
   }
 
-  /* Buttons */
+  /* Boutons Fresh — pill, DM Sans, full primaire vert, ombres douces */
   .mf-btn {
     display: inline-flex; align-items: center; justify-content: center;
-    gap: 8px;
-    padding: 10px 16px;
-    font-family: var(--mf-font-body);
-    font-weight: 600;
-    font-size: 14px;
+    gap: 6px;
+    padding: 10px 18px;
+    font-family: var(--mf-font-display);
+    font-weight: 700;
+    font-size: 13.5px;
     line-height: 1;
-    border-radius: var(--mf-radius-md);
+    border-radius: var(--mf-radius-pill);
     border: 1px solid transparent;
     cursor: pointer;
     transition: background var(--mf-dur) var(--mf-ease-out),
                 border-color var(--mf-dur) var(--mf-ease-out),
-                color var(--mf-dur) var(--mf-ease-out);
+                color var(--mf-dur) var(--mf-ease-out),
+                transform var(--mf-dur-fast) var(--mf-ease-out),
+                box-shadow var(--mf-dur) var(--mf-ease-out);
   }
+  .mf-btn:not(:disabled):hover { transform: translateY(-1px); box-shadow: var(--mf-shadow-2); }
   .mf-btn:disabled { cursor: not-allowed; opacity: .55; }
 
-  .mf-btn.mf-btn-primary  { background: var(--mf-green); color: #03150A; }
-  .mf-btn.mf-btn-primary:not(:disabled):hover { background: var(--mf-green-deep); color: #03150A; }
+  .mf-btn.mf-btn-primary  { background: var(--mf-green); color: #fff; }
+  .mf-btn.mf-btn-primary:not(:disabled):hover { background: var(--mf-green-deep); color: #fff; }
   .mf-btn.mf-btn-ghost    {
     background: var(--mf-night-elevated);
     color: var(--mf-text);
-    border-color: var(--mf-night-line);
+    border-color: transparent;
   }
   .mf-btn.mf-btn-ghost:not(:disabled):hover { background: var(--mf-night-line); color: var(--mf-text); }
   .mf-btn.mf-btn-ghost.is-active {
-    background: var(--mf-night-line);
-    border-color: var(--mf-night-line);
-    color: var(--mf-text);
+    background: var(--mf-text);
+    border-color: var(--mf-text);
+    color: var(--mf-night);
   }
   .mf-btn.mf-btn-danger   { background: var(--mf-danger-soft); color: var(--mf-danger); }
-  .mf-btn.mf-btn-danger:not(:disabled):hover { background: rgba(239, 68, 68, .2); color: var(--mf-danger); }
+  .mf-btn.mf-btn-danger:not(:disabled):hover { background: var(--mf-danger); color: #fff; }
 
   .mf-icon-btn {
-    width: 32px; height: 32px;
+    width: 36px; height: 36px;
     display: inline-flex; align-items: center; justify-content: center;
-    border-radius: var(--mf-radius-sm);
+    border-radius: var(--mf-radius-pill);
     background: transparent;
     border: 1px solid transparent;
     cursor: pointer;
-    color: var(--mf-text-mute);
+    color: var(--mf-text-soft);
     transition: background var(--mf-dur) var(--mf-ease), color var(--mf-dur) var(--mf-ease);
   }
-  .mf-icon-btn:not(:disabled):hover { background: var(--mf-night-elevated); }
+  .mf-icon-btn:not(:disabled):hover { background: var(--mf-night-elevated); color: var(--mf-text); }
   .mf-icon-btn-edit   { color: var(--mf-info); }
   .mf-icon-btn-danger { color: var(--mf-danger); }
 
-  /* Badges */
+  /* Badges Fresh — pill, DM Sans 700, tracking */
   .mf-badge {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 4px 10px;
     border-radius: var(--mf-radius-pill);
-    font-size: 12px;
-    font-weight: 500;
+    font-family: var(--mf-font-display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
     line-height: 1.4;
   }
-  .mf-badge-green   { background: var(--mf-green-soft);   color: var(--mf-green-leaf); }
+  .mf-badge-green   { background: var(--mf-green-soft);   color: var(--mf-green-deep); }
   .mf-badge-warn    { background: var(--mf-warning-soft); color: var(--mf-warning); }
   .mf-badge-danger  { background: var(--mf-danger-soft);  color: var(--mf-danger); }
   .mf-badge-info    { background: var(--mf-info-soft);    color: var(--mf-info); }
   .mf-badge-neutral { background: var(--mf-night-elevated); color: var(--mf-text-soft); }
 
-  /* Input */
+  /* Input Fresh — fond card crème, focus vert doux */
   .mf-input {
     width: 100%;
-    background: var(--mf-night);
+    background: var(--mf-night-surface);
     border: 1px solid var(--mf-night-line);
     border-radius: var(--mf-radius-md);
     padding: 12px 14px;
@@ -369,23 +462,25 @@
   }
   .mf-toggle-group {
     display: inline-flex;
-    background: var(--mf-night);
+    background: var(--mf-night-surface);
     border: 1px solid var(--mf-night-line);
-    border-radius: var(--mf-radius-md);
+    border-radius: var(--mf-radius-pill);
     padding: 3px;
     gap: 2px;
   }
   .mf-toggle-opt {
-    padding: 6px 12px;
+    padding: 8px 14px;
+    font-family: var(--mf-font-display);
     font-size: 13px;
-    font-weight: 500;
-    border-radius: var(--mf-radius-sm);
+    font-weight: 600;
+    border-radius: var(--mf-radius-pill);
     color: var(--mf-text-soft);
     transition: background var(--mf-dur) var(--mf-ease-out), color var(--mf-dur) var(--mf-ease-out);
     cursor: pointer;
   }
-  .mf-toggle-opt.is-active { background: var(--mf-night-elevated); color: var(--mf-text); }
+  .mf-toggle-opt.is-active { background: var(--mf-text); color: var(--mf-night); }
 
+  /* Stat — chiffre display vert (Fresh rule: "un nombre est un titre") */
   .mf-stat {
     font-family: var(--mf-font-display);
     font-size: 32px;
@@ -401,7 +496,7 @@
     border-radius: var(--mf-radius-pill);
     background: var(--mf-night-elevated);
     color: var(--mf-text);
-    border: 1px solid var(--mf-night-line);
+    border: 1px solid transparent;
     display: grid; place-items: center;
     transition: background var(--mf-dur) var(--mf-ease-out), border-color var(--mf-dur) var(--mf-ease-out);
     cursor: pointer;
@@ -412,7 +507,7 @@
   }
   .mf-stepper-btn:disabled { opacity: .35; cursor: not-allowed; }
 
-  /* Anim entrée subtile (hover gain de hauteur géré par mf-motion-card) */
+  /* Anim entrée subtile */
   .mf-fade-in {
     animation: mf-fade-in var(--mf-dur-slow) var(--mf-ease-out) both;
   }

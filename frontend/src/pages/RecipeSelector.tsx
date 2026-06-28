@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Clock, Filter, Search, Users } from 'lucide-react';
+import { ArrowLeft, Beef, CakeSlice, Clock, Fish, Filter, Salad, Search, Soup, UtensilsCrossed, Users, type LucideIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useRecipeStore } from '@/stores/recipeStore';
@@ -15,13 +15,13 @@ type FilterKey = 'all' | 'haveAll' | 'quick' | 'vegetarian';
 
 const QUICK_THRESHOLD_MIN = 30;
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  vegetarian: '🥗',
-  fish: '🐟',
-  meat: '🥩',
-  pasta: '🍝',
-  dessert: '🍰',
-  other: '🍽️',
+const CATEGORY_ICON: Record<string, LucideIcon> = {
+  vegetarian: Salad,
+  fish: Fish,
+  meat: Beef,
+  pasta: Soup,
+  dessert: CakeSlice,
+  other: UtensilsCrossed,
 };
 
 const RecipeSelector = () => {
@@ -92,7 +92,7 @@ const RecipeSelector = () => {
 
   return (
     <div className="mf-page min-h-screen pb-24">
-      <div className="mx-auto max-w-3xl px-4 pt-6 sm:px-8 sm:pt-10">
+      <div className="px-4 pt-6 sm:px-8 sm:pt-10">
 
         <header className="mf-card flex items-center gap-4 p-4">
           <button
@@ -183,7 +183,7 @@ const RecipeSelector = () => {
                 const totalTime = (recipe.prepTime ?? 0) + (recipe.cookTime ?? 0);
                 const availability = recipesAvailability[recipe.id];
                 const category = getRecipeCategory(recipe.tags);
-                const emoji = category ? CATEGORY_EMOJI[category] : '🍽️';
+                const CategoryIcon = (category && CATEGORY_ICON[category]) || UtensilsCrossed;
                 return (
                   <button
                     key={recipe.id}
@@ -200,7 +200,7 @@ const RecipeSelector = () => {
                       />
                     ) : (
                       <div className="mf-thumb mf-thumb-lg flex-shrink-0">
-                        <span aria-hidden>{emoji}</span>
+                        <CategoryIcon className="h-6 w-6" strokeWidth={1.8} aria-hidden />
                       </div>
                     )}
                     <div className="flex flex-1 min-w-0 flex-col gap-1.5">

@@ -71,8 +71,8 @@ export const ConfirmServingsDialog = ({
           </span>
           <button
             type="button"
-            onClick={() => setServings((s) => Math.min(20, s + 1))}
-            disabled={saving || servings >= 20}
+            onClick={() => setServings((s) => Math.min(100, s + 1))}
+            disabled={saving || servings >= 100}
             className="mf-stepper-btn h-11 w-11"
             aria-label={t('pages.meals.increaseServings')}
           >

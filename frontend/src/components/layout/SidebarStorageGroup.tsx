@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { STORAGE_GROUP } from '@/config/desktopNavigation';
@@ -75,9 +76,7 @@ export const SidebarStorageGroup = ({
           }}
         >
           <a href={`/storage/${area.id}`} className="flex items-center gap-2 min-w-0">
-            <span className="text-base shrink-0" aria-hidden="true">
-              {area.emoji || '📦'}
-            </span>
+            <StorageAreaIcon type={area.type} className="h-4 w-4 shrink-0" />
             <span className="truncate">{area.name}</span>
           </a>
         </SidebarMenuSubButton>
@@ -132,9 +131,7 @@ export const SidebarStorageGroup = ({
                             isActive && 'bg-muted font-medium text-foreground',
                           )}
                         >
-                          <span className="text-base shrink-0" aria-hidden="true">
-                            {area.emoji || '📦'}
-                          </span>
+                          <StorageAreaIcon type={area.type} className="h-4 w-4 shrink-0" />
                           <span className="truncate">{area.name}</span>
                         </button>
                       </li>
@@ -146,7 +143,7 @@ export const SidebarStorageGroup = ({
             <button
               type="button"
               onClick={handleAddStorage}
-              className="mt-2 flex w-full items-center gap-2 rounded-md border border-dashed border-border px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
+              className="mt-2 flex w-full items-center gap-2 rounded-md border border-dashed border-mf-green/40 px-2 py-1.5 text-sm font-medium text-mf-green-deep transition-colors hover:border-mf-green hover:text-mf-green-deep"
             >
               <Plus className="h-4 w-4" />
               <span>{addLabel}</span>
@@ -194,11 +191,14 @@ export const SidebarStorageGroup = ({
             </ScrollArea>
           )}
           <SidebarMenuSubItem>
-            <SidebarMenuSubButton asChild>
+            <SidebarMenuSubButton
+              asChild
+              className="font-medium text-mf-green-deep hover:text-mf-green-deep"
+            >
               <button
                 type="button"
                 onClick={handleAddStorage}
-                className="flex w-full items-center gap-2 text-muted-foreground hover:text-foreground"
+                className="flex w-full items-center gap-2"
               >
                 <Plus className="h-4 w-4" />
                 <span>{addLabel}</span>

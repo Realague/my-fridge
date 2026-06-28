@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, Trash2 } from 'lucide-react';
+import { Carrot, Plus, Trash2 } from 'lucide-react';
 import { ItemSelector } from './ItemSelector';
 import { QuantitySelector } from './QuantitySelector';
 import { useTranslation } from 'react-i18next';
@@ -92,31 +93,36 @@ export const StructuredIngredientInput = ({
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
-      <div className="flex items-center justify-between">
-        <Label className="text-base font-medium">{t('pages.recipes.ingredients')}</Label>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={addIngredient}
-          className="flex items-center gap-2"
-        >
-          <Plus className="h-4 w-4" />
-          {t('ingredientInput.addIngredient')}
-        </Button>
-      </div>
-
-      {ingredients.length === 0 && (
-        <div className="text-center py-8 text-muted-foreground border-2 border-dashed border-border rounded-lg">
-          <p>{t('ingredientInput.noIngredients')}</p>
-          <p className="text-sm mt-1">{t('ingredientInput.clickToAdd')}</p>
+    <Card variant="elevated" className={className}>
+      <CardHeader>
+        <div className="flex items-center justify-between gap-3">
+          <CardTitle className="flex items-center gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-mf-green-soft">
+              <Carrot className="h-5 w-5 text-mf-orange" />
+            </span>
+            {t('pages.recipes.ingredients')}
+          </CardTitle>
+          <Button
+            type="button"
+            size="sm"
+            onClick={addIngredient}
+            className="rounded-full bg-mf-green-soft font-display font-semibold text-mf-green-deep hover:bg-mf-green-soft/70"
+          >
+            <Plus className="h-4 w-4" />
+            {t('ingredientInput.addIngredient')}
+          </Button>
         </div>
-      )}
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {ingredients.length === 0 && (
+          <div className="rounded-xl border-2 border-dashed border-mf-night-line bg-mf-night-elevated/30 px-6 py-10 text-center text-sm text-mf-text-mute">
+            {t('ingredientInput.emptyState')}
+          </div>
+        )}
 
-      <div className="space-y-3 ">
+        <div className="space-y-3 ">
         {ingredients.map((ingredient, index) => (
-          <div key={ingredient.id || `new-${index}`} className="flex items-center gap-3 p-3 border border-border rounded-lg bg-card">
+          <div key={ingredient.id || `new-${index}`} className="flex items-center gap-3 p-3 border border-border rounded-lg bg-muted">
             <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
                 <Label className="text-sm">{t('ingredientInput.item')}</Label>
@@ -208,7 +214,8 @@ export const StructuredIngredientInput = ({
             </Button>
           </div>
         ))}
-      </div>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };

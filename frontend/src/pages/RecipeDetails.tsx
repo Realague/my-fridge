@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Clock, Users, Heart, Edit, Calendar, ChefHat, ExternalLink, UtensilsCrossed } from 'lucide-react';
+import { ArrowLeft, Clock, Users, Heart, PenLine, Calendar, ChefHat, ExternalLink, UtensilsCrossed } from 'lucide-react';
 import { ConfirmServingsDialog } from '@/components/meals/ConfirmServingsDialog';
 import { ConsumeIngredientsDialog } from '@/components/ConsumeIngredientsDialog';
 import { useRecipeStore, type RecipeDeletionImpact } from '@/stores/recipeStore';
@@ -286,7 +286,7 @@ const RecipeDetails = () => {
                 size="sm"
                 onClick={() => navigate(`/recipes/${recipe.id}/edit`)}
               >
-                <Edit className="h-4 w-4" />
+                <PenLine className="h-4 w-4" />
               </Button>
             </div>
           </div>

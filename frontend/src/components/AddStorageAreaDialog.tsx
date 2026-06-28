@@ -57,7 +57,7 @@ const AddStorageAreaDialog = ({ trigger, open: controlledOpen, onOpenChange }: A
           size="sm"
           onClick={() => setOpen(true)}
         >
-          <Plus className="h-4 w-4 sm:mr-2" />
+          <Plus className="h-4 w-4 sm:mr-1.5" />
           <span className="hidden sm:inline">{t('storageArea.addArea')}</span>
         </Button>
       ) : null}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { getCategoryIcon } from '@/utils/categoryIcons';
+import { categoryTone, toneBadgeClass } from '@/lib/tokenMaps';
 
 interface ItemImageProps {
   /** Image URL; when null or when load fails, fallback icon is shown */
@@ -39,13 +40,13 @@ export const ItemImage = ({
     return (
       <div
         className={cn(
-          'flex items-center justify-center bg-muted flex-shrink-0',
+          'flex items-center justify-center flex-shrink-0',
+          toneBadgeClass(categoryTone(category)),
           containerClassName
         )}
         aria-hidden
       >
         <FallbackIcon
-          className="text-muted-foreground"
           size={fallbackIconSize}
           strokeWidth={1.5}
         />

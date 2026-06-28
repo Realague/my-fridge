@@ -5,12 +5,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Plus, PenLine, Trash2 } from 'lucide-react';
 import { StorageArea } from '@/types/household';
 import { useTranslation } from 'react-i18next';
 import { StorageAreaType, ITEM_CATEGORIES } from '@/types/enums';
 import { getCategoryColor } from '@/utils/itemUtils';
 import { CategoryIcon } from '@/utils/categoryIcons';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { getDefaultCategoriesForStorageType } from '@/utils/categoryStorageMapping';
 
 interface OnboardingStorageSelectorProps {
@@ -26,8 +27,6 @@ interface StorageTypeOption {
   description: string;
   suggestedNames: string[];
 }
-
-const emojiOptions = ['🥬', '🧊', '🏺', '🗄️', '📦', '🛒', '🍎', '🥖', '🧄', '🫙', '🥫', '🍯'];
 
 export const OnboardingStorageSelector = ({ 
   selectedAreas, 
@@ -169,7 +168,7 @@ export const OnboardingStorageSelector = ({
               variant="outline"
               className="h-20 p-4 flex flex-col items-center justify-center gap-1"
             >
-              <div className="text-2xl">{typeOption.emoji}</div>
+              <StorageAreaIcon type={typeOption.id} className="h-6 w-6" />
               <div className="text-xs font-medium text-center">{typeOption.name}</div>
               {count > 0 && (
                 <Badge variant="secondary" className="text-xs">
@@ -189,7 +188,7 @@ export const OnboardingStorageSelector = ({
             {selectedAreas.map((area, index) => (
               <div key={index} className="flex items-center justify-between p-3 rounded-lg border border-border bg-background">
                 <div className="flex items-center gap-3">
-                  <div className="text-lg">{area.emoji}</div>
+                  <StorageAreaIcon type={area.type} className="h-5 w-5" />
                   <div>
                     <div className="font-medium text-sm">{area.name}</div>
                     {area.description && (
@@ -217,7 +216,7 @@ export const OnboardingStorageSelector = ({
                     onClick={() => handleEditArea(index)}
                     className="h-8 w-8 p-0"
                   >
-                    <Edit2 className="h-4 w-4" />
+                    <PenLine className="h-4 w-4" />
                   </Button>
                   <Button
                     size="sm"
@@ -280,7 +279,7 @@ export const OnboardingStorageSelector = ({
                     }}
                     className="flex flex-col gap-1 h-14"
                   >
-                    <div className="text-lg">{type.emoji}</div>
+                    <StorageAreaIcon type={type.id} className="h-5 w-5" />
                     <div className="text-xs">{type.name.split(' ')[0]}</div>
                   </Button>
                 ))}
@@ -309,24 +308,6 @@ export const OnboardingStorageSelector = ({
                 placeholder={t('storageArea.descriptionPlaceholder')}
                 rows={2}
               />
-            </div>
-
-            {/* Emoji Selection */}
-            <div className="space-y-3">
-              <Label>{t('storageArea.chooseIcon')}</Label>
-              <div className="grid grid-cols-6 gap-2">
-                {emojiOptions.map((emoji) => (
-                  <Button
-                    key={emoji}
-                    variant={selectedEmoji === emoji ? "green" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedEmoji(emoji)}
-                    className="h-12 text-xl"
-                  >
-                    {emoji}
-                  </Button>
-                ))}
-              </div>
             </div>
 
             <div className="space-y-2">

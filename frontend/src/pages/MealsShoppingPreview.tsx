@@ -203,7 +203,7 @@ const MealsShoppingPreview = () => {
 
   return (
     <div className="mf-page min-h-screen pb-32">
-      <div className="mx-auto max-w-3xl px-4 pt-6 sm:px-8 sm:pt-10">
+      <div className="px-4 pt-6 sm:px-8 sm:pt-10">
         <header className="mf-card flex items-center gap-4 p-4">
           <button
             type="button"
@@ -379,7 +379,7 @@ const MealsShoppingPreview = () => {
             background: 'color-mix(in srgb, var(--mf-night) 92%, transparent)',
           }}
         >
-          <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-4 sm:px-8">
+          <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-8">
             <div className="text-[13px] text-[color:var(--mf-text-soft)]">
               {t('pages.mealsShopping.selectedCount', { count: selectedCount })}
             </div>

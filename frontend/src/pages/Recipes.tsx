@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Plus, Search, Heart, Clock, Users, ChefHat, Download } from 'lucide-react';
+import { Plus, Search, Heart, Clock, Users, ChefHat, Download, BookOpen } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useRecipeStore } from '@/stores/recipeStore';
@@ -105,7 +105,7 @@ const Recipes = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
-              <h1 className="text-xl font-bold text-foreground">{t('pages.recipes.title')}</h1>
+              <h1 className="text-xl font-bold text-foreground flex items-center gap-2"><BookOpen className="h-5 w-5 text-primary shrink-0" aria-hidden />{t('pages.recipes.title')}</h1>
               <p className="text-sm text-muted-foreground">
                 {loading ? t('common.loading') : t('pages.recipes.recipeSaved', { count: total || 0 })}
               </p>
@@ -133,12 +133,15 @@ const Recipes = () => {
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Search
+            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-mf-text-soft h-5 w-5 z-10"
+            aria-hidden="true"
+          />
           <Input
             placeholder={t('pages.recipes.search')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-card/80 backdrop-blur-sm border-0 shadow-lg"
+            className="pl-12 bg-card/80 backdrop-blur-sm border-0 shadow-lg"
           />
         </div>
 
@@ -265,7 +268,7 @@ const RecipeGrid = ({ activeTab, recipes, onToggleFavorite, getDifficultyColor }
             </CardHeader>
 
             <CardContent className="pt-0">
-              <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
+              <div className="flex items-center gap-3 flex-wrap text-sm text-muted-foreground mb-3">
                 <div className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
                   <span>{(recipe.prepTime || 0) + (recipe.cookTime || 0)}m</span>
@@ -274,6 +277,9 @@ const RecipeGrid = ({ activeTab, recipes, onToggleFavorite, getDifficultyColor }
                   <Users className="h-3 w-3" />
                   <span>{recipe.servings || 0}</span>
                 </div>
+                <Badge className={getDifficultyColor(recipe.difficulty)}>
+                  {t(`pages.recipes.difficultyOptions.${recipe.difficulty.toLowerCase()}`)}
+                </Badge>
               </div>
 
               {recipe.creator && (
@@ -286,18 +292,15 @@ const RecipeGrid = ({ activeTab, recipes, onToggleFavorite, getDifficultyColor }
                 </p>
               )}
 
-              <div className="flex items-center justify-between">
+              {(recipe.tags || []).length > 0 && (
                 <div className="flex flex-wrap gap-1">
-                  <Badge className={getDifficultyColor(recipe.difficulty)}>
-                    {t(`pages.recipes.difficultyOptions.${recipe.difficulty.toLowerCase()}`)}
-                  </Badge>
                   {(recipe.tags || []).slice(0, 2).map((tag, index) => (
                     <Badge key={index} variant="outline" className="text-xs">
                       {tag}
                     </Badge>
                   ))}
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         </motion.div>

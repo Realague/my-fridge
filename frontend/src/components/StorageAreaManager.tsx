@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Plus, Edit3, Trash2, Edit, ChevronUp, ChevronDown } from 'lucide-react';
+import { Plus, PenLine, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
+import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { useStorageAreasWithStats, useCurrentHouseholdStorageAreas } from '@/stores/storageAreaStore';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
@@ -121,7 +122,7 @@ const StorageAreaManager = () => {
       </CardHeader>
       <CardContent className="space-y-3">
         {storageAreas.map((area, index) => (
-          <div key={area.id} className="flex items-center justify-between p-4 bg-primary/10 rounded-xl shadow-sm border">
+          <div key={area.id} className="flex items-center justify-between p-4 bg-muted rounded-xl shadow-sm border">
             <div className="flex items-center gap-3">
               <div className="flex flex-col gap-0.5">
                 <Button
@@ -145,7 +146,9 @@ const StorageAreaManager = () => {
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </div>
-              <span className="text-2xl">{area.emoji}</span>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-card">
+                <StorageAreaIcon type={area.type} className="h-5 w-5" />
+              </span>
               <div>
                 <p className="font-semibold">{area.name}</p>
                 <p className="text-sm">{t(`storageArea.types.${area.type}`)}</p>
@@ -159,7 +162,7 @@ const StorageAreaManager = () => {
                 className="h-8 w-8 p-0"
                 aria-label={t('storageAreaManager.editStorageArea')}
               >
-                <Edit className="h-4 w-4" />
+                <PenLine className="h-4 w-4" />
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>

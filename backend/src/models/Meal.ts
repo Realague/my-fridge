@@ -52,7 +52,7 @@ Meal.init(
     servings: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      validate: { min: 1, max: 20 },
+      validate: { min: 1, max: 100 },
       defaultValue: 1,
     },
     position: {

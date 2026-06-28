@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowRight, Plus, Users, ArrowLeft } from 'lucide-react';
+import { ArrowRight, Plus, Users, ArrowLeft, Home } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { StorageArea } from '@/types/household';
@@ -126,7 +126,7 @@ const Onboarding = () => {
           <Card className="bg-card backdrop-blur-sm border border-border/50 shadow-xl">
             <CardHeader className="text-center space-y-4">
               <div className="mx-auto w-16 h-16 bg-mf-green rounded-2xl flex items-center justify-center">
-                <span className="text-2xl">🏠</span>
+                <Home className="h-8 w-8 text-white" />
               </div>
               <CardTitle className="text-2xl">{t('pages.household.setupHousehold')}</CardTitle>
               <CardDescription>
@@ -157,7 +157,7 @@ const Onboarding = () => {
                 className="w-full h-auto min-h-16 text-left justify-start px-6 py-4 whitespace-normal"
               >
                 <div className="flex items-center w-full">
-                  <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                  <div className="w-10 h-10 bg-card rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
                     <Users className="h-5 w-5" />
                   </div>
                   <div className="flex-1 min-w-0">

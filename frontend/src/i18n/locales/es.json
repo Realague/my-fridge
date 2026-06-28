@@ -178,6 +178,8 @@
     "location": "Ubicación",
     "moveToStorage": "Zona de almacenamiento",
     "expirationDate": "Fecha de vencimiento",
+    "expiresOn": "Vence el {{date}}",
+    "expiredOn": "Vencido desde el {{date}}",
     "addItem": "Agregar artículo",
     "addItemTo": "Agregar artículo a {{name}}",
     "selectItem": "Seleccionar artículo",
@@ -335,6 +337,7 @@
     "addIngredient": "Agregar ingrediente",
     "noIngredients": "Aún no se han agregado ingredientes",
     "clickToAdd": "Haz clic en \"Agregar ingrediente\" para comenzar",
+    "emptyState": "Aún no hay ingredientes — toca «+ Agregar» para empezar.",
     "item": "Artículo",
     "selectIngredient": "Seleccionar ingrediente...",
     "quantityAndUnit": "Cantidad y unidad",
@@ -559,6 +562,8 @@
       "recentActivityDescription": "Lo que está pasando en tu hogar",
       "switchHousehold": "Cambiar hogar",
       "manageHouseholds": "Gestionar hogares",
+      "storageAreasActive_one": "{{count}} ubicación activa",
+      "storageAreasActive_other": "{{count}} ubicaciones activas",
       "noStorageAreas": "Aún no hay áreas de almacenamiento",
       "addFirstStorageArea": "Agrega tu primera área de almacenamiento",
       "manage": "Gestionar",
@@ -3990,6 +3995,10 @@
       "description": "Agrega tus tarjetas para tenerlas siempre contigo",
       "addFirst": "Agregar una tarjeta"
     },
+    "addTile": {
+      "title": "Agregar una tarjeta",
+      "subtitle": "Escanear o escribir"
+    },
     "messages": {
       "created": "Tarjeta añadida",
       "deleted": "Tarjeta eliminada",
@@ -4039,6 +4048,7 @@
     "next": "Siguiente",
     "optional": "Opcional",
     "addedBy": "Agregado por {{name}}",
+    "addedByOn": "Agregado por {{name}} el {{date}}",
     "you": "ti",
     "back": "Volver",
     "edit": "Editar",

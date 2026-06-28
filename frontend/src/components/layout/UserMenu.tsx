@@ -41,18 +41,18 @@ export const UserMenu = () => {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="h-auto gap-2 px-2 py-1 hover:bg-muted/70 focus-visible:ring-2 focus-visible:ring-primary"
+          className="h-auto gap-2 rounded-full bg-mf-night-surface px-2 py-1 hover:bg-mf-night-elevated focus-visible:ring-2 focus-visible:ring-mf-green-ring"
           aria-label={t('header.openUserMenu')}
         >
-          <Avatar className="h-8 w-8 border border-border">
-            <AvatarFallback className="bg-primary/15 text-xs font-semibold text-foreground">
+          <Avatar className="h-8 w-8">
+            <AvatarFallback className="bg-mf-text text-[11px] font-bold text-mf-night dark:bg-mf-night dark:text-mf-text">
               {initials}
             </AvatarFallback>
           </Avatar>
-          <span className="hidden lg:inline text-sm font-medium text-foreground max-w-[7rem] truncate">
+          <span className="hidden lg:inline font-display text-sm font-bold text-mf-text max-w-[7rem] truncate pr-1">
             {displayName}
           </span>
-          <ChevronDown className="hidden md:inline h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          <ChevronDown className="hidden md:inline h-4 w-4 mr-1 text-mf-text-soft" aria-hidden="true" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">

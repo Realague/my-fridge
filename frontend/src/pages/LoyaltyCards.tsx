@@ -186,10 +186,12 @@ const LoyaltyCards = () => {
       <div className="bg-card/90 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <h1 className="text-xl font-bold text-foreground">{t('loyaltyCards.title')}</h1>
+            <div className="flex items-center gap-2 min-w-0">
+              <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <h1 className="text-xl font-bold text-foreground truncate flex items-center gap-2"><CreditCard className="h-5 w-5 text-primary shrink-0" aria-hidden />{t('loyaltyCards.title')}</h1>
+            </div>
             <Button
               variant="green"
               className="shrink-0 flex items-center gap-2"
@@ -251,6 +253,20 @@ const LoyaltyCards = () => {
                 </CardButton>
               );
             })}
+
+            <button
+              type="button"
+              onClick={() => setShowForm(true)}
+              className="flex h-full items-center gap-4 rounded-lg border-2 border-dashed border-mf-green bg-mf-green-soft/40 p-4 text-left transition-colors hover:bg-mf-green-soft/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-card text-mf-green-deep">
+                <Plus className="h-6 w-6" />
+              </span>
+              <div className="min-w-0">
+                <p className="font-semibold text-mf-green-deep">{t('loyaltyCards.addTile.title')}</p>
+                <p className="text-sm text-mf-green-deep/70">{t('loyaltyCards.addTile.subtitle')}</p>
+              </div>
+            </button>
           </div>
         )}
       </div>

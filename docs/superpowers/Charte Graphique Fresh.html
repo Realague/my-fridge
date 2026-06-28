@@ -1,0 +1,1840 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fresh — Charte Graphique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Surfaces */
+    --bg: #f4e8c9;
+    --card: #fbf4e0;
+    --sub: #ece0bf;
+    --page-bg: #e8e0cf;
+
+    /* Text */
+    --ink: #1a1d1a;
+    --ink-2: #5e6760;
+    --ink-3: #9ba59f;
+
+    /* Lines */
+    --rule: #ece4d2;
+
+    /* Accents */
+    --green: #2bb673;
+    --green-soft: #d6f3e3;
+    --green-deep: #1f9c5e;
+
+    --orange: #ff7a3a;
+    --orange-soft: #ffe0cc;
+
+    --red: #ef4a5a;
+    --red-soft: #ffd9de;
+
+    --yellow: #ffc839;
+    --yellow-soft: #fff1c4;
+
+    --blue: #4f8ef5;
+    --blue-soft: #dae9ff;
+
+    --pink: #ff6f9c;
+    --pink-soft: #ffd9e6;
+
+    --purple: #8c6df0;
+    --purple-soft: #e4dafa;
+
+    /* Radius */
+    --r-sm: 10px;
+    --r-md: 14px;
+    --r-lg: 18px;
+    --r-xl: 24px;
+    --r-pill: 999px;
+
+    /* Shadows */
+    --shadow-sm: 0 4px 10px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.04);
+    --shadow-lg: 0 12px 30px rgba(0,0,0,.06);
+
+    /* Spacing scale */
+    --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px;
+    --s-5: 20px; --s-6: 24px; --s-7: 32px; --s-8: 48px;
+
+    /* Type */
+    --font-display: "DM Sans", "Inter", system-ui, sans-serif;
+    --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 56px 40px 80px;
+  }
+
+  /* Type */
+  .display { font-family: var(--font-display); letter-spacing: -0.025em; }
+  h1.display {
+    font-size: 72px; font-weight: 700; line-height: 1; margin: 0;
+    letter-spacing: -0.04em;
+  }
+  h2.display {
+    font-size: 36px; font-weight: 700; line-height: 1.05; margin: 0;
+    letter-spacing: -0.03em;
+  }
+  h3.display {
+    font-size: 22px; font-weight: 700; line-height: 1.1; margin: 0;
+    letter-spacing: -0.02em;
+  }
+  .eyebrow {
+    font-family: var(--font-display);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .lead {
+    font-family: var(--font-body); font-size: 18px; line-height: 1.5;
+    color: var(--ink-2);
+  }
+
+  /* Layout */
+  section + section { margin-top: 80px; }
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 24px; margin-bottom: 28px; padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-head .num {
+    font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    color: var(--green); letter-spacing: 0.05em;
+  }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--r-xl);
+    padding: 24px 26px;
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Cover */
+  .cover {
+    background: var(--card);
+    border-radius: var(--r-xl);
+    padding: 56px 56px 48px;
+    box-shadow: var(--shadow-md);
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 40px;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .cover-eyebrow {
+    display: inline-block;
+    background: var(--green-soft); color: var(--green-deep);
+    padding: 6px 14px; border-radius: var(--r-pill);
+    font-family: var(--font-display); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .cover h1 { margin-top: 18px; }
+  .cover h1 em {
+    font-style: normal;
+    color: var(--green);
+    background: linear-gradient(180deg, transparent 65%, var(--green-soft) 65%);
+    padding: 0 6px;
+  }
+  .cover .meta {
+    display: flex; gap: 32px; margin-top: 28px;
+    font-family: var(--font-display); font-size: 13px;
+    color: var(--ink-2); font-weight: 600;
+  }
+  .cover .meta b { color: var(--ink); font-weight: 700; }
+  .cover .mascot {
+    width: 100%; max-width: 280px;
+    filter: drop-shadow(0 14px 30px rgba(0,0,0,.10));
+  }
+
+  /* Color swatches */
+  .swatch-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .swatch {
+    background: var(--card);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .swatch .chip {
+    height: 110px;
+    display: flex; align-items: flex-end; padding: 14px;
+    color: #fff;
+    font-family: var(--font-display); font-weight: 700; font-size: 14px;
+  }
+  .swatch .chip.light { color: var(--ink); }
+  .swatch .meta {
+    padding: 12px 14px 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .swatch .name {
+    font-family: var(--font-display); font-size: 13px; font-weight: 700;
+    color: var(--ink);
+  }
+  .swatch .hex {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--ink-2); letter-spacing: 0.02em;
+  }
+
+  .pair {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--card); border-radius: var(--r-lg);
+    padding: 12px 14px; box-shadow: var(--shadow-sm);
+  }
+  .pair .dot {
+    width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0;
+  }
+  .pair .dot.soft {
+    width: 32px; height: 32px; border-radius: 10px;
+    border: 1.5px dashed currentColor; opacity: 0.7;
+  }
+  .pair .info { flex: 1; min-width: 0; }
+  .pair .label {
+    font-family: var(--font-display); font-size: 12.5px; font-weight: 700;
+    color: var(--ink); line-height: 1.2;
+  }
+  .pair .hex {
+    font-family: var(--font-mono); font-size: 10.5px;
+    color: var(--ink-2); margin-top: 2px;
+  }
+
+  /* Type specimen */
+  .type-row {
+    display: grid;
+    grid-template-columns: 90px 1fr 220px;
+    gap: 24px; align-items: baseline;
+    padding: 18px 0; border-top: 1px solid var(--rule);
+  }
+  .type-row:first-child { border-top: none; }
+  .type-row .tag {
+    font-family: var(--font-mono); font-size: 11.5px;
+    color: var(--ink-2); padding-top: 8px;
+  }
+  .type-row .specs {
+    font-family: var(--font-mono); font-size: 11.5px;
+    color: var(--ink-2); padding-top: 8px;
+    text-align: right;
+  }
+  .type-row .sample { color: var(--ink); }
+
+  /* Components — buttons */
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .btn {
+    appearance: none; border: 0; cursor: pointer;
+    font-family: var(--font-display); font-weight: 700;
+    border-radius: var(--r-pill);
+    padding: 10px 18px; font-size: 13.5px;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .btn-primary { background: var(--green); color: #fff; }
+  .btn-dark { background: var(--ink); color: var(--bg); }
+  .btn-ghost { background: var(--sub); color: var(--ink); }
+  .btn-soft-orange { background: var(--orange-soft); color: var(--orange); }
+  .btn-soft-blue { background: var(--blue-soft); color: var(--blue); }
+  .btn-lg { padding: 14px 24px; font-size: 15px; }
+  .btn-fab {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--green); color: #fff;
+    font-size: 22px; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    line-height: 1;
+    box-shadow: 0 6px 16px rgba(43,182,115,.35);
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 4px 10px; border-radius: var(--r-pill);
+    font-family: var(--font-display); font-size: 11px;
+    font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .badge-green { background: var(--green); color: #fff; }
+  .badge-orange { background: var(--orange); color: #fff; }
+  .badge-yellow { background: var(--yellow); color: var(--ink); }
+  .badge-red { background: var(--red); color: #fff; }
+  .badge-soft-green { background: var(--green-soft); color: var(--green-deep); }
+
+  .pill-day {
+    display: inline-block;
+    padding: 5px 9px; border-radius: var(--r-pill);
+    font-family: var(--font-display); font-size: 11px; font-weight: 700;
+    color: #fff;
+  }
+
+  /* Cards demo */
+  .stat-bubble {
+    background: var(--card); border-radius: var(--r-lg);
+    padding: 18px 20px; box-shadow: var(--shadow-md);
+  }
+  .stat-bubble .icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; margin-bottom: 12px;
+  }
+  .stat-bubble .value {
+    font-family: var(--font-display); font-size: 28px; font-weight: 700;
+    line-height: 1; letter-spacing: -0.02em;
+  }
+  .stat-bubble .lbl {
+    font-family: var(--font-display); font-size: 12.5px;
+    color: var(--ink); font-weight: 600; margin-top: 4px;
+  }
+  .stat-bubble .sub {
+    font-family: var(--font-body); font-size: 11.5px;
+    color: var(--ink-2); margin-top: 2px;
+  }
+
+  /* Item card */
+  .item-card {
+    background: var(--sub); border-radius: var(--r-md);
+    padding: 12px 14px; display: flex; align-items: center; gap: 12px;
+  }
+  .item-card .ico {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 24px;
+    flex-shrink: 0;
+  }
+  .item-card .body { flex: 1; min-width: 0; }
+  .item-card .nm {
+    font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    color: var(--ink); line-height: 1.1;
+  }
+  .item-card .meta {
+    font-family: var(--font-body); font-size: 11px;
+    color: var(--ink-2); margin-top: 2px;
+  }
+
+  /* Radius + shadows demo */
+  .box-demo {
+    background: var(--card);
+    aspect-ratio: 1;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding: 14px;
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-2);
+  }
+
+  /* Mascot section */
+  .mascot-card {
+    background: var(--card); border-radius: var(--r-xl);
+    padding: 24px; box-shadow: var(--shadow-md);
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; gap: 12px;
+  }
+  .mascot-card img {
+    width: 100%; max-width: 160px;
+    filter: drop-shadow(0 6px 14px rgba(0,0,0,.08));
+  }
+  .mascot-card .name {
+    font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    color: var(--ink);
+  }
+  .mascot-card .when {
+    font-family: var(--font-body); font-size: 12px; color: var(--ink-2);
+    line-height: 1.4;
+  }
+
+  /* Code blocks */
+  pre.code {
+    background: #1a1d1a; color: #e9e8df; border-radius: var(--r-lg);
+    padding: 20px 22px; overflow-x: auto;
+    font-family: var(--font-mono); font-size: 12.5px; line-height: 1.65;
+    box-shadow: var(--shadow-md);
+    margin: 0;
+  }
+  .code .k { color: #ff6f9c; }
+  .code .s { color: #ffc839; }
+  .code .c { color: #6c7570; font-style: italic; }
+  .code .v { color: #34d089; }
+
+  .tabs {
+    display: flex; gap: 4px; margin-bottom: 14px;
+    background: var(--card); padding: 4px; border-radius: var(--r-pill);
+    border: 1px solid var(--rule); width: fit-content;
+  }
+  .tabs .tab {
+    background: transparent; border: 0; cursor: pointer;
+    padding: 8px 16px; border-radius: var(--r-pill);
+    font-family: var(--font-display); font-size: 13px; font-weight: 600;
+    color: var(--ink-2);
+  }
+  .tabs .tab.active { background: var(--ink); color: var(--bg); }
+
+  /* Do / Dont */
+  .do-dont { gap: 16px; }
+  .do, .dont {
+    border-radius: var(--r-lg); padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .do { background: var(--green-soft); }
+  .dont { background: var(--red-soft); }
+  .do .head, .dont .head {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-display); font-weight: 700; font-size: 13px;
+    margin-bottom: 8px; letter-spacing: 0.02em;
+  }
+  .do .head { color: var(--green-deep); }
+  .dont .head { color: var(--red); }
+  .do .body, .dont .body {
+    font-family: var(--font-body); font-size: 13px; color: var(--ink); line-height: 1.5;
+  }
+
+  /* Score ring demo */
+  .score-demo {
+    display: flex; gap: 28px; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+
+  /* Footer */
+  .foot {
+    margin-top: 80px; padding-top: 28px; border-top: 1px solid var(--rule);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-display); font-size: 12.5px; color: var(--ink-2);
+  }
+
+  /* Print */
+  @media print {
+    body { background: #fff; }
+    section { break-inside: avoid; }
+    .page { padding: 24px; }
+    pre.code { background: #ece0bf; color: #1a1d1a; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ─── COVER ─────────────────────────────────────────────────────────── -->
+  <section class="cover" style="margin-top: 0;">
+    <div>
+      <span class="cover-eyebrow">Charte graphique · v1.0</span>
+      <h1 class="display">Fresh<br/><em>design system</em></h1>
+      <p class="lead" style="max-width: 460px; margin-top: 18px;">
+        Identité visuelle joyeuse, colorée et lisible pour une app de gestion de
+        frigo, repas et nourriture. Inspirée Yuka / Basta — pensée pour rendre
+        chaque action évidente et chaque écran appétissant.
+      </p>
+      <div class="meta">
+        <div><b>1</b> mascotte<br/>Aetchebibeast</div>
+        <div><b>9</b> couleurs<br/>+ 8 teintes douces</div>
+        <div><b>2</b> polices<br/>DM Sans + Inter</div>
+        <div><b>5</b> radius<br/>10 → 24 + pill</div>
+      </div>
+    </div>
+    <img class="mascot" src="mascot/chef-happy.png" alt="Aetchebibeast" />
+  </section>
+
+  <!-- ─── 01. PRINCIPES ────────────────────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <div>
+        <div class="num">01</div>
+        <h2 class="display">Principes</h2>
+      </div>
+      <div class="lead" style="max-width: 380px;">
+        Quatre règles simples qui définissent toute décision design.
+      </div>
+    </div>
+    <div class="grid grid-4">
+      <div class="card">
+        <div style="width:40px;height:40px;border-radius:12px;background:var(--green-soft);display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1f9c5e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c5 0 9-4 9-9 0-3-3-7-9-7s-9 4-9 7c0 5 4 9 9 9Z"/><path d="M7 12c2-1 6-1 8 2"/></svg></div>
+        <h3 class="display" style="margin-top: 12px;">Frais avant tout</h3>
+        <p style="color: var(--ink-2); font-size: 13.5px; margin: 8px 0 0;">
+          Vert vif comme couleur primaire. Du blanc et du crème, jamais de noir lourd.
+        </p>
+      </div>
+      <div class="card">
+        <div style="width:40px;height:40px;border-radius:12px;background:var(--pink-soft);display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d04475" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 1.5 2.5 2.5 4 2.5S15 15.5 16 14"/><circle cx="9" cy="10" r=".8" fill="#d04475"/><circle cx="15" cy="10" r=".8" fill="#d04475"/></svg></div>
+        <h3 class="display" style="margin-top: 12px;">Avenant</h3>
+        <p style="color: var(--ink-2); font-size: 13.5px; margin: 8px 0 0;">
+          Coins arrondis, ombres douces, mascotte présente. Jamais menaçant.
+        </p>
+      </div>
+      <div class="card">
+        <div style="width:40px;height:40px;border-radius:12px;background:var(--orange-soft);display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d65a1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="#d65a1f"/></svg></div>
+        <h3 class="display" style="margin-top: 12px;">Clair en un coup d'œil</h3>
+        <p style="color: var(--ink-2); font-size: 13.5px; margin: 8px 0 0;">
+          Couleur = info. Vert OK, jaune attention, orange urgent, rouge périmé.
+        </p>
+      </div>
+      <div class="card">
+        <div style="width:40px;height:40px;border-radius:12px;background:var(--yellow-soft);display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b88a14" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 14h6l-2 7 8-11h-6l2-7Z"/></svg></div>
+        <h3 class="display" style="margin-top: 12px;">Action évidente</h3>
+        <p style="color: var(--ink-2); font-size: 13.5px; margin: 8px 0 0;">
+          Un seul CTA primaire par écran. Boutons pleins, pill, gros et verts.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 02. COULEURS ─────────────────────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <div>
+        <div class="num">02</div>
+        <h2 class="display">Couleurs</h2>
+      </div>
+      <div class="lead" style="max-width: 380px;">
+        Chaque accent vient avec sa version <em>soft</em> pour les fonds. Toujours
+        utiliser la paire ensemble.
+      </div>
+    </div>
+
+    <h3 class="display" style="margin-bottom: 14px;">Surfaces &amp; encre</h3>
+    <div class="grid swatch-grid" style="margin-bottom: 36px;">
+      <div class="swatch">
+        <div class="chip light" style="background: #f4e8c9; border-bottom: 1px solid var(--rule);">Background</div>
+        <div class="meta"><span class="name">bg</span><span class="hex">#F4E8C9</span></div>
+      </div>
+      <div class="swatch">
+        <div class="chip light" style="background: #fbf4e0; border-bottom: 1px solid var(--rule);">Card</div>
+        <div class="meta"><span class="name">card</span><span class="hex">#FBF4E0</span></div>
+      </div>
+      <div class="swatch">
+        <div class="chip light" style="background: #ece0bf;">Subtle</div>
+        <div class="meta"><span class="name">sub</span><span class="hex">#ECE0BF</span></div>
+      </div>
+      <div class="swatch">
+        <div class="chip light" style="background: #e8e0cf;">Page</div>
+        <div class="meta"><span class="name">page-bg</span><span class="hex">#E8E0CF</span></div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: #1a1d1a;">Ink primary</div>
+        <div class="meta"><span class="name">ink</span><span class="hex">#1A1D1A</span></div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: #5e6760;">Ink secondary</div>
+        <div class="meta"><span class="name">ink-2</span><span class="hex">#5E6760</span></div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: #9ba59f;">Ink tertiary</div>
+        <div class="meta"><span class="name">ink-3</span><span class="hex">#9BA59F</span></div>
+      </div>
+    </div>
+
+    <h3 class="display" style="margin-bottom: 14px;">Accents — paires action / soft</h3>
+    <p style="color: var(--ink-2); font-size: 13.5px; margin: 0 0 18px;">
+      L'accent franc va sur les CTA, badges et chiffres. La version soft va sur
+      les fonds de carte, halos d'icônes et bandeaux contextuels.
+    </p>
+    <div class="grid grid-2" style="gap: 14px;">
+      <!-- Each accent: pair card showing full + soft -->
+      <div class="card" style="padding: 18px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--green);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 16px; font-weight: 700;">Green — Excellent</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2);">#2BB673 · &gt; 7 jours · CTA principal</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--green-soft);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 14px; font-weight: 600; color: var(--ink-2);">green-soft</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);">#D6F3E3</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 18px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--yellow);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 16px; font-weight: 700;">Yellow — Good</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2);">#FFC839 · 3-7 jours · attention douce</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--yellow-soft);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 14px; font-weight: 600; color: var(--ink-2);">yellow-soft</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);">#FFF1C4</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 18px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--orange);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 16px; font-weight: 700;">Orange — Use soon</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2);">#FF7A3A · 1-3 jours · urgent</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--orange-soft);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 14px; font-weight: 600; color: var(--ink-2);">orange-soft</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);">#FFE0CC</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 18px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--red);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 16px; font-weight: 700;">Red — Expired</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2);">#EF4A5A · périmé · destructif</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--red-soft);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 14px; font-weight: 600; color: var(--ink-2);">red-soft</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);">#FFD9DE</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 18px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--blue);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 16px; font-weight: 700;">Blue — Frigo / info</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2);">#4F8EF5 · catégorie froid · liens</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--blue-soft);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 14px; font-weight: 600; color: var(--ink-2);">blue-soft</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);">#DAE9FF</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 18px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--pink);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 16px; font-weight: 700;">Pink — Repas / favoris</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2);">#FF6F9C · catégorie repas · social</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--pink-soft);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 14px; font-weight: 600; color: var(--ink-2);">pink-soft</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);">#FFD9E6</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 18px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--purple);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 16px; font-weight: 700;">Purple — Congelé</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2);">#8C6DF0 · catégorie surgelé</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--purple-soft);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 14px; font-weight: 600; color: var(--ink-2);">purple-soft</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);">#E4DAFA</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 18px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--green-deep);"></div>
+          <div style="flex:1;">
+            <div class="display" style="font-size: 16px; font-weight: 700;">Green deep</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2);">#1F9C5E · gradient hero · texte sur vert</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 8px 14px; border-radius: var(--r-md); background: linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%);">
+          <div style="color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 13px;">linear-gradient(135deg, green → green-deep)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 28px;">
+      <h3 class="display">Sémantique des urgences</h3>
+      <p style="color: var(--ink-2); font-size: 13.5px; margin: 8px 0 18px;">
+        Le code couleur urgence est <em>universel</em> dans toute l'app. Ne le
+        détourne jamais pour un autre usage.
+      </p>
+      <div class="row" style="gap: 18px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="pill-day" style="background: var(--green);">7+ j</span>
+          <span style="font-family: var(--font-display); font-size: 13px; font-weight: 600;">Excellent</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="pill-day" style="background: var(--yellow); color: var(--ink);">3-7 j</span>
+          <span style="font-family: var(--font-display); font-size: 13px; font-weight: 600;">Good</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="pill-day" style="background: var(--orange);">1-3 j</span>
+          <span style="font-family: var(--font-display); font-size: 13px; font-weight: 600;">Use soon</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="pill-day" style="background: var(--red);">Périmé</span>
+          <span style="font-family: var(--font-display); font-size: 13px; font-weight: 600;">Expired</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 03. TYPOGRAPHIE ──────────────────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <div>
+        <div class="num">03</div>
+        <h2 class="display">Typographie</h2>
+      </div>
+      <div class="lead" style="max-width: 380px;">
+        Deux familles. <b>DM Sans</b> tient la voix éditoriale, <b>Inter</b> fait
+        le travail de fond.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="type-row">
+        <div class="tag">Display XL</div>
+        <div class="sample display" style="font-size: 56px; font-weight: 700; line-height: 1;">Frigo en super forme.</div>
+        <div class="specs">DM Sans 700 · 56/56 · -0.04em</div>
+      </div>
+      <div class="type-row">
+        <div class="tag">Display L</div>
+        <div class="sample display" style="font-size: 36px; font-weight: 700; line-height: 1.05;">Recette du jour</div>
+        <div class="specs">DM Sans 700 · 36/38 · -0.03em</div>
+      </div>
+      <div class="type-row">
+        <div class="tag">Heading</div>
+        <div class="sample display" style="font-size: 22px; font-weight: 700;">Use first</div>
+        <div class="specs">DM Sans 700 · 22/26 · -0.02em</div>
+      </div>
+      <div class="type-row">
+        <div class="tag">Number</div>
+        <div class="sample display" style="font-size: 32px; font-weight: 700; color: var(--green); letter-spacing: -0.02em;">$22</div>
+        <div class="specs">DM Sans 700 · 32/32 · -0.02em</div>
+      </div>
+      <div class="type-row">
+        <div class="tag">Body</div>
+        <div class="sample" style="font-family: var(--font-body); font-size: 15px;">Fresh saves your groceries by reminding you what to use first.</div>
+        <div class="specs">Inter 400 · 15/22</div>
+      </div>
+      <div class="type-row">
+        <div class="tag">Label</div>
+        <div class="sample display" style="font-size: 13px; font-weight: 600;">Saved this month</div>
+        <div class="specs">DM Sans 600 · 13/16</div>
+      </div>
+      <div class="type-row">
+        <div class="tag">Eyebrow</div>
+        <div class="sample eyebrow">Recipe of the day</div>
+        <div class="specs">DM Sans 700 · 11.5 · 0.08em UPPER</div>
+      </div>
+      <div class="type-row">
+        <div class="tag">Caption</div>
+        <div class="sample" style="font-family: var(--font-body); font-size: 11.5px; color: var(--ink-2);">2 cups · Fridge top shelf</div>
+        <div class="specs">Inter 400 · 11.5/16</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 18px; background: var(--sub);">
+      <h3 class="display" style="margin-bottom: 6px;">Règles d'or</h3>
+      <ul style="margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 13.5px; line-height: 1.7;">
+        <li><b style="color: var(--ink);">Tracking serré</b> sur tous les titres (-0.02 à -0.04em). C'est ce qui rend Fresh "moderne".</li>
+        <li><b style="color: var(--ink);">Pas d'italiques</b>, pas de soulignement. Surligneur vert pour emphase.</li>
+        <li><b style="color: var(--ink);">Chiffres en display</b> : un nombre est aussi important qu'un titre. Toujours en gros et coloré.</li>
+        <li><b style="color: var(--ink);">Eyebrow</b> avant les sections importantes — donne le contexte.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ─── 04. RADIUS, OMBRES, ESPACEMENT ───────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <div>
+        <div class="num">04</div>
+        <h2 class="display">Forme &amp; respiration</h2>
+      </div>
+      <div class="lead" style="max-width: 380px;">
+        Coins arrondis généreux. Ombres légères et basses. Espacement aéré.
+      </div>
+    </div>
+
+    <h3 class="display" style="margin-bottom: 14px;">Radius</h3>
+    <div class="grid grid-4" style="margin-bottom: 32px;">
+      <div class="box-demo" style="border-radius: 10px;">10 · sm</div>
+      <div class="box-demo" style="border-radius: 14px;">14 · md</div>
+      <div class="box-demo" style="border-radius: 18px;">18 · lg</div>
+      <div class="box-demo" style="border-radius: 24px;">24 · xl</div>
+    </div>
+    <p style="color: var(--ink-2); font-size: 13px; margin: -16px 0 32px;">
+      <b style="color: var(--ink);">10/14</b> pour items list, badges et icônes intégrées.
+      <b style="color: var(--ink);">18</b> pour cards mobiles &amp; secondaires.
+      <b style="color: var(--ink);">24</b> pour cards desktop / hero.
+      <b style="color: var(--ink);">pill (999)</b> pour boutons et badges.
+    </p>
+
+    <h3 class="display" style="margin-bottom: 14px;">Ombres</h3>
+    <div class="grid grid-3" style="margin-bottom: 32px;">
+      <div class="box-demo" style="box-shadow: var(--shadow-sm); border-radius: 18px;">shadow-sm</div>
+      <div class="box-demo" style="box-shadow: var(--shadow-md); border-radius: 18px;">shadow-md</div>
+      <div class="box-demo" style="box-shadow: var(--shadow-lg); border-radius: 18px;">shadow-lg</div>
+    </div>
+    <p style="color: var(--ink-2); font-size: 13px; margin: -16px 0 32px;">
+      Toujours basses (Y positif), opacité &lt; 8%. Jamais de "lift" agressif.
+      Une carte qui flotte trop haut = on perd le calme de Fresh.
+    </p>
+
+    <h3 class="display" style="margin-bottom: 14px;">Espacement</h3>
+    <div class="card" style="padding: 18px;">
+      <div style="display: flex; align-items: flex-end; gap: 18px;">
+        <div style="text-align: center;">
+          <div style="width: 4px; height: 4px; background: var(--green); border-radius: 2px; margin: 0 auto;"></div>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); margin-top: 6px;">4</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="width: 8px; height: 8px; background: var(--green); border-radius: 2px; margin: 0 auto;"></div>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); margin-top: 6px;">8</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="width: 12px; height: 12px; background: var(--green); border-radius: 2px; margin: 0 auto;"></div>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); margin-top: 6px;">12</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="width: 16px; height: 16px; background: var(--green); border-radius: 2px; margin: 0 auto;"></div>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); margin-top: 6px;">16</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="width: 20px; height: 20px; background: var(--green); border-radius: 3px; margin: 0 auto;"></div>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); margin-top: 6px;">20</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="width: 24px; height: 24px; background: var(--green); border-radius: 3px; margin: 0 auto;"></div>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); margin-top: 6px;">24</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="width: 32px; height: 32px; background: var(--green); border-radius: 4px; margin: 0 auto;"></div>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); margin-top: 6px;">32</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="width: 48px; height: 48px; background: var(--green); border-radius: 4px; margin: 0 auto;"></div>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); margin-top: 6px;">48</div>
+        </div>
+      </div>
+      <p style="color: var(--ink-2); font-size: 13px; margin: 18px 0 0;">
+        Échelle <b style="color: var(--ink);">×4</b>. Padding card = 24/26.
+        Gap entre cards = 16/20. Padding container = 32 (desktop), 14-18 (mobile).
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── 05. COMPOSANTS ───────────────────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <div>
+        <div class="num">05</div>
+        <h2 class="display">Composants</h2>
+      </div>
+      <div class="lead" style="max-width: 380px;">
+        Le kit minimum pour reconstruire n'importe quel écran Fresh.
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <h3 class="display" style="margin-bottom: 14px;">Boutons</h3>
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="row" style="gap: 14px; margin-bottom: 16px;">
+        <button class="btn btn-primary">Order →</button>
+        <button class="btn btn-primary btn-lg">Start cooking →</button>
+        <button class="btn btn-dark">See all →</button>
+        <button class="btn btn-ghost">Filtrer</button>
+        <button class="btn btn-soft-orange">Use soon</button>
+        <button class="btn btn-soft-blue">Voir frigo</button>
+        <button class="btn btn-fab">+</button>
+      </div>
+      <p style="color: var(--ink-2); font-size: 13px; margin: 0;">
+        <b style="color: var(--ink);">Primary</b> = action principale (vert plein, pill).
+        <b style="color: var(--ink);">Dark</b> = action secondaire (encre).
+        <b style="color: var(--ink);">Ghost</b> = action tertiaire (sub).
+        <b style="color: var(--ink);">Soft</b> = chips/filtres.
+        <b style="color: var(--ink);">FAB</b> = ajouter (toujours vert, ombre verte).
+      </p>
+    </div>
+
+    <!-- Badges -->
+    <h3 class="display" style="margin-bottom: 14px;">Badges &amp; pills</h3>
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="row" style="gap: 8px; margin-bottom: 14px;">
+        <span class="badge badge-green">Excellent</span>
+        <span class="badge badge-yellow">Good</span>
+        <span class="badge badge-orange">Use soon</span>
+        <span class="badge badge-red">Expired</span>
+        <span class="badge badge-soft-green">Ready</span>
+      </div>
+      <div class="row" style="gap: 8px;">
+        <span class="pill-day" style="background: var(--green);">8d</span>
+        <span class="pill-day" style="background: var(--yellow); color: var(--ink);">5d</span>
+        <span class="pill-day" style="background: var(--orange);">2d</span>
+        <span class="pill-day" style="background: var(--red);">today</span>
+        <span class="pill-day" style="background: var(--red);">2d ago</span>
+      </div>
+    </div>
+
+    <!-- Item card + Stat bubble -->
+    <div class="grid grid-2" style="margin-bottom: 24px;">
+      <div>
+        <h3 class="display" style="margin-bottom: 14px;">Item card</h3>
+        <div class="item-card">
+          <div class="ico" style="background: var(--green-soft);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1f9c5e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13c2-1 4-1 6 0s4 1 6 0 4-1 6 0"/><path d="M3 17c2-1 4-1 6 0s4 1 6 0 4-1 6 0"/><path d="M12 4v5"/></svg></div>
+          <div class="body">
+            <div class="nm">Spinach</div>
+            <div class="meta">2 bunches · Fridge crisper</div>
+          </div>
+          <span class="pill-day" style="background: var(--orange);">2d</span>
+        </div>
+        <div class="item-card" style="margin-top: 8px;">
+          <div class="ico" style="background: var(--orange-soft);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d65a1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19 17 7"/><path d="M14 4c2 0 4 2 4 4l-2 2-4-4Z"/><path d="M9 12l-2 2M7 15l-2 2"/></svg></div>
+          <div class="body">
+            <div class="nm">Carrots</div>
+            <div class="meta">6 ea · Fridge crisper</div>
+          </div>
+          <span class="pill-day" style="background: var(--green);">12d</span>
+        </div>
+      </div>
+      <div>
+        <h3 class="display" style="margin-bottom: 14px;">Stat bubble</h3>
+        <div class="grid grid-2" style="gap: 10px;">
+          <div class="stat-bubble">
+            <div class="icon" style="background: var(--green-soft);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1f9c5e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 9h5a2 2 0 0 1 0 4h-3a2 2 0 0 0 0 4h5"/><path d="M12 7v2M12 15v2"/></svg></div>
+            <div class="value" style="color: var(--green);">$42</div>
+            <div class="lbl">Saved this month</div>
+            <div class="sub">+20% vs last</div>
+          </div>
+          <div class="stat-bubble">
+            <div class="icon" style="background: var(--orange-soft);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d65a1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1 3 4 4 4 8a4 4 0 0 1-8 0c0-2 1-3 2-4 0 2 1 3 2 4 0-3-1-5 0-8Z"/></svg></div>
+            <div class="value" style="color: var(--orange);">12d</div>
+            <div class="lbl">No-waste streak</div>
+            <div class="sub">personal best</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Score ring -->
+    <h3 class="display" style="margin-bottom: 14px;">Score ring</h3>
+    <div class="card score-demo" style="margin-bottom: 24px;">
+      <svg width="120" height="120" style="transform: rotate(-90deg);">
+        <circle cx="60" cy="60" r="52" stroke="#eee5d2" stroke-width="11" fill="none" />
+        <circle cx="60" cy="60" r="52" stroke="#2bb673" stroke-width="11" fill="none"
+          stroke-dasharray="294 32" stroke-linecap="round" />
+        <text x="60" y="68" text-anchor="middle" font-family="DM Sans" font-size="36" font-weight="700"
+          fill="#2bb673" transform="rotate(90 60 60)" letter-spacing="-1">90</text>
+      </svg>
+      <svg width="120" height="120" style="transform: rotate(-90deg);">
+        <circle cx="60" cy="60" r="52" stroke="#eee5d2" stroke-width="11" fill="none" />
+        <circle cx="60" cy="60" r="52" stroke="#ffc839" stroke-width="11" fill="none"
+          stroke-dasharray="208 118" stroke-linecap="round" />
+        <text x="60" y="68" text-anchor="middle" font-family="DM Sans" font-size="36" font-weight="700"
+          fill="#ffc839" transform="rotate(90 60 60)" letter-spacing="-1">64</text>
+      </svg>
+      <svg width="120" height="120" style="transform: rotate(-90deg);">
+        <circle cx="60" cy="60" r="52" stroke="#eee5d2" stroke-width="11" fill="none" />
+        <circle cx="60" cy="60" r="52" stroke="#ff7a3a" stroke-width="11" fill="none"
+          stroke-dasharray="120 206" stroke-linecap="round" />
+        <text x="60" y="68" text-anchor="middle" font-family="DM Sans" font-size="36" font-weight="700"
+          fill="#ff7a3a" transform="rotate(90 60 60)" letter-spacing="-1">37</text>
+      </svg>
+      <div style="font-family: var(--font-body); font-size: 13px; color: var(--ink-2); max-width: 220px;">
+        Trace verte/jaune/orange selon le score (0-100). Track #EEE5D2.
+        Stroke 11-14px. Chiffre en display 700 dans la couleur du ring.
+      </div>
+    </div>
+
+    <!-- Hero card -->
+    <h3 class="display" style="margin-bottom: 14px;">Hero gradient card</h3>
+    <div style="background: linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%); border-radius: 24px; padding: 28px 32px; color: #fff; position: relative; overflow: hidden; margin-bottom: 32px;">
+      <svg style="position: absolute; top: -10px; right: -20px; opacity: 0.18; transform: rotate(12deg);" width="160" height="160" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="13" r="6"/><circle cx="10" cy="13" r="2.2"/><path d="M16 13h5"/></svg>
+      <span class="badge" style="background: rgba(255,255,255,.25); color: #fff;">Recipe of the day</span>
+      <div class="display" style="font-size: 32px; font-weight: 700; margin-top: 12px; letter-spacing: -0.03em;">Coq au vin</div>
+      <div class="row" style="margin-top: 12px; font-family: var(--font-display); font-size: 13px; font-weight: 600;">
+        <span>45 min</span><span>·</span><span>4 pers</span><span>·</span><span>6 ingrédients</span>
+      </div>
+      <button class="btn" style="background: #fff; color: var(--green-deep); margin-top: 18px;">Start cooking →</button>
+    </div>
+  </section>
+
+  <!-- ─── 06. MASCOTTE ─────────────────────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <div>
+        <div class="num">06</div>
+        <h2 class="display">Mascotte — Aetchebibeast</h2>
+      </div>
+      <div class="lead" style="max-width: 380px;">
+        Un petit chef monstre qui réagit à l'état du frigo. Toujours présent
+        sur le hero et les états vides.
+      </div>
+    </div>
+
+    <div class="grid grid-4">
+      <div class="mascot-card">
+        <img src="mascot/chef-happy.png" alt="happy" />
+        <div class="name">Heureux</div>
+        <div class="when">Quand le frigo est en super forme (score ≥ 75). Hero dashboard, succès d'action.</div>
+      </div>
+      <div class="mascot-card">
+        <img src="mascot/chef-rotten.png" alt="rotten" />
+        <div class="name">Inquiet / dégoûté</div>
+        <div class="when">Quand des aliments expirent ou que le score est bas. Banner alerte.</div>
+      </div>
+      <div class="mascot-card">
+        <img src="mascot/chef-storage.png" alt="storage" />
+        <div class="name">Rangement</div>
+        <div class="when">Écran de scan/ajout, état "frigo vide", création d'un emplacement.</div>
+      </div>
+      <div class="mascot-card">
+        <img src="mascot/chef-update.png" alt="update" />
+        <div class="name">Action / mise à jour</div>
+        <div class="when">Pendant un sync, une mise à jour, ou comme illustration de loading.</div>
+      </div>
+    </div>
+
+    <div class="grid do-dont grid-2" style="margin-top: 18px;">
+      <div class="do">
+        <div class="head">✓ À faire</div>
+        <div class="body">
+          Toujours sur fond clair (card ou bg). Drop-shadow douce.
+          Taille minimum 76px, idéale 160-280px. Alignée à droite du contenu.
+        </div>
+      </div>
+      <div class="dont">
+        <div class="head">✗ À éviter</div>
+        <div class="body">
+          Ne jamais la rétrécir &lt; 60px (perte de détail). Ne pas la mettre
+          sur un fond coloré vif. Pas de rotation, pas de filtre, pas de teinte.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 07. ALIMENTS — IMAGE + FALLBACK ──────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <div>
+        <div class="num">07</div>
+        <h2 class="display">Aliments — image + fallback</h2>
+      </div>
+      <div class="lead" style="max-width: 380px;">
+        <b>L'image du produit est la règle.</b> Le placeholder n'apparaît que
+        si aucune image n'est disponible : une icône SVG choisie selon la
+        <em>catégorie</em>, sur fond soft de la même couleur.
+      </div>
+    </div>
+
+    <!-- Hiérarchie -->
+    <div class="card" style="margin-bottom: 18px;">
+      <h3 class="display" style="margin-bottom: 6px;">Hiérarchie d'affichage</h3>
+      <p style="color: var(--ink-2); font-size: 13.5px; margin: 0 0 14px;">
+        Trois niveaux, dans l'ordre. On descend au niveau suivant seulement si
+        celui-au-dessus n'est pas disponible.
+      </p>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;">
+        <!-- Niveau 1 -->
+        <div style="background: var(--sub); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+          <div style="position: relative;">
+            <div style="width: 72px; height: 72px; border-radius: 18px; background: repeating-linear-gradient(45deg, #d4c89a 0 6px, #c8bb88 6px 12px); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 9px; color: var(--ink-2);">photo</div>
+            <span style="position: absolute; top: -8px; right: -8px; background: var(--green); color: #fff; width: 22px; height: 22px; border-radius: 50%; font-family: var(--font-display); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;">1</span>
+          </div>
+          <div>
+            <div class="display" style="font-size: 13px; font-weight: 700;">Photo produit</div>
+            <div style="font-family: var(--font-body); font-size: 11.5px; color: var(--ink-2); margin-top: 2px;">Image fournie (utilisateur, scan, base de données).</div>
+          </div>
+        </div>
+        <!-- Niveau 2 -->
+        <div style="background: var(--sub); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+          <div style="position: relative;">
+            <div style="width: 72px; height: 72px; border-radius: 18px; background: var(--green-soft); display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="carrot" width="36" height="36" stroke-width="1.8" style="width: 36px; height: 36px; color: var(--green-deep);"></i>
+            </div>
+            <span style="position: absolute; top: -8px; right: -8px; background: var(--ink); color: var(--bg); width: 22px; height: 22px; border-radius: 50%; font-family: var(--font-display); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;">2</span>
+          </div>
+          <div>
+            <div class="display" style="font-size: 13px; font-weight: 700;">Icône catégorie</div>
+            <div style="font-family: var(--font-body); font-size: 11.5px; color: var(--ink-2); margin-top: 2px;">Placeholder SVG, fond soft de la catégorie.</div>
+          </div>
+        </div>
+        <!-- Niveau 3 -->
+        <div style="background: var(--sub); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+          <div style="position: relative;">
+            <div style="width: 72px; height: 72px; border-radius: 18px; background: var(--card); border: 1.5px dashed var(--rule); display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="package" width="28" height="28" stroke-width="1.8" style="width: 28px; height: 28px; color: var(--ink-3);"></i>
+            </div>
+            <span style="position: absolute; top: -8px; right: -8px; background: var(--ink-3); color: var(--card); width: 22px; height: 22px; border-radius: 50%; font-family: var(--font-display); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;">3</span>
+          </div>
+          <div>
+            <div class="display" style="font-size: 13px; font-weight: 700;">Générique</div>
+            <div style="font-family: var(--font-body); font-size: 11.5px; color: var(--ink-2); margin-top: 2px;">Catégorie inconnue : icône "produit" neutre, dashed.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Icônes par catégorie -->
+    <div class="card" style="margin-bottom: 18px;">
+      <h3 class="display" style="margin-bottom: 6px;">Icônes placeholder par catégorie</h3>
+      <p style="color: var(--ink-2); font-size: 13.5px; margin: 0 0 14px;">
+        Icônes <b>Lucide</b>, trait 1.8px, coins arrondis. Couleur du trait = version
+        <em>deep</em> / accent ; fond = version <em>soft</em>. Jamais d'emoji
+        système pour les aliments.
+      </p>
+      <div class="grid grid-4" style="gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--green-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="carrot" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #1f9c5e;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Légumes</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">vegetables · Carrot</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--pink-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="apple" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #d04475;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Fruits</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">fruits · Apple</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--red-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="beef" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #c83a48;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Viande</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">meat · Beef</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--blue-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="fish" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #3a72d9;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Poisson</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">fish · Fish</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--purple-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="shell" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #6c50d0;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Fruits de mer</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">seafood · Shell</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--blue-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="milk" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #3a72d9;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Produits laitiers</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">dairy · Milk</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--yellow-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="wheat" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #b88a14;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Céréales</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">grains · Wheat</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--orange-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="flame" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #d65a1f;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Épices</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">spices · Flame</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--blue-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="cup-soda" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #3a72d9;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Boissons</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">beverages · CupSoda</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--orange-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="cookie" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #a87530;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Snacks</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">snacks · Cookie</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--red-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="soup" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #c83a48;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Condiments</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">condiments · Soup</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--purple-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="snowflake" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #6c50d0;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Surgelés</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">frozen · Snowflake</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--yellow-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="archive" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #b88a14;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Conserves</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">canned · Archive</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--pink-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="utensils-crossed" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #d04475;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Plat</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">meal · UtensilsCrossed</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--green-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="salad" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #1f9c5e;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Plat cuisiné</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">cooked_meal · Salad</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--purple-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="chef-hat" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #6c50d0;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Préparation</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">preparation · ChefHat</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--blue-soft); display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="spray-can" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #3a72d9;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Produits ménagers</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">cleaning_products · SprayCan</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sub); border-radius: 12px;">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: #e9ecf1; display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="package" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #717784;"></i>
+          </span>
+          <div>
+            <div class="display" style="font-size: 12.5px; font-weight: 700;">Autre</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);">other · Package</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Item rows comparison -->
+    <h3 class="display" style="margin-bottom: 14px;">Dans un item row</h3>
+    <div class="card" style="margin-bottom: 18px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+        <!-- With image -->
+        <div>
+          <div style="font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em;">Avec image — règle</div>
+          <div class="item-card">
+            <div class="ico" style="background: repeating-linear-gradient(45deg, #d4c89a 0 4px, #c8bb88 4px 8px); font-size: 9px; color: var(--ink-2); font-family: var(--font-mono);">photo</div>
+            <div class="body">
+              <div class="nm">Épinards bio</div>
+              <div class="meta">2 bottes · Frigo</div>
+            </div>
+            <span class="pill-day" style="background: var(--orange);">2j</span>
+          </div>
+        </div>
+        <!-- Fallback category -->
+        <div>
+          <div style="font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em;">Sans image — fallback</div>
+          <div class="item-card">
+            <div class="ico" style="background: var(--green-soft);">
+              <i data-lucide="carrot" width="22" height="22" stroke-width="1.8" style="width: 22px; height: 22px; color: #1f9c5e;"></i>
+            </div>
+            <div class="body">
+              <div class="nm">Épinards</div>
+              <div class="meta">Catégorie : légumes</div>
+            </div>
+            <span class="pill-day" style="background: var(--orange);">2j</span>
+          </div>
+        </div>
+        <!-- Unknown -->
+        <div>
+          <div style="font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em;">Catégorie inconnue</div>
+          <div class="item-card">
+            <div class="ico" style="background: var(--card); border: 1.5px dashed var(--rule);">
+              <i data-lucide="package" width="20" height="20" stroke-width="1.8" style="width: 20px; height: 20px; color: var(--ink-3);"></i>
+            </div>
+            <div class="body">
+              <div class="nm">Produit inconnu</div>
+              <div class="meta">Aucune catégorie assignée</div>
+            </div>
+            <span class="pill-day" style="background: var(--yellow); color: var(--ink);">5j</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Storage categories - kept -->
+    <h3 class="display" style="margin-bottom: 14px;">Lieux de stockage (nav, badge)</h3>
+    <div class="card" style="margin-bottom: 18px;">
+      <p style="color: var(--ink-2); font-size: 13.5px; margin: 0 0 14px;">
+        Une couleur par <em>lieu</em>, séparée de la catégorie alimentaire.
+        Utilisée dans les filtres, les chips de lieu sur les items et la nav.
+      </p>
+      <div class="row" style="gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 28px; height: 28px; border-radius: 9px; background: var(--blue-soft); display: inline-flex; align-items: center; justify-content: center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3a72d9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/></svg></span><span style="font-family: var(--font-display); font-size: 12.5px; font-weight: 600;">Frigo</span></div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 28px; height: 28px; border-radius: 9px; background: var(--purple-soft); display: inline-flex; align-items: center; justify-content: center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6c50d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4Z"/><path d="M4 12h16M12 4v16"/></svg></span><span style="font-family: var(--font-display); font-size: 12.5px; font-weight: 600;">Congélateur</span></div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 28px; height: 28px; border-radius: 9px; background: var(--orange-soft); display: inline-flex; align-items: center; justify-content: center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d65a1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4Z"/><path d="M4 10h16M4 14h16"/></svg></span><span style="font-family: var(--font-display); font-size: 12.5px; font-weight: 600;">Placard</span></div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 28px; height: 28px; border-radius: 9px; background: var(--pink-soft); display: inline-flex; align-items: center; justify-content: center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d04475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12h8"/></svg></span><span style="font-family: var(--font-display); font-size: 12.5px; font-weight: 600;">Cave / autre</span></div>
+      </div>
+    </div>
+
+    <div class="grid do-dont grid-2">
+      <div class="do">
+        <div class="head">✓ Faire</div>
+        <div class="body">
+          • Toujours afficher l'image du produit si elle existe (scan, base, photo utilisateur).<br/>
+          • Crop carré <em>cover</em>, radius hérité du conteneur (12-18px).<br/>
+          • Si pas d'image : icône SVG de la catégorie, fond <em>soft</em> assorti.<br/>
+          • Si la catégorie est inconnue : icône générique neutre, fond card avec border dashed.<br/>
+          • Garder la même taille de slot (40-72px) qu'on ait l'image ou le fallback.
+        </div>
+      </div>
+      <div class="dont">
+        <div class="head">✗ Ne pas faire</div>
+        <div class="body">
+          • Pas d'emoji système pour représenter un aliment — c'était l'ancienne règle.<br/>
+          • Pas de fond plein de la couleur d'accent — toujours la version soft.<br/>
+          • Ne pas mélanger image et icône dans une même liste sans aligner les tailles.<br/>
+          • Pas d'icône colorée multi-tons : SVG line, un seul stroke.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 08. CSS / TAILWIND ───────────────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <div>
+        <div class="num">08</div>
+        <h2 class="display">À copier dans ton projet</h2>
+      </div>
+      <div class="lead" style="max-width: 380px;">
+        Tokens prêts à coller. Choisis le format qui colle à ta stack.
+      </div>
+    </div>
+
+    <h3 class="display" style="margin-bottom: 14px;">Variables CSS</h3>
+<pre class="code"><span class="c">/* fresh-tokens.css */</span>
+<span class="k">:root</span> {
+  <span class="c">/* Surfaces */</span>
+  <span class="v">--bg</span>: <span class="s">#f4e8c9</span>;       <span class="c">/* crème chaud, fond principal */</span>
+  <span class="v">--card</span>: <span class="s">#fbf4e0</span>;     <span class="c">/* surface des cards */</span>
+  <span class="v">--sub</span>: <span class="s">#ece0bf</span>;      <span class="c">/* items list, filtres */</span>
+  <span class="v">--page-bg</span>: <span class="s">#e8e0cf</span>;  <span class="c">/* arrière-plan périphérique du desktop */</span>
+
+  <span class="c">/* Text */</span>
+  <span class="v">--ink</span>: <span class="s">#1a1d1a</span>;
+  <span class="v">--ink-2</span>: <span class="s">#5e6760</span>;
+  <span class="v">--ink-3</span>: <span class="s">#9ba59f</span>;
+  <span class="v">--rule</span>: <span class="s">#ece4d2</span>;
+
+  <span class="c">/* Accents (action) + soft (fond) */</span>
+  <span class="v">--green</span>: <span class="s">#2bb673</span>;     <span class="v">--green-soft</span>: <span class="s">#d6f3e3</span>;   <span class="v">--green-deep</span>: <span class="s">#1f9c5e</span>;
+  <span class="v">--yellow</span>: <span class="s">#ffc839</span>;    <span class="v">--yellow-soft</span>: <span class="s">#fff1c4</span>;
+  <span class="v">--orange</span>: <span class="s">#ff7a3a</span>;    <span class="v">--orange-soft</span>: <span class="s">#ffe0cc</span>;
+  <span class="v">--red</span>: <span class="s">#ef4a5a</span>;       <span class="v">--red-soft</span>: <span class="s">#ffd9de</span>;
+  <span class="v">--blue</span>: <span class="s">#4f8ef5</span>;      <span class="v">--blue-soft</span>: <span class="s">#dae9ff</span>;
+  <span class="v">--pink</span>: <span class="s">#ff6f9c</span>;      <span class="v">--pink-soft</span>: <span class="s">#ffd9e6</span>;
+  <span class="v">--purple</span>: <span class="s">#8c6df0</span>;    <span class="v">--purple-soft</span>: <span class="s">#e4dafa</span>;
+
+  <span class="c">/* Radius */</span>
+  <span class="v">--r-sm</span>: 10px; <span class="v">--r-md</span>: 14px; <span class="v">--r-lg</span>: 18px; <span class="v">--r-xl</span>: 24px; <span class="v">--r-pill</span>: 999px;
+
+  <span class="c">/* Shadows */</span>
+  <span class="v">--shadow-sm</span>: 0 4px 10px rgba(0,0,0,.04);
+  <span class="v">--shadow-md</span>: 0 4px 12px rgba(0,0,0,.04);
+  <span class="v">--shadow-lg</span>: 0 12px 30px rgba(0,0,0,.06);
+
+  <span class="c">/* Type */</span>
+  <span class="v">--font-display</span>: <span class="s">"DM Sans"</span>, <span class="s">"Inter"</span>, system-ui, sans-serif;
+  <span class="v">--font-body</span>: <span class="s">"Inter"</span>, ui-sans-serif, system-ui, sans-serif;
+}</pre>
+
+    <h3 class="display" style="margin: 28px 0 14px;">Tailwind config (extend)</h3>
+<pre class="code"><span class="c">// tailwind.config.ts — extend dans theme.extend</span>
+<span class="k">colors</span>: {
+  <span class="k">bg</span>: <span class="s">"#f4e8c9"</span>,
+  <span class="k">card</span>: <span class="s">"#fbf4e0"</span>,
+  <span class="k">sub</span>: <span class="s">"#ece0bf"</span>,
+  <span class="k">pageBg</span>: <span class="s">"#e8e0cf"</span>,
+  <span class="k">ink</span>: { <span class="k">DEFAULT</span>: <span class="s">"#1a1d1a"</span>, <span class="k">2</span>: <span class="s">"#5e6760"</span>, <span class="k">3</span>: <span class="s">"#9ba59f"</span> },
+  <span class="k">rule</span>: <span class="s">"#ece4d2"</span>,
+  <span class="k">green</span>: { <span class="k">DEFAULT</span>: <span class="s">"#2bb673"</span>, <span class="k">soft</span>: <span class="s">"#d6f3e3"</span>, <span class="k">deep</span>: <span class="s">"#1f9c5e"</span> },
+  <span class="k">yellow</span>: { <span class="k">DEFAULT</span>: <span class="s">"#ffc839"</span>, <span class="k">soft</span>: <span class="s">"#fff1c4"</span> },
+  <span class="k">orange</span>: { <span class="k">DEFAULT</span>: <span class="s">"#ff7a3a"</span>, <span class="k">soft</span>: <span class="s">"#ffe0cc"</span> },
+  <span class="k">red</span>:    { <span class="k">DEFAULT</span>: <span class="s">"#ef4a5a"</span>, <span class="k">soft</span>: <span class="s">"#ffd9de"</span> },
+  <span class="k">blue</span>:   { <span class="k">DEFAULT</span>: <span class="s">"#4f8ef5"</span>, <span class="k">soft</span>: <span class="s">"#dae9ff"</span> },
+  <span class="k">pink</span>:   { <span class="k">DEFAULT</span>: <span class="s">"#ff6f9c"</span>, <span class="k">soft</span>: <span class="s">"#ffd9e6"</span> },
+  <span class="k">purple</span>: { <span class="k">DEFAULT</span>: <span class="s">"#8c6df0"</span>, <span class="k">soft</span>: <span class="s">"#e4dafa"</span> },
+},
+<span class="k">borderRadius</span>: { <span class="k">sm</span>: <span class="s">"10px"</span>, <span class="k">md</span>: <span class="s">"14px"</span>, <span class="k">lg</span>: <span class="s">"18px"</span>, <span class="k">xl</span>: <span class="s">"24px"</span> },
+<span class="k">boxShadow</span>: {
+  <span class="k">sm</span>: <span class="s">"0 4px 10px rgba(0,0,0,.04)"</span>,
+  <span class="k">md</span>: <span class="s">"0 4px 12px rgba(0,0,0,.04)"</span>,
+  <span class="k">lg</span>: <span class="s">"0 12px 30px rgba(0,0,0,.06)"</span>,
+},
+<span class="k">fontFamily</span>: {
+  <span class="k">display</span>: [<span class="s">'"DM Sans"'</span>, <span class="s">'"Inter"'</span>, <span class="s">"system-ui"</span>],
+  <span class="k">sans</span>: [<span class="s">'"Inter"'</span>, <span class="s">"ui-sans-serif"</span>, <span class="s">"system-ui"</span>],
+}</pre>
+
+    <h3 class="display" style="margin: 28px 0 14px;">Helper — score → couleur</h3>
+<pre class="code"><span class="c">// fresh-utils.ts</span>
+<span class="k">export function</span> <span class="v">scoreFor</span>(daysToExpire: number) {
+  <span class="k">if</span> (daysToExpire &lt; 0)  <span class="k">return</span> { color: <span class="s">"red"</span>,    label: <span class="s">"Expired"</span> };
+  <span class="k">if</span> (daysToExpire &lt;= 1) <span class="k">return</span> { color: <span class="s">"red"</span>,    label: <span class="s">"Bad"</span> };
+  <span class="k">if</span> (daysToExpire &lt;= 3) <span class="k">return</span> { color: <span class="s">"orange"</span>, label: <span class="s">"Use soon"</span> };
+  <span class="k">if</span> (daysToExpire &lt;= 7) <span class="k">return</span> { color: <span class="s">"yellow"</span>, label: <span class="s">"Good"</span> };
+  <span class="k">return</span>                       { color: <span class="s">"green"</span>,  label: <span class="s">"Excellent"</span> };
+}</pre>
+
+    <h3 class="display" style="margin: 28px 0 14px;">Imports Google Fonts</h3>
+<pre class="code"><span class="k">&lt;link</span> <span class="v">href</span>=<span class="s">"https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap"</span> <span class="v">rel</span>=<span class="s">"stylesheet"</span><span class="k">&gt;</span></pre>
+  </section>
+
+  <!-- ─── 09. STRATÉGIE DE MIGRATION ───────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <div>
+        <div class="num">09</div>
+        <h2 class="display">Migrer ton app vers Fresh</h2>
+      </div>
+      <div class="lead" style="max-width: 380px;">
+        Trois vagues pour adopter le système sans casser l'app existante.
+      </div>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card">
+        <span class="badge badge-soft-green">Vague 1 · 1-2 jours</span>
+        <h3 class="display" style="margin-top: 12px;">Tokens</h3>
+        <p style="color: var(--ink-2); font-size: 13.5px; margin: 8px 0 0; line-height: 1.55;">
+          Remplace seulement tes variables : couleurs, polices, radius, shadows,
+          fond crème. L'app ressemble déjà à Fresh sans toucher aux composants.
+        </p>
+        <ul style="margin: 12px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 13px;">
+          <li>Coller <code style="font-family: var(--font-mono); font-size: 12px;">fresh-tokens.css</code></li>
+          <li>Charger DM Sans + Inter</li>
+          <li>Body bg → <code style="font-family: var(--font-mono); font-size: 12px;">#f4e8c9</code></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="badge badge-soft-green" style="background: var(--orange-soft); color: var(--orange);">Vague 2 · 1-2 sem.</span>
+        <h3 class="display" style="margin-top: 12px;">Patterns signature</h3>
+        <p style="color: var(--ink-2); font-size: 13.5px; margin: 8px 0 0; line-height: 1.55;">
+          Migre les éléments qui font vraiment Fresh. Refactor uniquement les
+          écrans-clés (dashboard d'abord).
+        </p>
+        <ul style="margin: 12px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 13px;">
+          <li>Score circulaire</li>
+          <li>Badges &amp; pills colorés</li>
+          <li>Cards à fond pastel</li>
+          <li>Aetchebibeast en hero</li>
+          <li>Boutons pill, FAB vert</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="badge badge-soft-green" style="background: var(--blue-soft); color: var(--blue);">Vague 3 · continu</span>
+        <h3 class="display" style="margin-top: 12px;">Détails &amp; polish</h3>
+        <p style="color: var(--ink-2); font-size: 13.5px; margin: 8px 0 0; line-height: 1.55;">
+          Itère après mesure. Garde la mascotte cohérente, n'ajoute rien qui
+          contredit les principes.
+        </p>
+        <ul style="margin: 12px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 13px;">
+          <li>Emoji par catégorie</li>
+          <li>Micro-anims scan</li>
+          <li>États vides avec mascotte</li>
+          <li>Transitions douces (200ms)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 18px; background: var(--sub);">
+      <h3 class="display" style="margin-bottom: 6px;">Garde-fous</h3>
+      <ul style="margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 13.5px; line-height: 1.7;">
+        <li><b style="color: var(--ink);">Feature-flag par écran</b> pour pouvoir rollback rapidement.</li>
+        <li><b style="color: var(--ink);">Migre le dashboard d'abord</b>, mesure (engagement, NPS), puis étends.</li>
+        <li><b style="color: var(--ink);">Garde tes composants form actuels</b> au début. Fresh est avant tout un thème de présentation.</li>
+        <li><b style="color: var(--ink);">N'invente pas de couleur hors palette.</b> Si un état nouveau arrive, demande-toi : est-ce green / yellow / orange / red / blue / pink / purple ?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ─── 10. DO / DON'T GLOBAL ────────────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <div>
+        <div class="num">10</div>
+        <h2 class="display">Do / Don't</h2>
+      </div>
+    </div>
+
+    <div class="grid do-dont grid-2">
+      <div class="do">
+        <div class="head">✓ Faire</div>
+        <div class="body">
+          • Une seule action primaire par écran (vert, pill, gros).<br/>
+          • Couleur = sémantique. Vert OK, jaune attention, orange urgent, rouge expiré.<br/>
+          • Pastilles soft pour les fonds d'icônes — jamais de remplissage plein.<br/>
+          • Mascotte sur le hero et les états vides.<br/>
+          • Chiffres en display 700, dans la couleur de leur statut.
+        </div>
+      </div>
+      <div class="dont">
+        <div class="head">✗ Ne pas faire</div>
+        <div class="body">
+          • Pas de gradients agressifs (sauf hero vert→deep).<br/>
+          • Pas de couleur primaire autre que le vert.<br/>
+          • Pas de border 1px partout — Fresh respire avec des fonds, pas des traits.<br/>
+          • Pas d'emoji en titre éditorial sérieux (réserver au contenu &amp; CTA).<br/>
+          • Pas de mascotte à moins de 60px ni sur fond coloré vif.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 11. DARK THEME ───────────────────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <div>
+        <div class="num">11</div>
+        <h2 class="display">Dark theme</h2>
+      </div>
+      <div class="lead" style="max-width: 380px;">
+        Même hiérarchie, même sémantique, fond <em>vert-encre</em> profond.
+        Les accents restent identiques — seules les surfaces et l'encre s'inversent.
+      </div>
+    </div>
+
+    <!-- Surfaces dark -->
+    <h3 class="display" style="margin-bottom: 14px;">Surfaces &amp; encre — dark</h3>
+    <div class="grid swatch-grid" style="margin-bottom: 28px;">
+      <div class="swatch">
+        <div class="chip" style="background: #15181b;">bg</div>
+        <div class="meta"><span class="name">bg</span><span class="hex">#15181B</span></div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: #1f2326;">card</div>
+        <div class="meta"><span class="name">card</span><span class="hex">#1F2326</span></div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: #272c30;">sub</div>
+        <div class="meta"><span class="name">sub</span><span class="hex">#272C30</span></div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: #0a0c0d;">page</div>
+        <div class="meta"><span class="name">page-bg</span><span class="hex">#0A0C0D</span></div>
+      </div>
+      <div class="swatch">
+        <div class="chip light" style="background: #f4ede0;">ink</div>
+        <div class="meta"><span class="name">ink</span><span class="hex">#F4EDE0</span></div>
+      </div>
+      <div class="swatch">
+        <div class="chip light" style="background: #a8b0a8;">ink-2</div>
+        <div class="meta"><span class="name">ink-2</span><span class="hex">#A8B0A8</span></div>
+      </div>
+      <div class="swatch">
+        <div class="chip light" style="background: #6a7370;">ink-3</div>
+        <div class="meta"><span class="name">ink-3</span><span class="hex">#6A7370</span></div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: #2e3439;">rule</div>
+        <div class="meta"><span class="name">rule</span><span class="hex">#2E3439</span></div>
+      </div>
+    </div>
+
+    <!-- Accents dark -->
+    <h3 class="display" style="margin-bottom: 6px;">Accents — dark</h3>
+    <p style="color: var(--ink-2); font-size: 13.5px; margin: 0 0 18px;">
+      Les accents sont <em>plus saturés et lumineux</em> qu'en light pour
+      ressortir sur fond sombre. Chaque accent garde sa version <em>soft</em>
+      en teinte sombre opaque (pas rgba) pour rester lisible.
+    </p>
+    <div class="grid grid-3" style="gap: 12px; margin-bottom: 32px;">
+      <div style="background: #1f2326; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px;">
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #34c97f;"></div>
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #1d3a2c;"></div>
+        <div style="flex: 1;">
+          <div class="display" style="font-size: 13px; font-weight: 700; color: #f4ede0;">green</div>
+          <div style="font-family: var(--font-mono); font-size: 10.5px; color: #a8b0a8;">#34C97F · soft #1D3A2C</div>
+        </div>
+      </div>
+      <div style="background: #1f2326; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px;">
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #5ee4a0;"></div>
+        <div style="flex: 1;">
+          <div class="display" style="font-size: 13px; font-weight: 700; color: #f4ede0;">green-deep</div>
+          <div style="font-family: var(--font-mono); font-size: 10.5px; color: #a8b0a8;">#5EE4A0 · texte sur green-soft</div>
+        </div>
+      </div>
+      <div style="background: #1f2326; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px;">
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #ffd158;"></div>
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #423318;"></div>
+        <div style="flex: 1;">
+          <div class="display" style="font-size: 13px; font-weight: 700; color: #f4ede0;">yellow</div>
+          <div style="font-family: var(--font-mono); font-size: 10.5px; color: #a8b0a8;">#FFD158 · soft #423318</div>
+        </div>
+      </div>
+      <div style="background: #1f2326; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px;">
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #ff8a4f;"></div>
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #4a2a1a;"></div>
+        <div style="flex: 1;">
+          <div class="display" style="font-size: 13px; font-weight: 700; color: #f4ede0;">orange</div>
+          <div style="font-family: var(--font-mono); font-size: 10.5px; color: #a8b0a8;">#FF8A4F · soft #4A2A1A</div>
+        </div>
+      </div>
+      <div style="background: #1f2326; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px;">
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #ff6071;"></div>
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #4a1d24;"></div>
+        <div style="flex: 1;">
+          <div class="display" style="font-size: 13px; font-weight: 700; color: #f4ede0;">red</div>
+          <div style="font-family: var(--font-mono); font-size: 10.5px; color: #a8b0a8;">#FF6071 · soft #4A1D24</div>
+        </div>
+      </div>
+      <div style="background: #1f2326; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px;">
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #6aa3ff;"></div>
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #1c2e4d;"></div>
+        <div style="flex: 1;">
+          <div class="display" style="font-size: 13px; font-weight: 700; color: #f4ede0;">blue</div>
+          <div style="font-family: var(--font-mono); font-size: 10.5px; color: #a8b0a8;">#6AA3FF · soft #1C2E4D</div>
+        </div>
+      </div>
+      <div style="background: #1f2326; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px;">
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #ff85ab;"></div>
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #4a1f30;"></div>
+        <div style="flex: 1;">
+          <div class="display" style="font-size: 13px; font-weight: 700; color: #f4ede0;">pink</div>
+          <div style="font-family: var(--font-mono); font-size: 10.5px; color: #a8b0a8;">#FF85AB · soft #4A1F30</div>
+        </div>
+      </div>
+      <div style="background: #1f2326; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px;">
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #a48cff;"></div>
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: #2e2350;"></div>
+        <div style="flex: 1;">
+          <div class="display" style="font-size: 13px; font-weight: 700; color: #f4ede0;">purple</div>
+          <div style="font-family: var(--font-mono); font-size: 10.5px; color: #a8b0a8;">#A48CFF · soft #2E2350</div>
+        </div>
+      </div>
+      <div style="background: #1f2326; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px;">
+        <div style="width: 36px; height: 36px; border-radius: 11px; background: linear-gradient(135deg, #34c97f 0%, #5ee4a0 100%);"></div>
+        <div style="flex: 1;">
+          <div class="display" style="font-size: 13px; font-weight: 700; color: #f4ede0;">hero gradient</div>
+          <div style="font-family: var(--font-mono); font-size: 10.5px; color: #a8b0a8;">green → green-deep</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview dark dashboard -->
+    <h3 class="display" style="margin-bottom: 14px;">Aperçu — un fragment de dashboard</h3>
+    <div style="background: #0a0c0d; border-radius: 24px; padding: 24px; box-shadow: var(--shadow-lg);">
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px;">
+        <!-- Hero card dark -->
+        <div style="background: linear-gradient(135deg, #34c97f 0%, #5ee4a0 100%); border-radius: 20px; padding: 24px 26px; color: #15181b; position: relative; overflow: hidden;">
+          <svg style="position: absolute; top: -8px; right: -12px; opacity: 0.18; transform: rotate(12deg);" width="130" height="130" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="13" r="6"/><circle cx="10" cy="13" r="2.2"/><path d="M16 13h5"/></svg>
+          <span class="badge" style="background: rgba(21,24,27,.18); color: #15181b;">Recette du jour</span>
+          <div class="display" style="font-size: 28px; font-weight: 700; margin-top: 10px; letter-spacing: -0.03em; color: #15181b;">Coq au vin</div>
+          <div class="row" style="margin-top: 10px; font-family: var(--font-display); font-size: 12.5px; font-weight: 600; color: #15181b;">
+            <span>45 min</span><span>·</span><span>4 pers</span><span>·</span><span>6 ingr.</span>
+          </div>
+          <button class="btn" style="background: #15181b; color: #5ee4a0; margin-top: 14px;">Commencer →</button>
+        </div>
+        <!-- Score + stats dark -->
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="background: #1f2326; border-radius: 18px; padding: 16px 18px; display: flex; align-items: center; gap: 16px;">
+            <svg width="76" height="76" style="transform: rotate(-90deg); flex-shrink: 0;">
+              <circle cx="38" cy="38" r="32" stroke="#2e3439" stroke-width="8" fill="none" />
+              <circle cx="38" cy="38" r="32" stroke="#34c97f" stroke-width="8" fill="none"
+                stroke-dasharray="180 22" stroke-linecap="round" />
+              <text x="38" y="44" text-anchor="middle" font-family="DM Sans" font-size="22" font-weight="700"
+                fill="#34c97f" transform="rotate(90 38 38)" letter-spacing="-1">90</text>
+            </svg>
+            <div>
+              <div class="display" style="font-size: 13px; font-weight: 700; color: #f4ede0;">Score frigo</div>
+              <div style="font-family: var(--font-body); font-size: 11.5px; color: #a8b0a8;">en super forme</div>
+            </div>
+          </div>
+          <div style="background: #1f2326; border-radius: 18px; padding: 14px 16px;">
+            <div style="width: 36px; height: 36px; border-radius: 11px; background: #1d3a2c; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5ee4a0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 9h5a2 2 0 0 1 0 4h-3a2 2 0 0 0 0 4h5"/><path d="M12 7v2M12 15v2"/></svg></div>
+            <div class="display" style="font-size: 24px; font-weight: 700; color: #34c97f; margin-top: 8px; letter-spacing: -0.02em;">$42</div>
+            <div class="display" style="font-size: 12px; font-weight: 600; color: #f4ede0;">Économisé ce mois</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item rows dark -->
+      <div style="margin-top: 16px; background: #1f2326; border-radius: 18px; padding: 8px;">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px;">
+          <div style="width: 40px; height: 40px; border-radius: 12px; background: #1d3a2c; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5ee4a0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13c2-1 4-1 6 0s4 1 6 0 4-1 6 0"/><path d="M3 17c2-1 4-1 6 0s4 1 6 0 4-1 6 0"/><path d="M12 4v5"/></svg></div>
+          <div style="flex: 1;">
+            <div class="display" style="font-size: 14px; font-weight: 700; color: #f4ede0;">Épinards</div>
+            <div style="font-family: var(--font-body); font-size: 11px; color: #a8b0a8;">2 bottes · Frigo</div>
+          </div>
+          <span class="pill-day" style="background: #ff8a4f;">2j</span>
+        </div>
+        <div style="height: 1px; background: #2e3439; margin: 0 14px;"></div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px;">
+          <div style="width: 40px; height: 40px; border-radius: 12px; background: #4a2a1a; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff8a4f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19 17 7"/><path d="M14 4c2 0 4 2 4 4l-2 2-4-4Z"/><path d="M9 12l-2 2M7 15l-2 2"/></svg></div>
+          <div style="flex: 1;">
+            <div class="display" style="font-size: 14px; font-weight: 700; color: #f4ede0;">Carottes</div>
+            <div style="font-family: var(--font-body); font-size: 11px; color: #a8b0a8;">6 pcs · Frigo</div>
+          </div>
+          <span class="pill-day" style="background: #34c97f;">12j</span>
+        </div>
+        <div style="height: 1px; background: #2e3439; margin: 0 14px;"></div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px;">
+          <div style="width: 40px; height: 40px; border-radius: 12px; background: #4a1d24; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff6071" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="7"/><path d="M9 7c1-1 2-2 3-2s2 1 3 2"/><path d="M12 7V5"/></svg></div>
+          <div style="flex: 1;">
+            <div class="display" style="font-size: 14px; font-weight: 700; color: #f4ede0;">Tomates</div>
+            <div style="font-family: var(--font-body); font-size: 11px; color: #a8b0a8;">4 pcs · Frigo</div>
+          </div>
+          <span class="pill-day" style="background: #ff6071;">périmé</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tokens CSS dark -->
+    <h3 class="display" style="margin: 28px 0 14px;">Tokens — à coller</h3>
+<pre class="code"><span class="c">/* fresh-tokens.css — bloc dark à ajouter */</span>
+<span class="k">:root[data-theme=<span class="s">"dark"</span>]</span> {
+  <span class="c">/* Surfaces */</span>
+  <span class="v">--bg</span>: <span class="s">#15181b</span>;
+  <span class="v">--card</span>: <span class="s">#1f2326</span>;
+  <span class="v">--sub</span>: <span class="s">#272c30</span>;
+  <span class="v">--page-bg</span>: <span class="s">#0a0c0d</span>;
+
+  <span class="c">/* Text */</span>
+  <span class="v">--ink</span>: <span class="s">#f4ede0</span>;
+  <span class="v">--ink-2</span>: <span class="s">#a8b0a8</span>;
+  <span class="v">--ink-3</span>: <span class="s">#6a7370</span>;
+  <span class="v">--rule</span>: <span class="s">#2e3439</span>;
+
+  <span class="c">/* Accents — plus saturés/lumineux, soft = teinte sombre opaque */</span>
+  <span class="v">--green</span>: <span class="s">#34c97f</span>;   <span class="v">--green-soft</span>: <span class="s">#1d3a2c</span>;   <span class="v">--green-deep</span>: <span class="s">#5ee4a0</span>;
+  <span class="v">--yellow</span>: <span class="s">#ffd158</span>;  <span class="v">--yellow-soft</span>: <span class="s">#423318</span>;
+  <span class="v">--orange</span>: <span class="s">#ff8a4f</span>;  <span class="v">--orange-soft</span>: <span class="s">#4a2a1a</span>;
+  <span class="v">--red</span>: <span class="s">#ff6071</span>;     <span class="v">--red-soft</span>: <span class="s">#4a1d24</span>;
+  <span class="v">--blue</span>: <span class="s">#6aa3ff</span>;    <span class="v">--blue-soft</span>: <span class="s">#1c2e4d</span>;
+  <span class="v">--pink</span>: <span class="s">#ff85ab</span>;    <span class="v">--pink-soft</span>: <span class="s">#4a1f30</span>;
+  <span class="v">--purple</span>: <span class="s">#a48cff</span>;  <span class="v">--purple-soft</span>: <span class="s">#2e2350</span>;
+
+  <span class="c">/* Shadows — plus marquées sur dark */</span>
+  <span class="v">--shadow-sm</span>: 0 4px 10px rgba(0,0,0,.35);
+  <span class="v">--shadow-md</span>: 0 6px 16px rgba(0,0,0,.45);
+  <span class="v">--shadow-lg</span>: 0 14px 32px rgba(0,0,0,.55);
+}
+
+<span class="c">/* Activation manuelle — data-theme sur &lt;html&gt; */</span>
+<span class="c">/* Auto système : ajouter en complément */</span>
+<span class="k">@media</span> (prefers-color-scheme: dark) {
+  <span class="k">:root:not([data-theme=<span class="s">"light"</span>])</span> { <span class="c">/* mêmes tokens que ci-dessus */</span> }
+}</pre>
+
+    <!-- Do / Don't dark -->
+    <div class="grid do-dont grid-2" style="margin-top: 28px;">
+      <div class="do">
+        <div class="head">✓ Faire — dark</div>
+        <div class="body">
+          • Surfaces neutres légèrement vertes-encre, jamais du noir pur (#000).<br/>
+          • Soft = teinte <em>sombre opaque</em> de la couleur d'accent (pas rgba) — meilleur contraste, pas de halo.<br/>
+          • Tous les accents montent en saturation/luminosité (green #2BB673 → #34C97F, orange #FF7A3A → #FF8A4F, red #EF4A5A → #FF6071, etc.).<br/>
+          • <code style="font-family: var(--font-mono); font-size: 12px;">green-deep</code> s'inverse : c'est <em>plus clair</em> que green (#5EE4A0) pour le texte sur green-soft.<br/>
+          • Ombres plus profondes (30-50% d'opacité) pour garder le relief.<br/>
+          • Mascotte sur fond <code style="font-family: var(--font-mono); font-size: 12px;">card</code>, jamais sur bg pur.
+        </div>
+      </div>
+      <div class="dont">
+        <div class="head">✗ Ne pas faire — dark</div>
+        <div class="body">
+          • Pas de <code style="font-family: var(--font-mono); font-size: 12px;">#000</code> ni de gris-bleu froid (Material). Fresh reste chaud.<br/>
+          • Ne pas réutiliser les soft clairs (#D6F3E3) — illisibles sur dark.<br/>
+          • Pas d'ombre avec du flou exagéré : préfère opacité.<br/>
+          • Ne pas inverser le gradient hero (toujours green → green-deep).<br/>
+          • Pas de white pure sur les icônes — utilise <code style="font-family: var(--font-mono); font-size: 12px;">ink</code> crème.
+        </div>
+      </div>
+    </div>
+
+    <!-- Switching strategy -->
+    <div class="card" style="margin-top: 18px; background: var(--sub);">
+      <h3 class="display" style="margin-bottom: 6px;">Stratégie de bascule</h3>
+      <ul style="margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 13.5px; line-height: 1.7;">
+        <li><b style="color: var(--ink);">Attribut sur <code style="font-family: var(--font-mono); font-size: 12px;">&lt;html&gt;</code></b> : <code style="font-family: var(--font-mono); font-size: 12px;">data-theme="dark"</code> ou <code style="font-family: var(--font-mono); font-size: 12px;">"light"</code>. Aucun autre composant n'a à savoir.</li>
+        <li><b style="color: var(--ink);">Trois modes</b> à exposer : Light · Dark · Auto (système). Persister la préférence en localStorage.</li>
+        <li><b style="color: var(--ink);">Transition douce</b> : <code style="font-family: var(--font-mono); font-size: 12px;">transition: background-color .25s, color .25s</code> sur body et cards. Pas plus.</li>
+        <li><b style="color: var(--ink);">Tester chaque accent en dark</b> : un orange #FF7A3A passe bien, mais le blue/pink/purple ont besoin d'un +lum pour atteindre WCAG AA.</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="foot">
+    <div>Fresh design system · v1.0 · charte interne</div>
+    <div>Aetchebibeast veille au grain.</div>
+  </div>
+
+</div>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script>window.lucide && lucide.createIcons();</script>
+</body>
+</html>

@@ -45,10 +45,7 @@ export class BrandController {
 
   async getBrandById(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
-      if (!id) {
-        throw new BadRequestError('Brand ID is required');
-      }
+      const { id } = req.params as { id: string };
       const brand = await this.brandService.getBrandById(id);
       if (!brand) {
         throw new NotFoundError('Brand not found');

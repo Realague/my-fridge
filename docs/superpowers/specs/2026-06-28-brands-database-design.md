@@ -134,7 +134,10 @@ continue (les autres ne sont pas bloquées).
   2. dédup : `findByNormalizedName` → si existe, renvoie l'existant (200) ;
   3. sinon génère un slug `id` depuis `normalizedName` (suffixe `-2`, `-3`… si
      collision d'id avec un autre normalizedName) ;
-  4. `isCurated=false`, `usageCount=1` ;
+  4. `isCurated=false`, `usageCount=0` (décision post-revue : le chemin de
+     tracking carte est l'unique source de comptage, pour éviter de
+     double-compter le foyer créateur entre la création et sa première carte ;
+     remplace le `usageCount=1` initialement prévu) ;
   5. logo : si `domain` fourni → tentative logo.dev → Cloudinary → `logoPath` ;
      échec/absence → `logoPath=null`, **création non bloquée**.
 - `incrementUsage(id)` — appelé au tracking d'usage.

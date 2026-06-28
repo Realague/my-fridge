@@ -53,7 +53,11 @@ export class BrandService {
       logoPath,
       category: data.category || null,
       isCurated: false,
-      usageCount: 1,
+      // Start at 0: the loyalty-card tracking path (incrementUsage on a
+      // household's first association) is the single source of usageCount,
+      // so the creating household is counted once when it adds its card —
+      // not double-counted between creation and first card.
+      usageCount: 0,
     });
 
     return this.mapToDto(brand);

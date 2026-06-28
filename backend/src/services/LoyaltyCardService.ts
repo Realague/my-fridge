@@ -1,22 +1,40 @@
 import { LoyaltyCardRepository } from '../repositories/LoyaltyCardRepository';
 import { LoyaltyCard } from '../models/LoyaltyCard';
 import { CreateLoyaltyCardDto, UpdateLoyaltyCardDto, LoyaltyCardDto, GetLoyaltyCardsQueryDto } from '../types/LoyaltyCardDto';
+import { BrandService } from './BrandService';
 
 export class LoyaltyCardService {
   private loyaltyCardRepository: LoyaltyCardRepository;
+  private brandService: BrandService;
 
   constructor() {
     this.loyaltyCardRepository = new LoyaltyCardRepository();
+    this.brandService = new BrandService();
   }
 
   async createLoyaltyCard(data: CreateLoyaltyCardDto): Promise<LoyaltyCardDto> {
     const loyaltyCard = await this.loyaltyCardRepository.create(data);
-    const retrieved = await this.loyaltyCardRepository.findById(loyaltyCard.id, data.householdId);
 
+    // Track distinct-household usage of the referenced brand. Best-effort:
+    // increment only when this household had no prior card for this brand.
+    if (data.storeSlug) {
+      const priorCount = await this.loyaltyCardRepository.countByHouseholdAndSlug(
+        data.householdId,
+        data.storeSlug
+      );
+      if (priorCount <= 1) {
+        try {
+          await this.brandService.incrementUsage(data.storeSlug);
+        } catch (err) {
+          console.warn(`Failed to increment usage for brand ${data.storeSlug}:`, err);
+        }
+      }
+    }
+
+    const retrieved = await this.loyaltyCardRepository.findById(loyaltyCard.id, data.householdId);
     if (!retrieved) {
       throw new Error('Failed to retrieve created loyalty card');
     }
-
     return this.mapToDto(retrieved);
   }
 

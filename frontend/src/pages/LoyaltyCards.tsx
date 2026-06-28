@@ -6,14 +6,14 @@ import { ArrowLeft, Plus, Trash2, CreditCard } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import BarcodeDisplay from '@/components/BarcodeDisplay';
 import LoyaltyCardForm from '@/components/LoyaltyCardForm';
-import { StoreLogo } from '@/components/StoreSelector';
+import BrandLogo from '@/components/BrandLogo';
 import { useLoyaltyCardStore } from '@/stores/loyaltyCardStore';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
-import { getStoreBySlug } from '@/data/storeCatalog';
+import { useBrandStore } from '@/stores/brandStore';
 import { LoyaltyCard } from '@/services/loyaltyCardService';
 import { CreateLoyaltyCardRequest } from '@/services/loyaltyCardService';
 import { BarcodeFormat } from '@/types/enums';
@@ -57,6 +57,13 @@ const LoyaltyCards = () => {
   const [selectedCard, setSelectedCard] = useState<LoyaltyCard | null>(null);
   const [cardToDelete, setCardToDelete] = useState<LoyaltyCard | null>(null);
 
+  const fetchBrands = useBrandStore((s) => s.fetchBrands);
+  const getBrandBySlug = useBrandStore((s) => s.getBrandBySlug);
+
+  useEffect(() => {
+    void fetchBrands();
+  }, [fetchBrands]);
+
   useEffect(() => {
     if (households.length === 0) {
       void fetchHouseholds();
@@ -90,26 +97,21 @@ const LoyaltyCards = () => {
   };
 
   const CardLogo = ({ card }: { card: LoyaltyCard }) => {
-    const catalogEntry = card.storeSlug ? getStoreBySlug(card.storeSlug) : null;
-
-    if (catalogEntry) {
-      return <StoreLogo store={catalogEntry} size="md" />;
-    }
-
+    const brand = getBrandBySlug(card.storeSlug);
     return (
-      <div
-        className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg"
-        style={{ backgroundColor: card.color || '#6B7280' }}
-      >
-        {card.storeName.charAt(0).toUpperCase()}
-      </div>
+      <BrandLogo
+        name={card.storeName}
+        logoPath={brand?.logoPath ?? null}
+        color={brand?.color ?? card.color}
+        size="md"
+      />
     );
   };
 
   // Full-screen barcode view
   if (selectedCard) {
-    const catalogEntry = selectedCard.storeSlug ? getStoreBySlug(selectedCard.storeSlug) : null;
-    const bgColor = catalogEntry?.color || selectedCard.color || '#1f2937';
+    const brand = getBrandBySlug(selectedCard.storeSlug);
+    const bgColor = brand?.color || selectedCard.color || '#1f2937';
 
     return (
       <div className="min-h-screen flex flex-col" style={{ backgroundColor: bgColor }}>
@@ -134,9 +136,12 @@ const LoyaltyCards = () => {
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center px-6 gap-6">
-          {catalogEntry && (
-            <StoreLogo store={catalogEntry} size="md" />
-          )}
+          <BrandLogo
+            name={selectedCard.storeName}
+            logoPath={brand?.logoPath ?? null}
+            color={brand?.color ?? selectedCard.color}
+            size="md"
+          />
 
           {selectedCard.barcodeData && selectedCard.barcodeFormat ? (
             <BarcodeDisplay
@@ -226,8 +231,8 @@ const LoyaltyCards = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {loyaltyCards.map((card) => {
-              const catalogEntry = card.storeSlug ? getStoreBySlug(card.storeSlug) : null;
-              const cardColor = catalogEntry?.color || card.color || '#6B7280';
+              const brand = getBrandBySlug(card.storeSlug);
+              const cardColor = brand?.color || card.color || '#6B7280';
 
               return (
                 <CardButton

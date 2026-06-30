@@ -10,7 +10,6 @@ interface BrandLogoProps {
 const BrandLogo = ({ name, logoPath, color, size = 'md' }: BrandLogoProps) => {
   const [failed, setFailed] = useState(false);
   const sizeClass = size === 'sm' ? 'w-8 h-8' : 'w-12 h-12';
-  const padClass = size === 'sm' ? 'p-1' : 'p-1.5';
   const textSize = size === 'sm' ? 'text-sm' : 'text-lg';
 
   useEffect(() => {
@@ -22,7 +21,7 @@ const BrandLogo = ({ name, logoPath, color, size = 'md' }: BrandLogoProps) => {
   if (showInitial) {
     return (
       <div
-        className={`${sizeClass} rounded-full flex items-center justify-center text-white font-bold ${textSize} shrink-0`}
+        className={`${sizeClass} rounded-xl flex items-center justify-center text-white font-bold ${textSize} shrink-0`}
         style={{ backgroundColor: color || '#6B7280' }}
       >
         {name.charAt(0).toUpperCase()}
@@ -30,9 +29,13 @@ const BrandLogo = ({ name, logoPath, color, size = 'md' }: BrandLogoProps) => {
     );
   }
 
+  // logo.dev returns opaque square "icon" tiles. Let the tile fill the frame
+  // edge-to-edge and clip it with overflow-hidden so its square corners follow
+  // the rounded shape instead of poking out. object-contain keeps non-square
+  // (custom) logos from being cropped.
   return (
     <div
-      className={`${sizeClass} rounded-xl bg-white flex items-center justify-center ${padClass} shrink-0 shadow-sm ring-1 ring-black/5 dark:ring-white/10`}
+      className={`${sizeClass} rounded-xl overflow-hidden bg-white flex items-center justify-center shrink-0 shadow-sm ring-1 ring-black/5 dark:ring-white/10`}
     >
       <img
         src={logoPath}

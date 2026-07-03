@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardButton, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Settings, Users, Bell, Menu, ChevronDown, Refrigerator } from 'lucide-react';
+import { Settings, Users, Bell, Menu, ChevronDown, Refrigerator, ShoppingCart, CalendarDays, BookOpen, PackageMinus, CreditCard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StorageAreaCard from '@/components/StorageAreaCard';
 import BottomNavigation from '@/components/BottomNavigation';
@@ -150,11 +150,11 @@ const Dashboard = () => {
   const itemMinimums = getItemMinimumsForHousehold();
 
   const quickActions = [
-    { title: t('pages.shopping.title'), description: t('pages.dashboard.itemsPending', { count: getPendingItems().length }), emoji: '🛒', route: '/shopping' },
-    { title: t('pages.meals.title'), description: t('pages.dashboard.planThisWeek'), emoji: '📅', route: '/meals' },
-    { title: t('pages.recipes.title'), description: t('pages.dashboard.savedRecipes', { count: (recipes || []).length }), emoji: '📖', route: '/recipes' },
-    { title: t('pages.dashboard.itemMinimums'), description: t('pages.dashboard.itemsTracked', { count: itemMinimums.length }), emoji: '📊', route: '/item-minimums' },
-    { title: t('pages.dashboard.loyaltyCards'), description: t('pages.dashboard.loyaltyCardsDesc'), emoji: '💳', route: '/loyalty-cards' },
+    { title: t('pages.shopping.title'), description: t('pages.dashboard.itemsPending', { count: getPendingItems().length }), icon: ShoppingCart, route: '/shopping' },
+    { title: t('pages.meals.title'), description: t('pages.dashboard.planThisWeek'), icon: CalendarDays, route: '/meals' },
+    { title: t('pages.recipes.title'), description: t('pages.dashboard.savedRecipes', { count: (recipes || []).length }), icon: BookOpen, route: '/recipes' },
+    { title: t('pages.dashboard.itemMinimums'), description: t('pages.dashboard.itemsTracked', { count: itemMinimums.length }), icon: PackageMinus, route: '/item-minimums' },
+    { title: t('pages.dashboard.loyaltyCards'), description: t('pages.dashboard.loyaltyCardsDesc'), icon: CreditCard, route: '/loyalty-cards' },
   ];
 
   return (
@@ -232,7 +232,7 @@ const Dashboard = () => {
                 aria-label={`${action.title} — ${action.description}`}
               >
                 <CardContent className="p-4 text-center">
-                  <div className="text-2xl mb-2">{action.emoji}</div>
+                  <action.icon className="h-6 w-6 mb-2 mx-auto text-mf-green-deep" strokeWidth={1.8} />
                   <div className="font-medium text-sm text-foreground">{action.title}</div>
                   <div className="text-xs text-muted-foreground">{action.description}</div>
                 </CardContent>
@@ -250,7 +250,7 @@ const Dashboard = () => {
         {/* Storage Areas — Fresh "card with header + grid" pattern */}
         <Card className="border-0 bg-mf-night-surface shadow-none">
           <CardHeader className="px-4 sm:px-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex flex-row items-center justify-between gap-3">
               <div className="min-w-0 flex items-start gap-3">
                 <span
                   aria-hidden="true"

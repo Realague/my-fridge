@@ -1,4 +1,5 @@
 import { StoredItemRepository } from '../repositories/StoredItemRepository';
+import { ExpirationNotificationRepository } from '../repositories/ExpirationNotificationRepository';
 import { CreateStoredItemDto, UpdateStoredItemDto, GetStoredItemsQueryDto, StoredItemDto } from '../types/ItemDto';
 import { StoredItem } from '../models/StoredItem';
 import { StorageArea } from '../models/StorageArea';
@@ -9,9 +10,11 @@ import { BadRequestError } from '../errors/CustomErrors';
 
 export class StoredItemService {
   private storedItemRepository: StoredItemRepository;
+  private expirationNotificationRepository: ExpirationNotificationRepository;
 
   constructor() {
     this.storedItemRepository = new StoredItemRepository();
+    this.expirationNotificationRepository = new ExpirationNotificationRepository();
   }
 
   async createStoredItem(data: CreateStoredItemDto): Promise<StoredItemDto> {
@@ -170,6 +173,9 @@ export class StoredItemService {
 
     const deleted = await this.storedItemRepository.delete(id, householdId);
     if (deleted) {
+      // The item left the stock: drop its expiration notifications so no stale
+      // alert/suggestion lingers for a removed item.
+      await this.expirationNotificationRepository.deleteByStoredItemId(id);
       await this.cleanupOneShotCookedMealItem(existing.itemId, householdId);
     }
     return deleted;
@@ -210,7 +216,11 @@ export class StoredItemService {
     if (item.category !== ItemCategory.COOKED_MEAL) return;
     if (item.recipeId) return; // Recipe-linked items persist with the recipe.
 
-    const remaining = await StoredItem.count({ where: { itemId, householdId } });
+    // Count INCLUDING soft-deleted rows (paranoid: false): a soft-deleted
+    // stored_item still references this itemId FK, so we must not hard-delete
+    // the catalog Item while any such row survives (it would violate the FK and
+    // break exit-undo restore of that soft-deleted row).
+    const remaining = await StoredItem.count({ where: { itemId, householdId }, paranoid: false });
     if (remaining === 0) {
       await item.destroy();
     }

@@ -16,6 +16,7 @@ import { ExpirationNotification } from './ExpirationNotification';
 import { ExpirationNotificationRead } from './ExpirationNotificationRead';
 import { PushSubscription } from './PushSubscription';
 import { Brand } from './Brand';
+import { StockExit } from './StockExit';
 
 // Define associations
 User.hasMany(Household, { foreignKey: 'createdBy', as: 'createdHouseholds' });
@@ -143,6 +144,20 @@ ExpirationNotificationRead.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 User.hasMany(PushSubscription, { foreignKey: 'userId', as: 'pushSubscriptions', onDelete: 'CASCADE' });
 PushSubscription.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
+// Stock Exit associations
+// itemId is intentionally a plain UUID (no FK) — the referenced item may be
+// hard-deleted; the log keeps a snapshot instead. storedItemId, however, has a
+// real FK (SET NULL on delete): stored_items is now soft-delete so the row
+// survives a "removal" and the link stays valid.
+Household.hasMany(StockExit, { foreignKey: 'householdId', as: 'stockExits' });
+StockExit.belongsTo(Household, { foreignKey: 'householdId', as: 'household' });
+
+User.hasMany(StockExit, { foreignKey: 'exitedBy', as: 'stockExits' });
+StockExit.belongsTo(User, { foreignKey: 'exitedBy', as: 'exitedByUser' });
+
+StoredItem.hasMany(StockExit, { foreignKey: 'storedItemId', as: 'stockExits' });
+StockExit.belongsTo(StoredItem, { foreignKey: 'storedItemId', as: 'storedItem' });
+
 // Brand is a global referential — no associations
 
 // Export models
@@ -164,5 +179,6 @@ export {
   ExpirationNotification,
   ExpirationNotificationRead,
   PushSubscription,
-  Brand
+  Brand,
+  StockExit
 };

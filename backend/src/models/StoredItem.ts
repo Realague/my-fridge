@@ -23,10 +23,11 @@ interface StoredItemAttributes {
   createdBy: string;
   createdAt?: Date;
   updatedAt?: Date;
+  deletedAt?: Date | null;
 }
 
 // Some attributes are optional in `StoredItem.build()` and `StoredItem.create()`
-interface StoredItemCreationAttributes extends Optional<StoredItemAttributes, 'id' | 'quantity' | 'unit' | 'expirationDate' | 'location' | 'isOpened' | 'openedDate' | 'frozenDate' | 'cookedDate' | 'createdAt' | 'updatedAt'> {}
+interface StoredItemCreationAttributes extends Optional<StoredItemAttributes, 'id' | 'quantity' | 'unit' | 'expirationDate' | 'location' | 'isOpened' | 'openedDate' | 'frozenDate' | 'cookedDate' | 'createdAt' | 'updatedAt' | 'deletedAt'> {}
 
 export class StoredItem extends Model<StoredItemAttributes, StoredItemCreationAttributes> implements StoredItemAttributes {
   public id!: string;
@@ -44,6 +45,7 @@ export class StoredItem extends Model<StoredItemAttributes, StoredItemCreationAt
   public readonly createdBy!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public readonly deletedAt!: Date | null;
 
   // Association attributes
   public readonly storageArea?: StorageArea;
@@ -220,6 +222,9 @@ StoredItem.init(
     sequelize,
     tableName: 'stored_items',
     timestamps: true,
+    // Soft-delete: destroy() sets deletedAt; default finds exclude deleted rows.
+    // This keeps rows alive after a "removal" so the stock_exits FK stays valid.
+    paranoid: true,
     indexes: [
       {
         fields: ['itemId'],

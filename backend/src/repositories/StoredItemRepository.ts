@@ -38,6 +38,18 @@ export class StoredItemRepository {
     });
   }
 
+  /**
+   * Find a stored item by id INCLUDING soft-deleted rows (paranoid: false).
+   * Used by the exit-undo flow, where a full exit soft-deletes the row and undo
+   * must locate and restore it.
+   */
+  async findByIdWithDeleted(id: string, householdId: string): Promise<StoredItem | null> {
+    return await StoredItem.findOne({
+      where: { id, householdId },
+      paranoid: false,
+    });
+  }
+
   async findAll(query: GetStoredItemsQueryDto): Promise<{ items: StoredItem[]; total: number }> {
     const { householdId, storageAreaId, itemId, search, isExpired, isExpiringSoon, limit = 50, offset = 0 } = query;
 

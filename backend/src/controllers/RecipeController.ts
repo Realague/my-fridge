@@ -421,7 +421,16 @@ export class RecipeController {
   consumeIngredients = async (req: Request, res: Response): Promise<void> => {
     try {
       const { householdId, id } = req.params as { householdId: string; id: string };
+      const userId = (req.user as any)?.id;
       const { deductions } = req.body;
+
+      if (!userId) {
+        res.status(401).json({
+          success: false,
+          error: 'Authentication required',
+        });
+        return;
+      }
 
       if (!deductions || !Array.isArray(deductions) || deductions.length === 0) {
         res.status(400).json({
@@ -434,6 +443,7 @@ export class RecipeController {
       const result = await this.recipeConsumeService.consumeIngredients(
         id,
         householdId,
+        userId,
         deductions
       );
 

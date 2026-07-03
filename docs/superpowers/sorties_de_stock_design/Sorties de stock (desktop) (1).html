@@ -1,0 +1,202 @@
+# Handoff : Sorties de stock (consommé / jeté / retiré)
+
+## Overview
+Cette feature permet à l'utilisateur de **faire sortir un article du stock** (frigo, garde‑manger…) en indiquant **ce qu'il en a fait** : `Consommé`, `Jeté`, ou `Retiré`. Chaque sortie :
+- décrémente la quantité de l'article (ou le supprime si la quantité tombe à 0),
+- écrit une **entrée de journal** (`log`) horodatée et attribuée à un utilisateur,
+- est **annulable pendant 10 secondes** via un toast.
+
+La feature inclut aussi des **suggestions proactives** : quand des articles sont périmés depuis plus de 3 jours, l'app propose de confirmer ce qu'on en a fait (mangé / jeté / ignorer), pour garder le stock et les statistiques anti‑gaspillage justes.
+
+Deux surfaces sont fournies : **mobile** et **desktop**. Même modèle de données, même logique métier, interactions adaptées à chaque plateforme.
+
+## About the Design Files
+Les fichiers de ce dossier sont des **références de design réalisées en HTML/CSS/JS vanilla** — des prototypes qui montrent l'apparence et le comportement souhaités, **pas du code de production à copier tel quel**.
+
+La tâche est de **recréer ces designs dans l'environnement existant de l'app Fresh / MonFrigo** (React / React Native / Vue / SwiftUI / etc.) en utilisant ses patterns, ses composants et sa librairie d'icônes déjà en place. Si aucun environnement n'existe encore, choisir le framework le plus adapté au projet.
+
+Points d'attention spécifiques au projet Fresh :
+- **Aucun emoji** dans l'UI (règle projet). Utiliser exclusivement des **icônes Lucide**.
+- Réutiliser les **tokens de couleur et la typo de la charte Fresh** déjà définis dans le codebase plutôt que de redéclarer les valeurs ci‑dessous — les hex listés ici servent de référence/fallback.
+
+## Fidelity
+**Haute fidélité (hifi).** Couleurs, typographie, espacements, rayons et interactions sont finaux. Recréer l'UI au pixel près avec les composants existants du codebase. Les seules libertés attendues concernent l'adaptation aux conventions du codebase (nommage, structure de composants, gestion d'état).
+
+---
+
+## Modèle de données
+
+```ts
+type StockItem = {
+  id: string;
+  name: string;
+  category: { label: string; icon: LucideIcon; colorKey: string }; // ex. "Produits laitiers"
+  storage: string;            // "Réfrigérateur", "Garde-manger", "Congélateur"…
+  qty: number;                // quantité en stock
+  unit: string;               // "yaourts", "portions", "L", "pot"…
+  detail?: string;            // précision optionnelle, ex. "2,75 L"
+  addedBy: string;            // "vous", "Sarah"…
+  addedOn: string;            // date d'ajout
+  status:
+    | { type: 'fresh' }
+    | { type: 'expiring'; days: number }   // expire dans N jours
+    | { type: 'expired';  days: number };  // périmé depuis N jours
+};
+
+type StockExitLog = {
+  itemId: string;
+  qty: number;                              // quantité sortie
+  action: 'consumed' | 'wasted' | 'removed';
+  user: string;
+  at: string;                               // ISO timestamp
+};
+```
+
+### Les 3 actions de sortie
+| Code | Libellé FR | Sens | Icône Lucide |
+|---|---|---|---|
+| `consumed` | Consommé | Mangé, cuisiné, utilisé | `utensils` |
+| `wasted` | Jeté | Périmé, avarié, plus envie | `trash-2` |
+| `removed` | Retiré | Donné, transféré, erreur de saisie | `package-x` |
+
+La distinction `consumed` vs `wasted` est le cœur métier : elle alimente les **statistiques anti‑gaspillage**. `removed` est une sortie neutre (ni consommé ni gaspillé).
+
+---
+
+## Logique métier (commune mobile + desktop)
+
+### `doAction(itemId, action, qtyOut)`
+1. Borne `qtyOut` entre 1 et `item.qty`.
+2. Prend un **snapshot** de l'article (pour l'undo).
+3. Pousse une entrée dans `logs` (`StockExitLog`).
+4. `remaining = item.qty - qtyOut` :
+   - si `remaining <= 0` → **retirer l'article de la liste** (animation de sortie ~330 ms, puis re‑render).
+   - sinon → `item.qty = remaining`, re‑render.
+5. Affiche un **toast d'annulation** (10 s).
+
+### `undo(snapshot)`
+Retire la dernière entrée de `logs`, restaure l'article (quantité et position) et re‑render. Déclenché par le bouton « Annuler » du toast ou à l'expiration… non : **uniquement** si l'utilisateur clique « Annuler » avant la fin du compte à rebours. À l'expiration des 10 s, l'action devient définitive (le toast disparaît, aucun appel undo).
+
+> Dans une vraie app : `doAction` doit idéalement **différer l'appel réseau de 10 s** (optimistic UI) ou écrire immédiatement puis proposer une mutation de compensation à l'undo. Choisir selon l'architecture existante.
+
+### Suggestions (péremption)
+- `suggestItems = items` filtrés sur `status.type === 'expired' && status.days >= 3 && !ignored`.
+- **0 article** → pas de bannière, badge cloche masqué.
+- **1 article** → bannière au singulier avec 3 boutons : `Oui, jeté` (wasted), `Non, mangé` (consumed), `Ignorer`.
+- **≥2 articles** → bannière groupée « N articles périmés… » + bouton « Faire le point » qui déplie une liste ; chaque ligne a Jeté / Mangé / Ignorer.
+- Une action depuis une suggestion s'applique sur la **quantité totale** de l'article (`qtyOut = item.qty`).
+- `Ignorer` ajoute l'id à un set `ignored` (masque la suggestion sans toucher au stock).
+- Le **badge rouge de la cloche** (topbar/nav) affiche le nombre de suggestions actives.
+
+---
+
+## Écrans / Vues
+
+### 1. Liste de stock — MOBILE
+- **Container** : iPhone 390 px de large, hauteur 844 px. Fond `--bg` crème (#fdf8ed).
+- **Status bar** (50 px) + **nav bar** : bouton retour (chevron‑left), titre « Réfrigérateur » avec icône `refrigerator` verte, sous‑titre « N articles · Maison Dubois », bouton `+` vert (38×38, radius 12, ombre verte).
+- **Corps scrollable** : bannière de suggestion (si applicable) → label de section « AU FRIGO » + compteur → cartes produit → hint de swipe.
+- **Carte produit** (`.prod`) : radius 18, fond blanc, ombre douce. Thumbnail 52×52 (radius 14, fond teinté catégorie, icône Lucide colorée), infos (nom DM Sans 14.5/700, pills catégorie + statut, ligne meta « Ajouté par … »), et tag quantité à droite (DM Sans 800, 15 px + unité 11 px).
+- **Tab bar** (5 onglets) : Accueil, Stock (actif, fond vert‑soft), Courses, Recettes, Plus.
+
+### 2. Liste de stock — DESKTOP
+- **Chrome Fresh complet** : `.screen` 1440×900, grid `256px 1fr`.
+  - **Sidebar** (256 px, fond `--card`) : marque « MonFrigo », nav principale, groupe de stockages (Réfrigérateur actif), pied « Réduire ».
+  - **Topbar** (64 px) : fil d'ariane « Mes produits › Réfrigérateur », cloche avec badge rouge, chip utilisateur.
+  - **Content** : page header (titre 30 px + actions « Journal des sorties » / « Ajouter un article »), barre de recherche, barre de filtres (Tous / Périmés / Bientôt périmés / Tri + toggle « Grouper par catégorie »), bannière de suggestion, lignes produit, hint.
+- **Ligne produit** (`.product-row`) : grid `64px 1fr auto auto`, radius 16, bordure `--rule`, fond `--card`. Thumbnail 64×64, corps (titre 17/700 + badge statut, chip catégorie, ligne meta), cellule quantité alignée à droite, et **zone d'actions rapides révélée au survol**.
+
+---
+
+## Interactions & Behavior
+
+### Mobile
+| Geste | Résultat |
+|---|---|
+| **Swipe gauche** sur une carte | Révèle l'action verte « Consommé » ; au‑delà du seuil (~78 px) et au relâché → `doAction(consumed, 1)` avec animation de collapse. En‑deçà → la carte revient. |
+| **Tap** sur une carte | Ouvre la **bottom sheet** détail. |
+| **Appui long** (~430 ms) | Ouvre le **menu contextuel** positionné près de la carte (Consommé / Jeter / Retirer / Préciser la quantité). |
+
+- La distinction swipe vs tap vs long‑press se fait sur le 1er mouvement : seuil 8 px ; intention horizontale si |dx| > |dy|. Tout mouvement annule le timer de long‑press.
+- **Bottom sheet** : slide depuis le bas (transform translateY, 320 ms, cubic‑bezier(.2,.85,.25,1)), poignée, en‑tête article, stepper quantité (si qty > 1), 3 boutons d'action empilés. Scrim semi‑opaque cliquable pour fermer.
+
+### Desktop
+| Action | Résultat |
+|---|---|
+| **Survol d'une ligne** | La cellule **quantité glisse vers la gauche** et libère la place où apparaissent 4 boutons ronds (largeur animée 0→192 px, ~200 ms) : Consommé (vert plein), Jeté (rouge‑soft), Retiré (gris), Préciser (gris). Au repos, les actions n'occupent aucun espace (seule la quantité est visible). Tooltip Lucide au survol de chaque bouton. |
+| **Clic sur la ligne** | Ouvre la **modal** détail centrée. |
+| **Clic droit** | Ouvre un **menu contextuel** à la position du curseur (repositionné pour rester dans le viewport). |
+| **Toggle « Grouper par catégorie »** | Regroupe les lignes par `group` avec en‑têtes de section. |
+| **Échap** | Ferme modal et menu contextuel. |
+
+- **Modal** : 460 px, centrée, radius 24, ombre forte. Apparition opacity + translateY (‑46%→‑50%), 220 ms. Bouton de fermeture, en‑tête (thumb 56, nom 20/700, badge statut + stock), stepper quantité (si qty > 1), label « Que s'est‑il passé ? », 3 gros boutons d'action.
+
+### Stepper de quantité (les deux plateformes)
+- Affiché seulement si `qty > 1`. Valeur par défaut **1**. Boutons `−` / `+` (désactivés aux bornes), bouton « Tout » → met `qty` max. Sous‑texte « sur N unité ».
+
+### Toast d'annulation (les deux plateformes)
+- Fond `--ink` foncé, texte blanc. Ligne 1 : « {Nom} — {Action} ». Ligne 2 : « {qté} {unité} · ajouté au journal ».
+- Bouton « Annuler » avec **anneau SVG de décompte 10 s** (stroke‑dashoffset animé linéairement de 0 à la circonférence). 
+- Apparition : translateY/translateX + opacity, ~300 ms. Un seul toast à la fois (un nouveau finalise le précédent).
+- Mobile : ancré en bas, au‑dessus de la tab bar. Desktop : bas‑droite du content.
+
+---
+
+## State Management
+État nécessaire (par surface, mais identique en logique) :
+- `items: StockItem[]` — source de vérité de la liste.
+- `logs: StockExitLog[]` — journal des sorties (à persister côté backend dans la vraie app).
+- `ignoredSuggest: Set<string>` — suggestions masquées.
+- `grouped: boolean` (desktop) — regroupement par catégorie.
+- État éphémère d'UI : sheet/modal ouverte + `qtyOut` courant, menu contextuel ouvert + position, toast courant + timer + snapshot d'undo.
+
+Transitions clés : `doAction` (mutation + log + toast), `undo` (restauration), `ignore` (filtre suggestions). Toutes déclenchent un re‑render de la liste **et** de la bannière de suggestion.
+
+---
+
+## Design Tokens (charte Fresh — référence)
+
+> Réutiliser les tokens existants du codebase. Valeurs de référence :
+
+**Couleurs**
+- Mobile : `--bg #fdf8ed`, `--card #ffffff`, `--sub #f6efde`
+- Desktop : `--bg #f4e8c9`, `--card #fbf4e0`, `--sub #ece0bf`, fond page `#e8e0cf`
+- Encre : `--ink #1a1d1a`, `--ink-2 #5e6760`, `--ink-3 #9ba59f`, `--rule #ece4d2`
+- Vert (primaire) : `--green #2bb673`, `--green-soft #d6f3e3`, `--green-deep #1f9c5e`
+- Orange : `#ff7a3a` / soft `#ffe0cc` · Rouge : `#ef4a5a` / soft `#ffd9de`
+- Jaune : `#ffc839` / soft `#fff1c4` · Bleu : `#4f8ef5` / soft `#dae9ff` · Violet : `#8c6df0` / soft `#e4dafa`
+
+**Typographie**
+- Display (titres, chiffres, labels) : **DM Sans** (400–800)
+- Body : **Inter** (400–700)
+- Échelle indicative : titres de page 30 px / titres carte 17 px / nom mobile 14.5 px / meta 11–13 px.
+
+**Rayons** : cartes 16–18, thumbnails 12–15, boutons ronds (pills) 999, modal 24, sheet 28 (haut).
+**Ombres** : `--shadow-sm 0 4px 10px rgba(0,0,0,.04)`, `--shadow-md 0 6px 16px rgba(0,0,0,.05)`.
+
+**Icônes** : **Lucide** uniquement. Catégories → icône Lucide de la catégorie (milk, apple, fish, shell, beef, wheat, flame, salad, soup, utensils-crossed, cooking-pot, snowflake, archive, package…). Actions → `utensils`, `trash-2`, `package-x`. UI → `plus`, `user`, `calendar`, `sliders-horizontal`, `chevron-*`, `list-checks`, `history`, `mouse-pointer-click`.
+
+---
+
+## Assets
+- `mascot/chef-rotten.png` — mascotte « chef » utilisée dans la bannière de suggestion (article périmé).
+- `mascot/chef-happy.png` — logo de marque dans la sidebar desktop.
+- Icônes : **Lucide** chargé via CDN dans les prototypes (`lucide@0.460.0`). Dans l'app, utiliser le package Lucide déjà intégré.
+- Polices : Google Fonts (DM Sans + Inter) dans les prototypes ; utiliser les polices du design system en place.
+
+## Files
+- `Sorties de stock (mobile).html` + `sorties-stock.js` — prototype mobile complet.
+- `Sorties de stock (desktop).html` + `sorties-stock-desktop.js` — prototype desktop complet.
+- `mascot/` — images de mascotte référencées.
+
+Les deux `.js` contiennent la logique de référence (`doAction`, `undo`, `renderSuggest`, gestes/menus, toast) — s'en inspirer pour la couche métier, indépendamment du rendu.
+
+## Screenshots
+Captures de référence dans `screenshots/` :
+- `desktop-01-liste.png` — liste de stock (état au repos).
+- `desktop-02-hover.png` — survol d'une ligne : quantité décalée à gauche + actions rapides révélées.
+- `desktop-03-modal.png` — modal de détail (sélecteur de quantité + 3 actions).
+- `desktop-04-suggestions.png` — bannière de suggestion dépliée (« Faire le point »).
+- `mobile-01-liste.png` — liste de stock mobile.
+- `mobile-02-sheet.png` — bottom sheet de détail (quantité + 3 actions).
+- `mobile-03-suggestions.png` — bannière de suggestion mobile dépliée.

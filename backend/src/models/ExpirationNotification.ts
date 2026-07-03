@@ -1,7 +1,7 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
 
-export type ExpirationNotificationPhase = 'initial' | 'reminder';
+export type ExpirationNotificationPhase = 'initial' | 'reminder' | 'exit_suggestion';
 
 interface ExpirationNotificationAttributes {
   id: string;
@@ -81,7 +81,7 @@ ExpirationNotification.init(
       },
     },
     phase: {
-      type: DataTypes.ENUM('initial', 'reminder'),
+      type: DataTypes.ENUM('initial', 'reminder', 'exit_suggestion'),
       allowNull: false,
     },
     itemNameSnapshot: {

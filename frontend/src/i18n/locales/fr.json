@@ -80,7 +80,7 @@
     "openRecipe": "Voir la recette",
     "cookingDateLabel": "Date de cuisson",
     "portionsLabel": "Nombre de portions",
-    "cookedAgo": "Cuisiné {{when}}",
+    "cookedAgo": "Cuisiné il y a {{count}} jour(s)",
     "cookedToday": "Cuisiné aujourd'hui",
     "portionsLeft_one": "Il te reste {{count}} portion de {{name}}",
     "portionsLeft_other": "Il te reste {{count}} portions de {{name}}",
@@ -171,8 +171,8 @@
     "goToDashboard": "Aller au tableau de bord",
     "expired": "Expiré",
     "expiresIn": "Expire dans {{days}}j",
-    "expiredSince_one": "Expiré depuis {{count}}j",
-    "expiredSince_other": "Expiré depuis {{count}}j",
+    "expiredSince_one": "Périmé depuis {{count}} j",
+    "expiredSince_other": "Périmé depuis {{count}} j",
     "fresh": "Frais ({{days}}j)",
     "quantity": "Quantité",
     "location": "Emplacement",
@@ -4061,5 +4061,56 @@
     "edit": "Modifier",
     "delete": "Supprimer",
     "retry": "Réessayer"
+  },
+  "stockExit": {
+    "consumed": "Consommé",
+    "wasted": "Jeté",
+    "removed": "Retiré",
+    "consumedDesc": "Mangé, cuisiné ou utilisé",
+    "wastedDesc": "Jeté à la poubelle",
+    "removedDesc": "Donné, transféré ou erreur",
+    "quantityLabel": "Quelle quantité ?",
+    "ofTotal": "sur {{count}} unité",
+    "ofTotal_other": "sur {{count}} unités",
+    "all": "Tout",
+    "whatHappened": "Que s'est-il passé ?",
+    "preciseQuantity": "Choisir la quantité…",
+    "moreActions": "Plus d'actions",
+    "increase": "Augmenter la quantité",
+    "decrease": "Diminuer la quantité",
+    "undo": "Annuler",
+    "undoneToast": "{{name}} restauré",
+    "undoFailed": "Annulation impossible",
+    "exitFailed": "Mise à jour du stock impossible",
+    "toast": {
+      "consumed": "{{name}} — consommé",
+      "wasted": "{{name}} — jeté",
+      "removed": "{{name}} — retiré",
+      "addedToJournal": "{{quantity}} {{unit}} · ajouté au journal"
+    },
+    "journalTitle": "Journal des sorties",
+    "suggestion": {
+      "title": "Faire le point",
+      "groupedTitle": "{{count}} articles périmés depuis plus de 3 jours",
+      "subtitle": "Tu veux faire le point ? Indique ce que tu en as fait.",
+      "rowTitle": "{{name}} est périmé depuis un moment",
+      "expiredMeta": "Périmé depuis plus de 3 jours",
+      "wasted": "Oui, marquer comme jeté",
+      "consumed": "Non, je les ai mangés",
+      "ignore": "Ignorer",
+      "expand": "Détails",
+      "collapse": "Masquer",
+      "expiredSince": "Périmé depuis {{days}}j · {{qty}}",
+      "ate": "Mangé",
+      "bannerTitle_one": "1 article est périmé depuis plus de 3 jours.",
+      "bannerTitle_other": "{{count}} articles sont périmés depuis plus de 3 jours.",
+      "cta": "Faire le point"
+    }
+  },
+  "settings": {
+    "notifications": {
+      "exitSuggestions": "Suggestions de sortie",
+      "exitSuggestionsDescription": "Proposer de marquer comme consommés ou jetés les articles périmés depuis plus de 3 jours."
+    }
   }
 }

@@ -13,7 +13,7 @@ import { useExpirationNotificationStore } from '@/stores/expirationNotificationS
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { ExpirationUrgency, ExpiringNowItem } from '@/types/expirationNotification';
-import { StorageAreaType } from '@/types/enums';
+import { StorageAreaType, StockExitType } from '@/types/enums';
 import { getTranslatedUnitLabel } from '@/utils/unitSystem';
 import { scrollRevealFadeUp } from '@/lib/motion';
 import { PushOptInBanner } from '@/components/PushOptInBanner';
@@ -40,7 +40,7 @@ export const ExpiringSoonCard = ({ householdId }: ExpiringSoonCardProps) => {
   const refreshExpiringNow = useExpirationNotificationStore((s) => s.refreshExpiringNow);
   const refreshNotifications = useExpirationNotificationStore((s) => s.refreshNotifications);
 
-  const { deleteStoredItem, updateStoredItem } = useStoredItemStore();
+  const { exitStoredItem, updateStoredItem } = useStoredItemStore();
   const getStorageAreas = useStorageAreaStore((s) => s.getStorageAreasForHousehold);
 
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -69,16 +69,11 @@ export const ExpiringSoonCard = ({ householdId }: ExpiringSoonCardProps) => {
     if (pendingId) return;
     setPendingId(item.storedItemId);
     try {
-      await deleteStoredItem(item.storedItemId);
-      toast.success(
-        t('pages.dashboard.expiringSoon.discardedToast', {
-          name: translateItemName(item.itemName, item.itemHouseholdId, t),
-        })
-      );
+      // Discarding an expired item is a "wasted" stock exit (logged in DB for stats).
+      await exitStoredItem(item.storedItemId, StockExitType.WASTED, item.quantity);
       await refreshAfterAction();
     } catch (error) {
       console.error('discard failed', error);
-      toast.error(t('messages.error.requestFailed'));
     } finally {
       setPendingId(null);
     }
@@ -248,7 +243,7 @@ const ExpiringSoonRow = ({ item, pending, onDiscard, onFreeze, onRecipes }: RowP
   const displayName = translateItemName(item.itemName, item.itemHouseholdId, t);
 
   return (
-    <div className={`${containerClasses} p-3 flex flex-col sm:flex-row sm:items-center gap-3`}>
+    <div className={`${containerClasses} p-3 flex flex-row items-center gap-3`}>
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <ItemImage
           src={item.itemImageUrl}
@@ -280,10 +275,11 @@ const ExpiringSoonRow = ({ item, pending, onDiscard, onFreeze, onRecipes }: RowP
         variant="ghost"
         onClick={action.onClick}
         disabled={pending}
-        className={`shrink-0 self-start sm:self-auto rounded-full font-display font-bold px-4 ${action.className}`}
+        aria-label={action.label}
+        className={`shrink-0 rounded-full font-display font-bold h-9 w-9 p-0 sm:w-auto sm:px-4 ${action.className}`}
       >
         {action.icon}
-        <span className="ml-1.5">{action.label}</span>
+        <span className="hidden sm:inline sm:ml-1.5">{action.label}</span>
       </Button>
     </div>
   );

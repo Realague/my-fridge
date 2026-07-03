@@ -80,7 +80,7 @@
     "openRecipe": "Open recipe",
     "cookingDateLabel": "Cooking date",
     "portionsLabel": "Number of portions",
-    "cookedAgo": "Cooked {{when}}",
+    "cookedAgo": "Cooked {{count}} days ago",
     "cookedToday": "Cooked today",
     "portionsLeft_one": "{{count}} portion left of {{name}}",
     "portionsLeft_other": "{{count}} portions left of {{name}}",
@@ -172,8 +172,8 @@
     "goToDashboard": "Go to dashboard",
     "expired": "Expired",
     "expiresIn": "Expires in {{days}}d",
-    "expiredSince_one": "Expired {{count}}d ago",
-    "expiredSince_other": "Expired {{count}}d ago",
+    "expiredSince_one": "Expired {{count}} day ago",
+    "expiredSince_other": "Expired {{count}} days ago",
     "fresh": "Fresh ({{days}}d)",
     "quantity": "Quantity",
     "location": "Location",
@@ -4061,5 +4061,56 @@
     "edit": "Edit",
     "delete": "Delete",
     "retry": "Retry"
+  },
+  "stockExit": {
+    "consumed": "Consumed",
+    "wasted": "Wasted",
+    "removed": "Removed",
+    "consumedDesc": "Eaten, cooked or used",
+    "wastedDesc": "Thrown in the bin",
+    "removedDesc": "Given, transferred or mistake",
+    "quantityLabel": "How many?",
+    "ofTotal": "of {{count}} unit",
+    "ofTotal_other": "of {{count}} units",
+    "all": "All",
+    "whatHappened": "What happened?",
+    "preciseQuantity": "Choose quantity…",
+    "moreActions": "More actions",
+    "increase": "Increase quantity",
+    "decrease": "Decrease quantity",
+    "undo": "Undo",
+    "undoneToast": "{{name}} restored",
+    "undoFailed": "Could not undo",
+    "exitFailed": "Could not update stock",
+    "toast": {
+      "consumed": "{{name}} — consumed",
+      "wasted": "{{name}} — wasted",
+      "removed": "{{name}} — removed",
+      "addedToJournal": "{{quantity}} {{unit}} · added to the journal"
+    },
+    "journalTitle": "Exit journal",
+    "suggestion": {
+      "title": "Time to take stock",
+      "groupedTitle": "{{count}} items expired 3+ days ago",
+      "subtitle": "Want to review? Tell us what happened to each.",
+      "rowTitle": "{{name}} expired a while ago",
+      "expiredMeta": "Expired more than 3 days ago",
+      "wasted": "Yes, mark as wasted",
+      "consumed": "No, I ate them",
+      "ignore": "Ignore",
+      "expand": "Details",
+      "collapse": "Hide",
+      "expiredSince": "Expired {{days}}d ago · {{qty}}",
+      "ate": "Eaten",
+      "bannerTitle_one": "1 item has been expired for over 3 days.",
+      "bannerTitle_other": "{{count}} items have been expired for over 3 days.",
+      "cta": "Review"
+    }
+  },
+  "settings": {
+    "notifications": {
+      "exitSuggestions": "Exit suggestions",
+      "exitSuggestionsDescription": "Suggest logging items that expired more than 3 days ago as consumed or wasted."
+    }
   }
 }

@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -11,18 +10,9 @@ import {
   ArrowLeft,
   ArrowDown,
   ArrowUp,
-  Calendar,
-  MapPin,
-  AlertTriangle,
-  PenLine,
-  Trash2,
-  Save,
   X,
-  PackageOpen,
-  Snowflake,
   ChevronDown,
   Filter,
-  Utensils,
 } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { ItemSelector } from '@/components/ItemSelector';
@@ -32,22 +22,15 @@ import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { itemService } from '@/services/itemService';
-import { format } from 'date-fns';
-import { Unit, StorageAreaType, ITEM_CATEGORIES, ItemCategory } from '@/types/enums';
+import { Unit, StorageAreaType, ITEM_CATEGORIES } from '@/types/enums';
 import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { Item } from '@/services/itemService';
 import { useTranslation } from 'react-i18next';
-import { useDateFormat } from '@/utils/dateFormatting';
 import { toast } from 'sonner';
 import { SelectedItemPreview } from '@/components/SelectedItemPreview';
-import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
-import { freezerTone, toneBadgeClass, toneTextClass } from '@/lib/tokenMaps';
-import { formatQuantityWithUnit } from '@/utils/unitSystem';
+import { getItemDisplayName } from '@/utils/itemUtils';
 import { CategoryIcon } from '@/utils/categoryIcons';
 import { OpenedStatusToggle } from '@/components/OpenedStatusToggle';
-import { ItemImage } from '@/components/ItemImage';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/authStore';
 import { motion, useReducedMotion } from 'framer-motion';
 import { scrollRevealFadeUp } from '@/lib/motion';
@@ -62,6 +45,7 @@ import {
   buildStorageAreaDisplayRows,
   type StorageAreaSortCriterion,
 } from '@/utils/storageAreaSort';
+import { StoredItemCard } from '@/components/StoredItemCard';
 
 const STORAGE_SORT_CRITERIA: StorageAreaSortCriterion[] = [
   'expiration',
@@ -70,59 +54,13 @@ const STORAGE_SORT_CRITERIA: StorageAreaSortCriterion[] = [
   'category',
 ];
 
-// Freezer health text/badge classes — share of recommended freezer time used
-// resolved onto charter info/warning/danger via lib/tokenMaps.
-function getFreezerColorClass(daysFrozen: number, recommendedDays: number): string {
-  return toneTextClass(freezerTone(daysFrozen, recommendedDays));
-}
-
-function getFreezerBadgeClassName(daysFrozen: number, recommendedDays: number): string {
-  return toneBadgeClass(freezerTone(daysFrozen, recommendedDays));
-}
-
-/** Show X/Y congélation + tooltip whenever the row is in a freezer zone or has a frozenDate. */
-function getFreezerProgressDisplay(
-  storageItem: {
-    frozenDate?: string | null;
-    daysFrozen?: number | null;
-    recommendedFreezerDays?: number | null;
-    createdAt: string;
-  },
-  areaType: StorageAreaType
-): { current: number; total: number } | null {
-  const total = storageItem.recommendedFreezerDays ?? 180;
-  const inFreezer = areaType === StorageAreaType.FREEZER;
-  const hasFrozenDate = Boolean(storageItem.frozenDate);
-  if (!inFreezer && !hasFrozenDate) return null;
-
-  let current = storageItem.daysFrozen;
-  if (current == null || current === undefined) {
-    if (hasFrozenDate && storageItem.frozenDate) {
-      current = Math.max(
-        0,
-        Math.floor((Date.now() - new Date(storageItem.frozenDate).getTime()) / 86_400_000)
-      );
-    } else if (inFreezer) {
-      current = Math.max(
-        0,
-        Math.floor((Date.now() - new Date(storageItem.createdAt).getTime()) / 86_400_000)
-      );
-    } else {
-      current = 0;
-    }
-  }
-  return { current, total };
-}
-
 const StorageArea = () => {
   const { id } = useParams<{ id: string }>();
   const { t, i18n } = useTranslation();
-  const { formatDate } = useDateFormat();
   const navigate = useNavigate();
   
   // Store hooks
-  const { getStorageAreaById, fetchStorageAreas, getStorageAreasForHousehold } = useStorageAreaStore();
-  const storageAreasList = getStorageAreasForHousehold();
+  const { getStorageAreaById, fetchStorageAreas } = useStorageAreaStore();
 
   // Surface fetch errors instead of swallowing them silently.
   useStoreErrorToast(useStoredItemStore((s) => s.error), useStoredItemStore((s) => s.setError));
@@ -130,9 +68,6 @@ const StorageArea = () => {
   const {
     getStoredItemsByStorageArea,
     createStoredItem,
-    updateStoredItem,
-    deleteStoredItem,
-    consumePortion,
     fetchStoredItemsByStorageArea,
     loading: storedItemsLoading
   } = useStoredItemStore();
@@ -149,7 +84,6 @@ const StorageArea = () => {
   const [location, setLocation] = useState('');
   const [isOpened, setIsOpened] = useState(false);
   const [openedDate, setOpenedDate] = useState('');
-  const [editingItem, setEditingItem] = useState<string | null>(null);
   const [items, setItems] = useState<Record<string, Item>>({});
   const [categoryFilter, setCategoryFilter] = useState('all');
 
@@ -285,452 +219,6 @@ const StorageArea = () => {
       console.error('Failed to add item:', error);
       toast.error(t('messages.error.failedToAddItem'));
     }
-  };
-
-  const getDaysUntilExpiration = (expirationDate?: string) => {
-    if (!expirationDate) return null;
-    const now = new Date();
-    const expDate = new Date(expirationDate);
-    const diffTime = expDate.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
-
-  const getExpirationStatus = (expirationDate?: string) => {
-    const days = getDaysUntilExpiration(expirationDate);
-    if (days === null) return null;
-    if (days < 0) return 'expired';
-    if (days <= 2) return 'expiring-soon';
-    if (days <= 7) return 'expiring-week';
-    return 'fresh';
-  };
-
-  const getExpirationBadge = (expirationDate?: string) => {
-    const status = getExpirationStatus(expirationDate);
-    const days = getDaysUntilExpiration(expirationDate);
-    
-    if (!status || days === null) return null;
-    
-    const badges = {
-      'expired': <Badge variant="destructive" className="text-xs">{t('storageArea.expiredSince', { count: Math.abs(days) })}</Badge>,
-      'expiring-soon': <Badge variant="destructive" className="text-xs">{t('storageArea.expiresIn', { days })}</Badge>,
-      'expiring-week': <Badge variant="secondary" className="text-xs bg-mf-warning-soft text-mf-warning">{t('storageArea.expiresIn', { days })}</Badge>,
-      'fresh': <Badge variant="secondary" className="text-xs bg-mf-green-soft text-mf-green-deep">{t('storageArea.fresh', { days })}</Badge>
-    };
-    
-    return badges[status];
-  };
-
-  const StorageItemCard = ({
-    storageItem,
-    storageAreas,
-  }: {
-    storageItem: typeof storageItems[0];
-    storageAreas: ReturnType<typeof getStorageAreasForHousehold>;
-  }) => {
-    const item = items[storageItem.itemId];
-    const isEditing = editingItem === storageItem.id;
-    const [editQuantity, setEditQuantity] = useState(storageItem.quantity.toString());
-    const [editUnit, setEditUnit] = useState(storageItem.unit);
-    const [editLocation, setEditLocation] = useState(storageItem.location || '');
-    const [editExpiration, setEditExpiration] = useState(
-      storageItem.expirationDate ? format(new Date(storageItem.expirationDate), 'yyyy-MM-dd') : ''
-    );
-    const [editIsOpened, setEditIsOpened] = useState(storageItem.isOpened);
-    const [editOpenedDate, setEditOpenedDate] = useState(
-      storageItem.openedDate ? format(new Date(storageItem.openedDate), 'yyyy-MM-dd') : ''
-    );
-    const [editStorageAreaId, setEditStorageAreaId] = useState(storageItem.storageAreaId);
-    const wasEditingRef = useRef(false);
-
-    useEffect(() => {
-      if (isEditing && !wasEditingRef.current) {
-        setEditQuantity(storageItem.quantity.toString());
-        setEditUnit(storageItem.unit);
-        setEditLocation(storageItem.location || '');
-        setEditExpiration(
-          storageItem.expirationDate ? format(new Date(storageItem.expirationDate), 'yyyy-MM-dd') : ''
-        );
-        setEditIsOpened(storageItem.isOpened);
-        setEditOpenedDate(
-          storageItem.openedDate ? format(new Date(storageItem.openedDate), 'yyyy-MM-dd') : ''
-        );
-        setEditStorageAreaId(storageItem.storageAreaId);
-      }
-      wasEditingRef.current = isEditing;
-    }, [isEditing, storageItem]);
-
-    const sortedStorageAreas = [...storageAreas].sort((a, b) => a.sortOrder - b.sortOrder);
-    const editTargetArea = sortedStorageAreas.find((a) => a.id === editStorageAreaId);
-    const showExpirationInEdit = editTargetArea?.type !== StorageAreaType.FREEZER;
-
-    if (!item) {
-      return (
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-          <CardContent className="p-4">
-            <div className="text-center text-gray-500">{t('common.loading')}</div>
-          </CardContent>
-        </Card>
-      );
-    }
-
-    const freezerProgress = getFreezerProgressDisplay(storageItem, area.type);
-    const freezerOverRecommended =
-      freezerProgress != null && freezerProgress.current > freezerProgress.total;
-    const showFreezerWarning = Boolean(storageItem.isFrozenTooLong || freezerOverRecommended);
-
-    const handleSave = async () => {
-      if (!selectedHouseholdId) return;
-      
-      try {
-        const expirationPayload =
-          editTargetArea?.type === StorageAreaType.FREEZER
-            ? null
-            : editExpiration || undefined;
-        await updateStoredItem(storageItem.id, {
-          quantity: parseFloat(editQuantity),
-          unit: editUnit as Unit,
-          location: editLocation.trim() || undefined,
-          expirationDate: expirationPayload,
-          isOpened: editIsOpened,
-          openedDate: editIsOpened && editOpenedDate ? editOpenedDate : undefined,
-          storageAreaId: editStorageAreaId,
-        });
-        setEditingItem(null);
-      } catch (error) {
-        console.error('Failed to update item:', error);
-      }
-    };
-
-    const handleCancel = () => {
-      setEditQuantity(storageItem.quantity.toString());
-      setEditUnit(storageItem.unit);
-      setEditLocation(storageItem.location || '');
-      setEditExpiration(storageItem.expirationDate ? format(new Date(storageItem.expirationDate), 'yyyy-MM-dd') : '');
-      setEditIsOpened(storageItem.isOpened);
-      setEditOpenedDate(storageItem.openedDate ? format(new Date(storageItem.openedDate), 'yyyy-MM-dd') : '');
-      setEditStorageAreaId(storageItem.storageAreaId);
-      setEditingItem(null);
-    };
-
-    const handleDelete = async () => {
-      if (!selectedHouseholdId) return;
-
-      try {
-        await deleteStoredItem(storageItem.id);
-      } catch (error) {
-        console.error('Failed to delete item:', error);
-      }
-    };
-
-    const isCookedMeal = item?.category === ItemCategory.COOKED_MEAL;
-    const isInFreezer = area.type === StorageAreaType.FREEZER;
-
-    const handleConsumePortion = async () => {
-      try {
-        const result = await consumePortion(storageItem.id);
-        const remaining = result.remaining ? Number(result.remaining.quantity) : 0;
-        if (remaining > 0) {
-          toast.success(
-            t('cookedMeal.portionsLeft', {
-              count: remaining,
-              name: item ? getItemDisplayName(item, t) : '',
-            })
-          );
-        }
-      } catch {
-        // toast already raised by store
-      }
-    };
-
-    const handleFreeze = async () => {
-      const freezer = storageAreasList.find((a) => a.type === StorageAreaType.FREEZER);
-      if (!freezer) {
-        toast.error(t('pages.dashboard.expiringSoon.noFreezer'));
-        return;
-      }
-      try {
-        const today = new Date().toISOString().split('T')[0];
-        await updateStoredItem(storageItem.id, {
-          storageAreaId: freezer.id,
-          frozenDate: today,
-          expirationDate: null,
-        });
-      } catch {
-        // toast already raised by store
-      }
-    };
-
-    return (
-      <Card className="bg-card backdrop-blur-sm border-0 shadow-lg">
-        <CardContent className="p-4">
-          <div className="flex items-start justify-between gap-3">
-            <ItemImage
-              src={item.imageUrl}
-              alt={getItemDisplayName(item, t)}
-              containerClassName="w-16 h-16 rounded-lg"
-              fallbackIconSize={48}
-              category={item.category}
-            />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <h3 className="font-medium text-foreground">{getItemDisplayName(item, t)}</h3>
-                <Badge variant="outline" className={`${getCategoryColor(item.category)} inline-flex items-center gap-1`}>
-                  <CategoryIcon category={item.category} className="h-3.5 w-3.5" />
-                  { t(`items.categories.${item.category}`) }
-                </Badge>
-                {storageItem.isOpened && (
-                  <Badge variant="secondary" className="text-xs bg-mf-warning-soft text-mf-warning">
-                    <PackageOpen className="h-3 w-3 mr-1" />
-                    {t('storedItems.opened')}
-                  </Badge>
-                )}
-                {freezerProgress && (
-                  <Badge
-                    variant={showFreezerWarning ? 'destructive' : 'secondary'}
-                    className={cn(
-                      'text-xs',
-                      !showFreezerWarning &&
-                        getFreezerBadgeClassName(freezerProgress.current, freezerProgress.total)
-                    )}
-                  >
-                    <Snowflake className="h-3 w-3 mr-1" />
-                    {showFreezerWarning ? t('storedItems.freezerWarning') : t('storedItems.frozen')}
-                  </Badge>
-                )}
-                {area.type !== StorageAreaType.FREEZER &&
-                  getExpirationBadge(storageItem.effectiveExpirationDate || storageItem.expirationDate)}
-              </div>
-              
-              {isEditing ? (
-                <div className="space-y-3">
-                  <div>
-                    <Label className="text-sm">{t('storageArea.moveToStorage')}</Label>
-                    <Select value={editStorageAreaId} onValueChange={setEditStorageAreaId}>
-                      <SelectTrigger className="mt-1 w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {sortedStorageAreas.map((sa) => (
-                          <SelectItem key={sa.id} value={sa.id}>
-                            <span className="flex items-center gap-2">
-                              <StorageAreaIcon type={sa.type} className="h-4 w-4" />
-                              <span>{sa.name}</span>
-                            </span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label className="text-sm">{t('storageArea.quantity')}</Label>
-                    <QuantitySelector
-                      item={item}
-                      initialQuantity={editQuantity}
-                      initialUnit={editUnit}
-                      onQuantityChange={(quantity, unit) => {
-                        setEditQuantity(quantity);
-                        setEditUnit(unit as Unit);
-                      }}
-                      className="mt-1"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label className="text-sm">{t('storageArea.location')}</Label>
-                    <Input
-                      value={editLocation}
-                      onChange={(e) => setEditLocation(e.target.value)}
-                      placeholder={t('storageArea.locationPlaceholder')}
-                      className="mt-1"
-                    />
-                  </div>
-                  
-                  {showExpirationInEdit && (
-                    <div>
-                      <Label className="text-sm">{t('storageArea.expirationDate')}</Label>
-                      <Input
-                        type="date"
-                        value={editExpiration}
-                        onChange={(e) => setEditExpiration(e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                  )}
-                  
-                  {item.daysAfterOpening && (
-                    <OpenedStatusToggle
-                      isOpened={editIsOpened}
-                      openedDate={editOpenedDate}
-                      daysAfterOpening={item.daysAfterOpening}
-                      effectiveExpirationDate={editIsOpened && editOpenedDate ? 
-                        new Date(new Date(editOpenedDate).getTime() + item.daysAfterOpening * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
-                        : undefined
-                      }
-                      onToggle={(opened, date) => {
-                        setEditIsOpened(opened);
-                        setEditOpenedDate(date || '');
-                      }}
-                    />
-                  )}
-                  
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={handleCancel}>
-                      <X className="h-3 w-3 mr-1" />
-                      {t('buttons.cancel')}
-                    </Button>
-                    <Button variant="green" size="sm" onClick={handleSave}>
-                      <Save className="h-3 w-3 mr-1" />
-                      {t('buttons.save')}
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span className="font-medium text-foreground">
-                      {formatQuantityWithUnit(storageItem.quantity, storageItem.unit, t, {
-                        item,
-                        itemName: getItemDisplayName(item, t),
-                      })}
-                    </span>
-                    {storageItem.location && (
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        <span>{storageItem.location}</span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {storageItem.creator && (
-                    <p className="text-xs text-muted-foreground">
-                      {t('common.addedBy', {
-                        name: storageItem.creator.id === currentUser?.id
-                          ? t('common.you')
-                          : storageItem.creator.displayName,
-                      })}
-                    </p>
-                  )}
-
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
-                    <div className="flex items-start gap-1 min-w-0">
-                      <Calendar className="h-3 w-3 shrink-0 mt-0.5" />
-                      <span>
-                        {t('storageArea.added')} {formatDate(new Date(storageItem.createdAt), 'MMM d')}
-                        {freezerProgress && (
-                          <>
-                            {' '}
-                            <Tooltip delayDuration={200}>
-                              <TooltipTrigger asChild>
-                                <button
-                                  type="button"
-                                  className={cn(
-                                    'inline cursor-help border-0 bg-transparent p-0 text-left font-medium underline decoration-dotted decoration-current underline-offset-2',
-                                    getFreezerColorClass(freezerProgress.current, freezerProgress.total)
-                                  )}
-                                >
-                                  [
-                                  {t('storedItems.frozenProgress', {
-                                    current: freezerProgress.current,
-                                    count: freezerProgress.total,
-                                  })}
-                                  ]
-                                </button>
-                              </TooltipTrigger>
-                              <TooltipContent side="top" className="max-w-xs">
-                                <p>
-                                  {t('storedItems.freezerRecommendation', {
-                                    category: t(`items.categories.${item.category}`),
-                                    count: Math.max(
-                                      1,
-                                      Math.round(freezerProgress.total / 30)
-                                    ),
-                                  })}
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </>
-                        )}
-                      </span>
-                    </div>
-                    {area.type !== StorageAreaType.FREEZER &&
-                      (storageItem.effectiveExpirationDate || storageItem.expirationDate) && (() => {
-                        const expDays = getDaysUntilExpiration(storageItem.effectiveExpirationDate || storageItem.expirationDate);
-                        if (expDays === null) return null;
-                        const label = expDays < 0
-                          ? t('storageArea.expiredSince', { count: Math.abs(expDays) })
-                          : t('storageArea.expiresIn', { days: expDays });
-                        return (
-                          <div className="flex items-center gap-1">
-                            <AlertTriangle className="h-3 w-3" />
-                            <span>{label}</span>
-                          </div>
-                        );
-                      })()}
-                    {storageItem.isOpened && storageItem.openedDate && (
-                      <div className="flex items-center gap-1 text-mf-warning">
-                        <PackageOpen className="h-3 w-3" />
-                        <span>{t('storedItems.openedOn')} {formatDate(new Date(storageItem.openedDate), 'MMM d')}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            {!isEditing && (
-              <div className="flex flex-col items-center gap-3">
-                {isCookedMeal && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleConsumePortion}
-                    className="h-10 w-10 sm:h-8 sm:w-8 p-0"
-                    aria-label={t('cookedMeal.consumePortion')}
-                    title={t('cookedMeal.consumePortion')}
-                  >
-                    <Utensils className="h-4 w-4" />
-                  </Button>
-                )}
-                {isCookedMeal && !isInFreezer && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleFreeze}
-                    className="h-10 w-10 sm:h-8 sm:w-8 p-0"
-                    aria-label={t('pages.dashboard.expiringSoon.actionFreeze')}
-                    title={t('pages.dashboard.expiringSoon.actionFreeze')}
-                  >
-                    <Snowflake className="h-4 w-4" />
-                  </Button>
-                )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setEditingItem(storageItem.id)}
-                  className="h-10 w-10 sm:h-8 sm:w-8 p-0"
-                  aria-label={t('common.edit')}
-                  title={t('common.edit')}
-                >
-                  <PenLine className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="deleteTrash"
-                  size="sm"
-                  onClick={handleDelete}
-                  className="h-10 w-10 sm:h-8 sm:w-8 p-0 mt-1"
-                  aria-label={t('common.delete')}
-                  title={t('common.delete')}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    );
   };
 
   const handleSortOption = (criterion: StorageAreaSortCriterion) => {
@@ -1005,9 +493,12 @@ const StorageArea = () => {
                       key={row.storedItem.id}
                       {...scrollRevealFadeUp(prefersReducedMotion)}
                     >
-                      <StorageItemCard
-                        storageItem={row.storedItem}
-                        storageAreas={storageAreasList}
+                      <StoredItemCard
+                        storedItem={row.storedItem}
+                        item={items[row.storedItem.itemId]}
+                        area={area}
+                        currentUserId={currentUser?.id}
+                        hideAreaBadge
                       />
                     </motion.div>
                   )

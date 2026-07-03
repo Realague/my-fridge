@@ -187,9 +187,13 @@ export class RecipeService {
         transaction,
       });
       if (linkedItem) {
+        // force: true → hard delete. The linked cooked-meal Item is hard-deleted
+        // right after, so any soft-deleted stored_item still referencing its
+        // itemId FK would violate the constraint. Purge them for real.
         await StoredItem.destroy({
           where: { itemId: linkedItem.id, householdId },
           transaction,
+          force: true,
         });
         await linkedItem.destroy({ transaction });
       }

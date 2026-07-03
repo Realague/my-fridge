@@ -3,7 +3,8 @@ import { devtools } from 'zustand/middleware';
 import { toast } from 'sonner';
 import i18n from '@/i18n/config';
 import { StoredItem, CreateStoredItemRequest, UpdateStoredItemRequest, GetStoredItemsRequest, storedItemService } from '@/services/storedItemService';
-import { ItemCategory } from '@/types/enums';
+import { stockExitService } from '@/services/stockExitService';
+import { ItemCategory, StockExitType } from '@/types/enums';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { useHouseholdStore } from './householdStore';
 
@@ -23,6 +24,7 @@ interface StoredItemStore {
   deleteStoredItem: (id: string) => Promise<void>;
   markAsOpened: (id: string, openedDate?: string) => Promise<void>;
   consumePortion: (id: string) => Promise<{ remaining: StoredItem | null }>;
+  exitStoredItem: (storedItemId: string, type: StockExitType, quantity?: number) => Promise<void>;
   
   // Internal actions
   setLoading: (loading: boolean) => void;
@@ -362,6 +364,77 @@ export const useStoredItemStore = create<StoredItemStore>()(
         } catch (error) {
           const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.consumePortionFailed');
           toast.error(i18n.t('messages.storedItem.consumePortionFailed'));
+          throw error;
+        }
+      },
+
+      exitStoredItem: async (storedItemId: string, type: StockExitType, quantity = 1) => {
+        const householdId = getHouseholdId();
+        if (!householdId) {
+          throw new Error('No household ID provided');
+        }
+
+        // Snapshot before mutation so the undo path can restore local state
+        // instantly (the server also restores authoritatively).
+        const snapshot = get().getStoredItemById(storedItemId);
+
+        try {
+          const { exit, remaining } = await stockExitService.exitStoredItem(
+            householdId,
+            storedItemId,
+            { type, quantity }
+          );
+
+          const store = get();
+          if (remaining) {
+            store.updateStoredItemInHousehold(remaining);
+          } else {
+            store.removeStoredItemFromHousehold(storedItemId);
+          }
+
+          const itemName = snapshot?.item
+            ? getItemDisplayName(snapshot.item as never, i18n.t.bind(i18n))
+            : exit.itemName || i18n.t('messages.storedItem.unnamed');
+
+          // Fresh charter — toast themed per exit type.
+          const toastFn =
+            type === StockExitType.CONSUMED
+              ? toast.success
+              : type === StockExitType.WASTED
+              ? toast.error
+              : toast;
+
+          toastFn(i18n.t(`stockExit.toast.${type}`, { name: itemName }), {
+            description: i18n.t('stockExit.toast.addedToJournal', {
+              quantity: Number(exit.quantity),
+              unit: i18n.t(`units.${exit.unit}`, { defaultValue: exit.unit }),
+            }),
+            duration: 10000,
+            action: {
+              label: i18n.t('stockExit.undo'),
+              onClick: async () => {
+                try {
+                  const { restored } = await stockExitService.undoExit(householdId, exit.id);
+                  const s = get();
+                  // Server reuses the original id, so replace-if-present else add.
+                  if (s.getStoredItemById(restored.id)) {
+                    s.updateStoredItemInHousehold(restored);
+                  } else {
+                    s.addStoredItemToHousehold(restored);
+                  }
+                  toast.success(i18n.t('stockExit.undoneToast', { name: itemName }));
+                } catch (err) {
+                  console.error('stock exit undo failed:', err);
+                  toast.error(i18n.t('stockExit.undoFailed'));
+                }
+              },
+            },
+          });
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : i18n.t('stockExit.exitFailed');
+          set({ error: message });
+          toast.error(i18n.t('stockExit.exitFailed'));
           throw error;
         }
       },

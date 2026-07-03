@@ -1,6 +1,6 @@
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { Bell, Check, CheckCheck, Trash2 } from 'lucide-react';
+import { AlertTriangle, Bell, Check, CheckCheck, Trash2, Utensils, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useExpirationNotificationStore } from '@/stores/expirationNotificationStore';
+import { useStoredItemStore } from '@/stores/storedItemStore';
+import { StockExitType } from '@/types/enums';
 import { ExpirationNotification } from '@/types/expirationNotification';
 
 interface NotificationSheetProps {
@@ -29,6 +31,7 @@ export const NotificationSheet: React.FC<NotificationSheetProps> = ({
   const markAllRead = useExpirationNotificationStore((s) => s.markAllRead);
   const removeOne = useExpirationNotificationStore((s) => s.removeOne);
   const clearAll = useExpirationNotificationStore((s) => s.clearAll);
+  const exitStoredItem = useStoredItemStore((s) => s.exitStoredItem);
 
   const hasUnread = notifications.some((n) => !n.readByCurrentUser);
 
@@ -96,23 +99,48 @@ export const NotificationSheet: React.FC<NotificationSheetProps> = ({
             </div>
           ) : (
             <div className="space-y-3">
-              {notifications.map((notification) => (
-                <NotificationRow
-                  key={notification.id}
-                  notification={notification}
-                  onClick={() => handleClick(notification)}
-                  onMarkRead={async (e) => {
-                    e.stopPropagation();
-                    if (!householdId) return;
-                    await markRead(householdId, notification.id);
-                  }}
-                  onRemove={async (e) => {
-                    e.stopPropagation();
-                    if (!householdId) return;
-                    await removeOne(householdId, notification.id);
-                  }}
-                />
-              ))}
+              {notifications.map((notification) =>
+                notification.phase === 'exit_suggestion' ? (
+                  <ExitSuggestionRow
+                    key={notification.id}
+                    notification={notification}
+                    onAct={async (type) => {
+                      if (!notification.storedItemId) return;
+                      try {
+                        await exitStoredItem(
+                          notification.storedItemId,
+                          type,
+                          notification.quantity ?? 1
+                        );
+                      } catch {
+                        // toast raised by store
+                      }
+                      if (householdId) await removeOne(householdId, notification.id);
+                    }}
+                    onIgnore={async () => {
+                      if (!householdId) return;
+                      await markRead(householdId, notification.id);
+                      await removeOne(householdId, notification.id);
+                    }}
+                  />
+                ) : (
+                  <NotificationRow
+                    key={notification.id}
+                    notification={notification}
+                    onClick={() => handleClick(notification)}
+                    onMarkRead={async (e) => {
+                      e.stopPropagation();
+                      if (!householdId) return;
+                      await markRead(householdId, notification.id);
+                    }}
+                    onRemove={async (e) => {
+                      e.stopPropagation();
+                      if (!householdId) return;
+                      await removeOne(householdId, notification.id);
+                    }}
+                  />
+                )
+              )}
             </div>
           )}
         </ScrollArea>
@@ -219,6 +247,67 @@ const NotificationRow: React.FC<NotificationRowProps> = ({
           >
             <Trash2 className="h-4 w-4" />
           </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface ExitSuggestionRowProps {
+  notification: ExpirationNotification;
+  onAct: (type: StockExitType) => void;
+  onIgnore: () => void;
+}
+
+const ExitSuggestionRow: React.FC<ExitSuggestionRowProps> = ({
+  notification,
+  onAct,
+  onIgnore,
+}) => {
+  const { t } = useTranslation();
+  const displayName = translateItemName(
+    notification.itemName,
+    notification.itemHouseholdId,
+    t
+  );
+
+  return (
+    <div className="p-4 rounded-lg border border-mf-yellow/40 bg-gradient-to-b from-mf-yellow-soft/60 to-card">
+      <div className="flex items-start gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-mf-danger-soft text-mf-danger">
+          <AlertTriangle className="h-5 w-5" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h4 className="font-medium text-foreground">
+            {t('stockExit.suggestion.rowTitle', { name: displayName })}
+          </h4>
+          <p className="text-sm text-muted-foreground mb-3">
+            {notification.storageAreaName ? `${notification.storageAreaName} · ` : ''}
+            {t('stockExit.suggestion.expiredMeta')}
+          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="green" size="sm" onClick={() => onAct(StockExitType.WASTED)}>
+              <Trash2 className="h-4 w-4" />
+              {t('stockExit.suggestion.wasted')}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onAct(StockExitType.CONSUMED)}
+            >
+              <Utensils className="h-4 w-4" />
+              {t('stockExit.suggestion.consumed')}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onIgnore}
+              className="text-muted-foreground"
+            >
+              <X className="h-4 w-4" />
+              {t('stockExit.suggestion.ignore')}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

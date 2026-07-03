@@ -30,6 +30,7 @@ import { CategoryIcon } from '@/utils/categoryIcons';
 import { getSuggestedStorageAreaId } from '@/utils/categoryStorageMapping';
 import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
 import { formatQuantityWithUnit } from '@/utils/unitSystem';
+import { useDateFormat } from '@/utils/dateFormatting';
 
 export interface ShoppingItemRowProps {
   shoppingItem: ShoppingItem;
@@ -69,6 +70,7 @@ export const ShoppingItemRow = ({
   onQuickStoreDateChange,
 }: ShoppingItemRowProps) => {
   const { t } = useTranslation();
+  const { formatDate } = useDateFormat();
 
   const [editQuantity, setEditQuantity] = useState(shoppingItem.quantity);
   const [editUnit, setEditUnit] = useState(shoppingItem.unit);
@@ -143,9 +145,9 @@ export const ShoppingItemRow = ({
         />
 
         <div className="flex-1 min-w-0">
-          <div className="min-w-0 flex items-center gap-2 flex-wrap">
+          <div className="min-w-0 flex items-center gap-2">
             <span
-              className={`font-medium line-clamp-2 sm:line-clamp-1 ${
+              className={`font-medium truncate min-w-0 ${
                 isCompleted
                   ? 'text-muted-foreground line-through'
                   : 'text-foreground'
@@ -157,12 +159,14 @@ export const ShoppingItemRow = ({
               className={`${getCategoryColor(
                 shoppingItem.item?.category
               )} inline-flex items-center gap-1 shrink-0`}
+              aria-label={categoryLabel}
+              title={categoryLabel}
             >
               <CategoryIcon
                 category={shoppingItem.item?.category}
                 className="h-3.5 w-3.5"
               />
-              {categoryLabel}
+              <span className="hidden sm:inline">{categoryLabel}</span>
             </Badge>
           </div>
           <div className="text-sm text-muted-foreground mt-1">
@@ -185,19 +189,41 @@ export const ShoppingItemRow = ({
                     itemName,
                   })}
                 </span>
-                {shoppingItem.creator && (
-                  <>
-                    <span>•</span>
-                    <span className="truncate">
-                      {t('common.addedBy', {
-                        name:
-                          shoppingItem.creator.id === currentUserId
-                            ? t('common.you')
-                            : shoppingItem.creator.displayName,
-                      })}
-                    </span>
-                  </>
-                )}
+                {shoppingItem.creator && (() => {
+                  const authorName =
+                    shoppingItem.creator.id === currentUserId
+                      ? t('common.you')
+                      : shoppingItem.creator.displayName;
+                  // Avatar initials always come from the real name (never "T" for "Toi").
+                  const initials = shoppingItem.creator.displayName
+                    .trim()
+                    .split(/\s+/)
+                    .map((w) => w.charAt(0))
+                    .slice(0, 2)
+                    .join('')
+                    .toUpperCase();
+                  return (
+                    <>
+                      {/* Desktop: "Ajouté par …" text. */}
+                      <span className="hidden sm:inline">•</span>
+                      <span className="hidden sm:inline truncate">
+                        {t('common.addedBy', { name: authorName })}
+                      </span>
+                      {/* Mobile: compact avatar chip + date. */}
+                      <span className="sm:hidden inline-flex items-center gap-1.5 min-w-0">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-white dark:bg-mf-night-surface pl-0.5 pr-2 py-0.5">
+                          <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-mf-green-soft text-mf-green-deep text-[9px] font-bold uppercase leading-none">
+                            {initials}
+                          </span>
+                          <span className="text-[11px] font-medium truncate">{authorName}</span>
+                        </span>
+                        <span className="text-[11px] whitespace-nowrap">
+                          · {formatDate(new Date(shoppingItem.createdAt), 'd MMM')}
+                        </span>
+                      </span>
+                    </>
+                  );
+                })()}
               </div>
             )}
           </div>

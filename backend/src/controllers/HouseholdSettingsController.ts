@@ -27,10 +27,11 @@ export class HouseholdSettingsController {
     try {
       const userId = (req.user as any).id;
       const householdId = req.params.householdId;
-      const { expirationAlertDays } = req.body ?? {};
+      const { expirationAlertDays, exitSuggestionsEnabled } = req.body ?? {};
 
       const settings = await this.settingsService.updateForHousehold(householdId!, userId, {
         expirationAlertDays,
+        exitSuggestionsEnabled,
       });
 
       const response: ApiResponse = {

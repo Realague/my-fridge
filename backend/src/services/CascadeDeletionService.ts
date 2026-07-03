@@ -1,13 +1,14 @@
 import { Transaction } from 'sequelize';
-import { 
-  Recipe, 
-  RecipeIngredient, 
-  StoredItem, 
-  ShoppingItem, 
-  StorageArea, 
-  Item, 
-  Meal, 
-  HouseholdMember 
+import {
+  Recipe,
+  RecipeIngredient,
+  StoredItem,
+  ShoppingItem,
+  StorageArea,
+  Item,
+  Meal,
+  HouseholdMember,
+  StockExit
 } from '../models';
 import sequelize from '../config/database';
 import { deleteImageFromCloudinary } from '../utils/imageUploader';
@@ -34,10 +35,15 @@ export class CascadeDeletionService {
       
       // Step 3: Delete recipes
       await this.deleteRecipes(householdId, t);
-      
+
+      // Step 3b: Delete stock exits (log rows) BEFORE stored items — the
+      // stock_exits.storedItemId FK (SET NULL) would otherwise churn, and
+      // removing the household's logs here avoids orphans / FK issues.
+      await this.deleteStockExits(householdId, t);
+
       // Step 4: Delete stored items (references items and storage areas)
       await this.deleteStoredItems(householdId, t);
-      
+
       // Step 5: Delete shopping items (references items)
       await this.deleteShoppingItems(householdId, t);
       
@@ -135,14 +141,32 @@ export class CascadeDeletionService {
   }
   
   /**
+   * Delete all stock exit log rows for the household. Hard delete (there is no
+   * soft-delete on stock_exits) — done before stored items so the SET NULL FK
+   * does not churn.
+   */
+  private async deleteStockExits(householdId: string, transaction: Transaction): Promise<void> {
+    const deletedCount = await StockExit.destroy({
+      where: { householdId },
+      transaction,
+      force: true
+    });
+
+    console.log(`Deleted ${deletedCount} stock exits for household ${householdId}`);
+  }
+
+  /**
    * Delete all stored items for the household
    */
   private async deleteStoredItems(householdId: string, transaction: Transaction): Promise<void> {
+    // force: true → hard delete. The household is being removed for good, so we
+    // must not leave soft-deleted rows (they hold FKs to items/storage areas).
     const deletedCount = await StoredItem.destroy({
       where: { householdId },
-      transaction
+      transaction,
+      force: true
     });
-    
+
     console.log(`Deleted ${deletedCount} stored items for household ${householdId}`);
   }
   

@@ -1,4 +1,4 @@
-export type ExpirationNotificationPhase = 'initial' | 'reminder';
+export type ExpirationNotificationPhase = 'initial' | 'reminder' | 'exit_suggestion';
 export type ExpirationUrgency = 'expired' | 'today' | 'tomorrow' | 'soon';
 
 export interface ExpirationNotification {
@@ -50,5 +50,6 @@ export interface ExpiringNowResponse {
 export interface HouseholdSettings {
   householdId: string;
   expirationAlertDays: number;
+  exitSuggestionsEnabled: boolean;
   updatedAt: string;
 }

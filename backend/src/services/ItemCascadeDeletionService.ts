@@ -58,13 +58,18 @@ export class ItemCascadeDeletionService {
    * Delete all stored items for the item
    */
   private async deleteStoredItems(itemId: string, transaction: Transaction): Promise<void> {
+    // force: true → real (hard) delete. This is a genuine item removal, so we
+    // must not leave soft-deleted rows behind (they would still reference the
+    // itemId FK and reappear via paranoid:false queries). The stock_exits FK is
+    // SET NULL, so exit logs are preserved with their snapshot.
     const deletedCount = await StoredItem.destroy({
-      where: { 
-        itemId: itemId 
+      where: {
+        itemId: itemId
       },
-      transaction
+      transaction,
+      force: true
     });
-    
+
     console.log(`Deleted ${deletedCount} stored items for item ${itemId}`);
   }
   

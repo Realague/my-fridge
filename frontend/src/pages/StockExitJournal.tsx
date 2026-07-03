@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, History, Loader2 } from 'lucide-react';
+import { ArrowLeft, History, Loader2 } from 'lucide-react';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useHouseholdStore } from '@/stores/householdStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
@@ -12,14 +12,6 @@ import { StockExitType } from '@/types/enums';
 import { useStockExitJournal } from '@/hooks/useStockExitJournal';
 import type { JournalPeriod } from '@/utils/journalPeriods';
 import BottomNavigation from '@/components/BottomNavigation';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
 import { JournalSummary } from '@/components/journal/JournalSummary';
 import { JournalToolbar, type TypeFilter } from '@/components/journal/JournalToolbar';
 import { JournalDayGroup } from '@/components/journal/JournalDayGroup';
@@ -139,28 +131,14 @@ export default function StockExitJournal() {
       {/* Header */}
       <div className="sticky top-0 z-40 border-b border-border/20 bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
-          <nav className="mb-3 hidden lg:block" aria-label="Breadcrumb">
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink href="/products">{t('pages.myProducts.title')}</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>{t('stockExit.journalTitle')}</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </nav>
-
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => navigate('/products')}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-mf-night-elevated text-mf-text lg:hidden"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-mf-night-elevated text-mf-text transition-colors hover:bg-mf-night-line"
               aria-label={t('common.back')}
             >
-              <ChevronLeft className="h-5 w-5" aria-hidden />
+              <ArrowLeft className="h-5 w-5" aria-hidden />
             </button>
 
             <span className="hidden h-[38px] w-[38px] shrink-0 items-center justify-center rounded-xl bg-mf-green-soft text-mf-green-deep lg:flex">

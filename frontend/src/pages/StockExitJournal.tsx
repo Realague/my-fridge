@@ -7,10 +7,7 @@ import { useHouseholdStore } from '@/stores/householdStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useDateFormat } from '@/utils/dateFormatting';
-import { getDisplayUnitLabel } from '@/utils/unitSystem';
 import { groupExitsByDay } from '@/utils/journalGrouping';
-import { downloadCsv, toCsv } from '@/utils/journalCsv';
-import { stockExitService, type StockExitDto } from '@/services/stockExitService';
 import { StockExitType } from '@/types/enums';
 import { useStockExitJournal } from '@/hooks/useStockExitJournal';
 import type { JournalPeriod } from '@/utils/journalPeriods';
@@ -27,7 +24,6 @@ import { JournalSummary } from '@/components/journal/JournalSummary';
 import { JournalToolbar, type TypeFilter } from '@/components/journal/JournalToolbar';
 import { JournalDayGroup } from '@/components/journal/JournalDayGroup';
 import { JournalEmptyState } from '@/components/journal/JournalEmptyState';
-import { ACTION_META } from '@/components/journal/journalActionMeta';
 
 export default function StockExitJournal() {
   const { t } = useTranslation();
@@ -38,7 +34,6 @@ export default function StockExitJournal() {
   const [period, setPeriod] = useState<JournalPeriod>('this_month');
   const [memberFilter, setMemberFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
-  const [exporting, setExporting] = useState(false);
 
   const now = useRef(new Date()).current;
 
@@ -129,57 +124,6 @@ export default function StockExitJournal() {
     setMemberFilter('all');
   }, []);
 
-  const handleExport = useCallback(async () => {
-    if (!selectedHouseholdId) return;
-    setExporting(true);
-    try {
-      const all: StockExitDto[] = [];
-      const LIMIT = 200;
-      const MAX = 5000;
-      for (let offset = 0; offset < MAX; offset += LIMIT) {
-        const page = await stockExitService.listExits(selectedHouseholdId, {
-          from: range.from,
-          to: range.to,
-          exitType: filters.exitType,
-          exitedBy: filters.exitedBy,
-          limit: LIMIT,
-          offset,
-        });
-        all.push(...page);
-        if (page.length < LIMIT) break;
-      }
-
-      const headers = [
-        t('stockExit.journal.export.columns.datetime'),
-        t('stockExit.journal.export.columns.item'),
-        t('stockExit.journal.export.columns.category'),
-        t('stockExit.journal.export.columns.storage'),
-        t('stockExit.journal.export.columns.type'),
-        t('stockExit.journal.export.columns.quantity'),
-        t('stockExit.journal.export.columns.member'),
-      ];
-      const rows = all.map((e) => {
-        const unitLabel = getDisplayUnitLabel(e.unit, e.quantity, t);
-        return [
-          formatDate(new Date(e.createdAt), 'yyyy-MM-dd HH:mm'),
-          e.itemName ?? '',
-          e.category ? t(`items.categories.${e.category}`) : '',
-          e.storageAreaName ?? '',
-          t(ACTION_META[e.exitType].labelKey),
-          `${e.quantity}${unitLabel ? ` ${unitLabel}` : ''}`,
-          e.exitedByName ?? '',
-        ];
-      });
-
-      downloadCsv(
-        `journal-sorties-${formatDate(now, 'yyyy-MM-dd')}.csv`,
-        toCsv(headers, rows)
-      );
-    } finally {
-      setExporting(false);
-    }
-  }, [selectedHouseholdId, range.from, range.to, filters.exitType, filters.exitedBy, t, formatDate, now]);
-
   const filtersActive = typeFilter !== 'all' || memberFilter !== 'all';
   const isInitialLoading = loading && entries.length === 0;
 
@@ -253,8 +197,6 @@ export default function StockExitJournal() {
           currentUserId={currentUserId}
           memberFilter={memberFilter}
           onMemberChange={setMemberFilter}
-          onExport={handleExport}
-          exporting={exporting}
         />
 
         {/* Timeline */}

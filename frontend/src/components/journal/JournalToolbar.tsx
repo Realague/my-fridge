@@ -1,4 +1,4 @@
-import { Calendar, Download, SlidersHorizontal, Users } from 'lucide-react';
+import { Calendar, SlidersHorizontal, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -33,8 +33,6 @@ interface JournalToolbarProps {
   currentUserId?: string;
   memberFilter: string;
   onMemberChange: (value: string) => void;
-  onExport: () => void;
-  exporting?: boolean;
 }
 
 const TAB_ACTIVE_CLASS: Record<TypeFilter, string> = {
@@ -54,8 +52,6 @@ export function JournalToolbar({
   currentUserId,
   memberFilter,
   onMemberChange,
-  onExport,
-  exporting,
 }: JournalToolbarProps) {
   const { t } = useTranslation();
 
@@ -160,17 +156,6 @@ export function JournalToolbar({
         >
           <SlidersHorizontal className="h-4 w-4" aria-hidden />
           <span className="hidden sm:inline">{t('stockExit.journal.filters.advanced')}</span>
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={onExport}
-          disabled={exporting || counts.all === 0}
-        >
-          <Download className="h-4 w-4" aria-hidden />
-          <span className="hidden sm:inline">{t('stockExit.journal.export.button')}</span>
         </Button>
       </div>
     </div>

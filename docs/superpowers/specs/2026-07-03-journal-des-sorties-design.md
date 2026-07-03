@@ -25,8 +25,9 @@ tokens Fresh déjà en place.
 ## 3. Décisions arrêtées
 
 1. **Stats** : nouvel endpoint d'agrégats (pas de calcul client approximatif).
-2. **Barre d'outils** : onglets par type + filtre Membre + filtre Période + Export CSV.
+2. **Barre d'outils** : onglets par type + filtre Membre + filtre Période.
    Panneau « Filtres » avancé = ticket de suivi (bouton présent, désactivé).
+   (Export retiré — jugé non utile.)
 3. **Champ contexte (↳)** : hors périmètre (backend n'a pas de `note`, la capture appartient
    au ticket amont). Affiché uniquement si le DTO en fournit un un jour.
 4. **Portée** : globale au foyer, stockage affiché par ligne.
@@ -55,15 +56,13 @@ tokens Fresh déjà en place.
   empilée + légende). Couleur des deltas = *favorabilité* (plus de consommés = vert, plus de
   jetés = défavorable) ; delta masqué si `previous` null.
 - `JournalToolbar.tsx` — onglets type + compteurs, select Membre (masqué si 1 membre), select
-  Période (Ce mois / Mois dernier / 30 derniers jours / Tout), Export CSV, bouton Filtres
-  (désactivé).
+  Période (Ce mois / Mois dernier / 30 derniers jours / Tout), bouton Filtres (désactivé).
 - `JournalDayGroup.tsx` + `JournalEntry.tsx` — en-tête de jour (Aujourd'hui/Hier/date +
   résumé du jour) et ligne d'entrée (liseré, vignette `CategoryIcon`, nom, badge catégorie,
   stockage `StorageAreaIcon`, badge d'action, quantité, membre avatar+prénom, heure).
 - `JournalEmptyState.tsx` — vide-filtre (« Aucune sortie ne correspond… » + réinitialiser) vs
   vide-total (mascotte + message encourageant).
-- Helpers : `journalGrouping.ts` (groupe par jour + libellés relatifs), `antiGaspi.ts` (taux),
-  `journalCsv.ts` (export du set filtré complet, refetch non paginé).
+- Helpers : `journalGrouping.ts` (groupe par jour + libellés relatifs), `antiGaspi.ts` (taux).
 
 ## 6. Règles métier
 

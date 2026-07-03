@@ -4134,18 +4134,6 @@
         "wastedCount_one": "{{count}} wasted",
         "wastedCount_other": "{{count}} wasted"
       },
-      "export": {
-        "button": "Export",
-        "columns": {
-          "datetime": "Date and time",
-          "item": "Item",
-          "category": "Category",
-          "storage": "Storage",
-          "type": "Exit type",
-          "quantity": "Quantity",
-          "member": "Member"
-        }
-      },
       "empty": {
         "title": "No exits yet",
         "subtitle": "Your journal will fill up as you take items out of stock — consumed, wasted or removed."

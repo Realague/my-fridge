@@ -4134,18 +4134,6 @@
         "wastedCount_one": "{{count}} jeté",
         "wastedCount_other": "{{count}} jetés"
       },
-      "export": {
-        "button": "Exporter",
-        "columns": {
-          "datetime": "Date et heure",
-          "item": "Article",
-          "category": "Catégorie",
-          "storage": "Stockage",
-          "type": "Type de sortie",
-          "quantity": "Quantité",
-          "member": "Membre"
-        }
-      },
       "empty": {
         "title": "Aucune sortie pour l'instant",
         "subtitle": "Ton journal se remplira au fil de tes sorties de stock — consommé, jeté ou retiré."

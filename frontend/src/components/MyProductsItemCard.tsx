@@ -336,9 +336,9 @@ export function MyProductsItemCard({
                       .toUpperCase();
                     return (
                       <>
-                        {/* Desktop: avatar + "Ajouté par … le …" text. */}
-                        <span className="hidden sm:inline-flex items-center gap-1.5">
-                          <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-mf-text text-mf-night dark:bg-mf-night dark:text-mf-text text-[9px] font-bold uppercase leading-none">
+                        {/* Desktop: larger avatar + "Ajouté par … le …" text. */}
+                        <span className="hidden sm:inline-flex items-center gap-2 text-[13px]">
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-mf-text text-mf-night dark:bg-mf-night dark:text-mf-text text-[11px] font-bold uppercase leading-none">
                             {initials}
                           </span>
                           <span>{t('common.addedByOn', { name: authorName, date: addedDate })}</span>

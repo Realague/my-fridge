@@ -204,9 +204,9 @@ export const ShoppingItemRow = ({
                     .toUpperCase();
                   return (
                     <>
-                      {/* Desktop: avatar + "Ajouté par …" text. */}
-                      <span className="hidden sm:inline-flex items-center gap-1.5 min-w-0">
-                        <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-mf-text text-mf-night dark:bg-mf-night dark:text-mf-text text-[9px] font-bold uppercase leading-none">
+                      {/* Desktop: larger avatar + "Ajouté par …" text. */}
+                      <span className="hidden sm:inline-flex items-center gap-2 min-w-0 text-[13px]">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-mf-text text-mf-night dark:bg-mf-night dark:text-mf-text text-[11px] font-bold uppercase leading-none">
                           {initials}
                         </span>
                         <span className="truncate">{t('common.addedBy', { name: authorName })}</span>

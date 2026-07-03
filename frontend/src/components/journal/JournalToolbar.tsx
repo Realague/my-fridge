@@ -1,7 +1,6 @@
-import { Calendar, SlidersHorizontal, Users } from 'lucide-react';
+import { Calendar, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -146,17 +145,6 @@ export function JournalToolbar({
             ))}
           </SelectContent>
         </Select>
-
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled
-          title={t('stockExit.journal.filters.advancedSoon')}
-        >
-          <SlidersHorizontal className="h-4 w-4" aria-hidden />
-          <span className="hidden sm:inline">{t('stockExit.journal.filters.advanced')}</span>
-        </Button>
       </div>
     </div>
   );

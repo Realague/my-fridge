@@ -4114,9 +4114,7 @@
         "wastedLegend_other": "{{count}} jetés"
       },
       "filters": {
-        "allMembers": "Membre : Tous",
-        "advanced": "Filtres",
-        "advancedSoon": "Filtres avancés — bientôt disponibles"
+        "allMembers": "Membre : Tous"
       },
       "periods": {
         "this_month": "Ce mois-ci",

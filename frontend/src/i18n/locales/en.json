@@ -4114,9 +4114,7 @@
         "wastedLegend_other": "{{count}} wasted"
       },
       "filters": {
-        "allMembers": "Member: All",
-        "advanced": "Filters",
-        "advancedSoon": "Advanced filters — coming soon"
+        "allMembers": "Member: All"
       },
       "periods": {
         "this_month": "This month",

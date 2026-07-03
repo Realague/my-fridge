@@ -26,8 +26,8 @@ tokens Fresh déjà en place.
 
 1. **Stats** : nouvel endpoint d'agrégats (pas de calcul client approximatif).
 2. **Barre d'outils** : onglets par type + filtre Membre + filtre Période.
-   Panneau « Filtres » avancé = ticket de suivi (bouton présent, désactivé).
-   (Export retiré — jugé non utile.)
+   Panneau « Filtres » avancé = ticket de suivi (bouton retiré). Export retiré
+   (jugés non utiles).
 3. **Champ contexte (↳)** : hors périmètre (backend n'a pas de `note`, la capture appartient
    au ticket amont). Affiché uniquement si le DTO en fournit un un jour.
 4. **Portée** : globale au foyer, stockage affiché par ligne.
@@ -56,7 +56,7 @@ tokens Fresh déjà en place.
   empilée + légende). Couleur des deltas = *favorabilité* (plus de consommés = vert, plus de
   jetés = défavorable) ; delta masqué si `previous` null.
 - `JournalToolbar.tsx` — onglets type + compteurs, select Membre (masqué si 1 membre), select
-  Période (Ce mois / Mois dernier / 30 derniers jours / Tout), bouton Filtres (désactivé).
+  Période (Ce mois / Mois dernier / 30 derniers jours / Tout).
 - `JournalDayGroup.tsx` + `JournalEntry.tsx` — en-tête de jour (Aujourd'hui/Hier/date +
   résumé du jour) et ligne d'entrée (liseré, vignette `CategoryIcon`, nom, badge catégorie,
   stockage `StorageAreaIcon`, badge d'action, quantité, membre avatar+prénom, heure).

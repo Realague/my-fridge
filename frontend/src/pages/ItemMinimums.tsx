@@ -101,7 +101,7 @@ const ItemMinimums = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate(-1)}
-                className="p-1 shrink-0"
+                className="p-1 shrink-0 md:hidden"
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>

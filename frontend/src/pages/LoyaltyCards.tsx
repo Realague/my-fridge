@@ -192,7 +192,7 @@ const LoyaltyCards = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+              <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="md:hidden">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <h1 className="text-xl font-bold text-foreground truncate flex items-center gap-2"><CreditCard className="h-5 w-5 text-primary shrink-0" aria-hidden />{t('loyaltyCards.title')}</h1>

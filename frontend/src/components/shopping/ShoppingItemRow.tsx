@@ -240,7 +240,7 @@ export const ShoppingItemRow = ({
               onClick={() => onMoveBack(shoppingItem.id)}
               title={t('pages.shopping.moveBackToBuy')}
               aria-label={t('pages.shopping.moveBackToBuy')}
-              className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity hover:bg-mf-green-soft hover:text-mf-green-deep"
+              className="h-8 w-8 p-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 transition-opacity hover:bg-mf-green-soft hover:text-mf-green-deep"
             >
               <Undo2 className="h-4 w-4" />
             </Button>
@@ -250,7 +250,7 @@ export const ShoppingItemRow = ({
               onClick={() => onDelete(shoppingItem.id)}
               title={t('common.delete')}
               aria-label={t('common.delete')}
-              className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity text-mf-danger hover:bg-mf-danger-soft"
+              className="h-8 w-8 p-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 transition-opacity text-mf-danger hover:bg-mf-danger-soft"
             >
               <Trash2 className="h-4 w-4" />
             </Button>

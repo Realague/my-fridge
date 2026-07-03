@@ -1,4 +1,9 @@
-import { StockExitRepository, CreateStockExitData } from '../repositories/StockExitRepository';
+import {
+  StockExitRepository,
+  CreateStockExitData,
+  ListStockExitsOptions,
+  StockExitFilters,
+} from '../repositories/StockExitRepository';
 import { StoredItemRepository } from '../repositories/StoredItemRepository';
 import { StoredItemService } from './StoredItemService';
 import { StockExit } from '../models/StockExit';
@@ -23,6 +28,20 @@ export interface StockExitDto {
   storageAreaName?: string | null;
   expirationDate?: string | null;
   createdAt: string;
+}
+
+// Per-type totals over a period (drives the summary band + tab counters).
+export interface StockExitStats {
+  consumed: number;
+  wasted: number;
+  removed: number;
+}
+
+export interface StockExitStatsResult {
+  current: StockExitStats;
+  // Comparable previous period (e.g. previous month). null when the caller did
+  // not request a comparison (non-month periods, or no previous data).
+  previous: StockExitStats | null;
 }
 
 // Server-side safety net for undo (client enforces 10s).
@@ -150,11 +169,54 @@ export class StockExitService {
   }
 
   /**
-   * Exit journal for a household, most recent first. See spec §1c.
+   * Exit journal for a household, most recent first. Supports optional
+   * period / type / member filters + pagination. See spec §1c.
    */
-  async listExits(householdId: string, limit: number = 50, offset: number = 0): Promise<StockExitDto[]> {
-    const exits = await this.stockExitRepository.findAll(householdId, limit, offset);
+  async listExits(householdId: string, options: ListStockExitsOptions = {}): Promise<StockExitDto[]> {
+    const exits = await this.stockExitRepository.findAll(householdId, options);
     return exits.map((exit) => this.mapToDto(exit));
+  }
+
+  /**
+   * Aggregated per-type counts for the journal summary band. `previous` is
+   * computed only when the caller supplies a previous range (frontend owns the
+   * period math and requests a comparison for calendar-month periods).
+   */
+  async getStats(
+    householdId: string,
+    opts: {
+      from?: Date;
+      to?: Date;
+      previousFrom?: Date;
+      previousTo?: Date;
+      exitedBy?: string;
+    } = {}
+  ): Promise<StockExitStatsResult> {
+    const { from, to, previousFrom, previousTo, exitedBy } = opts;
+
+    const current = await this.countsFor(householdId, { from, to, exitedBy });
+
+    let previous: StockExitStats | null = null;
+    if (previousFrom && previousTo) {
+      previous = await this.countsFor(householdId, {
+        from: previousFrom,
+        to: previousTo,
+        exitedBy,
+      });
+    }
+
+    return { current, previous };
+  }
+
+  private async countsFor(householdId: string, filters: StockExitFilters): Promise<StockExitStats> {
+    const rows = await this.stockExitRepository.countByType(householdId, filters);
+    const stats: StockExitStats = { consumed: 0, wasted: 0, removed: 0 };
+    rows.forEach((row) => {
+      if (row.exitType in stats) {
+        stats[row.exitType as keyof StockExitStats] = row.count;
+      }
+    });
+    return stats;
   }
 
   private buildRestoreSnapshot(storedItem: StoredItem): Record<string, unknown> {

@@ -78,6 +78,17 @@ export function JournalToolbar({
 
   const showMemberFilter = members.length > 1;
 
+  // Disambiguate members who share a first name (e.g. duplicate accounts) by
+  // appending their email, so the dropdown options stay distinguishable.
+  const firstNameCounts = members.reduce<Record<string, number>>((acc, m) => {
+    acc[m.firstName] = (acc[m.firstName] ?? 0) + 1;
+    return acc;
+  }, {});
+  const memberLabel = (m: HouseholdMember): string => {
+    const base = m.id === currentUserId ? t('common.you') : m.firstName;
+    return firstNameCounts[m.firstName] > 1 ? `${base} · ${m.email}` : base;
+  };
+
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
       {/* Type tabs */}
@@ -125,7 +136,7 @@ export function JournalToolbar({
               <SelectItem value="all">{t('stockExit.journal.filters.allMembers')}</SelectItem>
               {members.map((m) => (
                 <SelectItem key={m.id} value={m.id}>
-                  {m.id === currentUserId ? t('common.you') : m.firstName}
+                  {memberLabel(m)}
                 </SelectItem>
               ))}
             </SelectContent>

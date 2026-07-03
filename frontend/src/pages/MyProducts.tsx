@@ -10,6 +10,7 @@ import {
   ChefHat,
   ChevronDown,
   Filter,
+  History,
   Plus,
   Search,
   X,
@@ -410,15 +411,26 @@ const MyProducts = () => {
                 </p>
               </div>
             </div>
-            <Button
-              onClick={handleAddClick}
-              variant="green"
-              className="hidden sm:inline-flex shrink-0"
-              aria-label={t('addStoredItemDialog.openButton')}
-            >
-              <Plus className="h-4 w-4" />
-              <span>{t('addStoredItemDialog.openButton')}</span>
-            </Button>
+            <div className="flex shrink-0 items-center gap-2">
+              <Button
+                onClick={() => navigate('/products/journal')}
+                variant="outline"
+                className="shrink-0"
+                aria-label={t('stockExit.journalTitle')}
+              >
+                <History className="h-4 w-4" />
+                <span className="hidden sm:inline">{t('stockExit.journalTitle')}</span>
+              </Button>
+              <Button
+                onClick={handleAddClick}
+                variant="green"
+                className="hidden sm:inline-flex shrink-0"
+                aria-label={t('addStoredItemDialog.openButton')}
+              >
+                <Plus className="h-4 w-4" />
+                <span>{t('addStoredItemDialog.openButton')}</span>
+              </Button>
+            </div>
           </div>
         </div>
       </div>

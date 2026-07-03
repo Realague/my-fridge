@@ -4089,6 +4089,75 @@
       "addedToJournal": "{{quantity}} {{unit}} · added to the journal"
     },
     "journalTitle": "Exit journal",
+    "journal": {
+      "subtitle_one": "{{count}} exit · {{period}} · {{household}}",
+      "subtitle_other": "{{count}} exits · {{period}} · {{household}}",
+      "footerNote": "Most recent exits are shown first.",
+      "actions": {
+        "consumed": "Consumed",
+        "wasted": "Wasted",
+        "removed": "Removed"
+      },
+      "tabs": {
+        "all": "All"
+      },
+      "summary": {
+        "consumed": "Consumed",
+        "wasted": "Wasted",
+        "removed": "Removed",
+        "neutralExit": "Neutral exit",
+        "antiGaspi": "Anti-waste rate",
+        "vsMonth": "{{delta}} vs {{month}}",
+        "consumedLegend_one": "{{count}} consumed",
+        "consumedLegend_other": "{{count}} consumed",
+        "wastedLegend_one": "{{count}} wasted",
+        "wastedLegend_other": "{{count}} wasted"
+      },
+      "filters": {
+        "allMembers": "Member: All",
+        "advanced": "Filters",
+        "advancedSoon": "Advanced filters — coming soon"
+      },
+      "periods": {
+        "this_month": "This month",
+        "last_month": "Last month",
+        "last_30_days": "Last 30 days",
+        "all": "All time"
+      },
+      "day": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "exitsCount_one": "{{count}} exit",
+        "exitsCount_other": "{{count}} exits",
+        "consumedCount_one": "{{count}} consumed",
+        "consumedCount_other": "{{count}} consumed",
+        "wastedCount_one": "{{count}} wasted",
+        "wastedCount_other": "{{count}} wasted"
+      },
+      "export": {
+        "button": "Export",
+        "columns": {
+          "datetime": "Date and time",
+          "item": "Item",
+          "category": "Category",
+          "storage": "Storage",
+          "type": "Exit type",
+          "quantity": "Quantity",
+          "member": "Member"
+        }
+      },
+      "empty": {
+        "title": "No exits yet",
+        "subtitle": "Your journal will fill up as you take items out of stock — consumed, wasted or removed."
+      },
+      "periodEmpty": {
+        "title": "No exits in this period."
+      },
+      "noResults": {
+        "title": "No exits match these filters.",
+        "reset": "Reset filters"
+      }
+    },
     "suggestion": {
       "title": "Time to take stock",
       "groupedTitle": "{{count}} items expired 3+ days ago",

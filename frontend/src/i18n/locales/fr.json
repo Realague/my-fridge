@@ -4089,6 +4089,75 @@
       "addedToJournal": "{{quantity}} {{unit}} · ajouté au journal"
     },
     "journalTitle": "Journal des sorties",
+    "journal": {
+      "subtitle_one": "{{count}} sortie · {{period}} · {{household}}",
+      "subtitle_other": "{{count}} sorties · {{period}} · {{household}}",
+      "footerNote": "Les sorties les plus récentes sont affichées en premier.",
+      "actions": {
+        "consumed": "Consommé",
+        "wasted": "Jeté",
+        "removed": "Retiré"
+      },
+      "tabs": {
+        "all": "Tout"
+      },
+      "summary": {
+        "consumed": "Consommés",
+        "wasted": "Jetés",
+        "removed": "Retirés",
+        "neutralExit": "Sortie neutre",
+        "antiGaspi": "Taux anti-gaspi",
+        "vsMonth": "{{delta}} vs {{month}}",
+        "consumedLegend_one": "{{count}} consommé",
+        "consumedLegend_other": "{{count}} consommés",
+        "wastedLegend_one": "{{count}} jeté",
+        "wastedLegend_other": "{{count}} jetés"
+      },
+      "filters": {
+        "allMembers": "Membre : Tous",
+        "advanced": "Filtres",
+        "advancedSoon": "Filtres avancés — bientôt disponibles"
+      },
+      "periods": {
+        "this_month": "Ce mois-ci",
+        "last_month": "Le mois dernier",
+        "last_30_days": "30 derniers jours",
+        "all": "Tout l'historique"
+      },
+      "day": {
+        "today": "Aujourd'hui",
+        "yesterday": "Hier",
+        "exitsCount_one": "{{count}} sortie",
+        "exitsCount_other": "{{count}} sorties",
+        "consumedCount_one": "{{count}} consommé",
+        "consumedCount_other": "{{count}} consommés",
+        "wastedCount_one": "{{count}} jeté",
+        "wastedCount_other": "{{count}} jetés"
+      },
+      "export": {
+        "button": "Exporter",
+        "columns": {
+          "datetime": "Date et heure",
+          "item": "Article",
+          "category": "Catégorie",
+          "storage": "Stockage",
+          "type": "Type de sortie",
+          "quantity": "Quantité",
+          "member": "Membre"
+        }
+      },
+      "empty": {
+        "title": "Aucune sortie pour l'instant",
+        "subtitle": "Ton journal se remplira au fil de tes sorties de stock — consommé, jeté ou retiré."
+      },
+      "periodEmpty": {
+        "title": "Pas de sortie sur cette période."
+      },
+      "noResults": {
+        "title": "Aucune sortie ne correspond à ces filtres.",
+        "reset": "Réinitialiser les filtres"
+      }
+    },
     "suggestion": {
       "title": "Faire le point",
       "groupedTitle": "{{count}} articles périmés depuis plus de 3 jours",

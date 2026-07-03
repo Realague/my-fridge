@@ -22,6 +22,7 @@ import Dashboard from "./pages/Dashboard";
 import Shopping from "./pages/Shopping";
 import StorageArea from "./pages/StorageArea";
 import MyProducts from "./pages/MyProducts";
+import StockExitJournal from "./pages/StockExitJournal";
 
 import Recipes from "./pages/Recipes";
 import RecipeDetails from "./pages/RecipeDetails";
@@ -82,6 +83,7 @@ function App() {
                           <Route path="/shopping" element={<Shopping />} />
                           <Route path="/storage/:id" element={<StorageArea />} />
                           <Route path="/products" element={<MyProducts />} />
+                          <Route path="/products/journal" element={<StockExitJournal />} />
                           <Route path="/recipes" element={<Recipes />} />
                           <Route path="/recipes/:id" element={<RecipeDetails />} />
                           <Route path="/recipes/:id/cook" element={<RecipeCookingMode />} />

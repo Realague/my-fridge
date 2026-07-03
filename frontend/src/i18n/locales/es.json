@@ -4089,6 +4089,75 @@
       "addedToJournal": "{{quantity}} {{unit}} · añadido al registro"
     },
     "journalTitle": "Registro de salidas",
+    "journal": {
+      "subtitle_one": "{{count}} salida · {{period}} · {{household}}",
+      "subtitle_other": "{{count}} salidas · {{period}} · {{household}}",
+      "footerNote": "Las salidas más recientes se muestran primero.",
+      "actions": {
+        "consumed": "Consumido",
+        "wasted": "Tirado",
+        "removed": "Retirado"
+      },
+      "tabs": {
+        "all": "Todo"
+      },
+      "summary": {
+        "consumed": "Consumidos",
+        "wasted": "Tirados",
+        "removed": "Retirados",
+        "neutralExit": "Salida neutra",
+        "antiGaspi": "Tasa anti-desperdicio",
+        "vsMonth": "{{delta}} vs {{month}}",
+        "consumedLegend_one": "{{count}} consumido",
+        "consumedLegend_other": "{{count}} consumidos",
+        "wastedLegend_one": "{{count}} tirado",
+        "wastedLegend_other": "{{count}} tirados"
+      },
+      "filters": {
+        "allMembers": "Miembro: Todos",
+        "advanced": "Filtros",
+        "advancedSoon": "Filtros avanzados — próximamente"
+      },
+      "periods": {
+        "this_month": "Este mes",
+        "last_month": "El mes pasado",
+        "last_30_days": "Últimos 30 días",
+        "all": "Todo el historial"
+      },
+      "day": {
+        "today": "Hoy",
+        "yesterday": "Ayer",
+        "exitsCount_one": "{{count}} salida",
+        "exitsCount_other": "{{count}} salidas",
+        "consumedCount_one": "{{count}} consumido",
+        "consumedCount_other": "{{count}} consumidos",
+        "wastedCount_one": "{{count}} tirado",
+        "wastedCount_other": "{{count}} tirados"
+      },
+      "export": {
+        "button": "Exportar",
+        "columns": {
+          "datetime": "Fecha y hora",
+          "item": "Artículo",
+          "category": "Categoría",
+          "storage": "Almacenamiento",
+          "type": "Tipo de salida",
+          "quantity": "Cantidad",
+          "member": "Miembro"
+        }
+      },
+      "empty": {
+        "title": "Aún no hay salidas",
+        "subtitle": "Tu registro se irá llenando a medida que saques artículos del stock — consumidos, tirados o retirados."
+      },
+      "periodEmpty": {
+        "title": "No hay salidas en este período."
+      },
+      "noResults": {
+        "title": "Ninguna salida coincide con estos filtros.",
+        "reset": "Restablecer filtros"
+      }
+    },
     "suggestion": {
       "title": "Hacer balance",
       "groupedTitle": "{{count}} artículos caducados hace más de 3 días",

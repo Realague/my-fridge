@@ -511,7 +511,7 @@ const Shopping = () => {
                   </CardContent>
                 </Card>
 
-                <div className={`grid grid-cols-1 gap-6 ${hasToStore ? 'lg:grid-cols-2 lg:items-start' : ''}`}>
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
                   {/* À acheter */}
                   <Card variant="elevated">
                     <CardHeader>
@@ -526,27 +526,40 @@ const Shopping = () => {
                     <CardContent>{renderToBuySection()}</CardContent>
                   </Card>
 
-                  {/* À ranger — hidden when empty */}
-                  {hasToStore && (
-                    <Card variant="elevated" className="border-mf-green/30 bg-mf-green-soft/20">
-                      <CardHeader>
-                        <div className="flex items-center justify-between gap-3">
-                          <CardTitle className="flex items-center gap-2">
-                            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-mf-green-soft text-mf-green-deep">
-                              <Package className="h-5 w-5" />
-                            </span>
-                            {t('pages.shopping.toStore')}
-                            <span className="text-sm font-normal text-muted-foreground">({toStoreItems.length})</span>
-                          </CardTitle>
+                  {/* À ranger — always visible on desktop; hidden on mobile when empty */}
+                  <Card
+                    variant="elevated"
+                    className={`border-mf-green/30 bg-mf-green-soft/20 ${hasToStore ? '' : 'hidden lg:block'}`}
+                  >
+                    <CardHeader>
+                      <div className="flex items-center justify-between gap-3">
+                        <CardTitle className="flex items-center gap-2">
+                          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-mf-green-soft text-mf-green-deep">
+                            <Package className="h-5 w-5" />
+                          </span>
+                          {t('pages.shopping.toStore')}
+                          <span className="text-sm font-normal text-muted-foreground">({toStoreItems.length})</span>
+                        </CardTitle>
+                        {hasToStore && (
                           <Button variant="green" size="sm" onClick={openAssistantForAll} className="gap-1.5 shrink-0">
                             <PackageCheck className="h-4 w-4" />
                             {t('pages.shopping.storeAll')}
                           </Button>
+                        )}
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      {hasToStore ? (
+                        renderToStoreSection()
+                      ) : (
+                        <div className="text-center py-10 text-muted-foreground">
+                          <div className="text-4xl mb-2">📦</div>
+                          <p className="font-medium text-foreground">{t('pages.shopping.toStoreEmptyTitle')}</p>
+                          <p className="text-sm mt-1 max-w-xs mx-auto">{t('pages.shopping.toStoreEmptyDescription')}</p>
                         </div>
-                      </CardHeader>
-                      <CardContent>{renderToStoreSection()}</CardContent>
-                    </Card>
-                  )}
+                      )}
+                    </CardContent>
+                  </Card>
                 </div>
               </>
             )}

@@ -729,7 +729,9 @@
       "itemCountSummary_one": "{{count}} item",
       "itemCountSummary_other": "{{count}} items",
       "emptyTitle": "No items in the list",
-      "emptyDescription": "Add an item to start your shopping list."
+      "emptyDescription": "Add an item to start your shopping list.",
+      "toStoreEmptyTitle": "Nothing to store yet",
+      "toStoreEmptyDescription": "Check off an item in « To buy » — it will show up here to be stored."
     },
     "meals": {
       "kicker": "This week",

@@ -729,7 +729,9 @@
       "itemCountSummary_one": "{{count}} article",
       "itemCountSummary_other": "{{count}} articles",
       "emptyTitle": "Aucun article dans la liste",
-      "emptyDescription": "Ajoutez un article pour commencer votre liste de courses."
+      "emptyDescription": "Ajoutez un article pour commencer votre liste de courses.",
+      "toStoreEmptyTitle": "Rien à ranger pour l’instant",
+      "toStoreEmptyDescription": "Cochez un article « à acheter » — il apparaîtra ici pour être rangé au stock."
     },
     "meals": {
       "kicker": "Cette semaine",

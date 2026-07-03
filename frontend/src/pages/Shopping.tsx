@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Users, Filter, Package, PackageCheck, ShoppingCart, PartyPopper, Trash2 } from 'lucide-react';
+import { Users, Filter, Package, PackageCheck, PackageOpen, ShoppingCart, Trash2 } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { AddItemCard } from '@/components/AddItemCard';
 import { Item } from '@/services/itemService';
@@ -553,7 +553,9 @@ const Shopping = () => {
                         renderToStoreSection()
                       ) : (
                         <div className="text-center py-10 text-muted-foreground">
-                          <div className="text-4xl mb-2">📦</div>
+                          <span className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-mf-green-soft text-mf-green-deep">
+                            <PackageOpen className="h-7 w-7" />
+                          </span>
                           <p className="font-medium text-foreground">{t('pages.shopping.toStoreEmptyTitle')}</p>
                           <p className="text-sm mt-1 max-w-xs mx-auto">{t('pages.shopping.toStoreEmptyDescription')}</p>
                         </div>

@@ -205,7 +205,7 @@ export const ShoppingItemRow = ({
                   return (
                     <>
                       {/* Desktop: avatar + name chip (pill), no "Ajouté par" prefix. */}
-                      <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-mf-night-elevated py-1 pl-1 pr-3 min-w-0">
+                      <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-white dark:bg-mf-night-surface py-1 pl-1 pr-3 min-w-0">
                         <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-mf-text text-mf-night dark:bg-mf-night dark:text-mf-text text-[11px] font-bold uppercase leading-none">
                           {initials}
                         </span>

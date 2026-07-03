@@ -87,8 +87,8 @@ export function JournalEntry({
   );
 
   const member = showMember ? (
-    <span className="inline-flex items-center gap-1.5">
-      <span className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full bg-mf-green-soft text-[10px] font-bold uppercase leading-none text-mf-green-deep">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-mf-night-elevated py-0.5 pl-0.5 pr-2.5">
+      <span className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-mf-text text-[10px] font-bold uppercase leading-none text-mf-night dark:bg-mf-night dark:text-mf-text">
         {initials}
       </span>
       <span className="font-display text-[13px] font-bold text-mf-text-soft">{memberName}</span>

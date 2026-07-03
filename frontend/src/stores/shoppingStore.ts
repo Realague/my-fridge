@@ -5,6 +5,7 @@ import i18n from '@/i18n/config';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { makeAuthenticatedApiCall } from '@/utils/apiAuth';
 import { useHouseholdStore } from './householdStore';
+import { ShoppingItemStatus } from '@/types/enums';
 
 export interface ShoppingItem {
   id: string;
@@ -23,7 +24,7 @@ export interface ShoppingItem {
   householdId: string;
   quantity: string;
   unit: string;
-  completed: boolean;
+  status: ShoppingItemStatus;
   priority: number;
   storedItemId: string | null;
   createdBy: string;
@@ -45,7 +46,7 @@ export interface CreateShoppingItemRequest {
 export interface UpdateShoppingItemRequest {
   quantity?: string;
   unit?: string;
-  completed?: boolean;
+  status?: ShoppingItemStatus;
   priority?: number;
   storedItemId?: string;
 }
@@ -68,29 +69,29 @@ interface ShoppingStore {
   error: string | null;
   
   // Actions
-  fetchShoppingItems: (completed?: boolean) => Promise<void>;
+  fetchShoppingItems: (status?: ShoppingItemStatus) => Promise<void>;
   createShoppingItem: (itemData: CreateShoppingItemRequest) => Promise<ShoppingItem | null>;
   updateShoppingItem: (id: string, updates: UpdateShoppingItemRequest) => Promise<boolean>;
   deleteShoppingItem: (id: string) => Promise<boolean>;
-  toggleShoppingItemCompleted: (id: string) => Promise<boolean>;
-  bulkUpdateCompleted: (ids: string[], completed: boolean) => Promise<boolean>;
+  setStatus: (id: string, status: ShoppingItemStatus) => Promise<boolean>;
+  moveToStore: (id: string) => Promise<boolean>;
+  moveToBuy: (id: string) => Promise<boolean>;
   bulkTransferToStorage: (request: BulkTransferToStorageRequest) => Promise<boolean>;
-  clearCompleted: () => Promise<boolean>;
   reorderItems: (itemPriorities: Array<{ id: string; priority: number }>) => Promise<boolean>;
-  
+
   // Internal actions
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  
+
   // Item deletion cleanup
   removeShoppingItemsByItemId: (itemId: string) => void;
-  
+
   // Computed getters
-  getPendingItems: () => ShoppingItem[];
-  getCompletedItems: () => ShoppingItem[];
+  getToBuyItems: () => ShoppingItem[];
+  getToStoreItems: () => ShoppingItem[];
   getItemsByCategory: (category: string) => ShoppingItem[];
   getTotalItems: () => number;
-  getCompletedCount: () => number;
+  getToStoreCount: () => number;
 }
 
 // Non-hook API service for use in stores
@@ -152,36 +153,34 @@ export const useShoppingStore = create<ShoppingStore>()(
       setLoading: (loading) => set({ loading }),
       setError: (error) => set({ error }),
 
-      fetchShoppingItems: async (completed?: boolean) => {
+      fetchShoppingItems: async (status?: ShoppingItemStatus) => {
         set({ loading: true, error: null });
-        
+
         try {
           const searchParams = new URLSearchParams();
-          
-          if (completed !== undefined) searchParams.append('completed', completed.toString());
+
+          if (status !== undefined) searchParams.append('status', status);
 
           const householdId = getHouseholdId();
           if (!householdId) {
             throw new Error('No household available');
           }
-          
+
           const queryString = searchParams.toString();
-          
+
           const response = await apiService.get(`/api/households/${householdId}/shopping${queryString ? `?${queryString}` : ''}`);
           const result = await response.json();
-          
+
           if (result.success && result.data) {
             const newItems = result.data.items || [];
-            
-            if (completed === undefined) {
+
+            if (status === undefined) {
               // Fetching all items - replace the entire array
               set({ items: newItems });
             } else {
-              // Fetching specific completion state - merge with existing items
+              // Fetching a specific status - merge with existing items
               set(state => {
-                // Remove existing items with the same completion state
-                const filteredItems = state.items.filter(item => item.completed !== completed);
-                // Add the new items
+                const filteredItems = state.items.filter(item => item.status !== status);
                 return { items: [...filteredItems, ...newItems] };
               });
             }
@@ -327,66 +326,54 @@ export const useShoppingStore = create<ShoppingStore>()(
         }
       },
 
-      toggleShoppingItemCompleted: async (id: string) => {
+      // Shared status-transition helper with optimistic update: the row moves
+      // between sections instantly, then the server response reconciles.
+      setStatus: async (id: string, status: ShoppingItemStatus) => {
         set({ error: null });
-        
-        try { 
-          const householdId = getHouseholdId();
-          if (!householdId) {
-            throw new Error('No household available');
-          }
 
-          const response = await apiService.patch(`/api/households/${householdId}/shopping/${id}/toggle`);
-          const result = await response.json();
-          
-          if (result.success && result.data) {
-            const updatedItem = result.data;
-            set(state => ({
-              items: state.items.map(item => 
-                item.id === id ? updatedItem : item
-              )
-            }));
-            return true;
-          } else {
-            throw new Error(result.error || 'Failed to toggle shopping item completion');
-          }
-        } catch (error) {
-          const message = error instanceof Error ? error.message : 'Failed to toggle shopping item completion';
-          set({ error: message });
-          console.error('toggleShoppingItemCompleted: Error:', error);
-          return false;
-        }
-      },
+        // Snapshot for rollback, then flip locally for an instant transition.
+        const snapshot = get().items;
+        set(state => ({
+          items: state.items.map(item =>
+            item.id === id ? { ...item, status } : item
+          ),
+        }));
 
-      bulkUpdateCompleted: async (ids: string[], completed: boolean) => {
-        set({ error: null });
-        
         try {
           const householdId = getHouseholdId();
           if (!householdId) {
             throw new Error('No household available');
           }
 
-          const response = await apiService.put(`/api/households/${householdId}/shopping/bulk-update`, { ids, completed });
+          const response = await apiService.patch(
+            `/api/households/${householdId}/shopping/${id}/status`,
+            { status }
+          );
           const result = await response.json();
-          
-          if (result.success) {
+
+          if (result.success && result.data) {
+            const updatedItem = result.data as ShoppingItem;
             set(state => ({
-              items: state.items.map(item => 
-                ids.includes(item.id) ? { ...item, completed } : item
-              )
+              items: state.items.map(item =>
+                item.id === id ? updatedItem : item
+              ),
             }));
             return true;
           } else {
-            throw new Error(result.error || 'Failed to bulk update shopping items');
+            throw new Error(result.error || 'Failed to update shopping item status');
           }
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Failed to bulk update shopping items';
+          // Revert the optimistic change.
+          set({ items: snapshot });
+          const message = error instanceof Error ? error.message : 'Failed to update shopping item status';
           set({ error: message });
-          console.error('bulkUpdateCompleted: Error:', error);
+          console.error('setStatus: Error:', error);
           return false;
         }
       },
+
+      moveToStore: async (id: string) => get().setStatus(id, ShoppingItemStatus.TO_STORE),
+      moveToBuy: async (id: string) => get().setStatus(id, ShoppingItemStatus.TO_BUY),
 
       bulkTransferToStorage: async (request: BulkTransferToStorageRequest) => {
         set({ error: null });
@@ -404,17 +391,11 @@ export const useShoppingStore = create<ShoppingStore>()(
           const result = await response.json();
 
           if (result.success && result.data) {
-            const updatedItems: ShoppingItem[] = result.data;
-            set(state => {
-              const updatedIds = new Set(updatedItems.map((i: ShoppingItem) => i.id));
-              return {
-                items: state.items.map(item =>
-                  updatedIds.has(item.id)
-                    ? updatedItems.find((u: ShoppingItem) => u.id === item.id) || item
-                    : item
-                ),
-              };
-            });
+            // Stored items leave the shopping list entirely; drop the returned ids.
+            const removedIds = new Set<string>(result.data.removedShoppingItemIds || []);
+            set(state => ({
+              items: state.items.filter(item => !removedIds.has(item.id)),
+            }));
             return true;
           } else {
             throw new Error(result.error || 'Failed to bulk transfer to storage');
@@ -423,34 +404,6 @@ export const useShoppingStore = create<ShoppingStore>()(
           const message = error instanceof Error ? error.message : 'Failed to bulk transfer to storage';
           set({ error: message });
           console.error('bulkTransferToStorage: Error:', error);
-          return false;
-        }
-      },
-
-      clearCompleted: async () => {
-        set({ error: null });
-        
-        try {
-          const householdId = getHouseholdId();
-          if (!householdId) {
-            throw new Error('No household available');
-          }
-
-          const response = await apiService.delete(`/api/households/${householdId}/shopping/completed`);
-          const result = await response.json();
-          
-          if (result.success) {
-            set(state => ({
-              items: state.items.filter(item => !item.completed)
-            }));
-            return true;
-          } else {
-            throw new Error(result.error || 'Failed to clear completed shopping items');
-          }
-        } catch (error) {
-          const message = error instanceof Error ? error.message : 'Failed to clear completed shopping items';
-          set({ error: message });
-          console.error('clearCompleted: Error:', error);
           return false;
         }
       },
@@ -488,14 +441,14 @@ export const useShoppingStore = create<ShoppingStore>()(
       },
 
       // Computed getters
-      getPendingItems: () => {
+      getToBuyItems: () => {
         const items = get().items;
-        return items.filter(item => !item.completed);
+        return items.filter(item => item.status === ShoppingItemStatus.TO_BUY);
       },
 
-      getCompletedItems: () => {
+      getToStoreItems: () => {
         const items = get().items;
-        return items.filter(item => item.completed);
+        return items.filter(item => item.status === ShoppingItemStatus.TO_STORE);
       },
 
       getItemsByCategory: (category: string) => {
@@ -508,9 +461,9 @@ export const useShoppingStore = create<ShoppingStore>()(
         return get().items.length;
       },
 
-      getCompletedCount: () => {
+      getToStoreCount: () => {
         const items = get().items;
-        return items.filter(item => item.completed).length;
+        return items.filter(item => item.status === ShoppingItemStatus.TO_STORE).length;
       },
 
       removeShoppingItemsByItemId: (itemId: string) => {

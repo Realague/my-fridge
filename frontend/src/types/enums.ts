@@ -75,11 +75,16 @@ export const FREE_QUANTITY_UNITS: Unit[] = [
 // `serving` is not hidden globally — it is only offered for `ItemCategory.MEAL` (see unitSystem).
 export const HIDDEN_STORAGE_UNITS: Unit[] = [];
 
+// Shopping-list article states. Mirrors backend `ShoppingItemStatus`.
+//  - TO_BUY:   in the list, not yet in the cart ("À acheter")
+//  - TO_STORE: bought, waiting to be stored ("À ranger")
+// "Rangé" is not persisted: storing an item deletes the ShoppingItem row.
 export enum ShoppingItemStatus {
-  PENDING = 'pending',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled'
+  TO_BUY = 'to_buy',
+  TO_STORE = 'to_store',
 }
+
+export const SHOPPING_ITEM_STATUSES = Object.values(ShoppingItemStatus);
 
 export enum BarcodeFormat {
   EAN13 = 'ean13',

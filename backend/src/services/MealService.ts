@@ -22,7 +22,7 @@ import {
 import { CreateShoppingItemDto } from '../types/ItemDto';
 import { Meal } from '../models/Meal';
 import { Item } from '../models/Item';
-import { ItemCategory } from '../types/enums';
+import { ItemCategory, ShoppingItemStatus } from '../types/enums';
 import { NotFoundError, ValidationError } from '../errors/CustomErrors';
 import {
   normalizeToBaseUnit,
@@ -243,7 +243,7 @@ export class MealService {
         data.itemId,
         householdId,
         displayed.unit,
-        false
+        ShoppingItemStatus.TO_BUY
       );
 
       const previewItem: ShoppingPreviewItemDto = {
@@ -316,7 +316,7 @@ export class MealService {
         input.itemId,
         householdId,
         input.unit,
-        false
+        ShoppingItemStatus.TO_BUY
       );
 
       if (existing) {
@@ -501,13 +501,14 @@ export class MealService {
         need.itemId,
         householdId,
         displayed.unit,
-        false
+        ShoppingItemStatus.TO_BUY
       );
+      // "Already purchased" == waiting to be stored ("À ranger").
       const completedShop = await this.shoppingItemRepository.getDuplicateShoppingItem(
         need.itemId,
         householdId,
         displayed.unit,
-        true
+        ShoppingItemStatus.TO_STORE
       );
 
       // 1) Already purchased: report it as informational. The user can opt in

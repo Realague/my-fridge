@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { ShoppingItemService } from '../services/ShoppingItemService';
 import { StoredItemService } from '../services/StoredItemService';
 import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto, BulkTransferToStorageDto } from '../types/ItemDto';
+import { ShoppingItemStatus, SHOPPING_ITEM_STATUSES } from '../types/enums';
 
 export class ShoppingItemController {
   private shoppingItemService: ShoppingItemService;
@@ -87,9 +88,14 @@ export class ShoppingItemController {
         return;
       }
 
+      const statusParam = req.query.status as string | undefined;
+      const status = SHOPPING_ITEM_STATUSES.includes(statusParam as ShoppingItemStatus)
+        ? (statusParam as ShoppingItemStatus)
+        : undefined;
+
       const query: GetShoppingItemsQueryDto = {
         householdId,
-        completed: req.query.completed === 'true' ? true : req.query.completed === 'false' ? false : undefined,
+        status,
         limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
         offset: req.query.offset ? parseInt(req.query.offset as string) : undefined,
       };
@@ -155,11 +161,23 @@ export class ShoppingItemController {
     }
   }
 
-  async toggleShoppingItemCompleted(req: Request, res: Response): Promise<void> {
+  async updateShoppingItemStatus(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
+      const { status } = req.body;
 
-      const result = await this.shoppingItemService.toggleShoppingItemCompleted(id as string);
+      if (!SHOPPING_ITEM_STATUSES.includes(status as ShoppingItemStatus)) {
+        res.status(400).json({
+          success: false,
+          error: `Invalid status. Expected one of: ${SHOPPING_ITEM_STATUSES.join(', ')}`,
+        });
+        return;
+      }
+
+      const result = await this.shoppingItemService.setShoppingItemStatus(
+        id as string,
+        status as ShoppingItemStatus
+      );
 
       if (result.success) {
         res.status(200).json(result);
@@ -167,72 +185,7 @@ export class ShoppingItemController {
         res.status(404).json(result);
       }
     } catch (error) {
-      console.error('Error in toggleShoppingItemCompleted:', error);
-      res.status(500).json({
-        success: false,
-        error: 'Internal server error',
-      });
-    }
-  }
-
-  async bulkUpdateCompleted(req: Request, res: Response): Promise<void> {
-    try {
-      const { householdId } = req.params;
-      const { ids, completed } = req.body;
-
-      if (!householdId) {
-        res.status(400).json({
-          success: false,
-          error: 'Household ID is required',
-        });
-        return;
-      }
-
-      if (!Array.isArray(ids) || typeof completed !== 'boolean') {
-        res.status(400).json({
-          success: false,
-          error: 'Invalid request body. Expected ids array and completed boolean.',
-        });
-        return;
-      }
-
-      const result = await this.shoppingItemService.bulkUpdateCompleted(ids, completed, householdId);
-
-      if (result.success) {
-        res.status(200).json(result);
-      } else {
-        res.status(400).json(result);
-      }
-    } catch (error) {
-      console.error('Error in bulkUpdateCompleted:', error);
-      res.status(500).json({
-        success: false,
-        error: 'Internal server error',
-      });
-    }
-  }
-
-  async clearCompleted(req: Request, res: Response): Promise<void> {
-    try {
-      const { householdId } = req.params;
-
-      if (!householdId) {
-        res.status(400).json({
-          success: false,
-          error: 'Household ID is required',
-        });
-        return;
-      }
-
-      const result = await this.shoppingItemService.clearCompleted(householdId);
-
-      if (result.success) {
-        res.status(200).json(result);
-      } else {
-        res.status(400).json(result);
-      }
-    } catch (error) {
-      console.error('Error in clearCompleted:', error);
+      console.error('Error in updateShoppingItemStatus:', error);
       res.status(500).json({
         success: false,
         error: 'Internal server error',

@@ -26,7 +26,8 @@ export const LowStockCard = () => {
   const shoppingItemIds = useMemo(() => {
     const ids = new Set<string>();
     for (const item of shoppingItems) {
-      if (!item.completed && item.item?.id) {
+      // An item anywhere on the list (to buy or to store) counts as "already added".
+      if (item.item?.id) {
         ids.add(item.item.id);
       }
     }

@@ -47,7 +47,7 @@ const Dashboard = () => {
 
   // Zustand stores - selective subscriptions for better performance
   const { user: currentUser, setUser } = useAuthStore();
-  const { getPendingItems, fetchShoppingItems } = useShoppingStore();
+  const { getToBuyItems, fetchShoppingItems } = useShoppingStore();
   const { fetchStoredItems } = useStoredItemStore();
   const { recipes, fetchRecipes } = useRecipeStore();
   const { getItemMinimumsForHousehold, fetchItemMinimums, fetchLowStockItems } = useItemMinimumStore();
@@ -150,7 +150,7 @@ const Dashboard = () => {
   const itemMinimums = getItemMinimumsForHousehold();
 
   const quickActions = [
-    { title: t('pages.shopping.title'), description: t('pages.dashboard.itemsPending', { count: getPendingItems().length }), icon: ShoppingCart, route: '/shopping' },
+    { title: t('pages.shopping.title'), description: t('pages.dashboard.itemsPending', { count: getToBuyItems().length }), icon: ShoppingCart, route: '/shopping' },
     { title: t('pages.meals.title'), description: t('pages.dashboard.planThisWeek'), icon: CalendarDays, route: '/meals' },
     { title: t('pages.recipes.title'), description: t('pages.dashboard.savedRecipes', { count: (recipes || []).length }), icon: BookOpen, route: '/recipes' },
     { title: t('pages.dashboard.itemMinimums'), description: t('pages.dashboard.itemsTracked', { count: itemMinimums.length }), icon: PackageMinus, route: '/item-minimums' },

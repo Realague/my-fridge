@@ -1,36 +1,30 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Users, Filter, Package, PackageCheck, CalendarIcon, ShoppingCart } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Users, Filter, Package, PackageCheck, ShoppingCart, PartyPopper, Trash2 } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { AddItemCard } from '@/components/AddItemCard';
 import { Item } from '@/services/itemService';
 import { useShoppingStore, ShoppingItem } from '@/stores/shoppingStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
-import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useStoreErrorToast } from '@/hooks/useStoreErrorToast';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { getItemDisplayName, getCategoryColor } from '@/utils/itemUtils';
-import { StorageAreaIcon } from '@/utils/storageAreaIcons';
-import { formatQuantityWithUnit } from '@/utils/unitSystem';
+import { getItemDisplayName } from '@/utils/itemUtils';
 import { CategoryIcon } from '@/utils/categoryIcons';
-import { StorageAreaType } from '@/types/enums';
-import { BulkStorageDialog } from '@/components/BulkStorageDialog';
-import { getSuggestedStorageAreaId } from '@/utils/categoryStorageMapping';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { useAuthStore } from '@/stores/authStore';
-import { motion, useReducedMotion } from 'framer-motion';
-import { scrollRevealFadeUp } from '@/lib/motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { shoppingRowMotion } from '@/lib/motion';
 
 import {
   DndContext,
@@ -52,23 +46,23 @@ import {
 import { ShoppingItemRow } from '@/components/shopping/ShoppingItemRow';
 import { AisleSection } from '@/components/shopping/AisleSection';
 import { ShoppingViewModeToggle } from '@/components/shopping/ShoppingViewModeToggle';
+import { BulkStorageDialog } from '@/components/BulkStorageDialog';
 import { useShoppingPreferences } from '@/hooks/useShoppingPreferences';
 import { Aisle, groupItemsByAisle } from '@/utils/aisleMapping';
+
+const noop = () => {};
 
 const Shopping = () => {
   const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion() ?? false;
-  // Protected route hook handles auth and household checks
   const { selectedHouseholdId } = useProtectedRoute();
   const currentUser = useAuthStore((state) => state.user);
-  
-  const { getStorageAreasForHousehold, fetchStorageAreas } = useStorageAreaStore();
-  const { createStoredItem } = useStoredItemStore();
 
-  // Surface fetch errors instead of swallowing them silently.
+  const { getStorageAreasForHousehold, fetchStorageAreas } = useStorageAreaStore();
+
   useStoreErrorToast(useShoppingStore((s) => s.error), useShoppingStore((s) => s.setError));
   useStoreErrorToast(useStorageAreaStore((s) => s.error), useStorageAreaStore((s) => s.setError));
-  
+
   const storageAreas = selectedHouseholdId ? getStorageAreasForHousehold() : [];
   const {
     items,
@@ -77,12 +71,13 @@ const Shopping = () => {
     createShoppingItem,
     updateShoppingItem,
     deleteShoppingItem,
-    toggleShoppingItemCompleted,
+    moveToStore,
+    moveToBuy,
     bulkTransferToStorage,
-    getPendingItems,
-    getCompletedItems,
+    getToBuyItems,
+    getToStoreItems,
     getTotalItems,
-    getCompletedCount
+    getToStoreCount,
   } = useShoppingStore();
 
   const {
@@ -96,540 +91,332 @@ const Shopping = () => {
 
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [completedItemsLoaded, setCompletedItemsLoaded] = useState(false);
-  const [loadingCompleted, setLoadingCompleted] = useState(false);
   const [activeAisle, setActiveAisle] = useState<Aisle | null>(null);
 
-  // Load shopping items and storage areas from API
+  // Guided storage assistant — the set of items being stored (1..N).
+  const [assistantItems, setAssistantItems] = useState<ShoppingItem[] | null>(null);
+  // Explicit confirmation before deleting a "to store" item.
+  const [itemToConfirmDelete, setItemToConfirmDelete] = useState<ShoppingItem | null>(null);
+
+  // Load shopping items and storage areas from API.
   useEffect(() => {
     if (selectedHouseholdId) {
-      // Fetch pending items first
-      fetchShoppingItems(false);
-
-      setCompletedItemsLoaded(false);
-      // Also fetch completed items
-      fetchCompletedItems();
-      // Fetch storage areas for the storage dialog
+      fetchShoppingItems();
       fetchStorageAreas();
     }
   }, [selectedHouseholdId, fetchShoppingItems, fetchStorageAreas]);
 
-  // Function to fetch completed items
-  const fetchCompletedItems = async () => {
-    if (!selectedHouseholdId || completedItemsLoaded) return;
-    
-    setLoadingCompleted(true);
-    try {
-      await fetchShoppingItems(true);
-      setCompletedItemsLoaded(true);
-    } catch (error) {
-      console.error('Failed to fetch completed items:', error);
-    } finally {
-      setLoadingCompleted(false);
-    }
-  };
-
-  // Function to refresh all shopping items
-  const refreshShoppingItems = async () => {
+  // Real-time is deferred to V2 — as a light touch, refetch when the window
+  // regains focus so a member sees the list roughly up to date.
+  useEffect(() => {
     if (!selectedHouseholdId) return;
-    
-    setCompletedItemsLoaded(false);
-    // Fetch pending items
-    await fetchShoppingItems(false);
-    
-    // Fetch completed items
-    await fetchCompletedItems();
-  };
-
-  // Inline quick-store prompt state
-  const [quickStoreItemId, setQuickStoreItemId] = useState<string | null>(null);
-  const [quickStoreDate, setQuickStoreDate] = useState('');
-  
-  // Fallback full storage dialog (used from "Modifier" toast action)
-  const [showStorageDialog, setShowStorageDialog] = useState(false);
-  const [itemToStore, setItemToStore] = useState<ShoppingItem | null>(null);
-  const [selectedStorageArea, setSelectedStorageArea] = useState('');
-  const [storageLocation, setStorageLocation] = useState('');
-  const [storageExpirationDate, setStorageExpirationDate] = useState('');
-
-  // Bulk storage dialog state
-  const [showBulkDialog, setShowBulkDialog] = useState(false);
+    const onFocus = () => fetchShoppingItems();
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, [selectedHouseholdId, fetchShoppingItems]);
 
   const handleAddItem = async (item: Item, quantity: string, unit: string) => {
     if (!selectedHouseholdId) {
       toast.error(t('messages.error.noHouseholdSelected'));
       return;
     }
-
-    await createShoppingItem({
-      itemId: item.id,
-      quantity,
-      unit,
-    });
+    await createShoppingItem({ itemId: item.id, quantity, unit });
   };
 
-  const toggleItemComplete = async (id: string) => {
-    const item = items.find(item => item.id === id);
-    if (!item || !selectedHouseholdId) return;
-
-    if (!item.completed) {
-      if (storageAreas.length === 0) {
-        // No storage areas -- fallback to old dialog
-        setItemToStore(item);
-        setSelectedStorageArea('');
-        setStorageLocation('');
-        setStorageExpirationDate('');
-        setShowStorageDialog(true);
-        return;
-      }
-
-      // Show inline quick-store prompt for this item
-      setQuickStoreItemId(id);
-      setQuickStoreDate('');
-    } else {
-      // Item is being unchecked - toggle via API
-      const success = await toggleShoppingItemCompleted(id);
-      
-      if (success && completedItemsLoaded) {
-        await refreshShoppingItems();
-      }
-    }
+  // À acheter → À ranger (no toast: this action is repeated many times in-store).
+  const handleCheck = (id: string) => {
+    void moveToStore(id);
   };
 
-  const handleQuickStore = async (id: string) => {
-    const item = items.find(i => i.id === id);
-    if (!item || !selectedHouseholdId) return;
-
-    const suggestedAreaId = getSuggestedStorageAreaId(item.item?.category, storageAreas);
-    if (!suggestedAreaId) return;
-
-    const suggestedArea = storageAreas.find(a => a.id === suggestedAreaId);
-
-    try {
-      const createdStoredItem = await createStoredItem({
-        itemId: item.item?.id,
-        storageAreaId: suggestedAreaId,
-        quantity: parseFloat(item.quantity),
-        unit: item.unit as any,
-        expirationDate: quickStoreDate || undefined,
-      });
-
-      const updateSuccess = await updateShoppingItem(item.id, {
-        storedItemId: createdStoredItem.id,
-        completed: true,
-      });
-
-      if (updateSuccess) {
-        const itemName = item.item ? getItemDisplayName(item.item, t) : '';
-        const areaName = suggestedArea ? suggestedArea.name : '';
-
-        toast.success(t('pages.shopping.itemAddedQuick', { item: itemName, area: areaName }), {
-          action: {
-            label: t('pages.shopping.modify'),
-            onClick: () => {
-              setItemToStore(item);
-              setSelectedStorageArea(suggestedAreaId);
-              setStorageLocation('');
-              setStorageExpirationDate(quickStoreDate);
-              setShowStorageDialog(true);
-            },
-          },
-        });
-        await refreshShoppingItems();
-      }
-    } catch (error) {
-      console.error('Error in quick store:', error);
-      toast.error(t('messages.error.failedToAddToStorage'));
-    }
-
-    setQuickStoreItemId(null);
-    setQuickStoreDate('');
+  // À ranger → À acheter.
+  const handleMoveBack = (id: string) => {
+    void moveToBuy(id);
   };
 
-  const handleSkipQuickStore = async (id: string) => {
-    if (!selectedHouseholdId) return;
-
-    try {
-      const success = await toggleShoppingItemCompleted(id);
-      if (success) {
-        toast.success(t('messages.success.itemMarkedCompleted'));
-        await refreshShoppingItems();
-      }
-    } catch (error) {
-      console.error('Error skipping storage:', error);
-    }
-
-    setQuickStoreItemId(null);
-    setQuickStoreDate('');
-  };
-
-  const handleCancelQuickStore = () => {
-    setQuickStoreItemId(null);
-    setQuickStoreDate('');
-  };
-
-  const handleAddToStorage = async () => {
-    if (!itemToStore || !selectedStorageArea || !selectedHouseholdId) return;
-
-    try {
-      // Add to storage using the new API
-      const createdStoredItem = await createStoredItem({
-        itemId: itemToStore.item?.id,
-        storageAreaId: selectedStorageArea,
-        quantity: parseFloat(itemToStore.quantity),
-        unit: itemToStore.unit as any,
-        expirationDate: storageExpirationDate || undefined,
-        location: storageLocation.trim() || undefined,
-      });
-
-      // Update the shopping item with the stored item ID, then mark as completed
-      const updateSuccess = await updateShoppingItem(itemToStore.id, {
-        storedItemId: createdStoredItem.id,
-        completed: true
-      });
-      
-      if (updateSuccess) {
-        toast.success(t('messages.success.itemAddedToStorage'));
-        // Refresh items to ensure proper state
-        await refreshShoppingItems();
-      }
-    } catch (error) {
-      console.error('Error adding to storage:', error);
-      toast.error(t('messages.error.failedToAddToStorage'));
-    }
-
-    // Close dialog and reset state
-    setShowStorageDialog(false);
-    setItemToStore(null);
-    setSelectedStorageArea('');
-    setStorageLocation('');
-    setStorageExpirationDate('');
-  };
-
-  const handleSkipStorage = async () => {
-    if (!itemToStore || !selectedHouseholdId) return;
-
-    try {
-      // Just mark as completed without adding to storage
-      const success = await toggleShoppingItemCompleted(itemToStore.id);
-      
-      if (success) {
-        toast.success(t('messages.success.itemMarkedCompleted'));
-        // Refresh items to ensure proper state
-        await refreshShoppingItems();
-      }
-    } catch (error) {
-      console.error('Error marking item as completed:', error);
-      toast.error(t('messages.error.failedToMarkCompleted'));
-    }
-
-    // Close dialog and reset state
-    setShowStorageDialog(false);
-    setItemToStore(null);
-  };
-
-  const handleBulkTransfer = async (items: Array<{ shoppingItemId: string; storageAreaId: string; expirationDate?: string }>) => {
-    const success = await bulkTransferToStorage({ items });
-    if (success) {
-      toast.success(t('pages.shopping.bulkStorageSuccess', { count: items.length }));
-      await refreshShoppingItems();
-    } else {
-      toast.error(t('pages.shopping.bulkStorageError'));
-    }
-  };
-
-  const handleBulkSkipAll = async () => {
-    // Just close the dialog without doing anything
-  };
-
-  const deleteItemHandler = async (id: string) => {
+  const deleteToBuy = async (id: string) => {
     if (!selectedHouseholdId) return;
     await deleteShoppingItem(id);
   };
 
-  const startEditingItem = (id: string) => {
-    setEditingItem(id);
+  const requestDeleteToStore = (id: string) => {
+    const item = items.find((i) => i.id === id);
+    if (item) setItemToConfirmDelete(item);
   };
 
-  const saveItemEdit = async (id: string, newQuantity: string, newUnit: string) => {
-    if (!selectedHouseholdId) return;
-    
-    const success = await updateShoppingItem(id, {
-      quantity: newQuantity,
-      unit: newUnit
-    });
-    
-    if (success) {
-      setEditingItem(null);
+  const confirmDeleteToStore = async () => {
+    if (!itemToConfirmDelete) return;
+    await deleteShoppingItem(itemToConfirmDelete.id);
+    setItemToConfirmDelete(null);
+  };
+
+  const openAssistantForItem = (id: string) => {
+    const item = getToStoreItems().find((i) => i.id === id);
+    if (item) setAssistantItems([item]);
+  };
+
+  const openAssistantForAll = () => {
+    const all = getToStoreItems();
+    if (all.length > 0) setAssistantItems(all);
+  };
+
+  const handleStore = async (
+    selected: Array<{ shoppingItemId: string; storageAreaId: string; expirationDate?: string }>
+  ) => {
+    const success = await bulkTransferToStorage({ items: selected });
+    if (!success) {
+      toast.error(t('pages.shopping.bulkStorageError'));
+      return;
+    }
+    setAssistantItems(null);
+    // Satisfaction cue once everything has been stored.
+    if (getTotalItems() === 0) {
+      toast.success(t('pages.shopping.allStoredAway'), {
+        icon: '🎉',
+      });
     }
   };
 
-  const cancelItemEdit = () => {
-    setEditingItem(null);
+  const startEditingItem = (id: string) => setEditingItem(id);
+  const cancelItemEdit = () => setEditingItem(null);
+  const saveItemEdit = async (id: string, newQuantity: string, newUnit: string) => {
+    if (!selectedHouseholdId) return;
+    const success = await updateShoppingItem(id, { quantity: newQuantity, unit: newUnit });
+    if (success) setEditingItem(null);
   };
 
-  // Group and aggregate items by itemId
-  const aggregateShoppingItems = (itemsList: ShoppingItem[]) => {
-    const grouped = new Map<string, ShoppingItem[]>();
-    itemsList.forEach(item => {
-      const key = item.item?.id || 'unknown';
-      if (!grouped.has(key)) {
-        grouped.set(key, []);
-      }
-      grouped.get(key)!.push(item);
-    });
-
-    // For items with same itemId and unit, show aggregated view
-    return Array.from(grouped.values()).flatMap(group => {
-      if (group.length === 1) return group;
-      
-      // Check if all have same unit
-      const firstUnit = group[0].unit;
-      if (group.every(item => item.unit === firstUnit)) {
-        // Aggregate - show total quantity
-        const totalQty = group.reduce((sum, item) => sum + parseFloat(item.quantity), 0);
-        return [{
-          ...group[0],
-          quantity: totalQty.toString(),
-        }];
-      }
-      return group;
-    });
-  };
-
-  // Filter items by category
   const filterItemsByCategory = (itemsList: ShoppingItem[]) => {
     if (categoryFilter === 'all') return itemsList;
-    return itemsList.filter(item => item.item?.category === categoryFilter);
+    return itemsList.filter((item) => item.item?.category === categoryFilter);
   };
 
-  const pendingItems = filterItemsByCategory(aggregateShoppingItems(getPendingItems()));
-  const completedItems = filterItemsByCategory(aggregateShoppingItems(getCompletedItems()));
-  const totalItems = getTotalItems();
-  const completedCount = getCompletedCount();
+  const getItemName = (shoppingItem: ShoppingItem) =>
+    shoppingItem.item ? getItemDisplayName(shoppingItem.item, t) : 'Unknown Item';
 
-  // Get unique categories from items
-  const categories = ['all', ...Array.from(new Set(items.map(item => item.item?.category).filter(Boolean)))];
-
-  const getItemName = (shoppingItem: ShoppingItem) => {
-    return shoppingItem.item ? getItemDisplayName(shoppingItem.item, t) : 'Unknown Item';
-  };
-
-  const getItemCategory = (shoppingItem: ShoppingItem) => {
-    return t(`items.categories.${shoppingItem.item?.category}`) || t('items.categories.other');
-  };
-
-  // Shared props passed down to every ShoppingItemRow, regardless of view mode.
-  const sharedRowProps = {
-    currentUserId: currentUser?.id,
-    storageAreas,
-    editingItemId: editingItem,
-    quickStoreItemId,
-    quickStoreDate,
-    onToggleComplete: toggleItemComplete,
-    onStartEdit: startEditingItem,
-    onCancelEdit: cancelItemEdit,
-    onSaveEdit: saveItemEdit,
-    onDelete: deleteItemHandler,
-    onQuickStore: handleQuickStore,
-    onSkipQuickStore: handleSkipQuickStore,
-    onCancelQuickStore: handleCancelQuickStore,
-    onQuickStoreDateChange: setQuickStoreDate,
-  };
-
-  // --- Aisle mode data ---------------------------------------------------
-  // In aisle mode, completed items stay in their aisle rather than being
-  // split into a separate section, so we aggregate both sets together.
-  const allFilteredItems = useMemo(
-    () =>
-      filterItemsByCategory(
-        aggregateShoppingItems([...getPendingItems(), ...getCompletedItems()])
-      ),
+  // --- Derived data ------------------------------------------------------
+  const toBuyItems = useMemo(
+    () => filterItemsByCategory(getToBuyItems()),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [items, categoryFilter]
+  );
+  const toStoreItems = useMemo(
+    () => filterItemsByCategory(getToStoreItems()),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [items, categoryFilter]
   );
 
-  const itemsByAisle = useMemo(
-    () => groupItemsByAisle(allFilteredItems),
-    [allFilteredItems]
-  );
+  const totalItems = getTotalItems();
+  const toStoreCount = getToStoreCount();
+  const hasToStore = toStoreItems.length > 0;
 
-  const visibleAisleOrder = useMemo(
-    () => aisleOrder.filter((aisle) => itemsByAisle[aisle].length > 0),
-    [aisleOrder, itemsByAisle]
-  );
+  const categories = ['all', ...Array.from(new Set(items.map((item) => item.item?.category).filter(Boolean)))];
 
-  // --- A-Z mode data -----------------------------------------------------
   const sortAlpha = (list: ShoppingItem[]) =>
     [...list].sort((a, b) =>
-      getItemName(a).localeCompare(getItemName(b), undefined, {
-        sensitivity: 'base',
-      })
+      getItemName(a).localeCompare(getItemName(b), undefined, { sensitivity: 'base' })
     );
 
-  const pendingItemsAlpha = useMemo(
-    () => sortAlpha(pendingItems),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pendingItems]
+  const toBuyByAisle = useMemo(() => groupItemsByAisle(toBuyItems), [toBuyItems]);
+  const toStoreByAisle = useMemo(() => groupItemsByAisle(toStoreItems), [toStoreItems]);
+  const toBuyAisleOrder = useMemo(
+    () => aisleOrder.filter((aisle) => toBuyByAisle[aisle].length > 0),
+    [aisleOrder, toBuyByAisle]
   );
-  const completedItemsAlpha = useMemo(
-    () => sortAlpha(completedItems),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [completedItems]
-  );
-
-  // --- DnD --------------------------------------------------------------
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 4 },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
+  const toStoreAisleOrder = useMemo(
+    () => aisleOrder.filter((aisle) => toStoreByAisle[aisle].length > 0),
+    [aisleOrder, toStoreByAisle]
   );
 
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveAisle(event.active.id as Aisle);
+  // Row props per section.
+  const buyRowProps = {
+    variant: 'to-buy' as const,
+    currentUserId: currentUser?.id,
+    editingItemId: editingItem,
+    onStartEdit: startEditingItem,
+    onCancelEdit: cancelItemEdit,
+    onSaveEdit: saveItemEdit,
+    onDelete: deleteToBuy,
+    onCheck: handleCheck,
+    onOpenAssistant: noop,
+    onMoveBack: noop,
+  };
+  const storeRowProps = {
+    variant: 'to-store' as const,
+    currentUserId: currentUser?.id,
+    editingItemId: null,
+    onStartEdit: noop,
+    onCancelEdit: noop,
+    onSaveEdit: noop,
+    onDelete: requestDeleteToStore,
+    onCheck: noop,
+    onOpenAssistant: openAssistantForItem,
+    onMoveBack: handleMoveBack,
   };
 
+  // --- DnD (aisle reordering, "À acheter" section) -----------------------
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+  const handleDragStart = (event: DragStartEvent) => setActiveAisle(event.active.id as Aisle);
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveAisle(null);
     if (!over || active.id === over.id) return;
     reorderAisle(active.id as Aisle, over.id as Aisle);
   };
+  const handleDragCancel = () => setActiveAisle(null);
 
-  const handleDragCancel = () => {
-    setActiveAisle(null);
+  // --- Section renderers -------------------------------------------------
+  const renderAlphaList = (
+    list: ShoppingItem[],
+    rowProps: typeof buyRowProps | typeof storeRowProps
+  ) => (
+    <div className="space-y-2 sm:space-y-3">
+      <AnimatePresence initial={false}>
+        {sortAlpha(list).map((shoppingItem) => (
+          <motion.div
+            key={shoppingItem.id}
+            layout={!prefersReducedMotion}
+            {...shoppingRowMotion(prefersReducedMotion)}
+          >
+            <ShoppingItemRow shoppingItem={shoppingItem} {...rowProps} />
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  );
+
+  const renderToBuySection = () => {
+    if (toBuyItems.length === 0) {
+      return (
+        <div className="text-center py-8 text-muted-foreground">
+          <div className="text-4xl mb-2">{hasToStore ? '🛒' : categoryFilter === 'all' ? '🎉' : '📋'}</div>
+          <p>
+            {hasToStore
+              ? t('pages.shopping.allInCart')
+              : categoryFilter === 'all'
+                ? t('pages.shopping.allItemsCompleted')
+                : t('pages.shopping.noItemsInCategory', { category: categoryFilter.toLowerCase() })}
+          </p>
+        </div>
+      );
+    }
+
+    if (viewMode === 'aisle') {
+      return (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          onDragCancel={handleDragCancel}
+        >
+          <SortableContext items={toBuyAisleOrder} strategy={verticalListSortingStrategy}>
+            <div className="space-y-3">
+              {toBuyAisleOrder.map((aisle) => (
+                <AisleSection
+                  key={aisle}
+                  aisle={aisle}
+                  items={toBuyByAisle[aisle]}
+                  collapsed={isAisleCollapsed(aisle)}
+                  onToggleCollapsed={toggleAisleCollapsed}
+                  {...buyRowProps}
+                />
+              ))}
+            </div>
+          </SortableContext>
+          <DragOverlay>
+            {activeAisle ? (
+              <AisleSection
+                aisle={activeAisle}
+                items={toBuyByAisle[activeAisle] ?? []}
+                collapsed
+                dragPreview
+                {...buyRowProps}
+              />
+            ) : null}
+          </DragOverlay>
+        </DndContext>
+      );
+    }
+
+    return renderAlphaList(toBuyItems, buyRowProps);
+  };
+
+  const renderToStoreSection = () => {
+    if (viewMode === 'aisle') {
+      return (
+        <div className="space-y-3">
+          {toStoreAisleOrder.map((aisle) => (
+            <AisleSection
+              key={aisle}
+              aisle={aisle}
+              items={toStoreByAisle[aisle]}
+              collapsed={isAisleCollapsed(aisle)}
+              onToggleCollapsed={toggleAisleCollapsed}
+              {...storeRowProps}
+            />
+          ))}
+        </div>
+      );
+    }
+    return renderAlphaList(toStoreItems, storeRowProps);
   };
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Storage Dialog */}
-      <Dialog open={showStorageDialog} onOpenChange={setShowStorageDialog}>
+      {/* Guided storage assistant (single item or "Tout ranger") */}
+      <BulkStorageDialog
+        open={assistantItems !== null}
+        onOpenChange={(open) => !open && setAssistantItems(null)}
+        items={assistantItems ?? []}
+        storageAreas={storageAreas}
+        title={
+          assistantItems && assistantItems.length === 1
+            ? t('pages.shopping.storeItemTitle', { name: getItemName(assistantItems[0]) })
+            : t('pages.shopping.storeAllTitle')
+        }
+        onConfirm={handleStore}
+        onSkipAll={() => setAssistantItems(null)}
+      />
+
+      {/* Delete confirmation for a "to store" item */}
+      <Dialog open={itemToConfirmDelete !== null} onOpenChange={(open) => !open && setItemToConfirmDelete(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Package className="h-5 w-5 text-primary" />
-               {t('pages.shopping.addToStorage')}
+              <Trash2 className="h-5 w-5 text-mf-danger" />
+              {t('pages.shopping.deleteToStoreTitle')}
             </DialogTitle>
+            <DialogDescription>
+              {t('pages.shopping.deleteToStoreDescription', {
+                name: itemToConfirmDelete ? getItemName(itemToConfirmDelete) : '',
+              })}
+            </DialogDescription>
           </DialogHeader>
-          
-          {itemToStore && (
-            <div className="space-y-4">
-              <div className="bg-muted p-3 rounded-lg">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-medium">{getItemName(itemToStore)}</span>
-                  <Badge className={`${getCategoryColor(itemToStore.item?.category)} inline-flex items-center gap-1`}>
-                    <CategoryIcon category={itemToStore.item?.category} className="h-3.5 w-3.5" />
-                    {getItemCategory(itemToStore)}
-                  </Badge>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {formatQuantityWithUnit(itemToStore.quantity, itemToStore.unit, t, {
-                    item: itemToStore.item,
-                    itemName: getItemName(itemToStore),
-                  })}
-                </p>
-              </div>
-              
-              <div>
-                <Label className="text-sm">{t('pages.shopping.storageArea')}</Label>
-                <Select value={selectedStorageArea} onValueChange={setSelectedStorageArea}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder={t('pages.shopping.selectStorageArea')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {storageAreas.map((area) => (
-                      <SelectItem key={area.id} value={area.id}>
-                        <div className="flex items-center gap-2">
-                          <StorageAreaIcon type={area.type} className="h-4 w-4" />
-                          <span>{area.name}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div>
-                <Label className="text-sm">{t('pages.shopping.locationOptional')}</Label>
-                <Input
-                  value={storageLocation}
-                  onChange={(e) => setStorageLocation(e.target.value)}
-                  placeholder={t('storageArea.locationPlaceholder')}
-                  className="mt-1"
-                />
-              </div>
-              
-              {storageAreas.find((a) => a.id === selectedStorageArea)?.type !== StorageAreaType.FREEZER && (
-                <div>
-                  <Label className="text-sm">{t('pages.shopping.expirationDateOptional')}</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="w-full mt-1 justify-start font-normal"
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {storageExpirationDate
-                          ? format(new Date(storageExpirationDate), 'dd MMMM yyyy', { locale: fr })
-                          : t('pages.shopping.expirationDateOptional')}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={storageExpirationDate ? new Date(storageExpirationDate) : undefined}
-                        onSelect={(date) => setStorageExpirationDate(date ? format(date, 'yyyy-MM-dd') : '')}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              )}
-              
-              <div className="flex gap-2 pt-2">
-              <Button 
-                  variant="outline" 
-                  onClick={handleSkipStorage}
-                  className="flex-1"
-                >
-                  {t('pages.shopping.skipStorage')}
-                </Button>
-                <Button
-                  variant="green"
-                  onClick={handleAddToStorage} 
-                  disabled={!selectedStorageArea}
-                  className="flex-1"
-                >
-                  {t('pages.shopping.addToStorage')}
-                </Button>
-              </div>
-            </div>
-          )}
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button variant="outline" onClick={() => setItemToConfirmDelete(null)} className="flex-1">
+              {t('common.cancel')}
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteToStore} className="flex-1">
+              {t('common.delete')}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {/* Bulk Storage Dialog */}
-      <BulkStorageDialog
-        open={showBulkDialog}
-        onOpenChange={setShowBulkDialog}
-        pendingItems={getPendingItems()}
-        storageAreas={storageAreas}
-        onConfirm={handleBulkTransfer}
-        onSkipAll={handleBulkSkipAll}
-      />
 
       {/* Header */}
       <div className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-foreground flex items-center gap-2"><ShoppingCart className="h-5 w-5 text-primary shrink-0" aria-hidden />{t('pages.shopping.title')}</h1>
+              <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+                <ShoppingCart className="h-5 w-5 text-primary shrink-0" aria-hidden />
+                {t('pages.shopping.title')}
+              </h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-sm text-muted-foreground">
-                  {t('pages.shopping.itemsCompleted', { completed: completedCount, count: totalItems })}
+                  {t('pages.shopping.itemCountSummary', { count: totalItems })}
                 </p>
                 <div className="flex items-center gap-1">
                   <Users className="h-4 w-4 text-primary" />
@@ -637,12 +424,12 @@ const Shopping = () => {
                 </div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-primary">
-                {Math.round((completedCount / totalItems) * 100) || 0}%
+            {toStoreCount > 0 && (
+              <div className="text-right">
+                <div className="text-2xl font-bold text-mf-green-deep">{toStoreCount}</div>
+                <div className="text-xs text-muted-foreground">{t('pages.shopping.toStoreShort')}</div>
               </div>
-              <div className="text-xs text-muted-foreground">{t('pages.shopping.complete')}</div>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -656,7 +443,7 @@ const Shopping = () => {
           buttonText={t('pages.shopping.add')}
         />
 
-        {loading && (
+        {loading && items.length === 0 && (
           <Card variant="elevated">
             <CardContent className="p-8 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-mf-green mx-auto mb-4"></div>
@@ -673,243 +460,97 @@ const Shopping = () => {
           </Card>
         )}
 
-        {!loading && selectedHouseholdId && (
-        <>
-        {/* Category Filter + View Mode Toggle */}
-        <Card variant="elevated">
-          <CardContent className="p-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-3">
-                <Filter className="h-5 w-5 text-muted-foreground" />
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder={t('pages.shopping.filterByCategory')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        <span className="inline-flex items-center gap-2">
-                          {category !== 'all' && (
-                            <CategoryIcon category={category} className="h-4 w-4" />
-                          )}
-                          {t(`items.categories.${category}`)}
-                        </span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {categoryFilter !== 'all' && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setCategoryFilter('all')}
-                    className="text-muted-foreground"
-                  >
-                    {t('pages.shopping.clearFilter')}
-                  </Button>
-                )}
-              </div>
-              <ShoppingViewModeToggle
-                value={viewMode}
-                onChange={setViewMode}
-                className="shrink-0"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {viewMode === 'aisle' ? (
+        {selectedHouseholdId && (!loading || items.length > 0) && (
           <>
-            {pendingItems.length > 0 && storageAreas.length > 0 && (
-              <div className="flex justify-end">
-                <Button
-                  variant="green"
-                  size="sm"
-                  onClick={() => setShowBulkDialog(true)}
-                  className="gap-1.5"
-                >
-                  <PackageCheck className="h-4 w-4" />
-                  {t('pages.shopping.bulkStorage')}
-                </Button>
-              </div>
-            )}
-
-            {visibleAisleOrder.length > 0 ? (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-                onDragCancel={handleDragCancel}
-              >
-                <SortableContext
-                  items={visibleAisleOrder}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-3">
-                    {visibleAisleOrder.map((aisle) => (
-                      <AisleSection
-                        key={aisle}
-                        aisle={aisle}
-                        items={itemsByAisle[aisle]}
-                        collapsed={isAisleCollapsed(aisle)}
-                        onToggleCollapsed={toggleAisleCollapsed}
-                        {...sharedRowProps}
-                      />
-                    ))}
-                  </div>
-                </SortableContext>
-                <DragOverlay>
-                  {activeAisle ? (
-                    <AisleSection
-                      aisle={activeAisle}
-                      items={itemsByAisle[activeAisle] ?? []}
-                      collapsed
-                      dragPreview
-                      {...sharedRowProps}
-                    />
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
-            ) : (
+            {totalItems === 0 ? (
               <Card variant="elevated">
-                <CardContent className="p-8 text-center text-muted-foreground">
-                  <div className="text-4xl mb-2">
-                    {categoryFilter === 'all' ? '🛒' : '📋'}
-                  </div>
-                  <p>
-                    {categoryFilter === 'all'
-                      ? t('pages.shopping.addNewItemsToGetStarted')
-                      : t('pages.shopping.noItemsInCategory', {
-                          category: categoryFilter.toLowerCase(),
-                        })}
-                  </p>
-                  {categoryFilter !== 'all' && (
-                    <p className="text-sm">
-                      {t('pages.shopping.tryDifferentCategory')}
-                    </p>
-                  )}
+                <CardContent className="p-10 text-center">
+                  <div className="text-5xl mb-3">🛒</div>
+                  <h2 className="text-lg font-bold text-foreground">{t('pages.shopping.emptyTitle')}</h2>
+                  <p className="text-sm text-muted-foreground mt-2">{t('pages.shopping.emptyDescription')}</p>
                 </CardContent>
               </Card>
+            ) : (
+              <>
+                {/* Category Filter + View Mode Toggle */}
+                <Card variant="elevated">
+                  <CardContent className="p-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <div className="flex items-center gap-3">
+                        <Filter className="h-5 w-5 text-muted-foreground" />
+                        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                          <SelectTrigger className="w-48">
+                            <SelectValue placeholder={t('pages.shopping.filterByCategory')} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem key={category} value={category}>
+                                <span className="inline-flex items-center gap-2">
+                                  {category !== 'all' && (
+                                    <CategoryIcon category={category} className="h-4 w-4" />
+                                  )}
+                                  {t(`items.categories.${category}`)}
+                                </span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {categoryFilter !== 'all' && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setCategoryFilter('all')}
+                            className="text-muted-foreground"
+                          >
+                            {t('pages.shopping.clearFilter')}
+                          </Button>
+                        )}
+                      </div>
+                      <ShoppingViewModeToggle value={viewMode} onChange={setViewMode} className="shrink-0" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <div className={`grid grid-cols-1 gap-6 ${hasToStore ? 'lg:grid-cols-2 lg:items-start' : ''}`}>
+                  {/* À acheter */}
+                  <Card variant="elevated">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+                          <ShoppingCart className="h-5 w-5" />
+                        </span>
+                        {t('pages.shopping.toBuy')}
+                        <span className="text-sm font-normal text-muted-foreground">({toBuyItems.length})</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>{renderToBuySection()}</CardContent>
+                  </Card>
+
+                  {/* À ranger — hidden when empty */}
+                  {hasToStore && (
+                    <Card variant="elevated" className="border-mf-green/30 bg-mf-green-soft/20">
+                      <CardHeader>
+                        <div className="flex items-center justify-between gap-3">
+                          <CardTitle className="flex items-center gap-2">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-mf-green-soft text-mf-green-deep">
+                              <Package className="h-5 w-5" />
+                            </span>
+                            {t('pages.shopping.toStore')}
+                            <span className="text-sm font-normal text-muted-foreground">({toStoreItems.length})</span>
+                          </CardTitle>
+                          <Button variant="green" size="sm" onClick={openAssistantForAll} className="gap-1.5 shrink-0">
+                            <PackageCheck className="h-4 w-4" />
+                            {t('pages.shopping.storeAll')}
+                          </Button>
+                        </div>
+                      </CardHeader>
+                      <CardContent>{renderToStoreSection()}</CardContent>
+                    </Card>
+                  )}
+                </div>
+              </>
             )}
           </>
-        ) : (
-          <>
-            {/* Pending Items (A-Z) */}
-            <Card variant="elevated">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <ShoppingCart className="h-5 w-5 text-foreground" />
-                    {t('pages.shopping.toBuy')} ({pendingItemsAlpha.length})
-                    {categoryFilter !== 'all' && (
-                      <span className="text-sm font-normal text-muted-foreground ml-2">
-                        • {t(`storageArea.types.${categoryFilter}`)}
-                      </span>
-                    )}
-                  </CardTitle>
-                  {pendingItemsAlpha.length > 0 && storageAreas.length > 0 && (
-                    <Button
-                      variant="green"
-                      size="sm"
-                      onClick={() => setShowBulkDialog(true)}
-                      className="gap-1.5"
-                    >
-                      <PackageCheck className="h-4 w-4" />
-                      {t('pages.shopping.bulkStorage')}
-                    </Button>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {pendingItemsAlpha.map((shoppingItem) => (
-                    <motion.div
-                      key={shoppingItem.id}
-                      {...scrollRevealFadeUp(prefersReducedMotion)}
-                    >
-                      <ShoppingItemRow
-                        shoppingItem={shoppingItem}
-                        {...sharedRowProps}
-                      />
-                    </motion.div>
-                  ))}
-
-                  {pendingItemsAlpha.length === 0 && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <div className="text-4xl mb-2">
-                        {categoryFilter === 'all' ? '🎉' : '📋'}
-                      </div>
-                      <p>
-                        {categoryFilter === 'all'
-                          ? t('pages.shopping.allItemsCompleted')
-                          : t('pages.shopping.noItemsInCategory', { category: categoryFilter.toLowerCase() })
-                        }
-                      </p>
-                      <p className="text-sm">
-                        {categoryFilter === 'all'
-                          ? t('pages.shopping.addNewItemsToGetStarted')
-                          : t('pages.shopping.tryDifferentCategory')
-                        }
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Completed Items (A-Z) */}
-            <Card variant="elevated">
-              <CardHeader>
-                <CardTitle>
-                  {t('pages.shopping.completed')} ({completedItemsAlpha.length})
-                  {categoryFilter !== 'all' && (
-                    <span className="text-sm font-normal text-muted-foreground ml-2">
-                      • {categoryFilter}
-                    </span>
-                  )}
-                  {loadingCompleted && (
-                    <div className="inline-flex items-center gap-2 ml-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-mf-green"></div>
-                      <span className="text-sm text-muted-foreground">{t('pages.shopping.loading')}</span>
-                    </div>
-                  )}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {loadingCompleted && completedItemsAlpha.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-mf-green mx-auto mb-4"></div>
-                    <p>{t('pages.shopping.loadingCompletedItems')}</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {completedItemsAlpha.map((shoppingItem) => (
-                      <motion.div
-                        key={shoppingItem.id}
-                        {...scrollRevealFadeUp(prefersReducedMotion)}
-                      >
-                        <ShoppingItemRow
-                          shoppingItem={shoppingItem}
-                          isCompleted
-                          {...sharedRowProps}
-                        />
-                      </motion.div>
-                    ))}
-                    {completedItemsAlpha.length === 0 && completedItemsLoaded && (
-                      <div className="text-center py-8 text-muted-foreground">
-                        <div className="text-4xl mb-2">✅</div>
-                        <p>{t('pages.shopping.noCompletedItemsYet')}</p>
-                        <p className="text-sm">{t('pages.shopping.completedItemsWillAppear')}</p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </>
-        )}
-        </>
         )}
       </div>
 

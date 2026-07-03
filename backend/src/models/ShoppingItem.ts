@@ -3,7 +3,7 @@ import sequelize from '../config/database';
 import { Item } from './Item';
 import { Household } from './Household';
 import { User } from './User';
-import { Unit, LINE_STORAGE_UNITS } from '../types/enums';
+import { Unit, LINE_STORAGE_UNITS, ShoppingItemStatus, SHOPPING_ITEM_STATUSES } from '../types/enums';
 
 interface ShoppingItemAttributes {
   id: string;
@@ -11,7 +11,7 @@ interface ShoppingItemAttributes {
   householdId: string;
   quantity: number;
   unit: string;
-  completed: boolean;
+  status: ShoppingItemStatus;
   priority: number;
   storedItemId: string | null;
   createdBy: string;
@@ -19,7 +19,7 @@ interface ShoppingItemAttributes {
   updatedAt: Date;
 }
 
-interface ShoppingItemCreationAttributes extends Optional<ShoppingItemAttributes, 'id' | 'createdAt' | 'updatedAt' | 'completed' | 'priority' | 'storedItemId'> {}
+interface ShoppingItemCreationAttributes extends Optional<ShoppingItemAttributes, 'id' | 'createdAt' | 'updatedAt' | 'status' | 'priority' | 'storedItemId'> {}
 
 class ShoppingItem extends Model<ShoppingItemAttributes, ShoppingItemCreationAttributes> implements ShoppingItemAttributes {
   public id!: string;
@@ -27,7 +27,7 @@ class ShoppingItem extends Model<ShoppingItemAttributes, ShoppingItemCreationAtt
   public householdId!: string;
   public quantity!: number;
   public unit!: string;
-  public completed!: boolean;
+  public status!: ShoppingItemStatus;
   public priority!: number;
   public storedItemId!: string | null;
   public createdBy!: string;
@@ -77,10 +77,17 @@ ShoppingItem.init(
         },
       },
     },
-    completed: {
-      type: DataTypes.BOOLEAN,
+    status: {
+      type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: false,
+      defaultValue: ShoppingItemStatus.TO_BUY,
+      validate: {
+        isValidStatus(value: string) {
+          if (!SHOPPING_ITEM_STATUSES.includes(value as ShoppingItemStatus)) {
+            throw new Error(`Invalid shopping item status: ${value}`);
+          }
+        },
+      },
     },
     priority: {
       type: DataTypes.INTEGER,

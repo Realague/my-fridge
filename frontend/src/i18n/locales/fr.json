@@ -715,7 +715,21 @@
         "itemCount_one": "{{completed}}/{{count}} article",
         "itemCount_other": "{{completed}}/{{count}} articles",
         "dragHandleLabel": "Réordonner le rayon {{name}}"
-      }
+      },
+      "moveBackToBuy": "Remettre dans à acheter",
+      "store": "Ranger",
+      "storeItemTitle": "Ranger {{name}}",
+      "storeAllTitle": "Tout ranger",
+      "deleteToStoreTitle": "Supprimer cet article ?",
+      "deleteToStoreDescription": "« {{name}} » ne sera ni rangé au stock ni gardé dans la liste.",
+      "allStoredAway": "Toutes les courses rangées !",
+      "allInCart": "Tout est dans le panier ! Il ne reste plus qu’à ranger les articles achetés.",
+      "toStore": "À ranger",
+      "toStoreShort": "à ranger",
+      "itemCountSummary_one": "{{count}} article",
+      "itemCountSummary_other": "{{count}} articles",
+      "emptyTitle": "Aucun article dans la liste",
+      "emptyDescription": "Ajoutez un article pour commencer votre liste de courses."
     },
     "meals": {
       "kicker": "Cette semaine",
@@ -4060,7 +4074,8 @@
     "back": "Retour",
     "edit": "Modifier",
     "delete": "Supprimer",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "cancel": "Annuler"
   },
   "stockExit": {
     "consumed": "Consommé",

@@ -35,7 +35,7 @@ persisté : ranger un article crée le `StoredItem` et **supprime** la ligne
 `ShoppingItemStatus = TO_BUY='to_buy' | TO_STORE='to_store'` ajouté dans
 `backend/src/types/enums.ts` **et** `frontend/src/types/enums.ts` (miroir).
 
-### Migration (`202507030-add-status-to-shopping-items`)
+### Migration (`202607030-add-status-to-shopping-items`)
 - Ajoute la colonne `status` (ENUM, défaut `to_buy`, NOT NULL).
 - Backfill : `completed=false → to_buy`.
 - Purge : `DELETE` des lignes `completed=true` (historique déjà stocké — le

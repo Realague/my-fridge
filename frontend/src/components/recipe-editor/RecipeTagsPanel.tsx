@@ -53,8 +53,24 @@ const SUGGESTION_ICONS: Record<string, LucideIcon> = {
   breakfast: EggFried,
 };
 
+/**
+ * Resolve the Lucide icon of a tag by matching its label against the
+ * translated suggested tags (shared by the editor and the details screen).
+ */
+export const iconForTagLabel = (
+  label: string,
+  t: (key: string, options?: Record<string, unknown>) => string
+): LucideIcon => {
+  const match = Object.entries(SUGGESTION_ICONS).find(
+    ([key]) =>
+      t(`pages.recipes.editor.suggestedTags.${key}`, { defaultValue: '' }).toLowerCase() ===
+      label.toLowerCase()
+  );
+  return match ? match[1] : Hash;
+};
+
 // Pills cycle through the six Fresh accent pairings, as in the mock.
-const TAG_TONES = [
+export const TAG_TONES = [
   'bg-mf-green-soft text-mf-green-deep',
   'bg-mf-blue-soft text-mf-blue',
   'bg-mf-orange-soft text-mf-orange',
@@ -72,10 +88,7 @@ export const RecipeTagsPanel = ({ tags, suggestions, onAddTag, onRemoveTag }: Re
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState('');
 
-  const iconForTag = (tag: string): LucideIcon => {
-    const suggestion = suggestions.find((s) => s.label.toLowerCase() === tag.toLowerCase());
-    return (suggestion && SUGGESTION_ICONS[suggestion.key]) || Hash;
-  };
+  const iconForTag = (tag: string): LucideIcon => iconForTagLabel(tag, t);
 
   const commitTag = (raw: string) => {
     const name = raw.trim().replace(/,$/, '').trim();

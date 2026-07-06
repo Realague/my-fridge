@@ -995,7 +995,9 @@
           "dessert": "Dessert",
           "glutenFree": "Gluten-free",
           "starter": "Starter",
-          "batchCooking": "Batch cooking"
+          "batchCooking": "Batch cooking",
+          "soup": "Soup",
+          "breakfast": "Breakfast"
         },
         "missingTitle": "a title",
         "missingIngredient": "an ingredient",
@@ -1007,6 +1009,13 @@
         "clear": "Clear",
         "clearConfirmTitle": "Clear all fields?",
         "clearConfirmDescription": "The recipe you are composing will be lost."
+      },
+      "details": {
+        "adjustServings": "Adjust servings",
+        "addMissingToShopping": "Add missing to the shopping list",
+        "addedToShopping_one": "{{count}} ingredient added to the shopping list",
+        "addedToShopping_other": "{{count}} ingredients added to the shopping list",
+        "markStepDone": "Mark step as done"
       },
       "consume": {
         "button": "Consume ingredients",

@@ -995,7 +995,9 @@
           "dessert": "Postre",
           "glutenFree": "Sin gluten",
           "starter": "Entrante",
-          "batchCooking": "Batch cooking"
+          "batchCooking": "Batch cooking",
+          "soup": "Sopa",
+          "breakfast": "Desayuno"
         },
         "missingTitle": "un título",
         "missingIngredient": "un ingrediente",
@@ -1007,6 +1009,13 @@
         "clear": "Vaciar",
         "clearConfirmTitle": "¿Vaciar todos los campos?",
         "clearConfirmDescription": "La receta en curso se perderá."
+      },
+      "details": {
+        "adjustServings": "Ajustar porciones",
+        "addMissingToShopping": "Añadir los que faltan a la lista de compras",
+        "addedToShopping_one": "{{count}} ingrediente añadido a la lista de compras",
+        "addedToShopping_other": "{{count}} ingredientes añadidos a la lista de compras",
+        "markStepDone": "Marcar el paso como hecho"
       },
       "consume": {
         "button": "Consumir ingredientes",

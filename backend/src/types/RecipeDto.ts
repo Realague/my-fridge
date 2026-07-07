@@ -45,6 +45,8 @@ export interface CreateRecipeDto {
   tags: string[];
   imageUrl?: string;
   sourceUrl?: string;
+  sourceDomain?: string;
+  importedAt?: string | Date;
   ingredients: CreateRecipeIngredientDto[];
   householdId: string;
   createdBy: string;
@@ -78,6 +80,8 @@ export interface RecipeDto {
   tags: string[];
   imageUrl: string | null;
   sourceUrl: string | null;
+  sourceDomain: string | null;
+  importedAt: string | null;
   isFavorite: boolean;
   householdId: string;
   createdBy: string;

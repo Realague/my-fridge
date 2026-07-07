@@ -20,6 +20,10 @@ interface RecipeAttributes {
   tags: string[];
   imageUrl: string | null;
   sourceUrl: string | null;
+  /** Bare host of `sourceUrl` (e.g. "marmiton.org"), for import traceability. */
+  sourceDomain: string | null;
+  /** When this recipe was ingested by the import pipeline. Null for hand-created recipes. */
+  importedAt: Date | null;
   isFavorite: boolean;
   householdId: string;
   createdBy: string;
@@ -28,7 +32,7 @@ interface RecipeAttributes {
 }
 
 // Some attributes are optional in `Recipe.build()` and `Recipe.create()`
-export interface RecipeCreationAttributes extends Optional<RecipeAttributes, 'id' | 'description' | 'imageUrl' | 'sourceUrl' | 'isFavorite' | 'createdAt' | 'updatedAt'> {}
+export interface RecipeCreationAttributes extends Optional<RecipeAttributes, 'id' | 'description' | 'imageUrl' | 'sourceUrl' | 'sourceDomain' | 'importedAt' | 'isFavorite' | 'createdAt' | 'updatedAt'> {}
 
 export class Recipe extends Model<RecipeAttributes, RecipeCreationAttributes> implements RecipeAttributes {
   public id!: string;
@@ -43,6 +47,8 @@ export class Recipe extends Model<RecipeAttributes, RecipeCreationAttributes> im
   public isFavorite!: boolean;
   public imageUrl!: string | null;
   public sourceUrl!: string | null;
+  public sourceDomain!: string | null;
+  public importedAt!: Date | null;
   public householdId!: string;
   public readonly createdBy!: string;
   public readonly createdAt!: Date;
@@ -139,6 +145,14 @@ Recipe.init(
     },
     sourceUrl: {
       type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    sourceDomain: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    importedAt: {
+      type: DataTypes.DATE,
       allowNull: true,
     },
     isFavorite: {

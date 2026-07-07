@@ -114,6 +114,10 @@ const AddRecipe = () => {
       instructions: data.instructions,
       tags: data.tags,
       sourceUrl: importedRecipe?.sourceUrl,
+      // Import traceability (Schema.org pipeline): where and when the
+      // recipe was ingested. Absent for hand-created recipes.
+      sourceDomain: importedRecipe?.sourceDomain,
+      importedAt: importedRecipe?.importedAt,
       // image is uploaded after create
       ingredients: data.ingredients,
     };
@@ -182,6 +186,7 @@ const AddRecipe = () => {
         instructions: importedRecipe?.instructions,
         ingredientStepMap: initialStepMap,
         imageUrl: importedRecipe?.imageUrl || null,
+        tags: importedRecipe?.tags ?? [],
       }}
       saving={loading}
       deferImageUpload

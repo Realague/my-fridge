@@ -63,12 +63,26 @@ const FRENCH_UNIT_MAP: { [key: string]: string } = {
   'c.s.': 'tbsp',
   'cuillère à soupe': 'tbsp',
   'cuillères à soupe': 'tbsp',
+  'cuillerée à soupe': 'tbsp',
+  'cuillerées à soupe': 'tbsp',
+  'cuil. à soupe': 'tbsp',
+  'c. à soupe': 'tbsp',
+  'c à soupe': 'tbsp',
+  'c.à.s': 'tbsp',
+  'c.à.s.': 'tbsp',
   'càs': 'tbsp',
   'cc': 'tsp',
   'c.c': 'tsp',
   'c.c.': 'tsp',
   'cuillère à café': 'tsp',
   'cuillères à café': 'tsp',
+  'cuillerée à café': 'tsp',
+  'cuillerées à café': 'tsp',
+  'cuil. à café': 'tsp',
+  'c. à café': 'tsp',
+  'c à café': 'tsp',
+  'c.à.c': 'tsp',
+  'c.à.c.': 'tsp',
   'càc': 'tsp',
   // Pieces
   'pièce': 'piece',
@@ -113,6 +127,23 @@ const FRENCH_UNIT_MAP: { [key: string]: string } = {
   'poignées': 'pinch',
 };
 
+// Unicode vulgar fractions → numeric value ("½ citron", "1 ½ oignon").
+const UNICODE_FRACTIONS: { [key: string]: number } = {
+  '½': 0.5, '⅓': 1 / 3, '⅔': 2 / 3, '¼': 0.25, '¾': 0.75,
+  '⅕': 0.2, '⅖': 0.4, '⅗': 0.6, '⅘': 0.8,
+  '⅙': 1 / 6, '⅚': 5 / 6, '⅛': 0.125, '⅜': 0.375, '⅝': 0.625, '⅞': 0.875,
+};
+const UNICODE_FRACTION_CLASS = `[${Object.keys(UNICODE_FRACTIONS).join('')}]`;
+
+// Leading vague-quantity phrases ("quelques brins de…", "un peu de sel").
+// Stripped before unit detection so the unit token right after them is still
+// recognized; their presence forces a free-quantity ingredient.
+const VAGUE_QUANTITY_PREFIX = /^(quelques|un peu de|un peu d'|un petit peu de)\s*/iu;
+// Trailing "as much as you like" mentions ("parmesan à volonté", "sel au goût").
+// `\b` is ASCII-only in JS, so accented words need explicit Unicode boundaries.
+const AT_WILL_PATTERN =
+  /(?:^|[^\p{L}])(?:à volonté|au goût|selon (?:le |votre )?goût)(?=$|[^\p{L}])/iu;
+
 // Tokens that trigger a volume conversion (to ml, multiplier 240 = 1 US cup).
 const CUP_TOKENS = new Set(['tasse', 'tasses', 'verre', 'verres', 'bol', 'bols', 'cup', 'cups']);
 // Tokens that trigger a dozen conversion (quantity × 12, unit becomes piece).
@@ -147,11 +178,17 @@ function inferFreeQuantityUnit(itemName: string): string {
 // Keep them as ingredient names when they appear alone after quantity (e.g. "3 noix").
 const AMBIGUOUS_FRENCH_UNITS = new Set(['noix']);
 
-// Words to remove from ingredient text (French)
+// Connectors stripped only at the START of the remaining text ("200 g de
+// farine" → "farine"). They must NOT be removed inside the name, otherwise
+// compound ingredients break ("pommes de terre" → "pommes terre",
+// "lait de coco" → "lait coco").
+const LEADING_CONNECTORS =
+  /^(?:de\s+|d'\s*|du\s+|des\s+|la\s+|le\s+|les\s+|l'\s*|un\s+|une\s+|à\s+|au\s+|aux\s+)+/iu;
+
+// Descriptor words removed anywhere in the ingredient text (French).
 const FRENCH_STOP_WORDS = [
-  'de', 'd\'', 'du', 'des', 'la', 'le', 'les', 'l\'', 'un', 'une',
-  'à', 'au', 'aux', 'en', 'et', 'ou', 'pour', 'avec', 'sans',
-  'frais', 'fraîche', 'fraîches', 'frais',
+  'en', 'et', 'ou', 'pour', 'avec', 'sans',
+  'frais', 'fraîche', 'fraîches',
   'environ', 'quelques', 'peu', 'beaucoup',
   'petit', 'petite', 'petits', 'petites',
   'grand', 'grande', 'grands', 'grandes',
@@ -184,36 +221,89 @@ export class IngredientMatchingService {
    */
   parseIngredient(text: string): ParsedIngredient {
     const originalText = text.trim();
+    try {
+      return this.doParseIngredient(originalText);
+    } catch (error) {
+      // Normalization must never make an import fail: fall back to the raw
+      // line (kept as the item name for manual matching) with no quantity.
+      console.warn(`[ingredient-parser] failed to parse "${originalText}":`, error);
+      return {
+        originalText,
+        quantity: null,
+        unit: null,
+        itemName: originalText,
+        isFreeQuantity: true,
+      };
+    }
+  }
+
+  private doParseIngredient(originalText: string): ParsedIngredient {
     let workingText = originalText.toLowerCase();
 
     // ------------------------------------------------------------------
+    // Step 0: vague quantities. A leading "quelques"/"un peu de" or a
+    // trailing "à volonté"/"au goût" means no measurable quantity — strip
+    // the phrase, remember to force the free-quantity flag.
+    // ------------------------------------------------------------------
+    let vagueQuantity = false;
+    const vagueMatch = workingText.match(VAGUE_QUANTITY_PREFIX);
+    if (vagueMatch) {
+      vagueQuantity = true;
+      workingText = workingText.substring(vagueMatch[0].length).trim();
+    }
+    if (AT_WILL_PATTERN.test(workingText)) {
+      vagueQuantity = true;
+      workingText = workingText.replace(AT_WILL_PATTERN, ' ').replace(/\s+/g, ' ').trim();
+    }
+
+    // ------------------------------------------------------------------
     // Step 1: extract a leading numeric quantity (if any).
-    // Handles fractions, decimals, ranges, simple integers.
+    // Handles fractions (ASCII and unicode), decimals, ranges, integers.
     // ------------------------------------------------------------------
     let quantity: number | null = null;
 
-    const quantityPatterns = [
-      /^(\d+)\s*[àa-]\s*(\d+)/, // Range: "1 à 2", "1-2"
-      /^(\d+)[,.](\d+)/, // Decimal: "1,5", "1.5"
-      /^(\d+)\s*\/\s*(\d+)/, // Fraction: "1/2"
-      /^(\d+)/, // Simple number: "200"
-    ];
+    const mixedUnicodeRegex = new RegExp(`^(\\d+)\\s*(${UNICODE_FRACTION_CLASS})`, 'u');
+    const bareUnicodeRegex = new RegExp(`^(${UNICODE_FRACTION_CLASS})`, 'u');
 
-    for (const pattern of quantityPatterns) {
-      const match = workingText.match(pattern);
-      if (match) {
-        if (pattern.source.includes('[àa-]') && match[1] && match[2]) {
-          quantity = (parseInt(match[1], 10) + parseInt(match[2], 10)) / 2;
-        } else if (pattern.source.includes('[,.]') && match[1] && match[2]) {
-          quantity = parseFloat(match[1] + '.' + match[2]);
-        } else if (pattern.source.includes('/') && match[1] && match[2]) {
-          quantity = parseInt(match[1], 10) / parseInt(match[2], 10);
-        } else if (match[1]) {
-          quantity = parseInt(match[1], 10);
-        }
-        workingText = workingText.substring(match[0].length).trim();
-        break;
+    const quantityPatterns = [
+      { regex: /^(\d+)\s+(\d+)\s*\/\s*(\d+)/, kind: 'mixed-fraction' }, // "1 1/2"
+      { regex: mixedUnicodeRegex, kind: 'mixed-unicode' },              // "1 ½", "1½"
+      { regex: bareUnicodeRegex, kind: 'bare-unicode' },                // "½"
+      { regex: /^(\d+)\s*[àa-]\s*(\d+)/, kind: 'range' },               // "1 à 2", "1-2"
+      { regex: /^(\d+)[,.](\d+)/, kind: 'decimal' },                    // "1,5", "1.5"
+      { regex: /^(\d+)\s*\/\s*(\d+)/, kind: 'fraction' },               // "1/2"
+      { regex: /^(\d+)/, kind: 'integer' },                             // "200"
+    ] as const;
+
+    for (const { regex, kind } of quantityPatterns) {
+      const match = workingText.match(regex);
+      if (!match) continue;
+
+      if (kind === 'mixed-fraction' && match[1] && match[2] && match[3]) {
+        quantity = parseInt(match[1], 10) + parseInt(match[2], 10) / parseInt(match[3], 10);
+      } else if (kind === 'mixed-unicode' && match[1] && match[2]) {
+        quantity = parseInt(match[1], 10) + (UNICODE_FRACTIONS[match[2]] ?? 0);
+      } else if (kind === 'bare-unicode' && match[1]) {
+        quantity = UNICODE_FRACTIONS[match[1]] ?? null;
+      } else if (kind === 'range' && match[1] && match[2]) {
+        quantity = (parseInt(match[1], 10) + parseInt(match[2], 10)) / 2;
+      } else if (kind === 'decimal' && match[1] && match[2]) {
+        quantity = parseFloat(match[1] + '.' + match[2]);
+      } else if (kind === 'fraction' && match[1] && match[2]) {
+        quantity = parseInt(match[1], 10) / parseInt(match[2], 10);
+      } else if (match[1]) {
+        quantity = parseInt(match[1], 10);
       }
+      workingText = workingText.substring(match[0].length).trim();
+      break;
+    }
+
+    // ------------------------------------------------------------------
+    // Step 1.5: a quantity may be linked to its unit by "de" ("¾ de litre
+    // de lait") — strip it so the unit token is at the cursor position.
+    // ------------------------------------------------------------------
+    if (quantity !== null) {
+      workingText = workingText.replace(/^(?:de\s+|d'\s*)/iu, '');
     }
 
     // ------------------------------------------------------------------
@@ -285,7 +375,7 @@ export class IngredientMatchingService {
     // ------------------------------------------------------------------
     // Step 3: determine isFreeQuantity.
     // ------------------------------------------------------------------
-    let isFreeQuantity = false;
+    let isFreeQuantity = vagueQuantity;
 
     if (unit && FREE_QUANTITY_UNIT_VALUES.has(unit)) {
       // A gestural unit was detected (pinch/drizzle/knob) — always free quantity.
@@ -316,15 +406,16 @@ export class IngredientMatchingService {
 
     // ------------------------------------------------------------------
     // Step 4: clean the remaining text into an item name.
+    // Free-quantity keywords go first ("une pincée de sel" → "de sel"),
+    // then leading connectors ("de sel" → "sel"), then descriptor words.
     // ------------------------------------------------------------------
     let itemName = workingText;
-    for (const word of FRENCH_STOP_WORDS) {
-      const regex = new RegExp(`\\b${word}\\b`, 'gi');
+    for (const { regex } of FREE_QUANTITY_KEYWORD_PATTERNS) {
       itemName = itemName.replace(regex, ' ');
     }
-
-    // Strip trailing free-quantity keywords so the ingredient name stays clean.
-    for (const { regex } of FREE_QUANTITY_KEYWORD_PATTERNS) {
+    itemName = itemName.replace(/\s+/g, ' ').trim().replace(LEADING_CONNECTORS, '');
+    for (const word of FRENCH_STOP_WORDS) {
+      const regex = new RegExp(`\\b${word}\\b`, 'gi');
       itemName = itemName.replace(regex, ' ');
     }
 

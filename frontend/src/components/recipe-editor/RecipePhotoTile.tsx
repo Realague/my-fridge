@@ -152,7 +152,7 @@ export const RecipePhotoTile = ({
               type="button"
               onClick={openPicker}
               disabled={uploading}
-              className="inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-2 font-display text-xs font-bold text-mf-night shadow-sm hover:bg-white"
+              className="inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-2 font-display text-xs font-bold text-neutral-900 shadow-sm hover:bg-white"
             >
               <Camera className="h-3.5 w-3.5" />
               {t('pages.recipes.editor.changePhoto')}

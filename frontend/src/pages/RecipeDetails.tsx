@@ -588,8 +588,8 @@ const RecipeDetails = () => {
                 </span>
                 <button
                   type="button"
-                  onClick={() => setServingsOverride(Math.min(20, servings + 1))}
-                  disabled={servings >= 20}
+                  onClick={() => setServingsOverride(Math.min(100, servings + 1))}
+                  disabled={servings >= 100}
                   aria-label="+"
                   className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-muted text-mf-green-deep transition-colors hover:bg-mf-green-soft disabled:opacity-40"
                 >

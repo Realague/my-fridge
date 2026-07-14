@@ -183,9 +183,14 @@ const RecipeDetails = () => {
   ).length;
 
   // ── Add missing (unchecked) ingredients to the shopping list ────────────
+  // Free-quantity ingredients ("à l'œil": pinch/drizzle/knob) have no numeric
+  // amount and use cooking units the shopping list rejects, so they never go
+  // on the list — matching the backend's aggregateNeeds behaviour.
   const missingIngredients = recipe.ingredients.filter(
     (ingredient, index) =>
-      ingredient.itemId && !checkedIngredients.has(ingredientKey(ingredient.id, index))
+      ingredient.itemId &&
+      !(Boolean(ingredient.isFreeQuantity) || isFreeQuantityUnit(ingredient.unit)) &&
+      !checkedIngredients.has(ingredientKey(ingredient.id, index))
   );
 
   const handleAddMissingToShopping = async () => {

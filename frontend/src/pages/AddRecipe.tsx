@@ -190,6 +190,7 @@ const AddRecipe = () => {
       }}
       saving={loading}
       deferImageUpload
+      isImport={Boolean(importedRecipe)}
       importedIngredients={importedIngredients}
       onSubmit={handleSubmit}
       onBack={() => navigate('/recipes')}

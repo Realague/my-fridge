@@ -73,6 +73,8 @@ interface RecipeEditorProps {
   deferImageUpload?: boolean;
   /** Raw ingredient lines from an import (Marmiton), shown as a reference card. */
   importedIngredients?: string[];
+  /** Create mode: recipe seeded from an import — CTA reads "save" instead of "publish". */
+  isImport?: boolean;
   onSubmit: (data: RecipeEditorSubmitData) => void | Promise<void>;
   onBack: () => void;
   /** Edit mode: cancel button of the sticky action bar. */
@@ -101,6 +103,7 @@ export const RecipeEditor = ({
   saving = false,
   deferImageUpload = false,
   importedIngredients = [],
+  isImport = false,
   onSubmit,
   onBack,
   onCancel,
@@ -441,7 +444,7 @@ export const RecipeEditor = ({
             {isValid ? (
               <>
                 <CheckCircle2 className="h-[15px] w-[15px] shrink-0 text-mf-green" />
-                {mode === 'create'
+                {mode === 'create' && !isImport
                   ? t('pages.recipes.editor.readyToPublish')
                   : t('pages.recipes.editor.readyToSave')}
               </>
@@ -497,7 +500,7 @@ export const RecipeEditor = ({
               <Check className="h-4 w-4" />
               {saving
                 ? t('pages.recipes.saving')
-                : mode === 'create'
+                : mode === 'create' && !isImport
                   ? t('pages.recipes.editor.publish')
                   : t('pages.recipes.saveRecipe')}
             </button>

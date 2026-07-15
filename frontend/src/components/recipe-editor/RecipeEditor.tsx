@@ -97,7 +97,6 @@ const seedInstructions = (): RecipeStep[] => [{ text: '', duration: null }];
  */
 export const RecipeEditor = ({
   mode,
-  breadcrumb,
   initialValues,
   saving = false,
   deferImageUpload = false,
@@ -299,9 +298,9 @@ export const RecipeEditor = ({
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto flex min-h-screen max-w-[1180px] flex-col px-4 pt-4 sm:px-6 sm:pt-6">
-        {/* Top bar */}
-        <div className="mb-5 flex items-center gap-3.5">
+      {/* Header banner */}
+      <div className="sticky top-0 z-30 border-b border-mf-night-line bg-card/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-[1180px] items-center px-4 py-3 sm:px-6">
           <button
             type="button"
             onClick={onBack}
@@ -310,12 +309,10 @@ export const RecipeEditor = ({
           >
             <ArrowLeft className="h-[19px] w-[19px]" />
           </button>
-          <div className="min-w-0 font-display text-sm font-semibold text-mf-text-mute">
-            {t('pages.recipes.title')}
-            <span className="mx-1.5">/</span>
-            <b className="font-bold text-foreground">{breadcrumb}</b>
-          </div>
         </div>
+      </div>
+
+      <div className="mx-auto flex min-h-screen max-w-[1180px] flex-col px-4 pt-4 sm:px-6 sm:pt-6">
 
         {/* Header: photo tile + inline title/description */}
         <div className="mb-5 grid gap-6 md:grid-cols-[340px_1fr]">

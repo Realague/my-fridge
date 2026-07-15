@@ -183,9 +183,14 @@ const RecipeDetails = () => {
   ).length;
 
   // ── Add missing (unchecked) ingredients to the shopping list ────────────
+  // Free-quantity ingredients ("à l'œil": pinch/drizzle/knob) have no numeric
+  // amount and use cooking units the shopping list rejects, so they never go
+  // on the list — matching the backend's aggregateNeeds behaviour.
   const missingIngredients = recipe.ingredients.filter(
     (ingredient, index) =>
-      ingredient.itemId && !checkedIngredients.has(ingredientKey(ingredient.id, index))
+      ingredient.itemId &&
+      !(Boolean(ingredient.isFreeQuantity) || isFreeQuantityUnit(ingredient.unit)) &&
+      !checkedIngredients.has(ingredientKey(ingredient.id, index))
   );
 
   const handleAddMissingToShopping = async () => {
@@ -346,9 +351,9 @@ const RecipeDetails = () => {
         recipe={recipe}
       />
 
-      <div className="mx-auto max-w-[1180px] px-4 py-4 sm:px-6 sm:py-6">
-        {/* Top bar */}
-        <div className="mb-5 flex flex-wrap items-center gap-3">
+      {/* Header banner */}
+      <div className="sticky top-0 z-30 border-b border-mf-night-line bg-card/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-2 px-4 py-3 sm:gap-3 sm:px-6">
           <button
             type="button"
             onClick={() => navigate(-1)}
@@ -357,12 +362,7 @@ const RecipeDetails = () => {
           >
             <ArrowLeft className="h-[19px] w-[19px]" />
           </button>
-          <div className="min-w-0 flex-1 truncate font-display text-sm font-semibold text-mf-text-mute">
-            {t('pages.recipes.title')}
-            <span className="mx-1.5">/</span>
-            <b className="font-bold text-foreground">{recipe.title}</b>
-          </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {recipe.sourceUrl && (
               <button
                 type="button"
@@ -386,21 +386,28 @@ const RecipeDetails = () => {
             <button
               type="button"
               onClick={() => navigate(`/recipes/${recipe.id}/edit`)}
-              className="inline-flex items-center gap-2 rounded-full bg-card px-4 py-2.5 font-display text-[13.5px] font-bold text-foreground shadow-[var(--mf-shadow-1)] transition-colors hover:bg-muted"
+              title={t('buttons.edit')}
+              aria-label={t('buttons.edit')}
+              className="inline-flex h-[42px] items-center gap-2 rounded-full bg-card px-3 py-2.5 font-display text-[13.5px] font-bold text-foreground shadow-[var(--mf-shadow-1)] transition-colors hover:bg-muted sm:px-4"
             >
-              <PenLine className="h-4 w-4" />
-              {t('buttons.edit')}
+              <PenLine className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">{t('buttons.edit')}</span>
             </button>
             <button
               type="button"
               onClick={() => navigate(`/recipes/${recipe.id}/cook?servings=${servings}`)}
-              className="inline-flex items-center gap-2 rounded-full bg-mf-green px-4 py-2.5 font-display text-[13.5px] font-bold text-white shadow-[0_6px_16px_rgba(43,182,115,.32)] transition-colors hover:bg-mf-green-deep"
+              title={t('pages.recipes.startCooking')}
+              aria-label={t('pages.recipes.startCooking')}
+              className="inline-flex h-[42px] items-center gap-2 whitespace-nowrap rounded-full bg-mf-green px-3 py-2.5 font-display text-[13.5px] font-bold text-white shadow-[0_6px_16px_rgba(43,182,115,.32)] transition-colors hover:bg-mf-green-deep sm:px-4"
             >
-              <ChefHat className="h-4 w-4" />
-              {t('pages.recipes.startCooking')}
+              <ChefHat className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">{t('pages.recipes.startCooking')}</span>
             </button>
           </div>
         </div>
+      </div>
+
+      <div className="mx-auto max-w-[1180px] px-4 py-4 sm:px-6 sm:py-6">
 
         {/* Hero: photo + text */}
         <div className="mb-5 grid gap-6 md:grid-cols-[460px_1fr]">
@@ -583,8 +590,8 @@ const RecipeDetails = () => {
                 </span>
                 <button
                   type="button"
-                  onClick={() => setServingsOverride(Math.min(20, servings + 1))}
-                  disabled={servings >= 20}
+                  onClick={() => setServingsOverride(Math.min(100, servings + 1))}
+                  disabled={servings >= 100}
                   aria-label="+"
                   className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-muted text-mf-green-deep transition-colors hover:bg-mf-green-soft disabled:opacity-40"
                 >

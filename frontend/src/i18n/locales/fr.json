@@ -731,7 +731,65 @@
       "emptyTitle": "Aucun article dans la liste",
       "emptyDescription": "Ajoutez un article pour commencer votre liste de courses.",
       "toStoreEmptyTitle": "Rien à ranger pour l’instant",
-      "toStoreEmptyDescription": "Cochez un article « à acheter » — il apparaîtra ici pour être rangé au stock."
+      "toStoreEmptyDescription": "Cochez un article « à acheter » — il apparaîtra ici pour être rangé au stock.",
+      "scan": "Scanner",
+      "scanner": {
+        "title": "Scanner un code-barres",
+        "hint": "Vise un code-barres…",
+        "detected": "Code détecté ✓",
+        "starting": "Ouverture de la caméra…",
+        "done": "Terminé",
+        "torch": "Activer la torche",
+        "addManually": "Ajouter manuellement",
+        "permission": {
+          "title": "Scanner tes articles",
+          "body": "Fresh utilise la caméra pour scanner les codes-barres et gagner du temps pendant tes courses. Aucune photo n’est conservée.",
+          "enable": "Activer la caméra",
+          "later": "Plus tard",
+          "privacy": "Aucune image enregistrée"
+        },
+        "refused": {
+          "title": "Scan indisponible",
+          "body": "Le scan n’est pas disponible sans accès caméra. Autorise la caméra dans les réglages de l’app pour scanner tes codes-barres.",
+          "retry": "Activer la caméra"
+        },
+        "catalog": {
+          "eyebrow": "Hors liste · déjà au catalogue",
+          "title": "Tu n’avais pas prévu cet article",
+          "body": "Ce produit n’était pas dans ta liste. L’ajouter directement à « À ranger » ?",
+          "add": "Ajouter"
+        },
+        "off": {
+          "eyebrow": "Nouveau · Open Food Facts",
+          "title": "Créer cet article",
+          "body": "Produit trouvé sur Open Food Facts. Vérifie puis ajoute-le à ton catalogue et à « À ranger ».",
+          "code": "code {{code}}",
+          "name": "Nom du produit",
+          "category": "Catégorie",
+          "unit": "Unité par défaut",
+          "mappingNote": "Le mapping code-barres ↔ article sera partagé avec tous les foyers.",
+          "create": "Créer et ajouter"
+        },
+        "unknown": {
+          "eyebrow": "Non identifié",
+          "title": "Produit non identifié",
+          "body": "Le code {{code}} n’est pas reconnu par Open Food Facts. Tu peux l’ajouter manuellement.",
+          "continue": "Continuer les scans"
+        },
+        "offline": {
+          "eyebrow": "Hors ligne",
+          "title": "Connexion requise",
+          "body": "Ce nouveau code-barres n’est pas dans le cache local. Connecte-toi pour l’identifier, réessaie plus tard ou ajoute-le manuellement."
+        },
+        "toast": {
+          "movedToStore": "{{name}} ajouté à « À ranger »",
+          "addedToStore": "{{name}} ajouté à « À ranger »",
+          "created": "{{name}} créé · mapping partagé",
+          "addFailed": "Impossible d’ajouter l’article",
+          "createFailed": "Impossible de créer l’article",
+          "lookupError": "Échec du scan, réessaie"
+        }
+      }
     },
     "meals": {
       "kicker": "Cette semaine",

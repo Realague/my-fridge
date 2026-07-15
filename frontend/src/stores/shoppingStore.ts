@@ -41,6 +41,8 @@ export interface CreateShoppingItemRequest {
   quantity: string;
   unit: string;
   priority?: number;
+  /** Set to TO_STORE to add the item directly to "À ranger" (e.g. a scan). */
+  status?: ShoppingItemStatus;
 }
 
 export interface UpdateShoppingItemRequest {

@@ -57,12 +57,16 @@ export class ShoppingItemService {
         data.unit = converted.unit;
       }
 
-      // Check for duplicate item with same unit in the household ("to buy")
+      // Merge within the target section (defaults to "to buy"; a scanned
+      // off-list product is added straight to "to store").
+      const targetStatus = data.status ?? ShoppingItemStatus.TO_BUY;
+
+      // Check for duplicate item with same unit in the household.
       let existingShoppingItem = await this.shoppingItemRepository.getDuplicateShoppingItem(
         data.itemId,
         data.householdId,
         data.unit,
-        ShoppingItemStatus.TO_BUY
+        targetStatus
       );
 
       if (existingShoppingItem) {
@@ -72,7 +76,7 @@ export class ShoppingItemService {
         const compatibleItem = await this.shoppingItemRepository.findByItemAndHousehold(
           data.itemId,
           data.householdId,
-          ShoppingItemStatus.TO_BUY
+          targetStatus
         );
 
         if (compatibleItem && canConvertUnits(data.unit, compatibleItem.unit)) {

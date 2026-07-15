@@ -47,6 +47,7 @@ import { ShoppingItemRow } from '@/components/shopping/ShoppingItemRow';
 import { AisleSection } from '@/components/shopping/AisleSection';
 import { ShoppingViewModeToggle } from '@/components/shopping/ShoppingViewModeToggle';
 import { BulkStorageDialog } from '@/components/BulkStorageDialog';
+import ShoppingBarcodeScanner from '@/components/shopping/ShoppingBarcodeScanner';
 import { useShoppingPreferences } from '@/hooks/useShoppingPreferences';
 import { Aisle, groupItemsByAisle } from '@/utils/aisleMapping';
 
@@ -95,6 +96,8 @@ const Shopping = () => {
 
   // Guided storage assistant — the set of items being stored (1..N).
   const [assistantItems, setAssistantItems] = useState<ShoppingItem[] | null>(null);
+  // Barcode scanner overlay ("Scanner un code-barres" from the courses page).
+  const [scannerOpen, setScannerOpen] = useState(false);
   // Explicit confirmation before deleting a "to store" item.
   const [itemToConfirmDelete, setItemToConfirmDelete] = useState<ShoppingItem | null>(null);
 
@@ -157,6 +160,20 @@ const Shopping = () => {
   const openAssistantForAll = () => {
     const all = getToStoreItems();
     if (all.length > 0) setAssistantItems(all);
+  };
+
+  // --- Barcode scan orchestration ----------------------------------------
+  // Cas 2 — a scanned item already in "À ranger": close the scanner and open
+  // the guided assistant for that single item.
+  const handleScanOpenAssistant = (shoppingItemId: string) => {
+    setScannerOpen(false);
+    openAssistantForItem(shoppingItemId);
+  };
+
+  // Cas 5 / offline — the user wants to add the product by hand: close the
+  // scanner so the "Ajouter un article" card is in reach.
+  const handleScanManualAdd = () => {
+    setScannerOpen(false);
   };
 
   const handleStore = async (
@@ -441,6 +458,7 @@ const Shopping = () => {
           onItemAdd={handleAddItem}
           placeholder={t('pages.shopping.searchPlaceholder')}
           buttonText={t('pages.shopping.add')}
+          onScan={selectedHouseholdId ? () => setScannerOpen(true) : undefined}
         />
 
         {loading && items.length === 0 && (
@@ -570,6 +588,16 @@ const Shopping = () => {
       </div>
 
       <BottomNavigation currentPage="shopping" />
+
+      {/* Barcode scanner overlay (continuous scan) */}
+      {scannerOpen && selectedHouseholdId && (
+        <ShoppingBarcodeScanner
+          householdId={selectedHouseholdId}
+          onClose={() => setScannerOpen(false)}
+          onOpenAssistant={handleScanOpenAssistant}
+          onManualAdd={handleScanManualAdd}
+        />
+      )}
     </div>
   );
 };

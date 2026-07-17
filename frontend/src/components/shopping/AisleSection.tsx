@@ -1,11 +1,11 @@
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { ChevronDown, GripVertical } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { shoppingRowMotion } from '@/lib/motion';
 
 import { ShoppingItem } from '@/stores/shoppingStore';
-import { StorageArea } from '@/services/storageAreaService';
 import {
   Aisle,
   getAisleIcon,
@@ -17,15 +17,11 @@ import {
   ShoppingItemRowProps,
 } from './ShoppingItemRow';
 
-type RowCallbackProps = Omit<
-  ShoppingItemRowProps,
-  'shoppingItem' | 'isCompleted'
->;
+type RowCallbackProps = Omit<ShoppingItemRowProps, 'shoppingItem'>;
 
 export interface AisleSectionProps extends RowCallbackProps {
   aisle: Aisle;
   items: ShoppingItem[];
-  storageAreas: StorageArea[];
   collapsed?: boolean;
   onToggleCollapsed?: (aisle: Aisle) => void;
   /**
@@ -63,12 +59,8 @@ export const AisleSection = ({
         transition,
       };
 
+  const prefersReducedMotion = useReducedMotion() ?? false;
   const name = t(getAisleTranslationKey(aisle));
-  const completedCount = useMemo(
-    () => items.filter((item) => item.completed).length,
-    [items]
-  );
-  const allCompleted = items.length > 0 && completedCount === items.length;
   const Icon = getAisleIcon(aisle);
 
   const contentId = `aisle-${aisle}-content`;
@@ -102,7 +94,7 @@ export const AisleSection = ({
         }
         className={`flex items-center gap-2 px-3 py-2 transition-opacity ${
           effectiveCollapsed ? '' : 'border-b border-border/60'
-        } ${allCompleted ? 'opacity-60' : ''} ${
+        } ${
           onToggleCollapsed
             ? 'cursor-pointer select-none hover:bg-accent/40'
             : ''
@@ -130,10 +122,7 @@ export const AisleSection = ({
         </h3>
 
         <span className="ml-auto text-xs sm:text-sm text-muted-foreground tabular-nums">
-          {t('pages.shopping.aisles.itemCount', {
-            count: items.length,
-            completed: completedCount,
-          })}
+          {items.length}
         </span>
 
         {onToggleCollapsed && (
@@ -148,14 +137,17 @@ export const AisleSection = ({
 
       {!effectiveCollapsed && (
         <div id={contentId} className="p-2 sm:p-3 space-y-2">
-          {items.map((shoppingItem) => (
-            <ShoppingItemRow
-              key={shoppingItem.id}
-              shoppingItem={shoppingItem}
-              isCompleted={shoppingItem.completed}
-              {...rowProps}
-            />
-          ))}
+          <AnimatePresence initial={false}>
+            {items.map((shoppingItem) => (
+              <motion.div
+                key={shoppingItem.id}
+                layout={!prefersReducedMotion}
+                {...shoppingRowMotion(prefersReducedMotion)}
+              >
+                <ShoppingItemRow shoppingItem={shoppingItem} {...rowProps} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       )}
     </section>

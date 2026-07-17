@@ -106,12 +106,17 @@ export enum StockExitType {
 }
 
 export const STOCK_EXIT_TYPES = Object.values(StockExitType);
-
+// Shopping-list article states.
+//  - TO_BUY:   in the list, not yet in the cart ("À acheter")
+//  - TO_STORE: bought, waiting to be stored ("À ranger")
+// The third conceptual state ("Rangé") is not persisted: storing an item
+// creates a StoredItem and deletes the ShoppingItem row.
 export enum ShoppingItemStatus {
-  PENDING = 'pending',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled'
+  TO_BUY = 'to_buy',
+  TO_STORE = 'to_store',
 }
+
+export const SHOPPING_ITEM_STATUSES = Object.values(ShoppingItemStatus);
 
 export enum BarcodeFormat {
   EAN13 = 'ean13',

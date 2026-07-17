@@ -159,6 +159,7 @@ StoredItem.hasMany(StockExit, { foreignKey: 'storedItemId', as: 'stockExits' });
 StockExit.belongsTo(StoredItem, { foreignKey: 'storedItemId', as: 'storedItem' });
 
 // Brand is a global referential — no associations
+
 // Export models
 export {
   sequelize,

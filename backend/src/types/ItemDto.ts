@@ -1,4 +1,4 @@
-import { ItemCategory, Unit } from './enums';
+import { ItemCategory, Unit, ShoppingItemStatus } from './enums';
 
 export interface CreateItemDto {
   name: string;
@@ -71,7 +71,7 @@ export interface CreateShoppingItemDto {
 export interface UpdateShoppingItemDto {
   quantity?: number;
   unit?: string;
-  completed?: boolean;
+  status?: ShoppingItemStatus;
   priority?: number;
   storedItemId?: string | null;
 }
@@ -82,7 +82,7 @@ export interface ShoppingItemDto {
   householdId: string;
   quantity: number;
   unit: string;
-  completed: boolean;
+  status: ShoppingItemStatus;
   priority: number;
   storedItemId: string | null;
   createdBy: string;
@@ -96,7 +96,7 @@ export interface ShoppingItemDto {
 
 export interface GetShoppingItemsQueryDto {
   householdId: string;
-  completed?: boolean;
+  status?: ShoppingItemStatus;
   limit?: number;
   offset?: number;
 }

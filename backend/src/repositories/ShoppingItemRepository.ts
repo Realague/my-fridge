@@ -3,6 +3,7 @@ import { ShoppingItem } from '../models/ShoppingItem';
 import { Item } from '../models/Item';
 import { User } from '../models/User';
 import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto } from '../types/ItemDto';
+import { ShoppingItemStatus } from '../types/enums';
 
 export class ShoppingItemRepository {
   async create(data: CreateShoppingItemDto): Promise<ShoppingItem> {
@@ -41,8 +42,8 @@ export class ShoppingItemRepository {
       householdId: query.householdId,
     };
 
-    if (query.completed !== undefined) {
-      whereClause.completed = query.completed;
+    if (query.status !== undefined) {
+      whereClause.status = query.status;
     }
 
     const options: any = {
@@ -113,46 +114,6 @@ export class ShoppingItemRepository {
     return deletedRowsCount > 0;
   }
 
-  async markAsCompleted(id: string): Promise<ShoppingItem | null> {
-    return await this.update(id, { completed: true });
-  }
-
-  async markAsIncomplete(id: string): Promise<ShoppingItem | null> {
-    return await this.update(id, { completed: false });
-  }
-
-  async bulkUpdateCompleted(ids: string[], completed: boolean, householdId?: string): Promise<number> {
-    const whereClause: any = {
-      id: {
-        [Op.in]: ids,
-      },
-    };
-
-    if (householdId) {
-      whereClause.householdId = householdId;
-    }
-
-    const [updatedRowsCount] = await ShoppingItem.update(
-      { completed },
-      {
-        where: whereClause,
-      }
-    );
-
-    return updatedRowsCount;
-  }
-
-  async clearCompleted(householdId: string): Promise<number> {
-    const deletedRowsCount = await ShoppingItem.destroy({
-      where: {
-        householdId,
-        completed: true,
-      },
-    });
-
-    return deletedRowsCount;
-  }
-
   async reorderItems(householdId: string, itemPriorities: Array<{ id: string; priority: number }>): Promise<boolean> {
     try {
       const updatePromises = itemPriorities.map(({ id, priority }) =>
@@ -175,11 +136,11 @@ export class ShoppingItemRepository {
     }
   }
 
-  async findByItemAndHousehold(itemId: string, householdId: string, completed: boolean, excludeId?: string): Promise<ShoppingItem | null> {
+  async findByItemAndHousehold(itemId: string, householdId: string, status: ShoppingItemStatus, excludeId?: string): Promise<ShoppingItem | null> {
     const whereClause: any = {
       itemId,
       householdId,
-      completed,
+      status,
     };
 
     if (excludeId) {
@@ -194,13 +155,13 @@ export class ShoppingItemRepository {
   }
 
   /**
-   * Sum all active (non-completed) ShoppingItem quantities for a given item,
-   * normalized to `targetUnit` when units are convertible. Items in
-   * incompatible units are skipped.
+   * Sum all "to buy" ShoppingItem quantities for a given item, normalized to
+   * `targetUnit` when units are convertible. Items in incompatible units are
+   * skipped.
    */
   async getActiveQuantityByItem(itemId: string, householdId: string, targetUnit: string): Promise<number> {
     const items = await ShoppingItem.findAll({
-      where: { itemId, householdId, completed: false },
+      where: { itemId, householdId, status: ShoppingItemStatus.TO_BUY },
       attributes: ['quantity', 'unit'],
     });
     if (items.length === 0) return 0;
@@ -217,12 +178,12 @@ export class ShoppingItemRepository {
     return total;
   }
 
-  async getDuplicateShoppingItem(itemId: string, householdId: string, unit: string, completed: boolean, excludeId?: string): Promise<ShoppingItem | null> {
+  async getDuplicateShoppingItem(itemId: string, householdId: string, unit: string, status: ShoppingItemStatus, excludeId?: string): Promise<ShoppingItem | null> {
     const whereClause: any = {
       itemId,
       householdId,
       unit,
-      completed,
+      status,
     };
 
     if (excludeId) {

@@ -28,8 +28,11 @@ interface BulkStorageItem {
 interface BulkStorageDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  pendingItems: ShoppingItem[];
+  /** Items to store (1..N). Serves both "Tout ranger" and single-item storing. */
+  items: ShoppingItem[];
   storageAreas: StorageArea[];
+  /** Optional dialog title override. Defaults to the bulk-storage title. */
+  title?: string;
   onConfirm: (items: Array<{
     shoppingItemId: string;
     storageAreaId: string;
@@ -41,21 +44,22 @@ interface BulkStorageDialogProps {
 export function BulkStorageDialog({
   open,
   onOpenChange,
-  pendingItems,
+  items,
   storageAreas,
+  title,
   onConfirm,
   onSkipAll,
 }: BulkStorageDialogProps) {
   const { t } = useTranslation();
 
   const initialItems = useMemo(() => {
-    return pendingItems.map(item => ({
+    return items.map(item => ({
       shoppingItem: item,
       selected: true,
       storageAreaId: getSuggestedStorageAreaId(item.item?.category, storageAreas) || '',
       expirationDate: '',
     }));
-  }, [pendingItems, storageAreas]);
+  }, [items, storageAreas]);
 
   const [bulkItems, setBulkItems] = useState<BulkStorageItem[]>(initialItems);
   const [submitting, setSubmitting] = useState(false);
@@ -128,7 +132,7 @@ export function BulkStorageDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <PackageCheck className="h-5 w-5 text-mf-green" />
-            {t('pages.shopping.bulkStorageTitle')}
+            {title ?? t('pages.shopping.bulkStorageTitle')}
           </DialogTitle>
         </DialogHeader>
 

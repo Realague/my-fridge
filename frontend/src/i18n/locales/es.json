@@ -715,7 +715,23 @@
         "itemCount_one": "{{completed}}/{{count}} artículo",
         "itemCount_other": "{{completed}}/{{count}} artículos",
         "dragHandleLabel": "Reordenar el pasillo {{name}}"
-      }
+      },
+      "moveBackToBuy": "Volver a comprar",
+      "store": "Guardar",
+      "storeItemTitle": "Guardar {{name}}",
+      "storeAllTitle": "Guardar todo",
+      "deleteToStoreTitle": "¿Eliminar este artículo?",
+      "deleteToStoreDescription": "«{{name}}» no se guardará en el stock ni se mantendrá en la lista.",
+      "allStoredAway": "¡Todas las compras guardadas!",
+      "allInCart": "¡Todo está en el carrito! Solo queda guardar los artículos comprados.",
+      "toStore": "Para guardar",
+      "toStoreShort": "para guardar",
+      "itemCountSummary_one": "{{count}} artículo",
+      "itemCountSummary_other": "{{count}} artículos",
+      "emptyTitle": "No hay artículos en la lista",
+      "emptyDescription": "Añade un artículo para empezar tu lista de la compra.",
+      "toStoreEmptyTitle": "Nada que guardar por ahora",
+      "toStoreEmptyDescription": "Marca un artículo de « Por comprar » y aparecerá aquí para guardarlo en el stock."
     },
     "meals": {
       "kicker": "Esta semana",
@@ -4060,7 +4076,8 @@
     "back": "Volver",
     "edit": "Editar",
     "delete": "Eliminar",
-    "retry": "Reintentar"
+    "retry": "Reintentar",
+    "cancel": "Cancelar"
   },
   "stockExit": {
     "consumed": "Consumido",

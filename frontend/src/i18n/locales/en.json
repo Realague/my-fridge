@@ -715,7 +715,23 @@
         "itemCount_one": "{{completed}}/{{count}} item",
         "itemCount_other": "{{completed}}/{{count}} items",
         "dragHandleLabel": "Reorder {{name}} aisle"
-      }
+      },
+      "moveBackToBuy": "Move back to buy",
+      "store": "Store",
+      "storeItemTitle": "Store {{name}}",
+      "storeAllTitle": "Store everything",
+      "deleteToStoreTitle": "Delete this item?",
+      "deleteToStoreDescription": "\"{{name}}\" will neither be stored nor kept in the list.",
+      "allStoredAway": "All groceries stored away!",
+      "allInCart": "Everything is in the cart! Just the purchased items left to store.",
+      "toStore": "To store",
+      "toStoreShort": "to store",
+      "itemCountSummary_one": "{{count}} item",
+      "itemCountSummary_other": "{{count}} items",
+      "emptyTitle": "No items in the list",
+      "emptyDescription": "Add an item to start your shopping list.",
+      "toStoreEmptyTitle": "Nothing to store yet",
+      "toStoreEmptyDescription": "Check off an item in « To buy » — it will show up here to be stored."
     },
     "meals": {
       "kicker": "This week",
@@ -4060,7 +4076,8 @@
     "back": "Back",
     "edit": "Edit",
     "delete": "Delete",
-    "retry": "Retry"
+    "retry": "Retry",
+    "cancel": "Cancel"
   },
   "stockExit": {
     "consumed": "Consumed",

@@ -5,7 +5,7 @@ import { StoredItemService } from './StoredItemService';
 import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto, ShoppingItemDto, BulkTransferToStorageDto, CreateStoredItemDto } from '../types/ItemDto';
 import { ApiResponse } from '../types/ApiResponse';
 import { ShoppingItem } from '../models/ShoppingItem';
-import { LINE_STORAGE_UNITS, Unit, StorageAreaType } from '../types/enums';
+import { LINE_STORAGE_UNITS, Unit, StorageAreaType, ShoppingItemStatus } from '../types/enums';
 import { convertToStorageUnit, canConvertUnits, normalizeToBaseUnit, getBestDisplayUnit } from '../utils/unitConversion';
 import { Item } from '../models/Item';
 import { StorageArea } from '../models/StorageArea';
@@ -57,12 +57,12 @@ export class ShoppingItemService {
         data.unit = converted.unit;
       }
 
-      // Check for duplicate item with same unit in the household
+      // Check for duplicate item with same unit in the household ("to buy")
       let existingShoppingItem = await this.shoppingItemRepository.getDuplicateShoppingItem(
         data.itemId,
         data.householdId,
         data.unit,
-        false
+        ShoppingItemStatus.TO_BUY
       );
 
       if (existingShoppingItem) {
@@ -72,7 +72,7 @@ export class ShoppingItemService {
         const compatibleItem = await this.shoppingItemRepository.findByItemAndHousehold(
           data.itemId,
           data.householdId,
-          false
+          ShoppingItemStatus.TO_BUY
         );
 
         if (compatibleItem && canConvertUnits(data.unit, compatibleItem.unit)) {
@@ -114,7 +114,7 @@ export class ShoppingItemService {
         householdId: shoppingItem.householdId,
         quantity: shoppingItem.quantity,
         unit: shoppingItem.unit,
-        completed: shoppingItem.completed,
+        status: shoppingItem.status,
         priority: shoppingItem.priority,
         storedItemId: shoppingItem.storedItemId,
         createdBy: shoppingItem.createdBy,
@@ -214,7 +214,7 @@ export class ShoppingItemService {
           itemId,
           householdId,
           unit,
-          false,
+          existingItem.status,
           id // Exclude current item from duplicate check
         );
         
@@ -270,7 +270,13 @@ export class ShoppingItemService {
     }
   }
 
-  async toggleShoppingItemCompleted(id: string): Promise<ApiResponse<ShoppingItemDto>> {
+  /**
+   * Move a shopping item between "À acheter" (TO_BUY) and "À ranger" (TO_STORE).
+   * No storage side effect — storing happens separately via bulkTransferToStorage.
+   * Preserves the duplicate-merge behaviour: if an item with the same
+   * item/unit already exists in the target status, quantities are merged.
+   */
+  async setShoppingItemStatus(id: string, status: ShoppingItemStatus): Promise<ApiResponse<ShoppingItemDto>> {
     try {
       const shoppingItem = await this.shoppingItemRepository.findById(id);
 
@@ -281,14 +287,19 @@ export class ShoppingItemService {
         };
       }
 
-      const wasCompleted = shoppingItem.completed;
-      const willBeCompleted = !wasCompleted;
+      if (shoppingItem.status === status) {
+        // Already in the requested state — nothing to do.
+        return {
+          success: true,
+          data: this.formatShoppingItemResponse(shoppingItem),
+        };
+      }
 
       let duplicateShoppingItem = await this.shoppingItemRepository.getDuplicateShoppingItem(
         shoppingItem.itemId,
         shoppingItem.householdId,
         shoppingItem.unit,
-        willBeCompleted,
+        status,
         id
       );
 
@@ -302,7 +313,7 @@ export class ShoppingItemService {
         const compatibleItem = await this.shoppingItemRepository.findByItemAndHousehold(
           shoppingItem.itemId,
           shoppingItem.householdId,
-          willBeCompleted,
+          status,
           id
         );
 
@@ -320,37 +331,18 @@ export class ShoppingItemService {
       let updatedShoppingItem: ShoppingItem | null = null;
       if (duplicateShoppingItem) {
         await this.deleteShoppingItem(duplicateShoppingItem.id);
-        const updateData: any = { quantity: mergedQuantity, completed: willBeCompleted };
+        const updateData: any = { quantity: mergedQuantity, status };
         if (mergedUnit) updateData.unit = mergedUnit;
         updatedShoppingItem = await this.shoppingItemRepository.update(id, updateData);
       } else {
-        updatedShoppingItem = await this.shoppingItemRepository.update(id, { completed: willBeCompleted });
+        updatedShoppingItem = await this.shoppingItemRepository.update(id, { status });
       }
 
       if (!updatedShoppingItem) {
         return {
           success: false,
-          error: 'Failed to toggle shopping item completion',
+          error: 'Failed to update shopping item status',
         };
-      }
-
-      // If the item is being unmarked as completed (was completed, now not completed),
-      // delete the stored item referenced by storedItemId and clear the reference
-      if (wasCompleted && !willBeCompleted && shoppingItem.storedItemId) {
-        try {
-          const deleteSuccess = await this.storedItemService.deleteStoredItem(
-            shoppingItem.storedItemId,
-            shoppingItem.householdId
-          );
-          
-          if (deleteSuccess) {
-            // Clear the storedItemId reference
-            await this.shoppingItemRepository.update(id, { storedItemId: null });
-          }
-        } catch (error) {
-          console.error('Error deleting stored item when unmarking shopping item:', error);
-          // Don't fail the entire operation if stored item deletion fails
-        }
       }
 
       return {
@@ -358,44 +350,10 @@ export class ShoppingItemService {
         data: this.formatShoppingItemResponse(updatedShoppingItem),
       };
     } catch (error) {
-      console.error('Error toggling shopping item completion:', error);
+      console.error('Error updating shopping item status:', error);
       return {
         success: false,
-        error: 'Failed to toggle shopping item completion',
-      };
-    }
-  }
-
-  async bulkUpdateCompleted(ids: string[], completed: boolean, householdId?: string): Promise<ApiResponse<{ updatedCount: number }>> {
-    try {
-      const updatedCount = await this.shoppingItemRepository.bulkUpdateCompleted(ids, completed, householdId);
-
-      return {
-        success: true,
-        data: { updatedCount },
-      };
-    } catch (error) {
-      console.error('Error bulk updating shopping items:', error);
-      return {
-        success: false,
-        error: 'Failed to bulk update shopping items',
-      };
-    }
-  }
-
-  async clearCompleted(householdId: string): Promise<ApiResponse<{ deletedCount: number }>> {
-    try {
-      const deletedCount = await this.shoppingItemRepository.clearCompleted(householdId);
-
-      return {
-        success: true,
-        data: { deletedCount },
-      };
-    } catch (error) {
-      console.error('Error clearing completed shopping items:', error);
-      return {
-        success: false,
-        error: 'Failed to clear completed shopping items',
+        error: 'Failed to update shopping item status',
       };
     }
   }
@@ -423,11 +381,17 @@ export class ShoppingItemService {
     }
   }
 
-  async bulkTransferToStorage(data: BulkTransferToStorageDto): Promise<ApiResponse<ShoppingItemDto[]>> {
+  /**
+   * Store one or more shopping items into the stock. For each item a StoredItem
+   * is created and the ShoppingItem row is DELETED — a stored article leaves the
+   * shopping list entirely ("Rangé"). Returns the ids of the removed rows so the
+   * client can drop them from its local state.
+   */
+  async bulkTransferToStorage(data: BulkTransferToStorageDto): Promise<ApiResponse<{ removedShoppingItemIds: string[] }>> {
     const transaction = await sequelize.transaction();
 
     try {
-      const results: ShoppingItemDto[] = [];
+      const removedShoppingItemIds: string[] = [];
 
       for (const transferItem of data.items) {
         const shoppingItem = await this.shoppingItemRepository.findById(transferItem.shoppingItemId);
@@ -458,21 +422,16 @@ export class ShoppingItemService {
           createdBy: data.createdBy,
         };
 
-        const storedItem = await this.storedItemService.createStoredItem(createStoredItemData);
+        await this.storedItemService.createStoredItem(createStoredItemData);
 
-        const updatedShoppingItem = await this.shoppingItemRepository.update(
-          shoppingItem.id,
-          { storedItemId: storedItem.id, completed: true }
-        );
-
-        if (updatedShoppingItem) {
-          results.push(this.formatShoppingItemResponse(updatedShoppingItem));
-        }
+        // The article is now in stock — remove it from the shopping list.
+        await this.shoppingItemRepository.delete(shoppingItem.id);
+        removedShoppingItemIds.push(shoppingItem.id);
       }
 
       await transaction.commit();
 
-      return { success: true, data: results };
+      return { success: true, data: { removedShoppingItemIds } };
     } catch (error) {
       await transaction.rollback();
       console.error('Error in bulkTransferToStorage:', error);
@@ -517,7 +476,7 @@ export class ShoppingItemService {
       householdId: shoppingItem.householdId,
       quantity: shoppingItem.quantity,
       unit: shoppingItem.unit,
-      completed: shoppingItem.completed,
+      status: shoppingItem.status,
       priority: shoppingItem.priority,
       storedItemId: shoppingItem.storedItemId,
       createdBy: shoppingItem.createdBy,

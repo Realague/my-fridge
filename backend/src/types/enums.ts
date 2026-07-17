@@ -106,7 +106,6 @@ export enum StockExitType {
 }
 
 export const STOCK_EXIT_TYPES = Object.values(StockExitType);
-
 // Shopping-list article states.
 //  - TO_BUY:   in the list, not yet in the cart ("À acheter")
 //  - TO_STORE: bought, waiting to be stored ("À ranger")

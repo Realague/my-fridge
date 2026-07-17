@@ -51,6 +51,30 @@ export async function uploadImageToCloudinary(
 }
 
 /**
+ * Uploads a remote image URL to Cloudinary. Cloudinary fetches the URL
+ * server-side, so this works for logo.dev image URLs.
+ * @returns Cloudinary secure URL, or null if the upload/fetch fails.
+ */
+export async function uploadImageFromUrl(
+  imageUrl: string,
+  publicId: string,
+  folder: string = 'brands'
+): Promise<string | null> {
+  try {
+    const result = await cloudinary.uploader.upload(imageUrl, {
+      folder,
+      public_id: publicId,
+      overwrite: false,
+      resource_type: 'image',
+    });
+    return result.secure_url;
+  } catch (error) {
+    console.error(`Failed to upload image from URL ${imageUrl}:`, error);
+    return null;
+  }
+}
+
+/**
  * Uploads multiple images to Cloudinary in batch
  * @param imageFiles - Array of objects with filePath and optional publicId
  * @param folder - Optional folder in Cloudinary (defaults to 'items')

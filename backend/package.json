@@ -26,7 +26,8 @@
     "db:create:script": "ts-node src/scripts/createDatabase.ts",
     "seed:items": "ts-node src/scripts/seedItemsFromCSV.ts",
     "seed:items:staging": "ts-node src/scripts/seedItemsFromCSV.ts my_fridge_db_staging 5433",
-    "seed:items:incremental": "ts-node src/scripts/seedItemsIncremental.ts"
+    "seed:items:incremental": "ts-node src/scripts/seedItemsIncremental.ts",
+    "brands:logos": "ts-node src/scripts/downloadBrandLogos.ts"
   },
   "keywords": [
     "express",

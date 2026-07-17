@@ -84,4 +84,17 @@ export enum BarcodeFormat {
   OTHER = 'other'
 }
 
-export const BARCODE_FORMATS = Object.values(BarcodeFormat); 
+export const BARCODE_FORMATS = Object.values(BarcodeFormat);
+
+export enum BrandCategory {
+  GRANDE_DISTRIBUTION = 'grande_distribution',
+  HARD_DISCOUNT = 'hard_discount',
+  BIO_ALIMENTAIRE = 'bio_alimentaire',
+  SURGELE = 'surgele',
+  BEAUTE = 'beaute',
+  BRICOLAGE_MAISON = 'bricolage_maison',
+  SPORT_CULTURE_TECH = 'sport_culture_tech',
+  MODE = 'mode'
+}
+
+export const BRAND_CATEGORIES = Object.values(BrandCategory);

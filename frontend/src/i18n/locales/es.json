@@ -4028,7 +4028,14 @@
       "search": "Buscar una tienda...",
       "other": "Otra tienda",
       "customStore": "Tienda personalizada",
-      "enterStoreName": "Nombre de la tienda"
+      "enterStoreName": "Nombre de la tienda",
+      "website": "Sitio web (opcional)",
+      "websitePlaceholder": "ej. carrefour.fr",
+      "loading": "Cargando tiendas…",
+      "error": "No se pudieron cargar las tiendas.",
+      "noResults": "No se encontró ninguna tienda.",
+      "creating": "Creando…",
+      "createError": "No se pudo crear la tienda."
     },
     "scanner": {
       "title": "Escanear código de barras",

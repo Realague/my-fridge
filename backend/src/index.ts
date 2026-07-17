@@ -13,6 +13,7 @@ import recipeRoutes from './routes/recipes';
 import mealRoutes from './routes/meals';
 import imageRoutes from './routes/images';
 import importRoutes from './routes/import';
+import brandRoutes from './routes/brands';
 import { sequelize } from './models';
 import { executeSmartMigration } from './utils/migrationStrategy';
 
@@ -82,6 +83,7 @@ app.use('/api/households', householdSettingsRoutes);
 app.use('/api/households', notificationRoutes);
 app.use('/api/push', pushSubscriptionRoutes);
 app.use('/api/items', itemRoutes);
+app.use('/api/brands', brandRoutes);
 app.use('/api', recipeRoutes);
 app.use('/api', mealRoutes);
 app.use('/api/images', imageRoutes);
@@ -102,6 +104,7 @@ app.get('/', (req, res) => {
       recipes: '/api/recipes/:householdId/recipes',
       meals: '/api/households/:householdId/meals',
       items: '/api/items',
+      brands: '/api/brands',
       dbTest: '/db-test'
     }
   });

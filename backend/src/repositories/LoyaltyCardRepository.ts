@@ -90,4 +90,8 @@ export class LoyaltyCardRepository {
     });
     return deleted > 0;
   }
+
+  async countByHouseholdAndSlug(householdId: string, storeSlug: string): Promise<number> {
+    return await LoyaltyCard.count({ where: { householdId, storeSlug } });
+  }
 }

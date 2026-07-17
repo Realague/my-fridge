@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Camera, Keyboard } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { BarcodeFormat } from '@/types/enums';
-import { StoreCatalogEntry } from '@/data/storeCatalog';
+import { Brand } from '@/services/brandService';
 import StoreSelector from './StoreSelector';
 import BarcodeScanner from './BarcodeScanner';
 import { CreateLoyaltyCardRequest } from '@/services/loyaltyCardService';
@@ -26,8 +26,7 @@ type BarcodeEntrySource = 'scan' | 'manual' | null;
 const LoyaltyCardForm = ({ open, onOpenChange, onSubmit }: LoyaltyCardFormProps) => {
   const { t } = useTranslation();
   const [step, setStep] = useState<Step>('store');
-  const [selectedStore, setSelectedStore] = useState<StoreCatalogEntry | null>(null);
-  const [customStoreName, setCustomStoreName] = useState('');
+  const [selectedStore, setSelectedStore] = useState<Brand | null>(null);
   const [cardNumber, setCardNumber] = useState('');
   const [barcodeData, setBarcodeData] = useState('');
   const [barcodeFormat, setBarcodeFormat] = useState<BarcodeFormat | undefined>();
@@ -40,7 +39,6 @@ const LoyaltyCardForm = ({ open, onOpenChange, onSubmit }: LoyaltyCardFormProps)
   const reset = () => {
     setStep('store');
     setSelectedStore(null);
-    setCustomStoreName('');
     setCardNumber('');
     setBarcodeData('');
     setBarcodeFormat(undefined);
@@ -56,9 +54,8 @@ const LoyaltyCardForm = ({ open, onOpenChange, onSubmit }: LoyaltyCardFormProps)
     onOpenChange(isOpen);
   };
 
-  const handleStoreSelect = (store: StoreCatalogEntry | null, customName?: string) => {
-    setSelectedStore(store);
-    if (customName) setCustomStoreName(customName);
+  const handleStoreSelect = (brand: Brand) => {
+    setSelectedStore(brand);
     setStep('barcode');
   };
 
@@ -101,13 +98,13 @@ const LoyaltyCardForm = ({ open, onOpenChange, onSubmit }: LoyaltyCardFormProps)
           : barcodeFormat ?? detectFormat(finalBarcodeData);
 
       const data: CreateLoyaltyCardRequest = {
-        storeName: selectedStore?.name || customStoreName,
-        storeSlug: selectedStore?.slug,
+        storeName: selectedStore?.name ?? '',
+        storeSlug: selectedStore?.id,
         cardNumber: cardNumber.trim(),
         barcodeData: finalBarcodeData,
         barcodeFormat: finalFormat,
         notes: notes.trim() || undefined,
-        color: selectedStore?.color,
+        color: selectedStore?.color ?? undefined,
       };
 
       await onSubmit(data);
@@ -143,7 +140,7 @@ const LoyaltyCardForm = ({ open, onOpenChange, onSubmit }: LoyaltyCardFormProps)
           {step === 'barcode' && (
             <div className="space-y-4">
               <h3 className="font-semibold text-foreground">
-                {t('loyaltyCards.form.addBarcode', { store: selectedStore?.name || customStoreName })}
+                {t('loyaltyCards.form.addBarcode', { store: selectedStore?.name })}
               </h3>
               <div className="grid grid-cols-1 gap-3">
                 <Button

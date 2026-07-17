@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus } from 'lucide-react';
+import { Plus, ScanBarcode } from 'lucide-react';
 import { Item } from '@/services/itemService';
 import { QuantitySelector } from './QuantitySelector';
 import { ItemSelector } from './ItemSelector';
@@ -17,15 +17,18 @@ interface AddItemCardProps {
   buttonText: string;
   disabled?: boolean;
   storageAreaName?: string;
+  /** When provided, a barcode-scan button is shown next to the search field. */
+  onScan?: () => void;
 }
 
-export const AddItemCard = ({ 
+export const AddItemCard = ({
   title,
   onItemAdd,
   placeholder,
   buttonText,
   disabled = false,
-  storageAreaName
+  storageAreaName,
+  onScan
 }: AddItemCardProps) => {
   const { t } = useTranslation();
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
@@ -114,13 +117,31 @@ export const AddItemCard = ({
             <label className="text-sm font-medium text-muted-foreground mb-2 block">
               {t('storageArea.selectItem')}
             </label>
-            <ItemSelector
-              onItemSelect={handleItemSelect}
-              placeholder={placeholder}
-              selectedItem={selectedItem}
-              className="w-full"
-              autoFocus
-            />
+            <div className="flex items-center gap-2">
+              <div className="flex-1 min-w-0">
+                <ItemSelector
+                  onItemSelect={handleItemSelect}
+                  placeholder={placeholder}
+                  selectedItem={selectedItem}
+                  className="w-full"
+                  autoFocus
+                />
+              </div>
+              {onScan && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={onScan}
+                  disabled={disabled}
+                  className="h-11 w-11 shrink-0 rounded-full"
+                  title={t('pages.shopping.scan')}
+                  aria-label={t('pages.shopping.scan')}
+                >
+                  <ScanBarcode className="h-5 w-5" />
+                </Button>
+              )}
+            </div>
           </div>
 
           {selectedItem && (

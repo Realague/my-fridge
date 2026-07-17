@@ -17,6 +17,7 @@ import { ExpirationNotificationRead } from './ExpirationNotificationRead';
 import { PushSubscription } from './PushSubscription';
 import { Brand } from './Brand';
 import { StockExit } from './StockExit';
+import { BarcodeMapping } from './BarcodeMapping';
 
 // Define associations
 User.hasMany(Household, { foreignKey: 'createdBy', as: 'createdHouseholds' });
@@ -160,6 +161,15 @@ StockExit.belongsTo(StoredItem, { foreignKey: 'storedItemId', as: 'storedItem' }
 
 // Brand is a global referential — no associations
 
+// Barcode Mapping associations. The mapping is a global (cross-household)
+// referential keyed on barcode; it only links to the catalog Item it resolves
+// to (and, optionally, the user who first created it).
+Item.hasMany(BarcodeMapping, { foreignKey: 'itemId', as: 'barcodeMappings' });
+BarcodeMapping.belongsTo(Item, { foreignKey: 'itemId', as: 'item' });
+
+User.hasMany(BarcodeMapping, { foreignKey: 'createdBy', as: 'createdBarcodeMappings' });
+BarcodeMapping.belongsTo(User, { foreignKey: 'createdBy', as: 'creator' });
+
 // Export models
 export {
   sequelize,
@@ -180,5 +190,6 @@ export {
   ExpirationNotificationRead,
   PushSubscription,
   Brand,
-  StockExit
+  StockExit,
+  BarcodeMapping
 };

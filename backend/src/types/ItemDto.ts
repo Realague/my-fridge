@@ -66,6 +66,11 @@ export interface CreateShoppingItemDto {
   unit: string;
   createdBy: string;
   priority?: number;
+  /**
+   * Target section. Defaults to TO_BUY. Set to TO_STORE to add an item directly
+   * to "À ranger" (e.g. a scanned off-list product bought in store).
+   */
+  status?: ShoppingItemStatus;
 }
 
 export interface UpdateShoppingItemDto {

@@ -9,6 +9,7 @@ import { authenticateGoogleToken } from '../middleware/auth';
 import { validateRequest } from '../middleware/validation';
 import storageAreaRoutes from './storageAreas';
 import shoppingRoutes from './shopping';
+import barcodeRoutes from './barcode';
 import itemMinimumRoutes from './itemMinimums';
 import loyaltyCardRoutes from './loyaltyCards';
 
@@ -71,6 +72,9 @@ router.use('/:householdId/storage-areas', storageAreaRoutes);
 
 // Nested routes for shopping lists
 router.use('/:householdId/shopping', shoppingRoutes);
+
+// Nested routes for barcode scanning (lookup + mapping confirmation)
+router.use('/:householdId/barcode', barcodeRoutes);
 
 // Nested routes for item minimums
 router.use('/:householdId/item-minimums', itemMinimumRoutes);

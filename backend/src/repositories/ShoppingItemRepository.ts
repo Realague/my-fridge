@@ -14,6 +14,8 @@ export class ShoppingItemRepository {
       unit: data.unit,
       createdBy: data.createdBy,
       priority: data.priority || 0,
+      // Defaults to TO_BUY at the model level when omitted.
+      ...(data.status ? { status: data.status } : {}),
     });
   }
 

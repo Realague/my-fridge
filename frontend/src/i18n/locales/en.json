@@ -731,7 +731,65 @@
       "emptyTitle": "No items in the list",
       "emptyDescription": "Add an item to start your shopping list.",
       "toStoreEmptyTitle": "Nothing to store yet",
-      "toStoreEmptyDescription": "Check off an item in « To buy » — it will show up here to be stored."
+      "toStoreEmptyDescription": "Check off an item in « To buy » — it will show up here to be stored.",
+      "scan": "Scan",
+      "scanner": {
+        "title": "Scan a barcode",
+        "hint": "Point at a barcode…",
+        "detected": "Code detected ✓",
+        "starting": "Starting camera…",
+        "done": "Done",
+        "torch": "Toggle flashlight",
+        "addManually": "Add manually",
+        "permission": {
+          "title": "Scan your items",
+          "body": "Fresh uses the camera to scan barcodes and save you time while shopping. No photo is kept.",
+          "enable": "Enable the camera",
+          "later": "Later",
+          "privacy": "No image is stored"
+        },
+        "refused": {
+          "title": "Scanning unavailable",
+          "body": "Scanning isn’t available without camera access. Allow the camera in your device settings to scan barcodes.",
+          "retry": "Enable the camera"
+        },
+        "catalog": {
+          "eyebrow": "Off-list · already in catalog",
+          "title": "You hadn’t planned this item",
+          "body": "This product wasn’t on your list. Add it straight to « To store »?",
+          "add": "Add"
+        },
+        "off": {
+          "eyebrow": "New · Open Food Facts",
+          "title": "Create this item",
+          "body": "Product found on Open Food Facts. Check the details, then add it to your catalog and « To store ».",
+          "code": "code {{code}}",
+          "name": "Product name",
+          "category": "Category",
+          "unit": "Default unit",
+          "mappingNote": "The barcode ↔ item mapping will be shared with all households.",
+          "create": "Create and add"
+        },
+        "unknown": {
+          "eyebrow": "Not identified",
+          "title": "Product not identified",
+          "body": "Code {{code}} isn’t recognized by Open Food Facts. You can add it manually.",
+          "continue": "Keep scanning"
+        },
+        "offline": {
+          "eyebrow": "Offline",
+          "title": "Connection required",
+          "body": "This new barcode isn’t in the local cache. Connect to identify it, try again later, or add it manually."
+        },
+        "toast": {
+          "movedToStore": "{{name}} added to « To store »",
+          "addedToStore": "{{name}} added to « To store »",
+          "created": "{{name}} created · mapping shared",
+          "addFailed": "Couldn’t add the item",
+          "createFailed": "Couldn’t create the item",
+          "lookupError": "Scan failed, try again"
+        }
+      }
     },
     "meals": {
       "kicker": "This week",

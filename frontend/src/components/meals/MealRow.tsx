@@ -102,7 +102,7 @@ export const MealRow = ({
           variant="ghost"
           size="sm"
           onClick={onIncrement}
-          disabled={disabled || meal.servings >= 20}
+          disabled={disabled || meal.servings >= 100}
           className="h-8 w-8 p-0"
           aria-label={t('pages.meals.increaseServings')}
         >

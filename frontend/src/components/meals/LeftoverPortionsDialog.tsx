@@ -235,8 +235,8 @@ export const LeftoverPortionsDialog = ({
           </span>
           <button
             type="button"
-            onClick={() => setPortions((p) => Math.min(20, p + 1))}
-            disabled={submitting || portions >= 20}
+            onClick={() => setPortions((p) => Math.min(100, p + 1))}
+            disabled={submitting || portions >= 100}
             className="mf-stepper-btn h-11 w-11"
             aria-label={t('leftoverPortionsDialog.increment')}
           >

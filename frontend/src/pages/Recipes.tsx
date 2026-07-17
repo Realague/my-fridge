@@ -19,6 +19,7 @@ import { X } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { scrollRevealFadeUp } from '@/lib/motion';
 import { difficultyTone, toneBadgeClass } from '@/lib/tokenMaps';
+import { cn } from '@/lib/utils';
 
 const Recipes = () => {
   const { t } = useTranslation();
@@ -233,38 +234,42 @@ const RecipeGrid = ({ activeTab, recipes, onToggleFavorite, getDifficultyColor }
             variant="elevated"
             className="overflow-hidden pointer-events-none [&_button]:pointer-events-auto [&_button]:relative [&_button]:z-10"
           >
-            {recipe.imageUrl && (
-              <div className="w-full h-40 overflow-hidden bg-muted">
+            <div className="relative w-full h-40 overflow-hidden bg-muted">
+              {recipe.imageUrl ? (
                 <img
                   src={recipe.imageUrl}
                   alt={recipe.title}
-                  className="w-full h-full object-cover"
+                  className="absolute inset-0 h-full w-full object-cover"
                 />
-              </div>
-            )}
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle as="h3">{recipe.title}</CardTitle>
-                  <CardDescription className="text-sm mt-1">
-                    {recipe.description}
-                  </CardDescription>
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+                  <ChefHat className="h-12 w-12 text-muted-foreground/40" />
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onToggleFavorite(recipe.id);
-                  }}
-                  className="ml-2 relative z-10 pointer-events-auto"
-                  aria-label={recipe.isFavorite ? t('pages.recipes.unfavorite') : t('pages.recipes.favorite')}
-                >
-                  <Heart
-                    className={`h-4 w-4 ${recipe.isFavorite ? 'fill-mf-danger text-mf-danger' : 'text-muted-foreground'}`}
-                  />
-                </Button>
-              </div>
+              )}
+              <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/25 to-transparent" />
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleFavorite(recipe.id);
+                }}
+                title={recipe.isFavorite ? t('pages.recipes.unfavorite') : t('pages.recipes.favorite')}
+                aria-label={recipe.isFavorite ? t('pages.recipes.unfavorite') : t('pages.recipes.favorite')}
+                className="!absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 shadow-[var(--mf-shadow-1)] transition-transform hover:scale-105"
+              >
+                <Heart
+                  className={cn(
+                    'h-[18px] w-[18px] text-mf-danger',
+                    recipe.isFavorite && 'fill-mf-danger'
+                  )}
+                />
+              </button>
+            </div>
+            <CardHeader className="pb-3">
+              <CardTitle as="h3">{recipe.title}</CardTitle>
+              <CardDescription className="text-sm mt-1">
+                {recipe.description}
+              </CardDescription>
             </CardHeader>
 
             <CardContent className="pt-0">
@@ -313,14 +318,12 @@ const RecipeGridSkeleton = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {Array.from({ length: 6 }).map((_, index) => (
-        <Card key={index} variant="elevated">
+        <Card key={index} variant="elevated" className="overflow-hidden">
+          <Skeleton className="h-40 w-full rounded-none" />
           <CardHeader className="pb-3">
-            <div className="flex items-start justify-between">
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-5 w-3/4" />
-                <Skeleton className="h-4 w-full" />
-              </div>
-              <Skeleton className="h-6 w-6 rounded-full ml-2" />
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-3/4" />
+              <Skeleton className="h-4 w-full" />
             </div>
           </CardHeader>
           <CardContent className="pt-0">

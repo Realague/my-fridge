@@ -65,7 +65,7 @@ const Meals = () => {
     const meal = meals.find((m) => m.id === id);
     if (!meal) return;
     const next = meal.servings + delta;
-    if (next < 1 || next > 20) return;
+    if (next < 1 || next > 100) return;
     try {
       await updateServings(id, next);
     } catch (error) {

@@ -114,6 +114,8 @@ const AddRecipe = () => {
       instructions: data.instructions,
       tags: data.tags,
       sourceUrl: importedRecipe?.sourceUrl,
+      sourceDomain: importedRecipe?.sourceDomain,
+      importedAt: importedRecipe?.importedAt,
       // image is uploaded after create
       ingredients: data.ingredients,
     };
@@ -182,9 +184,11 @@ const AddRecipe = () => {
         instructions: importedRecipe?.instructions,
         ingredientStepMap: initialStepMap,
         imageUrl: importedRecipe?.imageUrl || null,
+        tags: importedRecipe?.tags ?? [],
       }}
       saving={loading}
       deferImageUpload
+      isImport={Boolean(importedRecipe)}
       importedIngredients={importedIngredients}
       onSubmit={handleSubmit}
       onBack={() => navigate('/recipes')}

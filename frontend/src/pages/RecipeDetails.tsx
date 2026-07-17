@@ -34,7 +34,7 @@ import { getItemDisplayName } from '@/utils/itemUtils';
 import { formatQuantityWithUnit, isFreeQuantityUnit } from '@/utils/unitSystem';
 import { Item } from '@/services/itemService';
 import { useAuthStore } from '@/stores/authStore';
-import { iconForTagLabel, TAG_TONES } from '@/components/recipe-editor/RecipeTagsPanel';
+import { iconForTagLabel } from '@/components/recipe-editor/RecipeTagsPanel';
 import { cn } from '@/lib/utils';
 import {
   AlertDialog,
@@ -457,14 +457,14 @@ const RecipeDetails = () => {
             )}
             {recipe.tags.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2">
-                {recipe.tags.map((tag, index) => {
+                {recipe.tags.map((tag) => {
                   const TagIcon = iconForTagLabel(tag, t);
                   return (
                     <span
                       key={tag}
                       className={cn(
                         'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 font-display text-[12.5px] font-bold',
-                        TAG_TONES[index % TAG_TONES.length]
+                        'bg-mf-night-elevated text-mf-text-soft'
                       )}
                     >
                       <TagIcon className="h-3.5 w-3.5" />

@@ -69,16 +69,6 @@ export const iconForTagLabel = (
   return match ? match[1] : Hash;
 };
 
-// Pills cycle through the six Fresh accent pairings, as in the mock.
-export const TAG_TONES = [
-  'bg-mf-green-soft text-mf-green-deep',
-  'bg-mf-blue-soft text-mf-blue',
-  'bg-mf-orange-soft text-mf-orange',
-  'bg-mf-purple-soft text-mf-purple-deep',
-  'bg-mf-pink-soft text-mf-pink-deep',
-  'bg-mf-yellow-soft text-mf-brown',
-];
-
 /**
  * Tags panel: colored pill chips inside a single input zone
  * (Enter / comma to add, Backspace to pop) + dashed suggestion pills.
@@ -118,14 +108,14 @@ export const RecipeTagsPanel = ({ tags, suggestions, onAddTag, onRemoveTag }: Re
         className="flex cursor-text flex-wrap items-center gap-2 rounded-md border-[1.5px] border-transparent bg-muted px-2.5 py-2 transition-colors focus-within:border-mf-green focus-within:bg-card"
         onClick={() => inputRef.current?.focus()}
       >
-        {tags.map((tag, index) => {
+        {tags.map((tag) => {
           const Icon = iconForTag(tag);
           return (
             <span
               key={tag}
               className={cn(
                 'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full py-1.5 pl-3 pr-1.5 font-display text-[13px] font-bold',
-                TAG_TONES[index % TAG_TONES.length]
+                'border border-mf-night-line bg-card text-mf-text-soft'
               )}
             >
               <Icon className="h-3.5 w-3.5" />

@@ -47,6 +47,9 @@ export interface CreateRecipeDto {
   tags: string[];
   imageUrl?: string;
   sourceUrl?: string;
+  /** Import traceability — set by the import flow only. */
+  sourceDomain?: string;
+  importedAt?: string;
   ingredients: CreateRecipeIngredientDto[];
 }
 
@@ -228,7 +231,9 @@ export interface ConsumeResult {
   consumed: ConsumeResultItem[];
 }
 
-export interface ParsedMarmitonRecipe {
+export type ImportExtractionMethod = 'json-ld' | 'microdata' | 'rdfa' | 'html-fallback';
+
+export interface ParsedImportedRecipe {
   title: string;
   description: string;
   prepTime: number;
@@ -240,7 +245,28 @@ export interface ParsedMarmitonRecipe {
   matchedIngredients: MatchedIngredient[];
   imageUrl: string | null;
   sourceUrl: string;
+  sourceDomain?: string;
+  importedAt?: string;
+  extractionMethod?: ImportExtractionMethod;
+  tags?: string[];
   ingredientStepMapping?: { [ingredientIndex: number]: number[] };
+}
+
+/** @deprecated legacy name kept for older call sites — same shape. */
+export type ParsedMarmitonRecipe = ParsedImportedRecipe;
+
+export type RecipeImportErrorCode =
+  | 'SOURCE_NOT_ALLOWED'
+  | 'ROBOTS_DISALLOWED'
+  | 'NO_RECIPE_FOUND'
+  | 'FETCH_FAILED'
+  | 'UNKNOWN';
+
+export class RecipeImportError extends Error {
+  constructor(message: string, public readonly code: RecipeImportErrorCode) {
+    super(message);
+    this.name = 'RecipeImportError';
+  }
 }
 
 export const useRecipeService = () => {
@@ -380,22 +406,35 @@ export const useRecipeService = () => {
     return data.data || data;
   };
 
-  const importFromMarmiton = async (url: string): Promise<ParsedMarmitonRecipe> => {
-    const response = await makeApiCall('/api/import/marmiton', {
+  // Generic Schema.org-based import: accepts any allowed recipe page URL.
+  const importRecipe = async (url: string): Promise<ParsedImportedRecipe> => {
+    const response = await makeApiCall('/api/import/recipe', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: { url },
     });
-    
+
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: 'Failed to import recipe' }));
-      throw new Error(errorData.error || `HTTP ${response.status}`);
+      const errorData = await response
+        .json()
+        .catch(() => ({ error: 'Failed to import recipe', code: undefined }));
+      const code: RecipeImportErrorCode =
+        errorData.code === 'SOURCE_NOT_ALLOWED' ||
+        errorData.code === 'ROBOTS_DISALLOWED' ||
+        errorData.code === 'NO_RECIPE_FOUND' ||
+        errorData.code === 'FETCH_FAILED'
+          ? errorData.code
+          : 'UNKNOWN';
+      throw new RecipeImportError(errorData.error || `HTTP ${response.status}`, code);
     }
-    
+
     return response.json();
   };
+
+  /** @deprecated use importRecipe — kept while older call sites migrate. */
+  const importFromMarmiton = importRecipe;
 
   return {
     getRecipes,
@@ -409,6 +448,7 @@ export const useRecipeService = () => {
     getRecipeStats,
     getIngredientStats,
     getRecipesByUser,
+    importRecipe,
     importFromMarmiton,
     getConsumePreview,
     consumeIngredients,

@@ -14,6 +14,7 @@ import {
   RecipeIngredientDto
 } from '../types/RecipeDto';
 import { NotFoundError, ValidationError } from '../errors/CustomErrors';
+import { domainOfUrl } from './recipeImport/types';
 
 export interface RecipeDeletionImpact {
   recipeId: string;
@@ -69,6 +70,14 @@ export class RecipeService {
     const transaction = await sequelize.transaction();
 
     try {
+      // Import traceability: sourceDomain always derives from sourceUrl when
+      // absent; importedAt only exists for recipes that went through the
+      // import pipeline (hand-created recipes keep it null).
+      const sourceUrl = recipeData.sourceUrl || null;
+      const sourceDomain =
+        recipeData.sourceDomain || (sourceUrl ? domainOfUrl(sourceUrl) || null : null);
+      const importedAt = recipeData.importedAt ? new Date(recipeData.importedAt) : null;
+
       // Create the recipe
       const recipe = await this.recipeRepository.create({
         title: recipeData.title,
@@ -80,7 +89,9 @@ export class RecipeService {
         instructions: recipeData.instructions,
         tags: recipeData.tags,
         imageUrl: recipeData.imageUrl || null,
-        sourceUrl: recipeData.sourceUrl || null,
+        sourceUrl,
+        sourceDomain,
+        importedAt: importedAt && !isNaN(importedAt.getTime()) ? importedAt : null,
         householdId: recipeData.householdId,
         createdBy: recipeData.createdBy
       }, transaction);
@@ -333,6 +344,8 @@ export class RecipeService {
       tags: recipe.tags,
       imageUrl: recipe.imageUrl,
       sourceUrl: recipe.sourceUrl,
+      sourceDomain: recipe.sourceDomain,
+      importedAt: recipe.importedAt ? recipe.importedAt.toISOString() : null,
       isFavorite: recipe.isFavorite,
       householdId: recipe.householdId,
       createdBy: recipe.createdBy,

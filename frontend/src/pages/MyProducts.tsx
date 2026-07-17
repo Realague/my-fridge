@@ -47,8 +47,10 @@ import { Switch } from '@/components/ui/switch';
 
 import AddStorageAreaDialog from '@/components/AddStorageAreaDialog';
 import { AddStoredItemDialog } from '@/components/AddStoredItemDialog';
-import { MyProductsItemCard } from '@/components/MyProductsItemCard';
+import { StoredItemCard } from '@/components/StoredItemCard';
+import { ExitSuggestionCard } from '@/components/ExitSuggestionCard';
 import { useAuthStore } from '@/stores/authStore';
+import { useExpirationNotificationStore } from '@/stores/expirationNotificationStore';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
@@ -96,11 +98,11 @@ const MyProducts = () => {
 
   const {
     fetchStoredItems,
-    deleteStoredItem,
     getStoredItemsForHousehold,
     loading: storedItemsLoading,
   } = useStoredItemStore();
   const { fetchStorageAreas, getStorageAreasForHousehold } = useStorageAreaStore();
+  const fetchNotifications = useExpirationNotificationStore((s) => s.fetchAll);
 
   const storedItems = getStoredItemsForHousehold();
   const storageAreas = getStorageAreasForHousehold();
@@ -171,7 +173,9 @@ const MyProducts = () => {
     fetchStorageAreas();
     /** Refetch on mount: a per-area page may have overwritten the household bucket. */
     fetchStoredItems();
-  }, [selectedHouseholdId, fetchStorageAreas, fetchStoredItems]);
+    // Notifications drive the exit-suggestion banner at the top of the list.
+    fetchNotifications(selectedHouseholdId);
+  }, [selectedHouseholdId, fetchStorageAreas, fetchStoredItems, fetchNotifications]);
 
   /**
    * Hydrate the catalog map from any `item` payload embedded on stored items,
@@ -357,14 +361,6 @@ const MyProducts = () => {
     setSelectedAreaIds(null);
   };
 
-  const handleDelete = async (storedItemId: string) => {
-    try {
-      await deleteStoredItem(storedItemId);
-    } catch (error) {
-      console.error('Failed to delete stored item:', error);
-    }
-  };
-
   const renderRow = (row: StorageAreaListRow, key: string | number) => {
     if (row.kind === 'header') {
       return (
@@ -388,12 +384,11 @@ const MyProducts = () => {
     const si = row.storedItem;
     return (
       <motion.div key={si.id} {...scrollRevealFadeUp(prefersReducedMotion)}>
-        <MyProductsItemCard
+        <StoredItemCard
           storedItem={si}
           item={items[si.itemId]}
           area={areaById[si.storageAreaId]}
           currentUserId={currentUser?.id}
-          onDelete={handleDelete}
         />
       </motion.div>
     );
@@ -429,6 +424,8 @@ const MyProducts = () => {
       </div>
 
       <div className="container mx-auto px-4 py-6 space-y-6">
+        <ExitSuggestionCard householdId={selectedHouseholdId} />
+
         <div className="relative">
           <Search
             className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 z-10 pointer-events-none"

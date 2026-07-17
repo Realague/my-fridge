@@ -80,7 +80,7 @@
     "openRecipe": "Abrir receta",
     "cookingDateLabel": "Fecha de cocción",
     "portionsLabel": "Número de porciones",
-    "cookedAgo": "Cocinado {{when}}",
+    "cookedAgo": "Cocinado  hace {{count}} día",
     "cookedToday": "Cocinado hoy",
     "portionsLeft_one": "Te queda {{count}} porción de {{name}}",
     "portionsLeft_other": "Te quedan {{count}} porciones de {{name}}",
@@ -171,8 +171,8 @@
     "goToDashboard": "Ir al tablero",
     "expired": "Vencido",
     "expiresIn": "Vence en {{days}}d",
-    "expiredSince_one": "Vencido hace {{count}}d",
-    "expiredSince_other": "Vencido hace {{count}}d",
+    "expiredSince_one": "Caducado hace {{count}} día",
+    "expiredSince_other": "Caducado hace {{count}} días",
     "fresh": "Fresco ({{days}}d)",
     "quantity": "Cantidad",
     "location": "Ubicación",
@@ -4061,5 +4061,56 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "retry": "Reintentar"
+  },
+  "stockExit": {
+    "consumed": "Consumido",
+    "wasted": "Tirado",
+    "removed": "Retirado",
+    "consumedDesc": "Comido, cocinado o usado",
+    "wastedDesc": "Tirado a la basura",
+    "removedDesc": "Regalado, transferido o error",
+    "quantityLabel": "¿Cuánto?",
+    "ofTotal": "de {{count}} unidad",
+    "ofTotal_other": "de {{count}} unidades",
+    "all": "Todo",
+    "whatHappened": "¿Qué ha pasado?",
+    "preciseQuantity": "Elegir cantidad…",
+    "moreActions": "Más acciones",
+    "increase": "Aumentar cantidad",
+    "decrease": "Disminuir cantidad",
+    "undo": "Deshacer",
+    "undoneToast": "{{name}} restaurado",
+    "undoFailed": "No se pudo deshacer",
+    "exitFailed": "No se pudo actualizar el stock",
+    "toast": {
+      "consumed": "{{name}} — consumido",
+      "wasted": "{{name}} — tirado",
+      "removed": "{{name}} — retirado",
+      "addedToJournal": "{{quantity}} {{unit}} · añadido al registro"
+    },
+    "journalTitle": "Registro de salidas",
+    "suggestion": {
+      "title": "Hacer balance",
+      "groupedTitle": "{{count}} artículos caducados hace más de 3 días",
+      "subtitle": "¿Hacemos balance? Indica qué pasó con cada uno.",
+      "rowTitle": "{{name}} caducó hace tiempo",
+      "expiredMeta": "Caducado hace más de 3 días",
+      "wasted": "Sí, marcar como tirado",
+      "consumed": "No, me los he comido",
+      "ignore": "Ignorar",
+      "expand": "Detalles",
+      "collapse": "Ocultar",
+      "expiredSince": "Caducado hace {{days}}d · {{qty}}",
+      "ate": "Comido",
+      "bannerTitle_one": "1 artículo lleva caducado más de 3 días.",
+      "bannerTitle_other": "{{count}} artículos llevan caducados más de 3 días.",
+      "cta": "Hacer balance"
+    }
+  },
+  "settings": {
+    "notifications": {
+      "exitSuggestions": "Sugerencias de salida",
+      "exitSuggestionsDescription": "Sugerir marcar como consumidos o tirados los artículos caducados hace más de 3 días."
+    }
   }
 }

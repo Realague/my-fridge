@@ -1,11 +1,11 @@
-import { Op } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import { ExpirationNotification } from '../models/ExpirationNotification';
 import { ExpirationNotificationRead } from '../models/ExpirationNotificationRead';
 
 type NewNotificationInput = {
   householdId: string;
   storedItemId: string;
-  phase: 'initial' | 'reminder';
+  phase: 'initial' | 'reminder' | 'exit_suggestion';
   itemNameSnapshot: string;
   itemHouseholdIdSnapshot: string | null;
   storageAreaNameSnapshot: string | null;
@@ -125,6 +125,21 @@ export class ExpirationNotificationRepository {
 
   async clearHousehold(householdId: string): Promise<void> {
     await ExpirationNotification.destroy({ where: { householdId } });
+  }
+
+  /**
+   * Remove every expiration notification tied to a stored item — used when the
+   * item leaves the stock (consumed/wasted/removed) so stale alerts don't linger.
+   * Accepts an optional transaction so it can run atomically inside recipe consume.
+   */
+  async deleteByStoredItemId(
+    storedItemId: string,
+    options?: { transaction?: Transaction }
+  ): Promise<number> {
+    return await ExpirationNotification.destroy({
+      where: { storedItemId },
+      transaction: options?.transaction,
+    });
   }
 
   async pruneOlderThan(date: Date): Promise<number> {

@@ -8,6 +8,15 @@ export enum StorageAreaType {
 
 export const STORAGE_AREA_TYPES = Object.values(StorageAreaType);
 
+// Distinguishes how a stored item leaves the stock. Mirrors backend `StockExitType`.
+export enum StockExitType {
+  CONSUMED = 'consumed', // eaten / cooked / used — positive outcome (green)
+  WASTED = 'wasted',     // thrown away — food waste (red)
+  REMOVED = 'removed',   // left stock, neutral: given, transferred, mistake (grey)
+}
+
+export const STOCK_EXIT_TYPES = Object.values(StockExitType);
+
 export enum ItemCategory {
   VEGETABLES = 'vegetables',
   FRUITS = 'fruits',

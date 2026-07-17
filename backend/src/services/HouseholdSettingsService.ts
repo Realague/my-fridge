@@ -6,6 +6,7 @@ import { HouseholdSettings } from '../models/HouseholdSettings';
 export interface HouseholdSettingsResponseDto {
   householdId: string;
   expirationAlertDays: number;
+  exitSuggestionsEnabled: boolean;
   updatedAt: Date;
 }
 
@@ -28,21 +29,41 @@ export class HouseholdSettingsService {
   async updateForHousehold(
     householdId: string,
     userId: string,
-    data: { expirationAlertDays: number }
+    data: { expirationAlertDays?: number; exitSuggestionsEnabled?: boolean }
   ): Promise<HouseholdSettingsResponseDto> {
     await this.assertMember(householdId, userId);
 
-    const days = Number(data.expirationAlertDays);
-    if (!Number.isInteger(days) || days < 1 || days > 14) {
-      throw new ValidationError('expirationAlertDays must be an integer between 1 and 14');
+    const updateData: { expirationAlertDays?: number; exitSuggestionsEnabled?: boolean } = {};
+
+    if (data.expirationAlertDays !== undefined) {
+      const days = Number(data.expirationAlertDays);
+      if (!Number.isInteger(days) || days < 1 || days > 14) {
+        throw new ValidationError('expirationAlertDays must be an integer between 1 and 14');
+      }
+      updateData.expirationAlertDays = days;
+    }
+
+    if (data.exitSuggestionsEnabled !== undefined) {
+      if (typeof data.exitSuggestionsEnabled !== 'boolean') {
+        throw new ValidationError('exitSuggestionsEnabled must be a boolean');
+      }
+      updateData.exitSuggestionsEnabled = data.exitSuggestionsEnabled;
     }
 
     let settings = await this.settingsRepository.findByHouseholdId(householdId);
     if (!settings) {
       settings = await this.settingsRepository.createDefault(householdId);
     }
-    await settings.update({ expirationAlertDays: days });
+    await settings.update(updateData);
     return this.toResponseDto(settings);
+  }
+
+  async getExitSuggestionsEnabledForHousehold(householdId: string): Promise<boolean> {
+    let settings = await this.settingsRepository.findByHouseholdId(householdId);
+    if (!settings) {
+      settings = await this.settingsRepository.createDefault(householdId);
+    }
+    return settings.exitSuggestionsEnabled;
   }
 
   async getAlertDaysForHousehold(householdId: string): Promise<number> {
@@ -64,6 +85,7 @@ export class HouseholdSettingsService {
     return {
       householdId: settings.householdId,
       expirationAlertDays: settings.expirationAlertDays,
+      exitSuggestionsEnabled: settings.exitSuggestionsEnabled,
       updatedAt: settings.updatedAt,
     };
   }

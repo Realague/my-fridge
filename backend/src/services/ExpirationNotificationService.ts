@@ -15,7 +15,7 @@ export type ExpirationUrgency = 'expired' | 'today' | 'tomorrow' | 'soon';
 export interface ExpirationNotificationDto {
   id: string;
   storedItemId: string | null;
-  phase: 'initial' | 'reminder';
+  phase: 'initial' | 'reminder' | 'exit_suggestion';
   itemName: string;
   itemHouseholdId: string | null;
   storageAreaId: string | null;
@@ -172,6 +172,8 @@ export class ExpirationNotificationService {
     await this.notificationRepository.pruneOlderThan(this.daysAgo(PRUNE_DAYS));
 
     const alertDays = await this.settingsService.getAlertDaysForHousehold(householdId);
+    const exitSuggestionsEnabled =
+      await this.settingsService.getExitSuggestionsEnabledForHousehold(householdId);
     const storedItems = await this.loadStoredItems(householdId);
 
     const toInsert: Parameters<ExpirationNotificationRepository['bulkUpsertSkippingConflict']>[0] = [];
@@ -184,7 +186,6 @@ export class ExpirationNotificationService {
       if (!effectiveDate) continue;
 
       const daysUntil = this.diffInDays(effectiveDate);
-      if (daysUntil < 1) continue; // expired or today: no drawer entry per spec
 
       const baseSnapshot = {
         householdId,
@@ -199,6 +200,14 @@ export class ExpirationNotificationService {
         quantitySnapshot: Number(storedItem.quantity),
         unitSnapshot: storedItem.unit,
       };
+
+      // exit_suggestion: expired ≥ 3 days (daysUntil <= -3). Gated on household setting.
+      if (exitSuggestionsEnabled && daysUntil <= -3) {
+        toInsert.push({ ...baseSnapshot, phase: 'exit_suggestion' });
+        continue; // expired items don't also get initial/reminder entries
+      }
+
+      if (daysUntil < 1) continue; // expired or today: no drawer entry per spec
 
       // initial: only when alertDays > 1 AND item is within the window (1 < daysUntil <= alertDays)
       if (alertDays > 1 && daysUntil > 1 && daysUntil <= alertDays) {
@@ -252,6 +261,23 @@ export class ExpirationNotificationService {
       ? `/storage/${notification.storageAreaIdSnapshot}`
       : '/';
     const url = `${basePath}?notificationId=${encodeURIComponent(notification.id)}`;
+
+    if (notification.phase === 'exit_suggestion') {
+      return {
+        title: `${itemName} est périmé`,
+        body: [
+          'Périmé depuis plus de 3 jours',
+          quantity ? `${quantity} ${unit}`.trim() : null,
+          storageAreaName,
+        ]
+          .filter(Boolean)
+          .join(' · '),
+        notificationId: notification.id,
+        storedItemId: notification.storedItemId,
+        storageAreaId: notification.storageAreaIdSnapshot,
+        url,
+      };
+    }
 
     if (notification.phase === 'reminder') {
       return {

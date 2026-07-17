@@ -15,6 +15,7 @@ import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'next-themes';
 import { usePushNotificationsStore } from '@/stores/pushNotificationsStore';
+import { useHouseholdSettingsStore } from '@/stores/householdSettingsStore';
 import { isPushSupported } from '@/utils/pushSubscription';
 
 const SETTINGS_TABS = ['profile', 'notifications', 'appearance'] as const;
@@ -28,7 +29,7 @@ const Settings = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Protected route hook handles auth and household checks
-  useProtectedRoute();
+  const { selectedHouseholdId } = useProtectedRoute();
 
   const tabParam = searchParams.get('tab');
   const activeTab: SettingsTab = SETTINGS_TABS.includes(tabParam as SettingsTab)
@@ -166,6 +167,34 @@ const Settings = () => {
   };
 
   const lowStockAlertsEnabled = user?.lowStockAlertsEnabled !== false;
+
+  const householdSettings = useHouseholdSettingsStore((s) =>
+    s.getSettings(selectedHouseholdId)
+  );
+  const fetchHouseholdSettings = useHouseholdSettingsStore((s) => s.fetch);
+  const updateHouseholdSettings = useHouseholdSettingsStore((s) => s.update);
+  const [isUpdatingExitSuggestions, setIsUpdatingExitSuggestions] = useState(false);
+  const exitSuggestionsEnabled = householdSettings?.exitSuggestionsEnabled !== false;
+
+  useEffect(() => {
+    if (selectedHouseholdId) {
+      void fetchHouseholdSettings(selectedHouseholdId);
+    }
+  }, [selectedHouseholdId, fetchHouseholdSettings]);
+
+  const handleExitSuggestionsChange = async (enabled: boolean) => {
+    if (!selectedHouseholdId) return;
+    setIsUpdatingExitSuggestions(true);
+    try {
+      await updateHouseholdSettings(selectedHouseholdId, { exitSuggestionsEnabled: enabled });
+      toast({ title: t('messages.success.settingsSaved') });
+    } catch (error) {
+      console.error('Error updating exit suggestions preference:', error);
+      toast({ title: t('messages.error.updateFailed'), variant: 'destructive' });
+    } finally {
+      setIsUpdatingExitSuggestions(false);
+    }
+  };
 
   const handleLowStockAlertsChange = async (enabled: boolean) => {
     setIsUpdatingLowStockAlerts(true);
@@ -323,6 +352,20 @@ const Settings = () => {
                     checked={lowStockAlertsEnabled}
                     disabled={isUpdatingLowStockAlerts}
                     onCheckedChange={handleLowStockAlertsChange}
+                  />
+                </div>
+                <div className="flex items-center justify-between p-4 rounded-lg bg-muted/70">
+                  <Label htmlFor="exit-suggestions" className="flex flex-col space-y-1 cursor-pointer flex-1">
+                     <span className="font-medium">{t('settings.notifications.exitSuggestions')}</span>
+                     <span className="font-normal text-sm text-muted-foreground">
+                       {t('settings.notifications.exitSuggestionsDescription')}
+                     </span>
+                  </Label>
+                  <Switch
+                    id="exit-suggestions"
+                    checked={exitSuggestionsEnabled}
+                    disabled={isUpdatingExitSuggestions || !selectedHouseholdId}
+                    onCheckedChange={handleExitSuggestionsChange}
                   />
                 </div>
               </CardContent>

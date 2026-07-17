@@ -28,7 +28,10 @@ export const householdSettingsService = {
   get: (householdId: string) =>
     call<HouseholdSettings>(`/api/households/${householdId}/settings`),
 
-  update: (householdId: string, dto: { expirationAlertDays: number }) =>
+  update: (
+    householdId: string,
+    dto: { expirationAlertDays?: number; exitSuggestionsEnabled?: boolean }
+  ) =>
     call<HouseholdSettings>(`/api/households/${householdId}/settings`, {
       method: 'PUT',
       body: dto,

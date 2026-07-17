@@ -1,29 +1,42 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardLinkOverlay } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, ChefHat, Clock, MapPin, PackageOpen, Snowflake, Trash2, Utensils } from 'lucide-react';
+import { ChefHat, Clock, MapPin, PackageOpen, PackageX, SlidersHorizontal, Snowflake, Trash2, User, Utensils } from 'lucide-react';
 import type { StoredItem } from '@/services/storedItemService';
 import type { Item } from '@/services/itemService';
 import type { StorageArea } from '@/services/storageAreaService';
+import { ExitActionModal } from '@/components/ExitActionModal';
+import { StockExitType } from '@/types/enums';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '@/utils/dateFormatting';
 import { ItemImage } from '@/components/ItemImage';
 import { CategoryIcon } from '@/utils/categoryIcons';
 import { StorageAreaIcon } from '@/utils/storageAreaIcons';
 import { getCategoryColor, getItemDisplayName } from '@/utils/itemUtils';
-import { formatQuantityWithUnit } from '@/utils/unitSystem';
+import { getDisplayUnitLabel } from '@/utils/unitSystem';
 import { ItemCategory, StorageAreaType } from '@/types/enums';
 import { useStoredItemStore } from '@/stores/storedItemStore';
 import { useStorageAreaStore } from '@/stores/storageAreaStore';
 import { toast } from 'sonner';
+import { motion, useMotionValue, animate } from 'framer-motion';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
+import { getFreezerProgressDisplay } from '@/utils/freezerProgress';
+import { freezerTone, toneBadgeClass, toneTextClass } from '@/lib/tokenMaps';
 
 interface MyProductsItemCardProps {
   storedItem: StoredItem;
   item: Item | undefined;
   area: StorageArea | undefined;
   currentUserId: string | undefined;
-  onDelete: (storedItemId: string) => void;
+  onDelete?: (storedItemId: string) => void;
+  /** When true, do not render the navigation overlay / navigate on card click. */
+  disableNavigate?: boolean;
+  /** When true, hide the storage-area badge chip (redundant inside a single area). */
+  hideAreaBadge?: boolean;
 }
 
 function getDaysUntilExpiration(expirationDate?: string | null): number | null {
@@ -44,13 +57,18 @@ export function MyProductsItemCard({
   area,
   currentUserId,
   onDelete,
+  disableNavigate,
+  hideAreaBadge,
 }: MyProductsItemCardProps) {
   const { t } = useTranslation();
   const { formatDate } = useDateFormat();
   const navigate = useNavigate();
-  const consumePortion = useStoredItemStore((s) => s.consumePortion);
   const updateStoredItem = useStoredItemStore((s) => s.updateStoredItem);
+  const exitStoredItem = useStoredItemStore((s) => s.exitStoredItem);
   const getStorageAreasForHousehold = useStorageAreaStore((s) => s.getStorageAreasForHousehold);
+  const [exitModalOpen, setExitModalOpen] = useState(false);
+  const isMobile = useIsMobile();
+  const swipeX = useMotionValue(0);
 
   const isCookedMeal = item?.category === ItemCategory.COOKED_MEAL;
   const linkedRecipeId = item?.recipeId ?? null;
@@ -59,24 +77,6 @@ export function MyProductsItemCard({
   const handleOpenRecipe = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (linkedRecipeId) navigate(`/recipes/${linkedRecipeId}`);
-  };
-
-  const handleConsumePortion = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    try {
-      const result = await consumePortion(storedItem.id);
-      const remaining = result.remaining ? Number(result.remaining.quantity) : 0;
-      if (remaining > 0) {
-        toast.success(
-          t('cookedMeal.portionsLeft', {
-            count: remaining,
-            name: item ? getItemDisplayName(item, t) : '',
-          })
-        );
-      }
-    } catch {
-      // toast already raised by store
-    }
   };
 
   const handleFreeze = async (e: React.MouseEvent) => {
@@ -119,7 +119,25 @@ export function MyProductsItemCard({
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onDelete(storedItem.id);
+    onDelete?.(storedItem.id);
+  };
+
+  const handleExit = async (type: StockExitType, quantity = 1) => {
+    try {
+      await exitStoredItem(storedItem.id, type, quantity);
+    } catch {
+      // toast already raised by store
+    }
+  };
+
+  const handleQuickConsume = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleExit(StockExitType.CONSUMED, 1);
+  };
+
+  const handleOpenExitModal = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setExitModalOpen(true);
   };
 
   const expirationSource = storedItem.effectiveExpirationDate || storedItem.expirationDate;
@@ -135,7 +153,7 @@ export function MyProductsItemCard({
     if (daysUntilExpiration < 0) {
       return (
         <span className={`${base} bg-mf-danger text-white`}>
-          {t('storageArea.expired')}
+          {t('storageArea.expiredSince', { count: Math.abs(daysUntilExpiration) })}
         </span>
       );
     }
@@ -163,16 +181,62 @@ export function MyProductsItemCard({
   const openedDaysAgo =
     storedItem.isOpened && storedItem.openedDate ? getDaysSince(storedItem.openedDate) : null;
 
+  // Freezer progress — identical section to the storage-area detail card.
+  const freezerProgress = getFreezerProgressDisplay(storedItem, area?.type);
+  const freezerOverRecommended =
+    freezerProgress != null && freezerProgress.current > freezerProgress.total;
+  const showFreezerWarning = Boolean(storedItem.isFrozenTooLong || freezerOverRecommended);
+
+  // Quantity label: unit word for measurable units, else the item noun ("6 yaourts").
+  const quantityDisplayName = getItemDisplayName(item, t);
+  const quantityUnitLabel = getDisplayUnitLabel(storedItem.unit, Number(storedItem.quantity), t, {
+    item,
+    itemName: quantityDisplayName,
+  });
+  const quantityLabel = quantityUnitLabel || quantityDisplayName.toLowerCase();
+
   return (
     <div className="relative isolate">
-      <CardLinkOverlay
-        aria-label={`${getItemDisplayName(item, t)} — ${area?.name ?? ''}`}
-        onClick={goToArea}
-      />
+      {!disableNavigate && (
+        <CardLinkOverlay
+          aria-label={`${getItemDisplayName(item, t)} — ${area?.name ?? ''}`}
+          onClick={goToArea}
+        />
+      )}
+      <div className="relative overflow-hidden rounded-2xl">
+        {/* Swipe-left reveal (mobile): quick "Consommé" action. */}
+        {isMobile && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-end bg-mf-green pr-6 text-white">
+            <span className="flex items-center gap-2 font-display text-sm font-bold">
+              <Utensils className="h-5 w-5" />
+              {t('stockExit.consumed')}
+            </span>
+          </div>
+        )}
+        <motion.div
+          style={isMobile ? { x: swipeX, touchAction: 'pan-y' } : undefined}
+          drag={isMobile ? 'x' : false}
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={{ left: 0.7, right: 0, top: 0, bottom: 0 }}
+          onDragEnd={(_, info) => {
+            if (info.offset.x <= -80) {
+              // Swipe consumes the whole line.
+              handleExit(StockExitType.CONSUMED, Number(storedItem.quantity));
+            }
+            animate(swipeX, 0, { type: 'spring', stiffness: 500, damping: 40 });
+          }}
+        >
       <Card
-        className="bg-card backdrop-blur-sm border-0 shadow-lg mf-motion-card hover:shadow-xl pointer-events-none [&_button]:pointer-events-auto [&_button]:relative [&_button]:z-10 [&_a]:pointer-events-auto [&_a]:relative [&_a]:z-10"
+        className={cn(
+          'group relative z-[1] rounded-2xl bg-card backdrop-blur-sm border-0 shadow-lg mf-motion-card hover:shadow-xl',
+          !disableNavigate &&
+            'pointer-events-none [&_button]:pointer-events-auto [&_button]:relative [&_button]:z-10 [&_a]:pointer-events-auto [&_a]:relative [&_a]:z-10'
+        )}
       >
-      <CardContent className="p-4">
+      <CardContent
+        className={cn('p-4', disableNavigate && 'cursor-pointer')}
+        onClick={disableNavigate ? () => setExitModalOpen(true) : undefined}
+      >
         <div className="flex items-start justify-between gap-3">
           <ItemImage
             src={item.imageUrl}
@@ -183,18 +247,10 @@ export function MyProductsItemCard({
           />
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
               <h3 className="font-medium text-foreground">{getItemDisplayName(item, t)}</h3>
 
-              <Badge
-                variant="outline"
-                className={`${getCategoryColor(item.category)} inline-flex items-center gap-1`}
-              >
-                <CategoryIcon category={item.category} className="h-3.5 w-3.5" />
-                {t(`items.categories.${item.category}`)}
-              </Badge>
-
-              {area && (
+              {area && !hideAreaBadge && (
                 <button
                   type="button"
                   onClick={handleAreaBadgeClick}
@@ -216,27 +272,37 @@ export function MyProductsItemCard({
                 </Badge>
               )}
 
-              {(isFreezerArea || storedItem.frozenDate) && (
+              {freezerProgress && (
                 <Badge
-                  variant="secondary"
-                  className="text-xs bg-mf-info-soft text-mf-info"
+                  variant={showFreezerWarning ? 'destructive' : 'secondary'}
+                  className={cn(
+                    'text-xs',
+                    !showFreezerWarning &&
+                      toneBadgeClass(
+                        freezerTone(freezerProgress.current, freezerProgress.total)
+                      )
+                  )}
                 >
                   <Snowflake className="h-3 w-3 mr-1" />
-                  {t('storedItems.frozen')}
+                  {showFreezerWarning ? t('storedItems.freezerWarning') : t('storedItems.frozen')}
                 </Badge>
               )}
 
               {expirationBadge}
             </div>
 
+            <div className="mb-2">
+              <Badge
+                variant="outline"
+                className={`${getCategoryColor(item.category)} inline-flex items-center gap-1`}
+              >
+                <CategoryIcon category={item.category} className="h-3.5 w-3.5" />
+                {t(`items.categories.${item.category}`)}
+              </Badge>
+            </div>
+
             <div className="space-y-2">
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">
-                  {formatQuantityWithUnit(storedItem.quantity, storedItem.unit, t, {
-                    item,
-                    itemName: getItemDisplayName(item, t),
-                  })}
-                </span>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground empty:hidden">
                 {storedItem.location && (
                   <div className="flex items-center gap-1">
                     <MapPin className="h-3 w-3" />
@@ -247,33 +313,94 @@ export function MyProductsItemCard({
 
               <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
                 <div className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  <span>
-                    {storedItem.creator
-                      ? t('common.addedByOn', {
-                          name:
-                            storedItem.creator.id === currentUserId
-                              ? t('common.you')
-                              : storedItem.creator.displayName,
-                          date: formatDate(new Date(storedItem.createdAt), 'MMM d'),
-                        })
-                      : `${t('storageArea.added')} ${formatDate(new Date(storedItem.createdAt), 'MMM d')}`}
-                  </span>
+                  {(() => {
+                    const creator = storedItem.creator;
+                    const addedDate = formatDate(new Date(storedItem.createdAt), 'd MMM');
+                    if (!creator) {
+                      return (
+                        <>
+                          <User className="h-3 w-3" />
+                          <span>{`${t('storageArea.added')} ${addedDate}`}</span>
+                        </>
+                      );
+                    }
+                    const authorName =
+                      creator.id === currentUserId ? t('common.you') : creator.displayName;
+                    // Avatar initials always from the real name (never "T" for "Toi").
+                    const initials = creator.displayName
+                      .trim()
+                      .split(/\s+/)
+                      .map((w) => w.charAt(0))
+                      .slice(0, 2)
+                      .join('')
+                      .toUpperCase();
+                    return (
+                      <>
+                        {/* Desktop: icon + "Ajouté par … le …" text. */}
+                        <span className="hidden sm:flex items-center gap-1">
+                          <User className="h-3 w-3" />
+                          <span>{t('common.addedByOn', { name: authorName, date: addedDate })}</span>
+                        </span>
+                        {/* Mobile: compact avatar chip + date. */}
+                        <span className="sm:hidden inline-flex items-center gap-1.5 min-w-0">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-mf-night-elevated pl-0.5 pr-2 py-0.5">
+                            <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-mf-green-soft text-mf-green-deep text-[9px] font-bold uppercase leading-none">
+                              {initials}
+                            </span>
+                            <span className="text-[11px] font-medium truncate">{authorName}</span>
+                          </span>
+                          <span className="text-[11px] whitespace-nowrap">· {addedDate}</span>
+                        </span>
+                      </>
+                    );
+                  })()}
                 </div>
 
-                {expirationSource && !isFreezerArea && (
+                {freezerProgress && (
                   <div className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    <span>
-                      {t(
-                        daysUntilExpiration !== null && daysUntilExpiration < 0
-                          ? 'storageArea.expiredOn'
-                          : 'storageArea.expiresOn',
-                        { date: formatDate(new Date(expirationSource), 'MMM d') },
-                      )}
-                    </span>
+                    <Snowflake className="h-3 w-3" />
+                    <Tooltip delayDuration={200}>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          className={cn(
+                            'inline cursor-help border-0 bg-transparent p-0 text-left font-medium underline decoration-dotted decoration-current underline-offset-2',
+                            toneTextClass(
+                              freezerTone(freezerProgress.current, freezerProgress.total)
+                            )
+                          )}
+                        >
+                          {t('storedItems.frozenProgress', {
+                            current: freezerProgress.current,
+                            count: freezerProgress.total,
+                          })}
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="max-w-xs">
+                        <p>
+                          {t('storedItems.freezerRecommendation', {
+                            category: t(`items.categories.${item.category}`),
+                            count: Math.max(1, Math.round(freezerProgress.total / 30)),
+                          })}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
                 )}
+
+                {expirationSource &&
+                  !isFreezerArea &&
+                  daysUntilExpiration !== null &&
+                  daysUntilExpiration >= 0 && (
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      <span>
+                        {t('storageArea.expiresOn', {
+                          date: formatDate(new Date(expirationSource), 'MMM d'),
+                        })}
+                      </span>
+                    </div>
+                  )}
 
                 {isCookedMeal && storedItem.cookedDate && (
                   <div className="flex items-center gap-1 text-mf-green-deep">
@@ -282,12 +409,7 @@ export function MyProductsItemCard({
                       {(() => {
                         const days = getDaysSince(storedItem.cookedDate);
                         if (days === 0) return t('cookedMeal.cookedToday');
-                        return t('cookedMeal.cookedAgo', {
-                          when:
-                            days === 1
-                              ? t('pages.myProducts.openedDaysAgo', { count: 1 })
-                              : t('pages.myProducts.openedDaysAgo', { count: days }),
-                        });
+                        return t('cookedMeal.cookedAgo', { count: 1 });
                       })()}
                     </span>
                   </div>
@@ -318,45 +440,100 @@ export function MyProductsItemCard({
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-3">
-            {isCookedMeal && (
+          <div className="flex items-center gap-3 self-start sm:self-center shrink-0">
+            {/* Quantité mise en avant (maquette : nombre + unité). */}
+            <div className="shrink-0 text-right flex items-baseline justify-end gap-1 sm:block sm:leading-none">
+              <span className="font-display font-extrabold text-foreground tabular-nums text-sm sm:text-xl">
+                {Number(storedItem.quantity)}
+              </span>
+              <span className="text-muted-foreground text-[11px] sm:mt-1 sm:block">
+                {quantityLabel}
+              </span>
+            </div>
+
+            {/* Actions rapides : colonne sur mobile, rangée qui se déploie au survol sur desktop. */}
+            <div className="hidden sm:flex sm:flex-row sm:items-center sm:gap-2 sm:overflow-hidden sm:max-w-0 sm:opacity-0 sm:transition-all sm:duration-200 sm:group-hover:max-w-[360px] sm:group-hover:opacity-100 sm:group-focus-within:max-w-[360px] sm:group-focus-within:opacity-100">
+              {isCookedMeal && !isInFreezer && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleFreeze}
+                  className="h-11 w-11 sm:h-10 sm:w-10 p-0 rounded-[13px] shrink-0 bg-mf-info-soft text-mf-info hover:bg-mf-info-soft/80"
+                  aria-label={t('pages.dashboard.expiringSoon.actionFreeze')}
+                  title={t('pages.dashboard.expiringSoon.actionFreeze')}
+                >
+                  <Snowflake className="h-5 w-5" />
+                </Button>
+              )}
+
+              {/* Consommé — geste unique, vert plein. */}
               <Button
-                variant="outline"
+                variant="green"
                 size="sm"
-                onClick={handleConsumePortion}
-                className="h-10 w-10 sm:h-8 sm:w-8 p-0"
-                aria-label={t('cookedMeal.consumePortion')}
-                title={t('cookedMeal.consumePortion')}
+                onClick={handleQuickConsume}
+                className="h-11 w-11 sm:h-10 sm:w-10 p-0 rounded-[13px] shrink-0"
+                aria-label={t('stockExit.consumed')}
+                title={t('stockExit.consumed')}
               >
-                <Utensils className="h-4 w-4" />
+                <Utensils className="h-5 w-5" />
               </Button>
-            )}
-            {isCookedMeal && !isInFreezer && (
+
+              {/* Jeté — rouge clair. */}
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
-                onClick={handleFreeze}
-                className="h-10 w-10 sm:h-8 sm:w-8 p-0"
-                aria-label={t('pages.dashboard.expiringSoon.actionFreeze')}
-                title={t('pages.dashboard.expiringSoon.actionFreeze')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleExit(StockExitType.WASTED, 1);
+                }}
+                className="h-11 w-11 sm:h-10 sm:w-10 p-0 rounded-[13px] shrink-0 bg-mf-danger-soft text-mf-danger hover:bg-mf-danger-soft/80"
+                aria-label={t('stockExit.wasted')}
+                title={t('stockExit.wasted')}
               >
-                <Snowflake className="h-4 w-4" />
+                <Trash2 className="h-5 w-5" />
               </Button>
-            )}
-            <Button
-              variant="deleteTrash"
-              size="sm"
-              onClick={handleDelete}
-              className="h-10 w-10 sm:h-8 sm:w-8 p-0 mt-1"
-              aria-label={t('buttons.delete')}
-              title={t('buttons.delete')}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+
+              {/* Retiré — neutre beige. */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleExit(StockExitType.REMOVED, 1);
+                }}
+                className="h-11 w-11 sm:h-10 sm:w-10 p-0 rounded-[13px] shrink-0 bg-muted text-muted-foreground hover:bg-muted/70"
+                aria-label={t('stockExit.removed')}
+                title={t('stockExit.removed')}
+              >
+                <PackageX className="h-5 w-5" />
+              </Button>
+
+              {/* Plus — quantité précise via modal. */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleOpenExitModal}
+                className="h-11 w-11 sm:h-10 sm:w-10 p-0 rounded-[13px] shrink-0 bg-muted text-muted-foreground hover:bg-muted/70"
+                aria-label={t('stockExit.preciseQuantity')}
+                title={t('stockExit.preciseQuantity')}
+              >
+                <SlidersHorizontal className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </CardContent>
       </Card>
+        </motion.div>
+      </div>
+
+      <ExitActionModal
+        open={exitModalOpen}
+        onOpenChange={setExitModalOpen}
+        storedItem={storedItem}
+        item={item}
+        onExit={(type, quantity) => handleExit(type, quantity)}
+      />
     </div>
   );
 }

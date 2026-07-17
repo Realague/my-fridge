@@ -1,10 +1,14 @@
-import sequelize from '../config/database'; 
+import { Transaction } from 'sequelize';
+import sequelize from '../config/database';
 import { Recipe } from '../models/Recipe';
 import { RecipeIngredient } from '../models/RecipeIngredient';
 import { StoredItem } from '../models/StoredItem';
 import { Item } from '../models/Item';
 import { StorageArea } from '../models/StorageArea';
 import { User } from '../models/User';
+import { StockExitRepository, CreateStockExitData } from '../repositories/StockExitRepository';
+import { ExpirationNotificationRepository } from '../repositories/ExpirationNotificationRepository';
+import { StockExitType } from '../types/enums';
 import { NotFoundError, ValidationError } from '../errors/CustomErrors';
 import {
   normalizeToBaseUnit,
@@ -78,6 +82,13 @@ export interface ConsumeResult {
 }
 
 export class RecipeConsumeService {
+  private stockExitRepository: StockExitRepository;
+  private expirationNotificationRepository: ExpirationNotificationRepository;
+
+  constructor(stockExitRepository?: StockExitRepository) {
+    this.stockExitRepository = stockExitRepository ?? new StockExitRepository();
+    this.expirationNotificationRepository = new ExpirationNotificationRepository();
+  }
 
   async getConsumePreview(
     recipeId: string,
@@ -218,6 +229,7 @@ export class RecipeConsumeService {
   async consumeIngredients(
     recipeId: string,
     householdId: string,
+    userId: string,
     deductions: ConsumeDeduction[]
   ): Promise<ConsumeResult> {
     if (!deductions || deductions.length === 0) {
@@ -240,6 +252,7 @@ export class RecipeConsumeService {
       for (const deduction of deductions) {
         const storedItem = await StoredItem.findOne({
           where: { id: deduction.storedItemId, householdId },
+          include: [{ model: StorageArea, as: 'storageArea' }],
           transaction,
           lock: transaction.LOCK.UPDATE,
         });
@@ -253,6 +266,20 @@ export class RecipeConsumeService {
         const item = await Item.findByPk(storedItem.itemId, { transaction });
         const itemName = item?.name ?? '';
 
+        // Snapshot the stored item BEFORE any mutation so the exit log can
+        // recreate it exactly (undo) and stats reflect the pre-deduction state.
+        const restoreSnapshot = this.buildRestoreSnapshot(storedItem);
+        const exitSnapshots = {
+          itemNameSnapshot: item?.name ?? null,
+          categorySnapshot: item?.category ?? null,
+          storageAreaIdSnapshot: storedItem.storageAreaId ?? null,
+          storageAreaNameSnapshot: storedItem.storageArea?.name ?? null,
+          expirationDateSnapshot: storedItem.expirationDate
+            ? new Date(storedItem.expirationDate)
+            : null,
+          restoreSnapshot,
+        };
+
         const deductionNormalized = normalizeToBaseUnit(
           deduction.quantity,
           deduction.unit
@@ -261,6 +288,10 @@ export class RecipeConsumeService {
           Number(storedItem.quantity),
           storedItem.unit
         );
+
+        // Pre-deduction quantity in the stored item's own unit — the exit log
+        // always records the amount removed from THIS stored item in ITS unit.
+        const preQuantity = Number(storedItem.quantity);
 
         if (deductionNormalized.unit !== storedNormalized.unit) {
           const converted = convertQuantity(
@@ -278,6 +309,8 @@ export class RecipeConsumeService {
 
           if (remaining <= 0.001) {
             await storedItem.destroy({ transaction });
+            await this.logConsumedExit(storedItem, preQuantity, householdId, userId, exitSnapshots, transaction);
+            await this.expirationNotificationRepository.deleteByStoredItemId(storedItem.id, { transaction });
             consumed.push({
               storedItemId: storedItem.id,
               itemName,
@@ -288,6 +321,7 @@ export class RecipeConsumeService {
             });
           } else {
             await storedItem.update({ quantity: remaining }, { transaction });
+            await this.logConsumedExit(storedItem, preQuantity - remaining, householdId, userId, exitSnapshots, transaction);
             consumed.push({
               storedItemId: storedItem.id,
               itemName,
@@ -302,6 +336,8 @@ export class RecipeConsumeService {
 
           if (remaining <= 0.001) {
             await storedItem.destroy({ transaction });
+            await this.logConsumedExit(storedItem, preQuantity, householdId, userId, exitSnapshots, transaction);
+            await this.expirationNotificationRepository.deleteByStoredItemId(storedItem.id, { transaction });
             consumed.push({
               storedItemId: storedItem.id,
               itemName,
@@ -320,6 +356,7 @@ export class RecipeConsumeService {
             const newQuantity = convertedBack ?? displayRemaining.quantity;
 
             await storedItem.update({ quantity: newQuantity }, { transaction });
+            await this.logConsumedExit(storedItem, preQuantity - newQuantity, householdId, userId, exitSnapshots, transaction);
             consumed.push({
               storedItemId: storedItem.id,
               itemName,
@@ -338,6 +375,69 @@ export class RecipeConsumeService {
       await transaction.rollback();
       throw error;
     }
+  }
+
+  /**
+   * Log a `consumed` stock exit for a stored item deduction, inside the given
+   * transaction so it rolls back atomically with the deduction.
+   */
+  private async logConsumedExit(
+    storedItem: StoredItem,
+    quantityDeducted: number,
+    householdId: string,
+    userId: string,
+    snapshots: {
+      itemNameSnapshot: string | null;
+      categorySnapshot: string | null;
+      storageAreaIdSnapshot: string | null;
+      storageAreaNameSnapshot: string | null;
+      expirationDateSnapshot: Date | null;
+      restoreSnapshot: Record<string, unknown>;
+    },
+    transaction: Transaction
+  ): Promise<void> {
+    // Guard against rounding producing a non-positive quantity (model min 0.001).
+    if (!Number.isFinite(quantityDeducted) || quantityDeducted < 0.001) {
+      return;
+    }
+
+    const createData: CreateStockExitData = {
+      householdId,
+      storedItemId: storedItem.id,
+      itemId: storedItem.itemId,
+      exitType: StockExitType.CONSUMED,
+      quantity: quantityDeducted,
+      unit: storedItem.unit,
+      exitedBy: userId,
+      itemNameSnapshot: snapshots.itemNameSnapshot,
+      categorySnapshot: snapshots.categorySnapshot,
+      storageAreaIdSnapshot: snapshots.storageAreaIdSnapshot,
+      storageAreaNameSnapshot: snapshots.storageAreaNameSnapshot,
+      expirationDateSnapshot: snapshots.expirationDateSnapshot,
+      restoreSnapshot: snapshots.restoreSnapshot,
+    };
+
+    await this.stockExitRepository.create(createData, { transaction });
+  }
+
+  private buildRestoreSnapshot(storedItem: StoredItem): Record<string, unknown> {
+    return {
+      id: storedItem.id,
+      itemId: storedItem.itemId,
+      storageAreaId: storedItem.storageAreaId,
+      quantity: Number(storedItem.quantity),
+      unit: storedItem.unit,
+      expirationDate: storedItem.expirationDate
+        ? new Date(storedItem.expirationDate).toISOString().split('T')[0]
+        : null,
+      location: storedItem.location,
+      isOpened: storedItem.isOpened,
+      openedDate: storedItem.openedDate ? new Date(storedItem.openedDate).toISOString().split('T')[0] : null,
+      frozenDate: storedItem.frozenDate ? new Date(storedItem.frozenDate).toISOString().split('T')[0] : null,
+      cookedDate: storedItem.cookedDate ? new Date(storedItem.cookedDate).toISOString().split('T')[0] : null,
+      householdId: storedItem.householdId,
+      createdBy: storedItem.createdBy,
+    };
   }
 
   private computeSuggestedDeductions(

@@ -9,7 +9,10 @@ interface HouseholdSettingsStore {
   error: string | null;
 
   fetch: (householdId: string) => Promise<HouseholdSettings | null>;
-  update: (householdId: string, dto: { expirationAlertDays: number }) => Promise<HouseholdSettings>;
+  update: (
+    householdId: string,
+    dto: { expirationAlertDays?: number; exitSuggestionsEnabled?: boolean }
+  ) => Promise<HouseholdSettings>;
 
   getSettings: (householdId: string | null | undefined) => HouseholdSettings | null;
   reset: () => void;
@@ -48,7 +51,7 @@ export const useHouseholdSettingsStore = create<HouseholdSettingsStore>()(
           set((state) => ({
             settingsByHousehold: {
               ...state.settingsByHousehold,
-              [householdId]: { ...previous, expirationAlertDays: dto.expirationAlertDays },
+              [householdId]: { ...previous, ...dto },
             },
           }));
         }

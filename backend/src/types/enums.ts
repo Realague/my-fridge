@@ -99,6 +99,14 @@ export const RECIPE_UNITS = [
   ...FREE_QUANTITY_UNITS,
 ];
 
+export enum StockExitType {
+  CONSUMED = 'consumed',
+  WASTED = 'wasted',
+  REMOVED = 'removed',
+}
+
+export const STOCK_EXIT_TYPES = Object.values(StockExitType);
+
 export enum ShoppingItemStatus {
   PENDING = 'pending',
   COMPLETED = 'completed',

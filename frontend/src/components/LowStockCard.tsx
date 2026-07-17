@@ -95,7 +95,7 @@ export const LowStockCard = () => {
             return (
               <motion.div
                 key={lowStockItem.itemMinimum.id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-mf-night-elevated rounded-md"
+                className="flex items-center justify-between gap-3 p-3 bg-mf-night-elevated rounded-md"
                 {...scrollRevealFadeUp(prefersReducedMotion)}
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -123,9 +123,15 @@ export const LowStockCard = () => {
                   </div>
                 </div>
                 {inList ? (
-                  <span className="inline-flex items-center gap-1.5 self-start sm:self-auto shrink-0 rounded-full bg-mf-green-soft px-3 py-1.5 font-display text-xs font-bold text-mf-green-deep">
-                    <Check className="h-3.5 w-3.5" />
-                    <span className="truncate">{t('pages.dashboard.alreadyInShoppingList')}</span>
+                  <span
+                    className="inline-flex items-center justify-center gap-1.5 shrink-0 rounded-full bg-mf-green-soft text-mf-green-deep h-8 w-8 sm:h-auto sm:w-auto sm:px-3 sm:py-1.5 font-display text-xs font-bold"
+                    title={t('pages.dashboard.alreadyInShoppingList')}
+                    aria-label={t('pages.dashboard.alreadyInShoppingList')}
+                  >
+                    <Check className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
+                    <span className="hidden sm:inline truncate">
+                      {t('pages.dashboard.alreadyInShoppingList')}
+                    </span>
                   </span>
                 ) : (
                   <Button
@@ -143,7 +149,7 @@ export const LowStockCard = () => {
                         lowStockItem.itemMinimum.minimumUnit
                       );
                     }}
-                    className="self-start sm:self-auto shrink-0 rounded-full bg-mf-green-soft text-mf-green-deep hover:bg-mf-green hover:text-white font-display font-bold px-4"
+                    className="shrink-0 rounded-full bg-mf-green-soft text-mf-green-deep hover:bg-mf-green hover:text-white font-display font-bold px-4"
                   >
                     <ShoppingCart className="h-4 w-4 mr-1.5" />
                     {t('buttons.add')}

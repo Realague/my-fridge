@@ -336,15 +336,20 @@ export function MyProductsItemCard({
                       .toUpperCase();
                     return (
                       <>
-                        {/* Desktop: icon + "Ajouté par … le …" text. */}
-                        <span className="hidden sm:flex items-center gap-1">
-                          <User className="h-3 w-3" />
-                          <span>{t('common.addedByOn', { name: authorName, date: addedDate })}</span>
+                        {/* Desktop: avatar + name chip (pill) + date, no "Ajouté par" prefix. */}
+                        <span className="hidden sm:inline-flex items-center gap-2 min-w-0">
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-mf-night-elevated py-1 pl-1 pr-3">
+                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-mf-text text-mf-night dark:bg-mf-night dark:text-mf-text text-[11px] font-bold uppercase leading-none">
+                              {initials}
+                            </span>
+                            <span className="text-[13px] font-medium truncate">{authorName}</span>
+                          </span>
+                          <span className="whitespace-nowrap text-[13px] text-mf-text-mute">· {addedDate}</span>
                         </span>
                         {/* Mobile: compact avatar chip + date. */}
                         <span className="sm:hidden inline-flex items-center gap-1.5 min-w-0">
                           <span className="inline-flex items-center gap-1 rounded-full bg-mf-night-elevated pl-0.5 pr-2 py-0.5">
-                            <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-mf-green-soft text-mf-green-deep text-[9px] font-bold uppercase leading-none">
+                            <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-mf-text text-mf-night dark:bg-mf-night dark:text-mf-text text-[9px] font-bold uppercase leading-none">
                               {initials}
                             </span>
                             <span className="text-[11px] font-medium truncate">{authorName}</span>

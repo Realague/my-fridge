@@ -182,7 +182,7 @@ export const ShoppingItemRow = ({
                 className="w-full"
               />
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-2">
                 <span>
                   {formatQuantityWithUnit(shoppingItem.quantity, shoppingItem.unit, t, {
                     item: itemData,
@@ -204,15 +204,17 @@ export const ShoppingItemRow = ({
                     .toUpperCase();
                   return (
                     <>
-                      {/* Desktop: "Ajouté par …" text. */}
-                      <span className="hidden sm:inline">•</span>
-                      <span className="hidden sm:inline truncate">
-                        {t('common.addedBy', { name: authorName })}
+                      {/* Desktop: avatar + name chip (pill), no "Ajouté par" prefix. */}
+                      <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-white dark:bg-mf-night-surface py-1 pl-1 pr-3 min-w-0">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-mf-text text-mf-night dark:bg-mf-night dark:text-mf-text text-[11px] font-bold uppercase leading-none">
+                          {initials}
+                        </span>
+                        <span className="text-[13px] font-medium truncate">{authorName}</span>
                       </span>
                       {/* Mobile: compact avatar chip + date. */}
                       <span className="sm:hidden inline-flex items-center gap-1.5 min-w-0">
                         <span className="inline-flex items-center gap-1 rounded-full bg-white dark:bg-mf-night-surface pl-0.5 pr-2 py-0.5">
-                          <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-mf-green-soft text-mf-green-deep text-[9px] font-bold uppercase leading-none">
+                          <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-mf-text text-mf-night dark:bg-mf-night dark:text-mf-text text-[9px] font-bold uppercase leading-none">
                             {initials}
                           </span>
                           <span className="text-[11px] font-medium truncate">{authorName}</span>

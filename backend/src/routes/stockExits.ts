@@ -8,6 +8,9 @@ const stockExitController = new StockExitController();
 // All routes require authentication
 router.use(authenticateGoogleToken);
 
+// GET /households/:householdId/stock-exits/stats - Aggregated per-type counts (summary band)
+router.get('/:householdId/stock-exits/stats', stockExitController.getStats.bind(stockExitController));
+
 // GET /households/:householdId/stock-exits - Exit journal (most recent first)
 router.get('/:householdId/stock-exits', stockExitController.listExits.bind(stockExitController));
 

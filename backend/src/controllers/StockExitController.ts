@@ -3,6 +3,25 @@ import { StockExitService } from '../services/StockExitService';
 import { ApiResponse } from '../types/ApiResponse';
 import { BadRequestError, NotFoundError, ValidationError } from '../errors/CustomErrors';
 import { User } from '../models/User';
+import { StockExitType, STOCK_EXIT_TYPES } from '../types/enums';
+
+// Parse an ISO date query param; throws on a malformed (but present) value.
+function parseDateParam(value: unknown, name: string): Date | undefined {
+  if (value === undefined || value === '') return undefined;
+  const date = new Date(value as string);
+  if (Number.isNaN(date.getTime())) {
+    throw new BadRequestError(`Invalid date for "${name}"`);
+  }
+  return date;
+}
+
+function parseExitType(value: unknown): StockExitType | undefined {
+  if (value === undefined || value === '' || value === 'all') return undefined;
+  if (!STOCK_EXIT_TYPES.includes(value as StockExitType)) {
+    throw new BadRequestError(`Invalid exit type: ${value}`);
+  }
+  return value as StockExitType;
+}
 
 export class StockExitController {
   private stockExitService: StockExitService;
@@ -79,7 +98,14 @@ export class StockExitController {
       const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 50;
       const offset = req.query.offset ? parseInt(req.query.offset as string, 10) : 0;
 
-      const exits = await this.stockExitService.listExits(householdId, limit, offset);
+      const exits = await this.stockExitService.listExits(householdId, {
+        limit,
+        offset,
+        from: parseDateParam(req.query.from, 'from'),
+        to: parseDateParam(req.query.to, 'to'),
+        exitType: parseExitType(req.query.exitType),
+        exitedBy: (req.query.exitedBy as string) || undefined,
+      });
 
       const response: ApiResponse = {
         success: true,
@@ -90,6 +116,34 @@ export class StockExitController {
       res.json(response);
     } catch (error) {
       this.handleError(res, error, 'Failed to retrieve stock exits');
+    }
+  }
+
+  async getStats(req: Request, res: Response): Promise<void> {
+    try {
+      const { householdId } = req.params;
+
+      if (!householdId) {
+        throw new BadRequestError('Household ID is required');
+      }
+
+      const stats = await this.stockExitService.getStats(householdId, {
+        from: parseDateParam(req.query.from, 'from'),
+        to: parseDateParam(req.query.to, 'to'),
+        previousFrom: parseDateParam(req.query.previousFrom, 'previousFrom'),
+        previousTo: parseDateParam(req.query.previousTo, 'previousTo'),
+        exitedBy: (req.query.exitedBy as string) || undefined,
+      });
+
+      const response: ApiResponse = {
+        success: true,
+        message: 'Stock exit stats retrieved successfully',
+        data: stats,
+      };
+
+      res.json(response);
+    } catch (error) {
+      this.handleError(res, error, 'Failed to retrieve stock exit stats');
     }
   }
 

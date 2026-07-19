@@ -124,6 +124,7 @@ export const ItemSelector = ({
   // Load personalized suggestions only when dropdown is opened (lazy loading)
   const loadSuggestionsOnDemand = async () => {
     if (!personalized || !user || !isAuthenticated || !selectedHouseholdId) return;
+    setApiLoading(true);
     try {
       const [data, firstPage] = await Promise.all([
         getCachedSuggestions(selectedHouseholdId),
@@ -141,6 +142,8 @@ export const ItemSelector = ({
     } catch (error) {
       console.error('ItemSelector: failed to load suggestions/catalog', error);
       setSuggestions(null); // fall back silently to the plain catalog
+    } finally {
+      setApiLoading(false);
     }
   };
 
@@ -150,6 +153,8 @@ export const ItemSelector = ({
     setApiResults([]);
     householdItemsRef.current = [];
     setSuggestions(null);
+    catalogOffsetRef.current = 0;
+    setCatalogTotal(0);
   }, [selectedHouseholdId]);
 
   // Debounced search effect - loads ALL items and filters on frontend for translation support
@@ -199,8 +204,12 @@ export const ItemSelector = ({
         searchTimeoutRef.current = timeout;
       }
     } else {
-      // When query is empty, show household items if available
-      setApiResults(householdItemsRef.current);
+      // Personalized selectors manage apiResults via loadSuggestionsOnDemand
+      // (suggestions + first catalogue page); don't overwrite it with the
+      // empty household-items ref.
+      if (!personalized) {
+        setApiResults(householdItemsRef.current);
+      }
       lastSearchQueryRef.current = '';
     }
 
@@ -341,6 +350,7 @@ export const ItemSelector = ({
     // Active search: page more matches via the search endpoint.
     if (query.trim()) {
       if (filteredResults.length >= 200) return; // sane bound on a typed search
+      const requested = query;
       setLoadingMore(true);
       try {
         const resp = await itemService.searchItems({
@@ -350,6 +360,7 @@ export const ItemSelector = ({
           offset: apiResults.length,
           personalized,
         });
+        if (requested !== query) return; // query changed while this page was in flight
         if (resp.items.length > 0) {
           setApiResults((prev) => [...prev, ...resp.items]);
         }
@@ -821,8 +832,8 @@ export const ItemSelector = ({
             </div>
           )}
 
-          {filteredResults.length === 0 && !query.trim() && !hasLoadedHouseholdItems && (
-            <div 
+          {filteredResults.length === 0 && !query.trim() && !hasLoadedHouseholdItems && !personalized && (
+            <div
               className="p-4 text-center text-sm text-muted-foreground bg-card cursor-pointer hover:bg-muted/50"
               onClick={() => loadHouseholdItemsOnDemand()}
             >

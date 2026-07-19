@@ -83,6 +83,13 @@ export const ItemSelector = ({
   const lastSearchQueryRef = useRef('');
   const householdItemsRef = useRef<Item[]>([]);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // Live mirror of `query` so async callbacks (e.g. loadMore) can detect a
+  // query change that happened while their request was in flight — a plain
+  // closure-captured `query` can't, since it's fixed per render.
+  const queryRef = useRef(query);
+  useEffect(() => {
+    queryRef.current = query;
+  }, [query]);
 
   // When the parent clears the selection (typically after a successful add),
   // pull focus back to the search input so the next item can be typed without
@@ -360,7 +367,7 @@ export const ItemSelector = ({
           offset: apiResults.length,
           personalized,
         });
-        if (requested !== query) return; // query changed while this page was in flight
+        if (requested !== queryRef.current) return; // query changed while this page was in flight
         if (resp.items.length > 0) {
           setApiResults((prev) => [...prev, ...resp.items]);
         }

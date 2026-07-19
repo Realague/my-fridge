@@ -15,13 +15,17 @@ export function getCachedSuggestions(householdId: string): Promise<ItemSuggestio
   if (hit && now - hit.at < TTL_MS) {
     return hit.promise;
   }
-  const promise = itemService.getItemSuggestions(householdId).catch((err) => {
-    // Don't cache failures — drop the entry so the next open retries.
-    cache.delete(householdId);
+  const entry: Entry = { at: now, promise: null as unknown as Promise<ItemSuggestions> };
+  entry.promise = itemService.getItemSuggestions(householdId).catch((err) => {
+    // Only evict if THIS entry is still the current one — a newer entry
+    // (fresh call or invalidate) must not be dropped by our late failure.
+    if (cache.get(householdId) === entry) {
+      cache.delete(householdId);
+    }
     throw err;
   });
-  cache.set(householdId, { at: now, promise });
-  return promise;
+  cache.set(householdId, entry);
+  return entry.promise;
 }
 
 export function invalidateSuggestions(householdId?: string): void {

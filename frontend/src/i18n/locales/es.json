@@ -306,6 +306,12 @@
     "consumeWithinDays_other": "Consumir dentro de {{count}} días"
   },
   "itemSelector": {
+    "sections": {
+      "recent": "Tus recientes",
+      "frequent": "Usados con frecuencia",
+      "householdFrequent": "Populares en tu hogar",
+      "allItems": "Todos los artículos"
+    },
     "recipes_one": "usado en {{count}} receta",
     "recipes_other": "usado en {{count}} recetas",
     "itemImage": "Imagen del artículo",

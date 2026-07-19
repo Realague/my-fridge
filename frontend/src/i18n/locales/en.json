@@ -306,6 +306,12 @@
     "consumeWithinDays_other": "To be consumed within {{count}} days after opening"
   },
   "itemSelector": {
+    "sections": {
+      "recent": "Your recent items",
+      "frequent": "Frequently used",
+      "householdFrequent": "Popular in your household",
+      "allItems": "All items"
+    },
     "itemImage": "Item Image",
     "itemImagePlaceholder": "Item image (optional)",
     "searchOrAddItemPlaceholder": "Search or add item...",

@@ -298,6 +298,7 @@ const StorageArea = () => {
                   placeholder={t('forms.searchOrAddItem')}
                   selectedItem={selectedItem}
                   className="mt-1"
+                  personalized
                 />
               </div>
               

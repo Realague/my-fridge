@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { itemService, Item } from '@/services/itemService';
+import { itemService, Item, RecentItem } from '@/services/itemService';
 import { ItemDeletionService } from '@/services/itemDeletionService';
 import { useAuthStore } from '@/stores/authStore';
 import { useHouseholdStore } from '@/stores/householdStore';
@@ -19,6 +19,9 @@ import { CategoryIcon } from '@/utils/categoryIcons';
 import { ItemImage } from '@/components/ItemImage';
 import { ItemCategory } from '@/types/enums';
 import { uploadImageWithSignature } from '@/services/imageUploadService';
+import { getCachedSuggestions } from '@/utils/itemSuggestionsCache';
+import { formatRelativeTime } from '@/utils/relativeTime';
+import type { ItemSuggestions } from '@/services/itemService';
 
 interface ItemSelectorProps {
   onItemSelect: (item: Item | null) => void;
@@ -29,6 +32,8 @@ interface ItemSelectorProps {
   excludeCleaningProducts?: boolean;
   /** Focus the search input on mount and whenever `selectedItem` clears. */
   autoFocus?: boolean;
+  /** Enable personalized ranking + sectioned empty-state (stock & shopping only). */
+  personalized?: boolean;
 }
 
 export const ItemSelector = ({
@@ -39,6 +44,7 @@ export const ItemSelector = ({
   excludedItems = [],
   excludeCleaningProducts = false,
   autoFocus = false,
+  personalized = false,
 }: ItemSelectorProps) => {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -51,6 +57,7 @@ export const ItemSelector = ({
   const [apiResults, setApiResults] = useState<Item[]>([]);
   const [apiLoading, setApiLoading] = useState(false);
   const [hasLoadedHouseholdItems, setHasLoadedHouseholdItems] = useState(false);
+  const [suggestions, setSuggestions] = useState<ItemSuggestions | null>(null);
 
   const { user, isAuthenticated } = useAuthStore();
   const { selectedHouseholdId, isCurrentUserAdmin } = useHouseholdStore();
@@ -110,11 +117,24 @@ export const ItemSelector = ({
     }
   };
 
+  // Load personalized suggestions only when dropdown is opened (lazy loading)
+  const loadSuggestionsOnDemand = async () => {
+    if (!personalized || !user || !isAuthenticated || !selectedHouseholdId) return;
+    try {
+      const data = await getCachedSuggestions(selectedHouseholdId);
+      setSuggestions(data);
+    } catch (error) {
+      console.error('ItemSelector: failed to load suggestions', error);
+      setSuggestions(null); // fall back silently to the plain catalog
+    }
+  };
+
   // Reset household items cache when household changes
   useEffect(() => {
     setHasLoadedHouseholdItems(false);
     setApiResults([]);
     householdItemsRef.current = [];
+    setSuggestions(null);
   }, [selectedHouseholdId]);
 
   // Debounced search effect - loads ALL items and filters on frontend for translation support
@@ -487,20 +507,27 @@ export const ItemSelector = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
     setIsOpen(true);
-    
+
     // Load household items when user starts typing (lazy loading)
-    if (!hasLoadedHouseholdItems && !e.target.value.trim()) {
-      loadHouseholdItemsOnDemand();
+    if (!e.target.value.trim()) {
+      if (personalized) {
+        loadSuggestionsOnDemand();
+      } else if (!hasLoadedHouseholdItems) {
+        loadHouseholdItemsOnDemand();
+      }
     }
   };
 
   const handleInputFocus = () => {
     setIsOpen(true);
     setTimeout(updateDropdownPosition, 0);
-    
-    // Load household items on first focus if not already loaded
-    if (!hasLoadedHouseholdItems && !query.trim()) {
-      loadHouseholdItemsOnDemand();
+
+    if (!query.trim()) {
+      if (personalized) {
+        loadSuggestionsOnDemand();
+      } else if (!hasLoadedHouseholdItems) {
+        loadHouseholdItemsOnDemand();
+      }
     }
   };
 
@@ -513,6 +540,51 @@ export const ItemSelector = ({
   const displayValue = selectedItem && !query ? getItemDisplayName(selectedItem, t) : query;
   const showClearButton = selectedItem && !query;
 
+  const renderRow = (item: Item, subtitle?: string) => (
+    <div
+      key={item.id}
+      onClick={() => handleItemSelect(item)}
+      className="group flex items-center justify-between p-2 hover:bg-muted cursor-pointer rounded transition-colors"
+    >
+      <div className="flex items-center gap-2 flex-1 min-w-0">
+        <ItemImage
+          src={item.imageUrl}
+          alt={getItemDisplayName(item, t)}
+          containerClassName="w-10 h-10 rounded-md"
+          fallbackIconSize={22}
+          category={item.category}
+        />
+        <div className="flex-1 min-w-0">
+          <div className="font-medium text-sm truncate">{getItemDisplayName(item, t)}</div>
+          <div className="flex items-center gap-2">
+            <Badge className={`${getCategoryColor(item.category)} inline-flex items-center gap-1`}>
+              <CategoryIcon category={item.category} className="h-3.5 w-3.5" />
+              {t(`items.categories.${item.category}`)}
+            </Badge>
+            {subtitle && <span className="text-xs text-muted-foreground">{subtitle}</span>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderSectionHeader = (label: string) => (
+    <div className="px-2 pt-3 pb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      {label}
+    </div>
+  );
+
+  // Filter out excluded / cleaning / cooked-meal items the same way the search
+  // results are filtered, so sections honour the same exclusions.
+  const keepSuggestion = (item: Item) =>
+    !excludedItems.some((e) => e.id === item.id) &&
+    !(excludeCleaningProducts && item.category === ItemCategory.CLEANING_PRODUCTS) &&
+    item.category !== ItemCategory.COOKED_MEAL;
+
+  const showSections = personalized && !query.trim() && !!suggestions;
+  const hasAnySuggestion =
+    !!suggestions &&
+    (suggestions.recent.length + suggestions.personalFrequent.length + suggestions.householdFrequent.length) > 0;
 
   return (
     <div ref={containerRef} className={cn("relative", className)}>
@@ -584,6 +656,32 @@ export const ItemSelector = ({
                   <div className="text-xs text-muted-foreground">{t('itemSelector.setCategoryUnitsAndOtherOptions')}</div>
                 </div>
               </Button>
+            </div>
+          )}
+
+          {showSections && hasAnySuggestion && (
+            <div className="p-1">
+              {suggestions!.recent.filter(keepSuggestion).length > 0 && (
+                <>
+                  {renderSectionHeader(t('itemSelector.sections.recent'))}
+                  {suggestions!.recent.filter(keepSuggestion).map((item) =>
+                    renderRow(item, formatRelativeTime((item as RecentItem).lastSelectedAt, i18n.language.split('-')[0]))
+                  )}
+                </>
+              )}
+              {suggestions!.personalFrequent.filter(keepSuggestion).length > 0 && (
+                <>
+                  {renderSectionHeader(t('itemSelector.sections.frequent'))}
+                  {suggestions!.personalFrequent.filter(keepSuggestion).map((item) => renderRow(item))}
+                </>
+              )}
+              {suggestions!.householdFrequent.filter(keepSuggestion).length > 0 && (
+                <>
+                  {renderSectionHeader(t('itemSelector.sections.householdFrequent'))}
+                  {suggestions!.householdFrequent.filter(keepSuggestion).map((item) => renderRow(item))}
+                </>
+              )}
+              {renderSectionHeader(t('itemSelector.sections.allItems'))}
             </div>
           )}
 

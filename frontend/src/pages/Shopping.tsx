@@ -459,6 +459,7 @@ const Shopping = () => {
           placeholder={t('pages.shopping.searchPlaceholder')}
           buttonText={t('pages.shopping.add')}
           onScan={selectedHouseholdId ? () => setScannerOpen(true) : undefined}
+          personalized
         />
 
         {loading && items.length === 0 && (

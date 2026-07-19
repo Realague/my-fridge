@@ -58,6 +58,10 @@ export const ItemSelector = ({
   const [apiLoading, setApiLoading] = useState(false);
   const [hasLoadedHouseholdItems, setHasLoadedHouseholdItems] = useState(false);
   const [suggestions, setSuggestions] = useState<ItemSuggestions | null>(null);
+  const [catalogTotal, setCatalogTotal] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const catalogOffsetRef = useRef(0);
+  const PAGE_SIZE = 20;
 
   const { user, isAuthenticated } = useAuthStore();
   const { selectedHouseholdId, isCurrentUserAdmin } = useHouseholdStore();
@@ -121,10 +125,21 @@ export const ItemSelector = ({
   const loadSuggestionsOnDemand = async () => {
     if (!personalized || !user || !isAuthenticated || !selectedHouseholdId) return;
     try {
-      const data = await getCachedSuggestions(selectedHouseholdId);
+      const [data, firstPage] = await Promise.all([
+        getCachedSuggestions(selectedHouseholdId),
+        itemService.getCatalogPage({
+          householdId: selectedHouseholdId,
+          language: i18n.language.split('-')[0],
+          limit: PAGE_SIZE,
+          offset: 0,
+        }),
+      ]);
       setSuggestions(data);
+      setApiResults(firstPage.items);
+      setCatalogTotal(firstPage.total);
+      catalogOffsetRef.current = firstPage.items.length;
     } catch (error) {
-      console.error('ItemSelector: failed to load suggestions', error);
+      console.error('ItemSelector: failed to load suggestions/catalog', error);
       setSuggestions(null); // fall back silently to the plain catalog
     }
   };
@@ -318,6 +333,60 @@ export const ItemSelector = ({
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
   }, [isOpen]);
+
+  const loadMore = async () => {
+    if (loadingMore) return;
+
+    // Active search: page more matches via the search endpoint.
+    if (query.trim()) {
+      if (filteredResults.length >= 200) return; // sane bound on a typed search
+      setLoadingMore(true);
+      try {
+        const resp = await itemService.searchItems({
+          search: query,
+          language: i18n.language.split('-')[0],
+          limit: PAGE_SIZE,
+          offset: apiResults.length,
+          personalized,
+        });
+        if (resp.items.length > 0) {
+          setApiResults((prev) => [...prev, ...resp.items]);
+        }
+      } catch (error) {
+        console.error('ItemSelector: failed to load more search results', error);
+      } finally {
+        setLoadingMore(false);
+      }
+      return;
+    }
+
+    // Personalized empty state: page the alphabetical catalogue.
+    if (personalized && catalogOffsetRef.current < catalogTotal) {
+      setLoadingMore(true);
+      try {
+        const page = await itemService.getCatalogPage({
+          householdId: selectedHouseholdId!,
+          language: i18n.language.split('-')[0],
+          limit: PAGE_SIZE,
+          offset: catalogOffsetRef.current,
+        });
+        setApiResults((prev) => [...prev, ...page.items]);
+        catalogOffsetRef.current += page.items.length;
+        setCatalogTotal(page.total);
+      } catch (error) {
+        console.error('ItemSelector: failed to load more catalog items', error);
+      } finally {
+        setLoadingMore(false);
+      }
+    }
+  };
+
+  const handleDropdownScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < 80) {
+      loadMore();
+    }
+  };
 
   const handleItemSelect = (item: Item) => {
     onItemSelect(item);
@@ -626,6 +695,7 @@ export const ItemSelector = ({
       {isOpen && createPortal(
         <div
           ref={dropdownRef}
+          onScroll={handleDropdownScroll}
           className="fixed z-[100] bg-card border border-border rounded-md shadow-lg max-h-64 overflow-y-auto pointer-events-auto"
           style={{
             top: dropdownPosition.top,
@@ -687,7 +757,7 @@ export const ItemSelector = ({
 
           {filteredResults.length > 0 && (
             <div className="p-1">
-              {filteredResults.slice(0, 8).map((item, index) => (
+              {filteredResults.map((item, index) => (
                 <div
                   key={`${item.id}-${index}`}
                   onClick={() => handleItemSelect(item)}
@@ -740,6 +810,13 @@ export const ItemSelector = ({
                   )}
                 </div>
               ))}
+            </div>
+          )}
+
+          {loadingMore && (
+            <div className="flex items-center justify-center p-2 text-xs text-muted-foreground bg-card">
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              {t('itemSelector.searching')}
             </div>
           )}
 

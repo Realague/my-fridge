@@ -88,7 +88,7 @@ module.exports = {
           FROM batch
           RETURNING 1
         )
-        SELECT (SELECT max(id) FROM batch) AS last_id,
+        SELECT (SELECT id FROM batch ORDER BY id DESC LIMIT 1) AS last_id,
                (SELECT count(*) FROM batch) AS n
         `,
         { replacements: { lastId, batch: BATCH } }

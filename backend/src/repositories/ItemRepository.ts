@@ -30,6 +30,19 @@ export class ItemRepository {
     });
   }
 
+  // Batch hydrate by id. Missing ids are simply absent from the result —
+  // a suggestion referencing a deleted item is thereby skipped, not an error.
+  async findByIds(ids: string[]): Promise<Item[]> {
+    if (ids.length === 0) return [];
+    return Item.findAll({
+      where: { id: { [Op.in]: ids } },
+      include: [
+        { model: User, as: 'creator', attributes: ['id', 'firstName', 'lastName', 'email'], required: false },
+        { model: Household, as: 'household', attributes: ['id', 'name'], required: false },
+      ],
+    });
+  }
+
   async findAll(query: GetItemsQueryDto = {}): Promise<{ items: Item[]; total: number }> {
     const {
       search,

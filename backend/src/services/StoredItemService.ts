@@ -5,16 +5,19 @@ import { StoredItem } from '../models/StoredItem';
 import { StorageArea } from '../models/StorageArea';
 import { Item } from '../models/Item';
 import { Recipe } from '../models/Recipe';
-import { ItemCategory, StorageAreaType, Unit } from '../types/enums';
+import { ItemCategory, StorageAreaType, Unit, HouseholdActivityAction } from '../types/enums';
 import { BadRequestError } from '../errors/CustomErrors';
+import { HouseholdActivityLogger } from './HouseholdActivityLogger';
 
 export class StoredItemService {
   private storedItemRepository: StoredItemRepository;
   private expirationNotificationRepository: ExpirationNotificationRepository;
+  private activityLogger: HouseholdActivityLogger;
 
   constructor() {
     this.storedItemRepository = new StoredItemRepository();
     this.expirationNotificationRepository = new ExpirationNotificationRepository();
+    this.activityLogger = new HouseholdActivityLogger();
   }
 
   async createStoredItem(data: CreateStoredItemDto): Promise<StoredItemDto> {
@@ -42,6 +45,17 @@ export class StoredItemService {
     };
 
     const storedItem = await this.storedItemRepository.create(createData);
+
+    // Personalized-search signal. Best-effort; covers direct add-to-stock AND
+    // shopping→storage transfers (bulkTransferToStorage delegates here).
+    await this.activityLogger.log({
+      householdId: data.householdId,
+      userId: data.createdBy,
+      itemId: resolvedItemId,
+      itemNameSnapshot: null,
+      action: HouseholdActivityAction.ITEM_ADDED,
+    });
+
     return this.mapToDto(storedItem);
   }
 

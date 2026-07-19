@@ -5,17 +5,19 @@ import { StoredItemService } from './StoredItemService';
 import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto, ShoppingItemDto, BulkTransferToStorageDto, CreateStoredItemDto } from '../types/ItemDto';
 import { ApiResponse } from '../types/ApiResponse';
 import { ShoppingItem } from '../models/ShoppingItem';
-import { LINE_STORAGE_UNITS, Unit, StorageAreaType, ShoppingItemStatus } from '../types/enums';
+import { LINE_STORAGE_UNITS, Unit, StorageAreaType, ShoppingItemStatus, HouseholdActivityAction } from '../types/enums';
 import { convertToStorageUnit, canConvertUnits, normalizeToBaseUnit, getBestDisplayUnit } from '../utils/unitConversion';
 import { Item } from '../models/Item';
 import { StorageArea } from '../models/StorageArea';
 import sequelize from '../config/database';
+import { HouseholdActivityLogger } from './HouseholdActivityLogger';
 
 export class ShoppingItemService {
   private shoppingItemRepository: ShoppingItemRepository;
   private itemRepository: ItemRepository;
   private householdRepository: HouseholdRepository;
   private storedItemService: StoredItemService;
+  private activityLogger: HouseholdActivityLogger;
 
   constructor(
     shoppingItemRepository?: ShoppingItemRepository,
@@ -27,6 +29,7 @@ export class ShoppingItemService {
     this.itemRepository = itemRepository || new ItemRepository();
     this.householdRepository = householdRepository || new HouseholdRepository();
     this.storedItemService = storedItemService || new StoredItemService();
+    this.activityLogger = new HouseholdActivityLogger();
   }
 
   async createShoppingItem(data: CreateShoppingItemDto): Promise<ApiResponse<ShoppingItemDto>> {
@@ -98,6 +101,15 @@ export class ShoppingItemService {
           error: 'Failed to create or update shopping item',
         };
       }
+
+      // Personalized-search signal (best-effort).
+      await this.activityLogger.log({
+        householdId: data.householdId,
+        userId: data.createdBy,
+        itemId: data.itemId,
+        itemNameSnapshot: item.name,
+        action: HouseholdActivityAction.SHOPPING_ADDED,
+      });
 
       // Create the response directly from the data we already have
       const shoppingItemDto: ShoppingItemDto = {
@@ -280,7 +292,7 @@ export class ShoppingItemService {
    * Preserves the duplicate-merge behaviour: if an item with the same
    * item/unit already exists in the target status, quantities are merged.
    */
-  async setShoppingItemStatus(id: string, status: ShoppingItemStatus): Promise<ApiResponse<ShoppingItemDto>> {
+  async setShoppingItemStatus(id: string, status: ShoppingItemStatus, userId: string): Promise<ApiResponse<ShoppingItemDto>> {
     try {
       const shoppingItem = await this.shoppingItemRepository.findById(id);
 
@@ -347,6 +359,17 @@ export class ShoppingItemService {
           success: false,
           error: 'Failed to update shopping item status',
         };
+      }
+
+      // "Checked off" = moved to "à ranger". Personalized-search signal.
+      if (shoppingItem.status === ShoppingItemStatus.TO_BUY && status === ShoppingItemStatus.TO_STORE) {
+        await this.activityLogger.log({
+          householdId: shoppingItem.householdId,
+          userId,
+          itemId: shoppingItem.itemId,
+          itemNameSnapshot: null,
+          action: HouseholdActivityAction.SHOPPING_CHECKED,
+        });
       }
 
       return {

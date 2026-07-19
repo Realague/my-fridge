@@ -165,6 +165,12 @@ export class ShoppingItemController {
     try {
       const { id } = req.params;
       const { status } = req.body;
+      const user = (req as any).user;
+
+      if (!user) {
+        res.status(401).json({ success: false, error: 'User not authenticated' });
+        return;
+      }
 
       if (!SHOPPING_ITEM_STATUSES.includes(status as ShoppingItemStatus)) {
         res.status(400).json({
@@ -176,7 +182,8 @@ export class ShoppingItemController {
 
       const result = await this.shoppingItemService.setShoppingItemStatus(
         id as string,
-        status as ShoppingItemStatus
+        status as ShoppingItemStatus,
+        user.id
       );
 
       if (result.success) {

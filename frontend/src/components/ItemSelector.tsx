@@ -177,7 +177,8 @@ export const ItemSelector = ({
             const response = await itemService.searchItems({
               search: query, // Search with the actual query
               language: normalizedLanguage, // Pass normalized language for backend translation search
-              limit: 20,
+              limit: PAGE_SIZE,
+              personalized,
             });
             
             setApiResults(response.items);

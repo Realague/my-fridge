@@ -107,6 +107,14 @@ export enum StockExitType {
 
 export const STOCK_EXIT_TYPES = Object.values(StockExitType);
 
+export enum HouseholdActivityAction {
+  ITEM_ADDED = 'item_added',
+  SHOPPING_ADDED = 'shopping_added',
+  SHOPPING_CHECKED = 'shopping_checked',
+}
+
+export const HOUSEHOLD_ACTIVITY_ACTIONS = Object.values(HouseholdActivityAction);
+
 // Shopping-list article states.
 //  - TO_BUY:   in the list, not yet in the cart ("À acheter")
 //  - TO_STORE: bought, waiting to be stored ("À ranger")

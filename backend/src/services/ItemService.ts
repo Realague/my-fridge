@@ -1,9 +1,9 @@
 import { ItemRepository } from '../repositories/ItemRepository';
 import { CreateItemDto, UpdateItemDto, GetItemsQueryDto, ItemDto } from '../types/ItemDto';
 import { ApiResponse } from '../types/ApiResponse';
-import { Item } from '../models';
 import { RecipeIngredient } from '../models/RecipeIngredient';
 import { ItemCascadeDeletionService } from './ItemCascadeDeletionService';
+import { formatItemDto } from '../utils/itemFormatter';
 
 export class ItemService {
   private itemRepository: ItemRepository;
@@ -42,7 +42,7 @@ export class ItemService {
 
       return {
         success: true,
-        data: this.formatItemResponse(item),
+        data: formatItemDto(item),
         message: 'Item created successfully',
       };
     } catch (error) {
@@ -75,7 +75,7 @@ export class ItemService {
 
       return {
         success: true,
-        data: this.formatItemResponse(item),
+        data: formatItemDto(item),
       };
     } catch (error) {
       console.error('Error fetching item:', error);
@@ -93,7 +93,7 @@ export class ItemService {
       return {
         success: true,
         data: {
-          items: items.map(item => this.formatItemResponse(item)),
+          items: items.map(item => formatItemDto(item)),
           total,
         },
       };
@@ -112,7 +112,7 @@ export class ItemService {
       
       return {
         success: true,
-        data: items.map(item => this.formatItemResponse(item)),
+        data: items.map(item => formatItemDto(item)),
       };
     } catch (error) {
       console.error('Error fetching items by household:', error);
@@ -163,7 +163,7 @@ export class ItemService {
 
       return {
         success: true,
-        data: this.formatItemResponse(item),
+        data: formatItemDto(item),
         message: 'Item updated successfully',
       };
     } catch (error) {
@@ -226,43 +226,4 @@ export class ItemService {
     });
     return count;
   }
-
-  private formatItemResponse(item: Item): ItemDto {
-    // Ensure availableUnits is always an array
-    let availableUnits = item.availableUnits;
-    if (typeof availableUnits === 'string') {
-      try {
-        availableUnits = JSON.parse(availableUnits);
-      } catch {
-        availableUnits = [item.defaultUnit];
-      }
-    }
-    if (!Array.isArray(availableUnits)) {
-      availableUnits = [item.defaultUnit];
-    }
-
-    return {
-      id: item.id,
-      name: item.name,
-      category: item.category,
-      defaultUnit: item.defaultUnit,
-      availableUnits: availableUnits,
-      pieceAlias: item.pieceAlias ?? null,
-      daysAfterOpening: item.daysAfterOpening || undefined,
-      createdBy: item.createdBy,
-      householdId: item.householdId,
-      imageUrl: item.imageUrl,
-      createdAt: item.createdAt.toISOString(),
-      updatedAt: item.updatedAt.toISOString(),
-      creator: item.creator ? {
-        id: item.creator.id,
-        displayName: item.creator.firstName + ' ' + item.creator.lastName,
-        email: item.creator.email,
-      } : undefined,
-      household: item.household ? {
-        id: item.household.id,
-        name: item.household.name,
-      } : undefined,
-    };
-  }
-} 
+}

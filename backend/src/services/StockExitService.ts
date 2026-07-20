@@ -196,13 +196,16 @@ export class StockExitService {
     await this.stockExitRepository.delete(exitId, householdId);
 
     // Undo (10s window) must erase the matching activity entry so the feed
-    // reflects final state. Best-effort: never break the undo itself.
+    // reflects final state. Narrow the deletion to the exact action of THIS
+    // exit (not all three) so undoing one exit type can't erase a still-valid
+    // exit of a different type on the same stored item. Residual edge case:
+    // two same-type partial exits on one item, undoing the older, still deletes
+    // the newer entry (would need an activityId link on stock_exits to fully
+    // fix). Best-effort: never break the undo itself.
     if (exit.storedItemId) {
       try {
         await this.activityRepo.deleteRecentForTarget(householdId, exit.storedItemId, [
-          HouseholdActivityAction.ITEM_CONSUMED,
-          HouseholdActivityAction.ITEM_THROWN,
-          HouseholdActivityAction.ITEM_REMOVED,
+          EXIT_TYPE_TO_ACTION[exit.exitType],
         ]);
       } catch (e) {
         console.error('[StockExitService] failed to delete activity on undo', e);

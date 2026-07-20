@@ -9,8 +9,10 @@ import { StoredItemService } from './StoredItemService';
 import { StockExit } from '../models/StockExit';
 import { StoredItem } from '../models/StoredItem';
 import { StoredItemDto } from '../types/ItemDto';
-import { StockExitType, STOCK_EXIT_TYPES } from '../types/enums';
+import { StockExitType, STOCK_EXIT_TYPES, HouseholdActivityAction, HouseholdActivityTargetType } from '../types/enums';
 import { BadRequestError, NotFoundError, ValidationError } from '../errors/CustomErrors';
+import { HouseholdActivityLogger } from './HouseholdActivityLogger';
+import { HouseholdActivityRepository } from '../repositories/HouseholdActivityRepository';
 
 export interface StockExitDto {
   id: string;
@@ -47,15 +49,26 @@ export interface StockExitStatsResult {
 // Server-side safety net for undo (client enforces 10s).
 const UNDO_WINDOW_MS = 60 * 1000;
 
+// Maps a stock exit's type to the activity-feed action logged alongside it.
+const EXIT_TYPE_TO_ACTION: Record<StockExitType, HouseholdActivityAction> = {
+  [StockExitType.CONSUMED]: HouseholdActivityAction.ITEM_CONSUMED,
+  [StockExitType.WASTED]: HouseholdActivityAction.ITEM_THROWN,
+  [StockExitType.REMOVED]: HouseholdActivityAction.ITEM_REMOVED,
+};
+
 export class StockExitService {
   private stockExitRepository: StockExitRepository;
   private storedItemRepository: StoredItemRepository;
   private storedItemService: StoredItemService;
+  private activityLogger: HouseholdActivityLogger;
+  private activityRepo: HouseholdActivityRepository;
 
   constructor() {
     this.stockExitRepository = new StockExitRepository();
     this.storedItemRepository = new StoredItemRepository();
     this.storedItemService = new StoredItemService();
+    this.activityLogger = new HouseholdActivityLogger();
+    this.activityRepo = new HouseholdActivityRepository();
   }
 
   /**
@@ -105,6 +118,23 @@ export class StockExitService {
     };
 
     const exit = await this.stockExitRepository.create(createData);
+
+    // Personalized-search / activity-feed signal. Best-effort (log() swallows
+    // its own errors); must never break the exit.
+    await this.activityLogger.log({
+      householdId,
+      userId,
+      itemId: storedItem.itemId,
+      itemNameSnapshot: storedItem.item?.name ?? null,
+      action: EXIT_TYPE_TO_ACTION[exitType],
+      targetType: HouseholdActivityTargetType.ITEM,
+      targetId: storedItem.id,
+      metadata: {
+        quantity: exitQty,
+        unit: storedItem.unit,
+        storageAreaName: storedItem.storageArea?.name ?? null,
+      },
+    });
 
     let remaining: StoredItemDto | null = null;
     if (exitQty >= currentQuantity) {
@@ -164,6 +194,20 @@ export class StockExitService {
 
     // Hard-delete the log so stats stay accurate.
     await this.stockExitRepository.delete(exitId, householdId);
+
+    // Undo (10s window) must erase the matching activity entry so the feed
+    // reflects final state. Best-effort: never break the undo itself.
+    if (exit.storedItemId) {
+      try {
+        await this.activityRepo.deleteRecentForTarget(householdId, exit.storedItemId, [
+          HouseholdActivityAction.ITEM_CONSUMED,
+          HouseholdActivityAction.ITEM_THROWN,
+          HouseholdActivityAction.ITEM_REMOVED,
+        ]);
+      } catch (e) {
+        console.error('[StockExitService] failed to delete activity on undo', e);
+      }
+    }
 
     return { restored };
   }

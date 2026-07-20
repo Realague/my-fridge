@@ -1,6 +1,6 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
-import { HouseholdActivityAction, HOUSEHOLD_ACTIVITY_ACTIONS } from '../types/enums';
+import { HouseholdActivityAction, HOUSEHOLD_ACTIVITY_ACTIONS, HouseholdActivityTargetType, HOUSEHOLD_ACTIVITY_TARGET_TYPES } from '../types/enums';
 import { User } from './User';
 import { Household } from './Household';
 
@@ -13,6 +13,9 @@ interface HouseholdActivityAttributes {
   itemId: string | null;
   itemNameSnapshot: string | null;
   action: HouseholdActivityAction;
+  targetType: HouseholdActivityTargetType | null;
+  targetId: string | null;
+  metadata: Record<string, unknown> | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -20,7 +23,7 @@ interface HouseholdActivityAttributes {
 interface HouseholdActivityCreationAttributes
   extends Optional<
     HouseholdActivityAttributes,
-    'id' | 'itemId' | 'itemNameSnapshot' | 'createdAt' | 'updatedAt'
+    'id' | 'itemId' | 'itemNameSnapshot' | 'targetType' | 'targetId' | 'metadata' | 'createdAt' | 'updatedAt'
   > {}
 
 export class HouseholdActivity
@@ -33,6 +36,9 @@ export class HouseholdActivity
   public itemId!: string | null;
   public itemNameSnapshot!: string | null;
   public action!: HouseholdActivityAction;
+  public targetType!: HouseholdActivityTargetType | null;
+  public targetId!: string | null;
+  public metadata!: Record<string, unknown> | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
@@ -70,6 +76,18 @@ HouseholdActivity.init(
     action: {
       type: DataTypes.ENUM(...HOUSEHOLD_ACTIVITY_ACTIONS),
       allowNull: false,
+    },
+    targetType: {
+      type: DataTypes.ENUM(...HOUSEHOLD_ACTIVITY_TARGET_TYPES),
+      allowNull: true,
+    },
+    targetId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
+    metadata: {
+      type: DataTypes.JSONB,
+      allowNull: true,
     },
   },
   {

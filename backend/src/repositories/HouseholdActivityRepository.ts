@@ -141,7 +141,7 @@ export class HouseholdActivityRepository {
 
     let nextCursor: string | null = null;
     if (rows.length > opts.limit) {
-      const last = rows[opts.limit]!;
+      const last = rows[opts.limit - 1]!;
       nextCursor = this.encodeCursor(last.createdAt, last.id);
       rows.length = opts.limit;
     }

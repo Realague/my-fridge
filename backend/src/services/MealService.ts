@@ -22,8 +22,9 @@ import {
 import { CreateShoppingItemDto } from '../types/ItemDto';
 import { Meal } from '../models/Meal';
 import { Item } from '../models/Item';
-import { ItemCategory, ShoppingItemStatus } from '../types/enums';
+import { ItemCategory, ShoppingItemStatus, HouseholdActivityAction, HouseholdActivityTargetType } from '../types/enums';
 import { NotFoundError, ValidationError } from '../errors/CustomErrors';
+import { HouseholdActivityLogger } from './HouseholdActivityLogger';
 import {
   normalizeToBaseUnit,
   getBestDisplayUnit,
@@ -44,6 +45,7 @@ export class MealService {
   private itemRepository: ItemRepository;
   private shoppingItemRepository: ShoppingItemRepository;
   private storedItemRepository: StoredItemRepository;
+  private activityLogger: HouseholdActivityLogger;
 
   constructor() {
     this.mealRepository = new MealRepository();
@@ -51,6 +53,7 @@ export class MealService {
     this.itemRepository = new ItemRepository();
     this.shoppingItemRepository = new ShoppingItemRepository();
     this.storedItemRepository = new StoredItemRepository();
+    this.activityLogger = new HouseholdActivityLogger();
   }
 
   async getMeals(householdId: string): Promise<MealDto[]> {
@@ -58,7 +61,7 @@ export class MealService {
     return meals.map((m) => this.transformToDto(m));
   }
 
-  async createMeal(householdId: string, data: CreateMealDto): Promise<MealDto> {
+  async createMeal(householdId: string, data: CreateMealDto, userId: string): Promise<MealDto> {
     this.validateMealData(data);
 
     const recipe = await this.recipeRepository.findById(data.recipeId, householdId);
@@ -78,6 +81,16 @@ export class MealService {
     );
     if (existingActive) {
       const updated = await this.mealRepository.updateServings(existingActive.id, servings);
+      await this.activityLogger.log({
+        householdId,
+        userId,
+        itemId: null,
+        itemNameSnapshot: null,
+        action: HouseholdActivityAction.RECIPE_PLANNED,
+        targetType: HouseholdActivityTargetType.RECIPE,
+        targetId: data.recipeId,
+        metadata: { recipeName: recipe.title, servings },
+      });
       return this.transformToDto(updated!);
     }
 
@@ -88,11 +101,26 @@ export class MealService {
     });
 
     const reloaded = await this.mealRepository.findById(meal.id, true);
+    await this.activityLogger.log({
+      householdId,
+      userId,
+      itemId: null,
+      itemNameSnapshot: null,
+      action: HouseholdActivityAction.RECIPE_PLANNED,
+      targetType: HouseholdActivityTargetType.RECIPE,
+      targetId: data.recipeId,
+      metadata: { recipeName: recipe.title, servings },
+    });
     return this.transformToDto(reloaded!);
   }
 
-  async updateMeal(id: string, householdId: string, data: UpdateMealDto): Promise<MealDto> {
-    const meal = await this.mealRepository.findById(id, false);
+  async updateMeal(
+    id: string,
+    householdId: string,
+    data: UpdateMealDto,
+    userId: string
+  ): Promise<MealDto> {
+    const meal = await this.mealRepository.findById(id, true);
     if (!meal || meal.householdId !== householdId) {
       throw new NotFoundError('Meal not found');
     }
@@ -106,14 +134,42 @@ export class MealService {
 
     const updated = await this.mealRepository.updateServings(id, data.servings);
     if (!updated) throw new NotFoundError('Failed to update meal');
+
+    if (Number(meal.servings) !== Number(data.servings)) {
+      await this.activityLogger.log({
+        householdId,
+        userId,
+        itemId: null,
+        itemNameSnapshot: null,
+        action: HouseholdActivityAction.RECIPE_SERVINGS_CHANGED,
+        targetType: HouseholdActivityTargetType.MEAL,
+        targetId: id,
+        metadata: {
+          recipeName: (meal as any).recipe?.title ?? null,
+          oldServings: Number(meal.servings),
+          newServings: Number(data.servings),
+        },
+      });
+    }
+
     return this.transformToDto(updated);
   }
 
-  async deleteMeal(id: string, householdId: string): Promise<void> {
-    const meal = await this.mealRepository.findById(id, false);
+  async deleteMeal(id: string, householdId: string, userId: string): Promise<void> {
+    const meal = await this.mealRepository.findById(id, true);
     if (!meal || meal.householdId !== householdId) {
       throw new NotFoundError('Meal not found');
     }
+    await this.activityLogger.log({
+      householdId,
+      userId,
+      itemId: null,
+      itemNameSnapshot: null,
+      action: HouseholdActivityAction.RECIPE_UNPLANNED,
+      targetType: HouseholdActivityTargetType.MEAL,
+      targetId: id,
+      metadata: { recipeName: (meal as any).recipe?.title ?? null },
+    });
     await this.mealRepository.deleteAndRepack(id, householdId);
   }
 
@@ -122,13 +178,34 @@ export class MealService {
    * meal disappears from the active plan. Idempotent: marking an already
    * cooked meal is a no-op that still returns the dto.
    */
-  async markMealCooked(id: string, householdId: string): Promise<MealDto> {
+  async markMealCooked(id: string, householdId: string, userId: string): Promise<MealDto> {
     const meal = await this.mealRepository.findById(id, false);
     if (!meal || meal.householdId !== householdId) {
       throw new NotFoundError('Meal not found');
     }
     const updated = await this.mealRepository.markCooked(id, householdId);
     if (!updated) throw new NotFoundError('Meal not found');
+
+    // markCooked's own join only pulls recipe scalar fields (no ingredients),
+    // so fetch the full recipe separately to get a real ingredient count
+    // instead of always logging 0.
+    const recipeFull = await this.recipeRepository.findById(meal.recipeId, householdId);
+    const ingredientCount = recipeFull?.ingredients?.length ?? 0;
+
+    await this.activityLogger.log({
+      householdId,
+      userId,
+      itemId: null,
+      itemNameSnapshot: null,
+      action: HouseholdActivityAction.RECIPE_COOKED,
+      targetType: HouseholdActivityTargetType.MEAL,
+      targetId: id,
+      metadata: {
+        recipeName: (updated as any).recipe?.title ?? null,
+        deductedIngredientCount: ingredientCount,
+      },
+    });
+
     return this.transformToDto(updated);
   }
 

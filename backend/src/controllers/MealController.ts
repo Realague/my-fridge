@@ -34,8 +34,13 @@ export class MealController {
   async createMeal(req: Request, res: Response): Promise<void> {
     try {
       const { householdId } = req.params as { householdId: string };
+      const userId = (req as any).user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, message: 'User authentication required' });
+        return;
+      }
       const data: CreateMealDto = req.body;
-      const meal = await this.mealService.createMeal(householdId, data);
+      const meal = await this.mealService.createMeal(householdId, data, userId);
       const response: ApiResponse<typeof meal> = {
         success: true,
         data: meal,
@@ -55,8 +60,13 @@ export class MealController {
   async updateMeal(req: Request, res: Response): Promise<void> {
     try {
       const { householdId, id } = req.params as { householdId: string; id: string };
+      const userId = (req as any).user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, message: 'User authentication required' });
+        return;
+      }
       const data: UpdateMealDto = req.body;
-      const meal = await this.mealService.updateMeal(id, householdId, data);
+      const meal = await this.mealService.updateMeal(id, householdId, data, userId);
       const response: ApiResponse<typeof meal> = {
         success: true,
         data: meal,
@@ -76,7 +86,12 @@ export class MealController {
   async deleteMeal(req: Request, res: Response): Promise<void> {
     try {
       const { householdId, id } = req.params as { householdId: string; id: string };
-      await this.mealService.deleteMeal(id, householdId);
+      const userId = (req as any).user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, message: 'User authentication required' });
+        return;
+      }
+      await this.mealService.deleteMeal(id, householdId, userId);
       res.status(204).send();
     } catch (error) {
       console.error('Error deleting meal:', error);
@@ -193,7 +208,12 @@ export class MealController {
   async markCooked(req: Request, res: Response): Promise<void> {
     try {
       const { householdId, id } = req.params as { householdId: string; id: string };
-      const meal = await this.mealService.markMealCooked(id, householdId);
+      const userId = (req as any).user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, message: 'User authentication required' });
+        return;
+      }
+      const meal = await this.mealService.markMealCooked(id, householdId, userId);
       const response: ApiResponse<typeof meal> = {
         success: true,
         data: meal,

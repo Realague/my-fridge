@@ -4342,5 +4342,36 @@
       "exitSuggestions": "Suggestions de sortie",
       "exitSuggestionsDescription": "Proposer de marquer comme consommés ou jetés les articles périmés depuis plus de 3 jours."
     }
+  },
+  "activity": {
+    "title": "Activité du foyer",
+    "recentTitle": "Activité récente",
+    "seeAll": "Voir tout",
+    "loadMore": "Charger plus",
+    "empty": "Aucune activité pour le moment",
+    "formerMember": "(ancien membre)",
+    "you": "Vous",
+    "unknownItem": "un article",
+    "unknownRecipe": "une recette",
+    "unknownMember": "Un membre",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "relativeMinutes": "il y a {{count}} min",
+    "justNow": "à l'instant",
+    "labels": {
+      "item_added": "a ajouté {{target}} au stock",
+      "item_quantity_changed": "a modifié la quantité de {{target}}",
+      "item_expiration_changed": "a modifié la date de péremption de {{target}}",
+      "item_consumed": "a consommé {{target}}",
+      "item_thrown": "a jeté {{target}}",
+      "item_removed": "a retiré {{target}} du stock",
+      "shopping_added": "a ajouté {{target}} à la liste de courses",
+      "shopping_checked": "a acheté {{target}}",
+      "shopping_removed": "a retiré {{target}} de la liste de courses",
+      "recipe_planned": "a planifié {{target}}",
+      "recipe_servings_changed": "a modifié les portions de {{target}}",
+      "recipe_cooked": "a cuisiné {{target}}",
+      "recipe_unplanned": "a retiré {{target}} du meal plan"
+    }
   }
 }

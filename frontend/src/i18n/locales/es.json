@@ -4342,5 +4342,36 @@
       "exitSuggestions": "Sugerencias de salida",
       "exitSuggestionsDescription": "Sugerir marcar como consumidos o tirados los artículos caducados hace más de 3 días."
     }
+  },
+  "activity": {
+    "title": "Actividad del hogar",
+    "recentTitle": "Actividad reciente",
+    "seeAll": "Ver todo",
+    "loadMore": "Cargar más",
+    "empty": "Aún no hay actividad",
+    "formerMember": "(ex miembro)",
+    "you": "Tú",
+    "unknownItem": "un artículo",
+    "unknownRecipe": "una receta",
+    "unknownMember": "Un miembro",
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "relativeMinutes": "hace {{count}} min",
+    "justNow": "ahora mismo",
+    "labels": {
+      "item_added": "añadió {{target}} al stock",
+      "item_quantity_changed": "cambió la cantidad de {{target}}",
+      "item_expiration_changed": "cambió la fecha de caducidad de {{target}}",
+      "item_consumed": "consumió {{target}}",
+      "item_thrown": "tiró {{target}}",
+      "item_removed": "quitó {{target}} del stock",
+      "shopping_added": "añadió {{target}} a la lista de la compra",
+      "shopping_checked": "compró {{target}}",
+      "shopping_removed": "quitó {{target}} de la lista de la compra",
+      "recipe_planned": "planificó {{target}}",
+      "recipe_servings_changed": "cambió las porciones de {{target}}",
+      "recipe_cooked": "cocinó {{target}}",
+      "recipe_unplanned": "quitó {{target}} del plan de comidas"
+    }
   }
 }

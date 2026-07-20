@@ -56,8 +56,12 @@ export function ActivityEntry({ entry, currentUserId }: Props) {
 }
 
 function renderWithEmphasis(text: string, target: string) {
-  if (!target || !text.includes(target)) return <span>{text}</span>;
-  const [before, after] = text.split(target);
+  const idx = target ? text.indexOf(target) : -1;
+  if (idx === -1) return <span>{text}</span>;
+  // indexOf + slice (not split): a target that appears more than once — e.g. an
+  // item literally named a connector word — would make split() drop the tail.
+  const before = text.slice(0, idx);
+  const after = text.slice(idx + target.length);
   return (
     <span>
       {before}

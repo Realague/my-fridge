@@ -5,7 +5,7 @@ import { StoredItemService } from './StoredItemService';
 import { CreateShoppingItemDto, UpdateShoppingItemDto, GetShoppingItemsQueryDto, ShoppingItemDto, BulkTransferToStorageDto, CreateStoredItemDto } from '../types/ItemDto';
 import { ApiResponse } from '../types/ApiResponse';
 import { ShoppingItem } from '../models/ShoppingItem';
-import { LINE_STORAGE_UNITS, Unit, StorageAreaType, ShoppingItemStatus, HouseholdActivityAction } from '../types/enums';
+import { LINE_STORAGE_UNITS, Unit, StorageAreaType, ShoppingItemStatus, HouseholdActivityAction, HouseholdActivityTargetType } from '../types/enums';
 import { convertToStorageUnit, canConvertUnits, normalizeToBaseUnit, getBestDisplayUnit } from '../utils/unitConversion';
 import { Item } from '../models/Item';
 import { StorageArea } from '../models/StorageArea';
@@ -109,6 +109,8 @@ export class ShoppingItemService {
         itemId: data.itemId,
         itemNameSnapshot: item.name,
         action: HouseholdActivityAction.SHOPPING_ADDED,
+        targetType: HouseholdActivityTargetType.SHOPPING_ITEM,
+        targetId: shoppingItem.id,
       });
 
       // Create the response directly from the data we already have
@@ -235,7 +237,7 @@ export class ShoppingItemService {
         );
         
         if (duplicateShoppingItem) {
-          await this.deleteShoppingItem(duplicateShoppingItem.id);
+          await this.deleteShoppingItem(duplicateShoppingItem.id, { silent: true });
           data.quantity = (data.quantity || 0) + duplicateShoppingItem.quantity;
           updatedShoppingItem = await this.shoppingItemRepository.update(duplicateShoppingItem.id, data);
         }
@@ -263,8 +265,10 @@ export class ShoppingItemService {
     }
   }
 
-  async deleteShoppingItem(id: string): Promise<ApiResponse<void>> {
+  async deleteShoppingItem(id: string, opts?: { silent?: boolean }): Promise<ApiResponse<void>> {
     try {
+      const existing = await this.shoppingItemRepository.findById(id);
+
       const deleted = await this.shoppingItemRepository.delete(id);
 
       if (!deleted) {
@@ -272,6 +276,20 @@ export class ShoppingItemService {
           success: false,
           error: 'Shopping item not found or delete failed',
         };
+      }
+
+      // Personalized-search signal (best-effort). Skipped for internal
+      // de-duplication deletes so merges never surface as user removals.
+      if (existing && !opts?.silent) {
+        await this.activityLogger.log({
+          householdId: existing.householdId,
+          userId: existing.createdBy,
+          itemId: existing.itemId,
+          itemNameSnapshot: existing.item?.name ?? null,
+          action: HouseholdActivityAction.SHOPPING_REMOVED,
+          targetType: HouseholdActivityTargetType.SHOPPING_ITEM,
+          targetId: id,
+        });
       }
 
       return {
@@ -346,7 +364,7 @@ export class ShoppingItemService {
 
       let updatedShoppingItem: ShoppingItem | null = null;
       if (duplicateShoppingItem) {
-        await this.deleteShoppingItem(duplicateShoppingItem.id);
+        await this.deleteShoppingItem(duplicateShoppingItem.id, { silent: true });
         const updateData: any = { quantity: mergedQuantity, status };
         if (mergedUnit) updateData.unit = mergedUnit;
         updatedShoppingItem = await this.shoppingItemRepository.update(id, updateData);
@@ -369,6 +387,8 @@ export class ShoppingItemService {
           itemId: shoppingItem.itemId,
           itemNameSnapshot: null,
           action: HouseholdActivityAction.SHOPPING_CHECKED,
+          targetType: HouseholdActivityTargetType.SHOPPING_ITEM,
+          targetId: id,
         });
       }
 

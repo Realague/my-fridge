@@ -5,7 +5,9 @@ import { HouseholdActivityAction, HouseholdActivityTargetType } from '../types/e
 
 export interface ActivityActorDto {
   id: string;
-  name: string;
+  // null when the author has no name on file (e.g. deleted user): the frontend
+  // supplies a localized fallback. The backend never bakes user-facing strings.
+  name: string | null;
   isFormerMember: boolean;
 }
 
@@ -60,7 +62,7 @@ export class HouseholdActivityFeedService {
   private toDto(row: HouseholdActivity, activeMemberIds: Set<string>): ActivityEntryDto {
     const firstName = row.user?.firstName?.trim();
     const lastName = row.user?.lastName?.trim();
-    const name = [firstName, lastName].filter(Boolean).join(' ') || 'Membre';
+    const name = [firstName, lastName].filter(Boolean).join(' ') || null;
 
     return {
       id: row.id,

@@ -21,7 +21,8 @@ export class HouseholdActivityController {
         return;
       }
 
-      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
+      const parsedLimit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
+      const limit = parsedLimit !== undefined && Number.isFinite(parsedLimit) ? parsedLimit : undefined;
       const before = (req.query.before as string) || undefined;
 
       const data = await this.service.getFeed(householdId, { limit, before });
@@ -45,7 +46,8 @@ export class HouseholdActivityController {
         return;
       }
 
-      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 5;
+      const parsedLimit = req.query.limit ? parseInt(req.query.limit as string, 10) : 5;
+      const limit = Number.isFinite(parsedLimit) ? parsedLimit : 5;
       const data = await this.service.getRecent(householdId, limit);
       res.status(200).json({ success: true, data });
     } catch (error) {

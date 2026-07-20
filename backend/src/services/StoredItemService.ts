@@ -5,7 +5,7 @@ import { StoredItem } from '../models/StoredItem';
 import { StorageArea } from '../models/StorageArea';
 import { Item } from '../models/Item';
 import { Recipe } from '../models/Recipe';
-import { ItemCategory, StorageAreaType, Unit, HouseholdActivityAction } from '../types/enums';
+import { ItemCategory, StorageAreaType, Unit, HouseholdActivityAction, HouseholdActivityTargetType } from '../types/enums';
 import { BadRequestError } from '../errors/CustomErrors';
 import { HouseholdActivityLogger } from './HouseholdActivityLogger';
 
@@ -54,6 +54,12 @@ export class StoredItemService {
       itemId: resolvedItemId,
       itemNameSnapshot: null,
       action: HouseholdActivityAction.ITEM_ADDED,
+      targetType: HouseholdActivityTargetType.ITEM,
+      targetId: storedItem.id,
+      metadata: {
+        quantity: Number(data.quantity),
+        unit: data.unit,
+      },
     });
 
     return this.mapToDto(storedItem);
@@ -148,7 +154,12 @@ export class StoredItemService {
     return storedItems.map(item => this.mapToDto(item));
   }
 
-  async updateStoredItem(id: string, householdId: string, data: UpdateStoredItemDto): Promise<StoredItemDto | null> {
+  async updateStoredItem(
+    id: string,
+    householdId: string,
+    data: UpdateStoredItemDto,
+    userId?: string
+  ): Promise<StoredItemDto | null> {
     // Get current stored item to check current storage area
     const currentItem = await this.storedItemRepository.findById(id, householdId);
     if (!currentItem) return null;
@@ -177,6 +188,56 @@ export class StoredItemService {
     }
 
     const storedItem = await this.storedItemRepository.update(id, householdId, updateData);
+
+    if (storedItem) {
+      // Best-effort change logs. `currentItem` is the pre-mutation snapshot
+      // (already loaded above, with `.item` included), so no extra query is
+      // needed. Only log fields that were actually present in the incoming
+      // payload AND whose value actually changed — a no-op update (e.g.
+      // re-saving the same quantity) must not spam the feed.
+      const authorId = userId ?? currentItem.createdBy;
+
+      if (data.quantity !== undefined && Number(data.quantity) !== Number(currentItem.quantity)) {
+        await this.activityLogger.log({
+          householdId,
+          userId: authorId,
+          itemId: currentItem.itemId,
+          itemNameSnapshot: currentItem.item?.name ?? null,
+          action: HouseholdActivityAction.ITEM_QUANTITY_CHANGED,
+          targetType: HouseholdActivityTargetType.ITEM,
+          targetId: id,
+          metadata: {
+            oldQuantity: Number(currentItem.quantity),
+            newQuantity: Number(data.quantity),
+            unit: currentItem.unit,
+          },
+        });
+      }
+
+      // `data.expirationDate` is `string | null | undefined`: undefined means
+      // the field was absent from the payload (nothing to log); null means it
+      // was explicitly cleared (e.g. user removed the date) and must still be
+      // compared against the prior value.
+      if (data.expirationDate !== undefined) {
+        const oldExp = currentItem.expirationDate
+          ? new Date(currentItem.expirationDate).toISOString().split('T')[0]
+          : null;
+        const newExp = data.expirationDate;
+        if (String(newExp) !== String(oldExp)) {
+          await this.activityLogger.log({
+            householdId,
+            userId: authorId,
+            itemId: currentItem.itemId,
+            itemNameSnapshot: currentItem.item?.name ?? null,
+            action: HouseholdActivityAction.ITEM_EXPIRATION_CHANGED,
+            targetType: HouseholdActivityTargetType.ITEM,
+            targetId: id,
+            metadata: { oldDate: oldExp, newDate: newExp },
+          });
+        }
+      }
+    }
+
     return storedItem ? this.mapToDto(storedItem) : null;
   }
 

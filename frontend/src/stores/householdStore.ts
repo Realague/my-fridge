@@ -106,6 +106,16 @@ export const syncHouseholdStoreWithAuth = () => {
       if (user?.selectedHouseholdId) {
         useHouseholdStore.getState().setSelectedHouseholdId(user.selectedHouseholdId);
       }
+      // `households` is never persisted across reloads (only selectedHouseholdId
+      // is), and this is the one place that runs once for the whole app,
+      // regardless of which route a reload lands on. Without this, components
+      // like HouseholdSwitcher that read getCurrentHousehold() before any page
+      // has called fetchHouseholds() itself see an empty list and fall back to
+      // their "no household" placeholder until the user visits a page that
+      // happens to fetch it.
+      if (user) {
+        void useHouseholdStore.getState().fetchHouseholds();
+      }
     }).catch((error) => {
       console.error('Failed to import auth store for sync:', error);
     });

@@ -108,12 +108,34 @@ export enum StockExitType {
 export const STOCK_EXIT_TYPES = Object.values(StockExitType);
 
 export enum HouseholdActivityAction {
+  // Stock
   ITEM_ADDED = 'item_added',
+  ITEM_QUANTITY_CHANGED = 'item_quantity_changed',
+  ITEM_EXPIRATION_CHANGED = 'item_expiration_changed',
+  ITEM_CONSUMED = 'item_consumed',
+  ITEM_THROWN = 'item_thrown',
+  ITEM_REMOVED = 'item_removed',
+  // Shopping list
   SHOPPING_ADDED = 'shopping_added',
   SHOPPING_CHECKED = 'shopping_checked',
+  SHOPPING_REMOVED = 'shopping_removed',
+  // Meal plan
+  RECIPE_PLANNED = 'recipe_planned',
+  RECIPE_SERVINGS_CHANGED = 'recipe_servings_changed',
+  RECIPE_COOKED = 'recipe_cooked',
+  RECIPE_UNPLANNED = 'recipe_unplanned',
 }
 
 export const HOUSEHOLD_ACTIVITY_ACTIONS = Object.values(HouseholdActivityAction);
+
+export enum HouseholdActivityTargetType {
+  ITEM = 'item',
+  SHOPPING_ITEM = 'shopping_item',
+  MEAL = 'meal',
+  RECIPE = 'recipe',
+}
+
+export const HOUSEHOLD_ACTIVITY_TARGET_TYPES = Object.values(HouseholdActivityTargetType);
 
 // Shopping-list article states.
 //  - TO_BUY:   in the list, not yet in the cart ("À acheter")

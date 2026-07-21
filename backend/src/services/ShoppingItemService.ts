@@ -385,7 +385,7 @@ export class ShoppingItemService {
           householdId: shoppingItem.householdId,
           userId,
           itemId: shoppingItem.itemId,
-          itemNameSnapshot: null,
+          itemNameSnapshot: shoppingItem.item?.name ?? null,
           action: HouseholdActivityAction.SHOPPING_CHECKED,
           targetType: HouseholdActivityTargetType.SHOPPING_ITEM,
           targetId: id,

@@ -10,7 +10,8 @@
     "mealPlan": "Plan de repas",
     "recipes": "Recettes",
     "more": "Plus",
-    "primary": "Navigation principale"
+    "primary": "Navigation principale",
+    "activity": "Activité du foyer"
   },
   "a11y": {
     "timer": {
@@ -543,6 +544,9 @@
         "household": {
           "title": "Foyer",
           "description": "Membres et configuration du foyer"
+        },
+        "activity": {
+          "description": "Voir les actions récentes des membres"
         },
         "notifications": {
           "title": "Notifications",

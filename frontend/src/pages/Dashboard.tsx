@@ -9,6 +9,7 @@ import NotificationDrawer from '@/components/NotificationDrawer';
 import AddStorageAreaDialog from '@/components/AddStorageAreaDialog';
 import { LowStockCard } from '@/components/LowStockCard';
 import { ExpiringSoonCard } from '@/components/ExpiringSoonCard';
+import { RecentActivityCard } from '@/components/RecentActivityCard';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -315,9 +316,9 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Recent Activity — hidden until a real activity feed exists.
-            Previously rendered hardcoded English mock rows (Sarah / John /
-            Yesterday) which leaked to FR/ES users on the home screen. */}
+        {/* Recent Activity — hidden entirely (RecentActivityCard returns null)
+            when the household has no activity yet. */}
+        <RecentActivityCard householdId={selectedHouseholdId} />
       </div>
 
       {/* Notification Drawer */}

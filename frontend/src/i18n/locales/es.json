@@ -4349,6 +4349,7 @@
   },
   "activity": {
     "title": "Actividad del hogar",
+    "subtitle": "Lo que tu hogar ha hecho recientemente",
     "recentTitle": "Actividad reciente",
     "seeAll": "Ver todo",
     "loadMore": "Cargar más",
@@ -4376,6 +4377,21 @@
       "recipe_servings_changed": "cambió las porciones de {{target}}",
       "recipe_cooked": "cocinó {{target}}",
       "recipe_unplanned": "quitó {{target}} del plan de comidas"
+    },
+    "labelsSelf": {
+      "item_added": "añadiste {{target}} al stock",
+      "item_quantity_changed": "cambiaste la cantidad de {{target}}",
+      "item_expiration_changed": "cambiaste la fecha de caducidad de {{target}}",
+      "item_consumed": "consumiste {{target}}",
+      "item_thrown": "tiraste {{target}}",
+      "item_removed": "quitaste {{target}} del stock",
+      "shopping_added": "añadiste {{target}} a la lista de la compra",
+      "shopping_checked": "compraste {{target}}",
+      "shopping_removed": "quitaste {{target}} de la lista de la compra",
+      "recipe_planned": "planificaste {{target}}",
+      "recipe_servings_changed": "cambiaste las porciones de {{target}}",
+      "recipe_cooked": "cocinaste {{target}}",
+      "recipe_unplanned": "quitaste {{target}} del plan de comidas"
     }
   }
 }

@@ -9,14 +9,17 @@ interface Props {
 
 export function ActivityDayGroup({ label, entries, currentUserId }: Props) {
   return (
-    <section className="mb-6">
-      <h2 className="mb-2 font-display text-sm font-extrabold uppercase tracking-wide text-mf-text-mute">
+    <section>
+      <h2 className="mb-2 px-1 font-display text-xs font-bold uppercase tracking-[0.08em] text-mf-text-mute">
         {label}
       </h2>
-      <div className="divide-y divide-border">
-        {entries.map((entry) => (
-          <ActivityEntry key={entry.id} entry={entry} currentUserId={currentUserId} />
-        ))}
+      {/* Surface crème bordée — même shell que la carte « Activité récente » du dashboard. */}
+      <div className="overflow-hidden rounded-xl border border-mf-night-line bg-mf-night-surface px-4 shadow-[0_1px_2px_rgba(20,15,5,0.05)] sm:px-5">
+        <div className="divide-y divide-border">
+          {entries.map((entry) => (
+            <ActivityEntry key={entry.id} entry={entry} currentUserId={currentUserId} />
+          ))}
+        </div>
       </div>
     </section>
   );

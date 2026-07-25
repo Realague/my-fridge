@@ -46,13 +46,17 @@ export class StoredItemService {
 
     const storedItem = await this.storedItemRepository.create(createData);
 
+    // Nom figé pour le feed d'activité : sans lui, la carte affiche « un article ».
+    // findByPk couvre l'ajout normal comme le cooked_meal (Item déjà persisté).
+    const addedItem = await Item.findByPk(resolvedItemId);
+
     // Personalized-search signal. Best-effort; covers direct add-to-stock AND
     // shopping→storage transfers (bulkTransferToStorage delegates here).
     await this.activityLogger.log({
       householdId: data.householdId,
       userId: data.createdBy,
       itemId: resolvedItemId,
-      itemNameSnapshot: null,
+      itemNameSnapshot: addedItem?.name ?? null,
       action: HouseholdActivityAction.ITEM_ADDED,
       targetType: HouseholdActivityTargetType.ITEM,
       targetId: storedItem.id,

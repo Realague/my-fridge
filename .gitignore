@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 .playwright-mcp
+.design-sync
 audit
 
 # Editor directories and files
@@ -27,4 +28,10 @@ audit
 
 # Env
 frontend/.env
-backend/.env
+backend/.env# design-sync (staged scripts, build output, machine state)
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
+frontend/.ds-styles.css

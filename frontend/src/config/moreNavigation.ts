@@ -1,6 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   Activity,
+  BarChart3,
   Bell,
   Calendar,
   CreditCard,
@@ -88,6 +89,13 @@ export const MORE_SECTIONS: MoreSection[] = [
         descriptionKey: 'pages.more.features.household.description',
         icon: Home,
         to: '/household',
+      },
+      {
+        id: 'statistics',
+        titleKey: 'navigation.statistics',
+        descriptionKey: 'pages.more.features.statistics.description',
+        icon: BarChart3,
+        to: '/statistics',
       },
       {
         id: 'activity',

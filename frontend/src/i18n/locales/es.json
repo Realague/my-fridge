@@ -11,7 +11,8 @@
     "recipes": "Recetas",
     "more": "Más",
     "primary": "Navegación principal",
-    "activity": "Actividad del hogar"
+    "activity": "Actividad del hogar",
+    "statistics": "Estadísticas"
   },
   "a11y": {
     "timer": {
@@ -559,6 +560,9 @@
         "signOut": {
           "title": "Cerrar sesión",
           "description": "Cierra sesión en tu cuenta"
+        },
+        "statistics": {
+          "description": "Antidesperdicio, cocina y contribución del hogar"
         }
       }
     },
@@ -4392,6 +4396,96 @@
       "recipe_servings_changed": "cambiaste las porciones de {{target}}",
       "recipe_cooked": "cocinaste {{target}}",
       "recipe_unplanned": "quitaste {{target}} del plan de comidas"
+    }
+  },
+  "stats": {
+    "title": "Estadísticas del hogar",
+    "periodLabel": "Período",
+    "blockLabel": "Sección",
+    "loadError": "No se han podido cargar las estadísticas por ahora.",
+    "recentHousehold_one": "Tu hogar tiene {{count}} día. ¡Vuelve dentro de unas semanas para ver evolucionar tus tendencias!",
+    "recentHousehold_other": "Tu hogar tiene {{count}} días. ¡Vuelve dentro de unas semanas para ver evolucionar tus tendencias!",
+    "periods": {
+      "current_month": "Mes actual",
+      "last_month": "Mes anterior",
+      "last_3_months": "Últimos 3 meses",
+      "current_year": "Año actual"
+    },
+    "blocks": {
+      "waste": "Antidesperdicio",
+      "cooking": "Cocina",
+      "household": "Hogar"
+    },
+    "trend": {
+      "badge": "{{arrow}} {{sign}}{{value}} vs {{month}}",
+      "points_one": "{{count}} pt",
+      "points_other": "{{count}} pts"
+    },
+    "cards": {
+      "waste": {
+        "title": "Antidesperdicio — {{month}}",
+        "caption": "Tasa de aprovechamiento · {{consumed}} artículos consumidos, {{wasted}} tirados",
+        "gaugeA11y": "Tasa de aprovechamiento: {{value}} %"
+      },
+      "cooking": {
+        "title": "En la cocina — {{month}}",
+        "caption_one": "Recetas cocinadas · {{count}} receta diferente probada",
+        "caption_other": "Recetas cocinadas · {{count}} recetas diferentes probadas"
+      }
+    },
+    "empty": {
+      "title": "Nada que llevarse a la boca",
+      "subtitle": "¡Añade tus primeros artículos para empezar a seguir tu impacto! Las estadísticas se irán llenando con tus salidas de stock.",
+      "cta": "Añadir un artículo"
+    },
+    "waste": {
+      "title": "Antidesperdicio",
+      "usageRate": "Tasa de aprovechamiento",
+      "consumed": "Artículos consumidos",
+      "wasted": "Artículos tirados",
+      "saved": "Salvados in extremis",
+      "savedCaption": "Consumidos en los 2 días previos a su caducidad",
+      "trendTitle": "Evolución de la tasa de aprovechamiento",
+      "trendA11y": "Tasa de aprovechamiento, del {{first}} % al {{last}} % en el período mostrado",
+      "topWastedTitle": "Lo que más tiras",
+      "topWastedInsight_one": "Las {{category}} van en cabeza — {{count}} artículo a la basura.",
+      "topWastedInsight_other": "Las {{category}} van en cabeza — {{count}} artículos a la basura.",
+      "topWastedEmpty": "Nada tirado en este período. Bien hecho.",
+      "keepTitle": "Tiempo medio de conservación — artículos consumidos",
+      "keepInsight_one": "Tus {{category}} aguantan de media {{count}} día en tu stock.",
+      "keepInsight_other": "Tus {{category}} aguantan de media {{count}} días en tu stock.",
+      "keepEmpty": "Aún no hay suficientes salidas para calcular una duración media.",
+      "days_one": "{{count}} d",
+      "days_other": "{{count}} d"
+    },
+    "cooking": {
+      "title": "Cocina",
+      "cooked": "Recetas cocinadas",
+      "cookedCaption": "Mediante «He cocinado» en el plan de comidas",
+      "distinct": "Recetas diferentes",
+      "mealPlan": "Plan de comidas cumplido",
+      "favorite": "Receta fetiche",
+      "favoriteCaption_one": "Cocinada {{count}} vez en los últimos 3 meses",
+      "favoriteCaption_other": "Cocinada {{count}} veces en los últimos 3 meses",
+      "topDishes": "Top 3 de categorías cocinadas",
+      "topDishesEmpty": "Cocina algunas recetas para ver aparecer tus categorías preferidas."
+    },
+    "household": {
+      "title": "Hogar",
+      "adds": "Añadidos al stock",
+      "cooks": "Recetas cocinadas",
+      "checks": "Compras marcadas",
+      "unitItems": "artículos",
+      "unitRecipes": "recetas",
+      "addsA11y": "Reparto de los {{count}} artículos añadidos entre los miembros del hogar",
+      "cooksA11y": "Reparto de las {{count}} recetas cocinadas entre los miembros del hogar",
+      "checksA11y": "Reparto de los {{count}} artículos de la compra marcados entre los miembros del hogar",
+      "sharedIntro_one": "El hogar ha añadido {{count}} artículo en este período, con la participación de todos los miembros.",
+      "sharedIntro_other": "El hogar ha añadido {{count}} artículos en este período, con la participación de todos los miembros.",
+      "soloIntro": "Has añadido {{adds}} artículos, cocinado {{cooks}} veces y marcado {{checks}} artículos de la compra.",
+      "disclaimer": "Estas cifras describen la contribución de cada persona. No están clasificadas ni comparadas — solo sumadas.",
+      "teamNudge": "¡Está bien hacer equipo, pensad en implicar a los demás miembros del hogar!",
+      "unknownMember": "Miembro {{index}}"
     }
   }
 }

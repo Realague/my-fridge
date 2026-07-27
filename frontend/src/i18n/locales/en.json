@@ -11,7 +11,8 @@
     "recipes": "Recipes",
     "more": "More",
     "primary": "Primary navigation",
-    "activity": "Household activity"
+    "activity": "Household activity",
+    "statistics": "Statistics"
   },
   "a11y": {
     "timer": {
@@ -559,6 +560,9 @@
         "signOut": {
           "title": "Sign out",
           "description": "Sign out of your account"
+        },
+        "statistics": {
+          "description": "Anti-waste, cooking and household contribution"
         }
       }
     },
@@ -4392,6 +4396,96 @@
       "recipe_servings_changed": "changed the servings of {{target}}",
       "recipe_cooked": "cooked {{target}}",
       "recipe_unplanned": "removed {{target}} from the meal plan"
+    }
+  },
+  "stats": {
+    "title": "Household statistics",
+    "periodLabel": "Period",
+    "blockLabel": "Section",
+    "loadError": "Statistics could not be loaded right now.",
+    "recentHousehold_one": "Your household is {{count}} day old. Come back in a few weeks to watch your trends take shape!",
+    "recentHousehold_other": "Your household is {{count}} days old. Come back in a few weeks to watch your trends take shape!",
+    "periods": {
+      "current_month": "This month",
+      "last_month": "Last month",
+      "last_3_months": "Last 3 months",
+      "current_year": "This year"
+    },
+    "blocks": {
+      "waste": "Anti-waste",
+      "cooking": "Cooking",
+      "household": "Household"
+    },
+    "trend": {
+      "badge": "{{arrow}} {{sign}}{{value}} vs {{month}}",
+      "points_one": "{{count}} pt",
+      "points_other": "{{count}} pts"
+    },
+    "cards": {
+      "waste": {
+        "title": "Anti-waste — {{month}}",
+        "caption": "Usage rate · {{consumed}} items eaten, {{wasted}} thrown away",
+        "gaugeA11y": "Usage rate: {{value}}%"
+      },
+      "cooking": {
+        "title": "In the kitchen — {{month}}",
+        "caption_one": "Recipes cooked · {{count}} different recipe tried",
+        "caption_other": "Recipes cooked · {{count}} different recipes tried"
+      }
+    },
+    "empty": {
+      "title": "Nothing to chew on yet",
+      "subtitle": "Add your first items to start tracking your impact! Statistics fill up as items leave your stock.",
+      "cta": "Add an item"
+    },
+    "waste": {
+      "title": "Anti-waste",
+      "usageRate": "Usage rate",
+      "consumed": "Items eaten",
+      "wasted": "Items thrown away",
+      "saved": "Saved just in time",
+      "savedCaption": "Eaten within 2 days of their expiry date",
+      "trendTitle": "Usage rate over time",
+      "trendA11y": "Usage rate, from {{first}}% to {{last}}% over the displayed period",
+      "topWastedTitle": "What you throw away most",
+      "topWastedInsight_one": "{{category}} come first — {{count}} item went to the bin.",
+      "topWastedInsight_other": "{{category}} come first — {{count}} items went to the bin.",
+      "topWastedEmpty": "Nothing thrown away this period. Nice.",
+      "keepTitle": "Average shelf life — items eaten",
+      "keepInsight_one": "Your {{category}} last {{count}} day in your stock on average.",
+      "keepInsight_other": "Your {{category}} last {{count}} days in your stock on average.",
+      "keepEmpty": "Not enough exits yet to work out an average shelf life.",
+      "days_one": "{{count}} d",
+      "days_other": "{{count}} d"
+    },
+    "cooking": {
+      "title": "Cooking",
+      "cooked": "Recipes cooked",
+      "cookedCaption": "Via “I cooked this” on the meal plan",
+      "distinct": "Different recipes",
+      "mealPlan": "Meal plan completed",
+      "favorite": "Go-to recipe",
+      "favoriteCaption_one": "Cooked {{count}} time over the last 3 months",
+      "favoriteCaption_other": "Cooked {{count}} times over the last 3 months",
+      "topDishes": "Top 3 cooked categories",
+      "topDishesEmpty": "Cook a few recipes to see your favourite categories appear."
+    },
+    "household": {
+      "title": "Household",
+      "adds": "Items added",
+      "cooks": "Recipes cooked",
+      "checks": "Shopping items ticked",
+      "unitItems": "items",
+      "unitRecipes": "recipes",
+      "addsA11y": "Split of the {{count}} items added, across household members",
+      "cooksA11y": "Split of the {{count}} recipes cooked, across household members",
+      "checksA11y": "Split of the {{count}} shopping items ticked, across household members",
+      "sharedIntro_one": "The household added {{count}} item over this period, with everyone taking part.",
+      "sharedIntro_other": "The household added {{count}} items over this period, with everyone taking part.",
+      "soloIntro": "You added {{adds}} items, cooked {{cooks}} times and ticked off {{checks}} shopping items.",
+      "disclaimer": "These figures describe what each person contributed. They are neither ranked nor compared — just added up.",
+      "teamNudge": "Teamwork is nice — think about getting the other household members involved!",
+      "unknownMember": "Member {{index}}"
     }
   }
 }

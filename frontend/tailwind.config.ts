@@ -1,5 +1,44 @@
 import type { Config } from "tailwindcss";
 
+// Charter tokens hold plain hex (`--mf-green: #2BB673`), which Tailwind cannot
+// give an alpha channel the usual way — that needs `<alpha-value>` inside the
+// value, i.e. channel triples. With a bare `var()` Tailwind silently DROPS every
+// modifier form: `bg-mf-night/85` produced no rule at all. The function form
+// below keeps the hex tokens (raw `var(--mf-*)` is used all over index.css and
+// in inline SVG props) while making `/NN` resolve through `color-mix`. That
+// color-mix is reserved for real `/NN` modifiers: for the bare utility Tailwind
+// hands us `var(--tw-bg-opacity, 1)`, and wrapping every single surface in a
+// color-mix would raise the browser floor app-wide to buy nothing.
+const mfToken =
+  (name: string) =>
+  ({ opacityValue }: { opacityValue?: string | number }) => {
+    // Tailwind passes a number for the bare utility and a string for `/NN`.
+    const alpha = opacityValue === undefined ? undefined : String(opacityValue);
+    return alpha === undefined || alpha === "1" || alpha.includes("var(")
+      ? `var(--${name})`
+      : `color-mix(in srgb, var(--${name}) calc(${alpha} * 100%), transparent)`;
+  };
+
+// Fresh charter palette bridged to Tailwind. Use `bg-mf-green`,
+// `text-mf-danger`, `border-mf-night-line`, etc. instead of raw `green-600` /
+// `red-500` / `rose-*` / `emerald-*` / `lime-*` so that drift between
+// look-alike-but-not-identical Tailwind families disappears. Names `night/*`
+// are kept as surface aliases (now resolve to Fresh cream tones) so existing
+// components keep working. Each entry maps 1:1 onto `--mf-<name>` in index.css.
+const MF_TOKENS = [
+	"night", "night-surface", "night-elevated", "night-line", "night-line-soft", "page-bg",
+	"text", "text-soft", "text-mute",
+	"green", "green-deep", "green-leaf", "green-soft", "green-ring",
+	"danger", "danger-soft", "info", "info-soft", "warning", "warning-soft",
+	"yellow", "yellow-soft", "orange", "orange-soft", "red", "red-soft",
+	"blue", "blue-soft", "pink", "pink-soft", "pink-deep",
+	"purple", "purple-soft", "purple-deep", "brown", "brown-soft",
+] as const;
+
+const mfPalette = Object.fromEntries(
+	MF_TOKENS.map((name) => [name, mfToken(`mf-${name}`)]),
+);
+
 export default {
 	darkMode: ["class"],
 	content: [
@@ -68,50 +107,7 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Fresh charter palette bridged to Tailwind. Use `bg-mf-green`,
-				// `text-mf-danger`, `border-mf-night-line`, etc. instead of raw
-				// `green-600` / `red-500` / `rose-*` / `emerald-*` / `lime-*` so that
-				// drift between look-alike-but-not-identical Tailwind families
-				// disappears. Names `night/*` are kept as surface aliases (now
-				// resolve to Fresh cream tones) so existing components keep working.
-				mf: {
-					night: 'var(--mf-night)',
-					'night-surface': 'var(--mf-night-surface)',
-					'night-elevated': 'var(--mf-night-elevated)',
-					'night-line': 'var(--mf-night-line)',
-					'night-line-soft': 'var(--mf-night-line-soft)',
-					'page-bg': 'var(--mf-page-bg)',
-					text: 'var(--mf-text)',
-					'text-soft': 'var(--mf-text-soft)',
-					'text-mute': 'var(--mf-text-mute)',
-					green: 'var(--mf-green)',
-					'green-deep': 'var(--mf-green-deep)',
-					'green-leaf': 'var(--mf-green-leaf)',
-					'green-soft': 'var(--mf-green-soft)',
-					'green-ring': 'var(--mf-green-ring)',
-					danger: 'var(--mf-danger)',
-					'danger-soft': 'var(--mf-danger-soft)',
-					info: 'var(--mf-info)',
-					'info-soft': 'var(--mf-info-soft)',
-					warning: 'var(--mf-warning)',
-					'warning-soft': 'var(--mf-warning-soft)',
-					yellow: 'var(--mf-yellow)',
-					'yellow-soft': 'var(--mf-yellow-soft)',
-					orange: 'var(--mf-orange)',
-					'orange-soft': 'var(--mf-orange-soft)',
-					red: 'var(--mf-red)',
-					'red-soft': 'var(--mf-red-soft)',
-					blue: 'var(--mf-blue)',
-					'blue-soft': 'var(--mf-blue-soft)',
-					pink: 'var(--mf-pink)',
-					'pink-soft': 'var(--mf-pink-soft)',
-					'pink-deep': 'var(--mf-pink-deep)',
-					purple: 'var(--mf-purple)',
-					'purple-soft': 'var(--mf-purple-soft)',
-					'purple-deep': 'var(--mf-purple-deep)',
-					brown: 'var(--mf-brown)',
-					'brown-soft': 'var(--mf-brown-soft)',
-				}
+				mf: mfPalette
 			},
 			// Bridge directly to Fresh charter tokens so every `rounded-*` Tailwind
 			// utility resolves to a charter step. Fresh scale: 10/14/18/24 + pill.

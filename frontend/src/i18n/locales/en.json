@@ -10,7 +10,8 @@
     "mealPlan": "Meal plan",
     "recipes": "Recipes",
     "more": "More",
-    "primary": "Primary navigation"
+    "primary": "Primary navigation",
+    "activity": "Household activity"
   },
   "a11y": {
     "timer": {
@@ -543,6 +544,9 @@
         "household": {
           "title": "Household",
           "description": "Members and household setup"
+        },
+        "activity": {
+          "description": "See household members' recent actions"
         },
         "notifications": {
           "title": "Notifications",
@@ -4341,6 +4345,53 @@
     "notifications": {
       "exitSuggestions": "Exit suggestions",
       "exitSuggestionsDescription": "Suggest logging items that expired more than 3 days ago as consumed or wasted."
+    }
+  },
+  "activity": {
+    "title": "Household activity",
+    "subtitle": "What your household has been up to",
+    "recentTitle": "Recent activity",
+    "seeAll": "See all",
+    "loadMore": "Load more",
+    "empty": "No activity yet",
+    "formerMember": "(former member)",
+    "you": "You",
+    "unknownItem": "an item",
+    "unknownRecipe": "a recipe",
+    "unknownMember": "A member",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "relativeMinutes": "{{count}} min ago",
+    "justNow": "just now",
+    "labels": {
+      "item_added": "added {{target}} to the stock",
+      "item_quantity_changed": "changed the quantity of {{target}}",
+      "item_expiration_changed": "changed the expiration date of {{target}}",
+      "item_consumed": "consumed {{target}}",
+      "item_thrown": "threw away {{target}}",
+      "item_removed": "removed {{target}} from the stock",
+      "shopping_added": "added {{target}} to the shopping list",
+      "shopping_checked": "bought {{target}}",
+      "shopping_removed": "removed {{target}} from the shopping list",
+      "recipe_planned": "planned {{target}}",
+      "recipe_servings_changed": "changed the servings of {{target}}",
+      "recipe_cooked": "cooked {{target}}",
+      "recipe_unplanned": "removed {{target}} from the meal plan"
+    },
+    "labelsSelf": {
+      "item_added": "added {{target}} to the stock",
+      "item_quantity_changed": "changed the quantity of {{target}}",
+      "item_expiration_changed": "changed the expiration date of {{target}}",
+      "item_consumed": "consumed {{target}}",
+      "item_thrown": "threw away {{target}}",
+      "item_removed": "removed {{target}} from the stock",
+      "shopping_added": "added {{target}} to the shopping list",
+      "shopping_checked": "bought {{target}}",
+      "shopping_removed": "removed {{target}} from the shopping list",
+      "recipe_planned": "planned {{target}}",
+      "recipe_servings_changed": "changed the servings of {{target}}",
+      "recipe_cooked": "cooked {{target}}",
+      "recipe_unplanned": "removed {{target}} from the meal plan"
     }
   }
 }

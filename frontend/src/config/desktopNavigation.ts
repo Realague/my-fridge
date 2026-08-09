@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import {
+  Activity,
   BookOpen,
   Boxes,
   CalendarDays,
@@ -64,6 +65,12 @@ export const DESKTOP_NAV_ITEMS: DesktopNavItem[] = [
     labelKey: 'pages.more.features.loyaltyCards.title',
     icon: CreditCard,
     to: '/loyalty-cards',
+  },
+  {
+    id: 'activity',
+    labelKey: 'navigation.activity',
+    icon: Activity,
+    to: '/activity',
   },
 ];
 

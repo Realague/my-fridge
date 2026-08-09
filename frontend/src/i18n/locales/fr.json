@@ -10,7 +10,8 @@
     "mealPlan": "Plan de repas",
     "recipes": "Recettes",
     "more": "Plus",
-    "primary": "Navigation principale"
+    "primary": "Navigation principale",
+    "activity": "Activité du foyer"
   },
   "a11y": {
     "timer": {
@@ -543,6 +544,9 @@
         "household": {
           "title": "Foyer",
           "description": "Membres et configuration du foyer"
+        },
+        "activity": {
+          "description": "Voir les actions récentes des membres"
         },
         "notifications": {
           "title": "Notifications",
@@ -4341,6 +4345,53 @@
     "notifications": {
       "exitSuggestions": "Suggestions de sortie",
       "exitSuggestionsDescription": "Proposer de marquer comme consommés ou jetés les articles périmés depuis plus de 3 jours."
+    }
+  },
+  "activity": {
+    "title": "Activité du foyer",
+    "subtitle": "Ce que ton foyer a fait récemment",
+    "recentTitle": "Activité récente",
+    "seeAll": "Voir tout",
+    "loadMore": "Charger plus",
+    "empty": "Aucune activité pour le moment",
+    "formerMember": "(ancien membre)",
+    "you": "Vous",
+    "unknownItem": "un article",
+    "unknownRecipe": "une recette",
+    "unknownMember": "Un membre",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "relativeMinutes": "il y a {{count}} min",
+    "justNow": "à l'instant",
+    "labels": {
+      "item_added": "a ajouté {{target}} au stock",
+      "item_quantity_changed": "a modifié la quantité de {{target}}",
+      "item_expiration_changed": "a modifié la date de péremption de {{target}}",
+      "item_consumed": "a consommé {{target}}",
+      "item_thrown": "a jeté {{target}}",
+      "item_removed": "a retiré {{target}} du stock",
+      "shopping_added": "a ajouté {{target}} à la liste de courses",
+      "shopping_checked": "a acheté {{target}}",
+      "shopping_removed": "a retiré {{target}} de la liste de courses",
+      "recipe_planned": "a planifié {{target}}",
+      "recipe_servings_changed": "a modifié les portions de {{target}}",
+      "recipe_cooked": "a cuisiné {{target}}",
+      "recipe_unplanned": "a retiré {{target}} du meal plan"
+    },
+    "labelsSelf": {
+      "item_added": "avez ajouté {{target}} au stock",
+      "item_quantity_changed": "avez modifié la quantité de {{target}}",
+      "item_expiration_changed": "avez modifié la date de péremption de {{target}}",
+      "item_consumed": "avez consommé {{target}}",
+      "item_thrown": "avez jeté {{target}}",
+      "item_removed": "avez retiré {{target}} du stock",
+      "shopping_added": "avez ajouté {{target}} à la liste de courses",
+      "shopping_checked": "avez acheté {{target}}",
+      "shopping_removed": "avez retiré {{target}} de la liste de courses",
+      "recipe_planned": "avez planifié {{target}}",
+      "recipe_servings_changed": "avez modifié les portions de {{target}}",
+      "recipe_cooked": "avez cuisiné {{target}}",
+      "recipe_unplanned": "avez retiré {{target}} du meal plan"
     }
   }
 }

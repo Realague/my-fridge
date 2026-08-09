@@ -42,6 +42,7 @@ import Settings from "./pages/Settings";
 import ItemMinimums from "./pages/ItemMinimums";
 import LoyaltyCards from "./pages/LoyaltyCards";
 import More from "./pages/More";
+import Activity from "./pages/Activity";
 import { AppShell } from "@/components/layout/AppShell";
 
 const queryClient = new QueryClient();
@@ -99,6 +100,7 @@ function App() {
                           <Route path="/item-minimums" element={<ItemMinimums />} />
                           <Route path="/loyalty-cards" element={<LoyaltyCards />} />
                           <Route path="/more" element={<More />} />
+                          <Route path="/activity" element={<Activity />} />
                         </Route>
 
                         <Route path="*" element={<NotFound />} />

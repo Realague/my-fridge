@@ -190,14 +190,15 @@ export class StoredItemController {
   async updateStoredItem(req: Request, res: Response): Promise<void> {
     try {
       const { householdId, id } = req.params;
-      
+
       if (!householdId || !id) {
         throw new BadRequestError('Household ID and item ID are required');
       }
-      
-      const updateData: UpdateStoredItemDto = req.body;
 
-      const storedItem = await this.storedItemService.updateStoredItem(id, householdId, updateData);
+      const updateData: UpdateStoredItemDto = req.body;
+      const user = req.user as User;
+
+      const storedItem = await this.storedItemService.updateStoredItem(id, householdId, updateData, user?.id);
 
       if (!storedItem) {
         throw new NotFoundError('Stored item not found');

@@ -116,6 +116,8 @@ export class ItemController {
         language: req.query.language as string,
         limit: req.query.limit ? parseInt(req.query.limit as string) : 10,
         offset: req.query.offset ? parseInt(req.query.offset as string) : 0,
+        personalized: req.query.personalized === 'true',
+        userId: user.id,
       };
 
       if (!query.search) {

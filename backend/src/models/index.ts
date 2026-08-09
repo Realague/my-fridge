@@ -18,6 +18,7 @@ import { PushSubscription } from './PushSubscription';
 import { Brand } from './Brand';
 import { StockExit } from './StockExit';
 import { BarcodeMapping } from './BarcodeMapping';
+import { HouseholdActivity } from './HouseholdActivity';
 
 // Define associations
 User.hasMany(Household, { foreignKey: 'createdBy', as: 'createdHouseholds' });
@@ -159,6 +160,15 @@ StockExit.belongsTo(User, { foreignKey: 'exitedBy', as: 'exitedByUser' });
 StoredItem.hasMany(StockExit, { foreignKey: 'storedItemId', as: 'stockExits' });
 StockExit.belongsTo(StoredItem, { foreignKey: 'storedItemId', as: 'storedItem' });
 
+// Household Activity associations
+// itemId is intentionally a plain UUID (no FK) — the referenced item may be
+// hard-deleted; the log keeps a name snapshot instead.
+Household.hasMany(HouseholdActivity, { foreignKey: 'householdId', as: 'activities' });
+HouseholdActivity.belongsTo(Household, { foreignKey: 'householdId', as: 'household' });
+
+User.hasMany(HouseholdActivity, { foreignKey: 'userId', as: 'activities' });
+HouseholdActivity.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
 // Brand is a global referential — no associations
 
 // Barcode Mapping associations. The mapping is a global (cross-household)
@@ -191,5 +201,6 @@ export {
   PushSubscription,
   Brand,
   StockExit,
-  BarcodeMapping
+  BarcodeMapping,
+  HouseholdActivity
 };

@@ -45,11 +45,22 @@ export interface SearchItemsRequest {
   language?: string;
   limit?: number;
   offset?: number;
+  personalized?: boolean;
 }
 
 export interface SearchItemsResponse {
   items: Item[];
   total: number;
+}
+
+export interface RecentItem extends Item {
+  lastSelectedAt: string;
+}
+
+export interface ItemSuggestions {
+  recent: RecentItem[];
+  personalFrequent: Item[];
+  householdFrequent: Item[];
 }
 
 export interface ApiResponse<T> {
@@ -91,19 +102,20 @@ const apiService = createApiService();
 // Item service methods
 const searchItems = async (params: SearchItemsRequest): Promise<SearchItemsResponse> => {
   const searchParams = new URLSearchParams();
-  
+
   searchParams.append('search', params.search);
   if (params.language) searchParams.append('language', params.language);
   if (params.limit) searchParams.append('limit', params.limit.toString());
   if (params.offset) searchParams.append('offset', params.offset.toString());
+  if (params.personalized) searchParams.append('personalized', 'true');
 
   const response = await apiService.get(`/api/items/search?${searchParams.toString()}`);
   const result: ApiResponse<SearchItemsResponse> = await response.json();
-  
+
   if (!result.success) {
     throw new Error(result.error || 'Failed to search items');
   }
-  
+
   return result.data || { items: [], total: 0 };
 };
 
@@ -161,12 +173,44 @@ const deleteItem = async (id: string, householdId?: string): Promise<void> => {
 const getItemsByHousehold = async (householdId: string): Promise<Item[]> => {
   const response = await apiService.get(`/api/items/household/${householdId}`);
   const result: ApiResponse<Item[]> = await response.json();
-  
+
   if (!result.success) {
     throw new Error(result.error || 'Failed to fetch household items');
   }
-  
+
   return result.data || [];
+};
+
+// Full catalog (global + household), alphabetical, paginated. Backed by the
+// empty-search branch of GET /api/items — powers the "Tous les articles"
+// section's infinite scroll.
+const getCatalogPage = async (params: {
+  householdId: string;
+  language?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<SearchItemsResponse> => {
+  const searchParams = new URLSearchParams();
+  searchParams.append('householdId', params.householdId);
+  if (params.language) searchParams.append('language', params.language);
+  if (params.limit) searchParams.append('limit', params.limit.toString());
+  if (params.offset) searchParams.append('offset', params.offset.toString());
+
+  const response = await apiService.get(`/api/items?${searchParams.toString()}`);
+  const result: ApiResponse<SearchItemsResponse> = await response.json();
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to load catalog');
+  }
+  return result.data || { items: [], total: 0 };
+};
+
+const getItemSuggestions = async (householdId: string): Promise<ItemSuggestions> => {
+  const response = await apiService.get(`/api/households/${householdId}/item-suggestions`);
+  const result: ApiResponse<ItemSuggestions> = await response.json();
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to load suggestions');
+  }
+  return result.data || { recent: [], personalFrequent: [], householdFrequent: [] };
 };
 
 const getItemsByCategory = async (category: string, householdId?: string): Promise<Item[]> => {
@@ -203,6 +247,8 @@ export const itemService = {
   getItemsByHousehold,
   getItemsByCategory,
   getRecipeCount,
+  getCatalogPage,
+  getItemSuggestions,
 };
 
 // Hook that returns the service methods (for backward compatibility)

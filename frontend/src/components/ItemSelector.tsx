@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { itemService, Item } from '@/services/itemService';
+import { itemService, Item, RecentItem } from '@/services/itemService';
 import { ItemDeletionService } from '@/services/itemDeletionService';
 import { useAuthStore } from '@/stores/authStore';
 import { useHouseholdStore } from '@/stores/householdStore';
@@ -19,6 +19,9 @@ import { CategoryIcon } from '@/utils/categoryIcons';
 import { ItemImage } from '@/components/ItemImage';
 import { ItemCategory } from '@/types/enums';
 import { uploadImageWithSignature } from '@/services/imageUploadService';
+import { getCachedSuggestions } from '@/utils/itemSuggestionsCache';
+import { formatRelativeTime } from '@/utils/relativeTime';
+import type { ItemSuggestions } from '@/services/itemService';
 
 interface ItemSelectorProps {
   onItemSelect: (item: Item | null) => void;
@@ -29,6 +32,8 @@ interface ItemSelectorProps {
   excludeCleaningProducts?: boolean;
   /** Focus the search input on mount and whenever `selectedItem` clears. */
   autoFocus?: boolean;
+  /** Enable personalized ranking + sectioned empty-state (stock & shopping only). */
+  personalized?: boolean;
 }
 
 export const ItemSelector = ({
@@ -39,6 +44,7 @@ export const ItemSelector = ({
   excludedItems = [],
   excludeCleaningProducts = false,
   autoFocus = false,
+  personalized = false,
 }: ItemSelectorProps) => {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -51,6 +57,11 @@ export const ItemSelector = ({
   const [apiResults, setApiResults] = useState<Item[]>([]);
   const [apiLoading, setApiLoading] = useState(false);
   const [hasLoadedHouseholdItems, setHasLoadedHouseholdItems] = useState(false);
+  const [suggestions, setSuggestions] = useState<ItemSuggestions | null>(null);
+  const [catalogTotal, setCatalogTotal] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const catalogOffsetRef = useRef(0);
+  const PAGE_SIZE = 20;
 
   const { user, isAuthenticated } = useAuthStore();
   const { selectedHouseholdId, isCurrentUserAdmin } = useHouseholdStore();
@@ -72,6 +83,13 @@ export const ItemSelector = ({
   const lastSearchQueryRef = useRef('');
   const householdItemsRef = useRef<Item[]>([]);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // Live mirror of `query` so async callbacks (e.g. loadMore) can detect a
+  // query change that happened while their request was in flight — a plain
+  // closure-captured `query` can't, since it's fixed per render.
+  const queryRef = useRef(query);
+  useEffect(() => {
+    queryRef.current = query;
+  }, [query]);
 
   // When the parent clears the selection (typically after a successful add),
   // pull focus back to the search input so the next item can be typed without
@@ -110,11 +128,40 @@ export const ItemSelector = ({
     }
   };
 
+  // Load personalized suggestions only when dropdown is opened (lazy loading)
+  const loadSuggestionsOnDemand = async () => {
+    if (!personalized || !user || !isAuthenticated || !selectedHouseholdId) return;
+    setApiLoading(true);
+    try {
+      const [data, firstPage] = await Promise.all([
+        getCachedSuggestions(selectedHouseholdId),
+        itemService.getCatalogPage({
+          householdId: selectedHouseholdId,
+          language: i18n.language.split('-')[0],
+          limit: PAGE_SIZE,
+          offset: 0,
+        }),
+      ]);
+      setSuggestions(data);
+      setApiResults(firstPage.items);
+      setCatalogTotal(firstPage.total);
+      catalogOffsetRef.current = firstPage.items.length;
+    } catch (error) {
+      console.error('ItemSelector: failed to load suggestions/catalog', error);
+      setSuggestions(null); // fall back silently to the plain catalog
+    } finally {
+      setApiLoading(false);
+    }
+  };
+
   // Reset household items cache when household changes
   useEffect(() => {
     setHasLoadedHouseholdItems(false);
     setApiResults([]);
     householdItemsRef.current = [];
+    setSuggestions(null);
+    catalogOffsetRef.current = 0;
+    setCatalogTotal(0);
   }, [selectedHouseholdId]);
 
   // Debounced search effect - loads ALL items and filters on frontend for translation support
@@ -142,7 +189,8 @@ export const ItemSelector = ({
             const response = await itemService.searchItems({
               search: query, // Search with the actual query
               language: normalizedLanguage, // Pass normalized language for backend translation search
-              limit: 20,
+              limit: PAGE_SIZE,
+              personalized,
             });
             
             setApiResults(response.items);
@@ -163,8 +211,12 @@ export const ItemSelector = ({
         searchTimeoutRef.current = timeout;
       }
     } else {
-      // When query is empty, show household items if available
-      setApiResults(householdItemsRef.current);
+      // Personalized selectors manage apiResults via loadSuggestionsOnDemand
+      // (suggestions + first catalogue page); don't overwrite it with the
+      // empty household-items ref.
+      if (!personalized) {
+        setApiResults(householdItemsRef.current);
+      }
       lastSearchQueryRef.current = '';
     }
 
@@ -298,6 +350,62 @@ export const ItemSelector = ({
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
   }, [isOpen]);
+
+  const loadMore = async () => {
+    if (loadingMore) return;
+
+    // Active search: page more matches via the search endpoint.
+    if (query.trim()) {
+      if (filteredResults.length >= 200) return; // sane bound on a typed search
+      const requested = query;
+      setLoadingMore(true);
+      try {
+        const resp = await itemService.searchItems({
+          search: query,
+          language: i18n.language.split('-')[0],
+          limit: PAGE_SIZE,
+          offset: apiResults.length,
+          personalized,
+        });
+        if (requested !== queryRef.current) return; // query changed while this page was in flight
+        if (resp.items.length > 0) {
+          setApiResults((prev) => [...prev, ...resp.items]);
+        }
+      } catch (error) {
+        console.error('ItemSelector: failed to load more search results', error);
+      } finally {
+        setLoadingMore(false);
+      }
+      return;
+    }
+
+    // Personalized empty state: page the alphabetical catalogue.
+    if (personalized && catalogOffsetRef.current < catalogTotal) {
+      setLoadingMore(true);
+      try {
+        const page = await itemService.getCatalogPage({
+          householdId: selectedHouseholdId!,
+          language: i18n.language.split('-')[0],
+          limit: PAGE_SIZE,
+          offset: catalogOffsetRef.current,
+        });
+        setApiResults((prev) => [...prev, ...page.items]);
+        catalogOffsetRef.current += page.items.length;
+        setCatalogTotal(page.total);
+      } catch (error) {
+        console.error('ItemSelector: failed to load more catalog items', error);
+      } finally {
+        setLoadingMore(false);
+      }
+    }
+  };
+
+  const handleDropdownScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < 80) {
+      loadMore();
+    }
+  };
 
   const handleItemSelect = (item: Item) => {
     onItemSelect(item);
@@ -487,20 +595,27 @@ export const ItemSelector = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
     setIsOpen(true);
-    
+
     // Load household items when user starts typing (lazy loading)
-    if (!hasLoadedHouseholdItems && !e.target.value.trim()) {
-      loadHouseholdItemsOnDemand();
+    if (!e.target.value.trim()) {
+      if (personalized) {
+        loadSuggestionsOnDemand();
+      } else if (!hasLoadedHouseholdItems) {
+        loadHouseholdItemsOnDemand();
+      }
     }
   };
 
   const handleInputFocus = () => {
     setIsOpen(true);
     setTimeout(updateDropdownPosition, 0);
-    
-    // Load household items on first focus if not already loaded
-    if (!hasLoadedHouseholdItems && !query.trim()) {
-      loadHouseholdItemsOnDemand();
+
+    if (!query.trim()) {
+      if (personalized) {
+        loadSuggestionsOnDemand();
+      } else if (!hasLoadedHouseholdItems) {
+        loadHouseholdItemsOnDemand();
+      }
     }
   };
 
@@ -513,6 +628,51 @@ export const ItemSelector = ({
   const displayValue = selectedItem && !query ? getItemDisplayName(selectedItem, t) : query;
   const showClearButton = selectedItem && !query;
 
+  const renderRow = (item: Item, subtitle?: string) => (
+    <div
+      key={item.id}
+      onClick={() => handleItemSelect(item)}
+      className="group flex items-center justify-between p-2 hover:bg-muted cursor-pointer rounded transition-colors"
+    >
+      <div className="flex items-center gap-2 flex-1 min-w-0">
+        <ItemImage
+          src={item.imageUrl}
+          alt={getItemDisplayName(item, t)}
+          containerClassName="w-10 h-10 rounded-md"
+          fallbackIconSize={22}
+          category={item.category}
+        />
+        <div className="flex-1 min-w-0">
+          <div className="font-medium text-sm truncate">{getItemDisplayName(item, t)}</div>
+          <div className="flex items-center gap-2">
+            <Badge className={`${getCategoryColor(item.category)} inline-flex items-center gap-1`}>
+              <CategoryIcon category={item.category} className="h-3.5 w-3.5" />
+              {t(`items.categories.${item.category}`)}
+            </Badge>
+            {subtitle && <span className="text-xs text-muted-foreground">{subtitle}</span>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderSectionHeader = (label: string) => (
+    <div className="px-2 pt-3 pb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      {label}
+    </div>
+  );
+
+  // Filter out excluded / cleaning / cooked-meal items the same way the search
+  // results are filtered, so sections honour the same exclusions.
+  const keepSuggestion = (item: Item) =>
+    !excludedItems.some((e) => e.id === item.id) &&
+    !(excludeCleaningProducts && item.category === ItemCategory.CLEANING_PRODUCTS) &&
+    item.category !== ItemCategory.COOKED_MEAL;
+
+  const showSections = personalized && !query.trim() && !!suggestions;
+  const hasAnySuggestion =
+    !!suggestions &&
+    (suggestions.recent.length + suggestions.personalFrequent.length + suggestions.householdFrequent.length) > 0;
 
   return (
     <div ref={containerRef} className={cn("relative", className)}>
@@ -554,6 +714,7 @@ export const ItemSelector = ({
       {isOpen && createPortal(
         <div
           ref={dropdownRef}
+          onScroll={handleDropdownScroll}
           className="fixed z-[100] bg-card border border-border rounded-md shadow-lg max-h-64 overflow-y-auto pointer-events-auto"
           style={{
             top: dropdownPosition.top,
@@ -587,9 +748,35 @@ export const ItemSelector = ({
             </div>
           )}
 
+          {showSections && hasAnySuggestion && (
+            <div className="p-1">
+              {suggestions!.recent.filter(keepSuggestion).length > 0 && (
+                <>
+                  {renderSectionHeader(t('itemSelector.sections.recent'))}
+                  {suggestions!.recent.filter(keepSuggestion).map((item) =>
+                    renderRow(item, formatRelativeTime((item as RecentItem).lastSelectedAt, i18n.language.split('-')[0]))
+                  )}
+                </>
+              )}
+              {suggestions!.personalFrequent.filter(keepSuggestion).length > 0 && (
+                <>
+                  {renderSectionHeader(t('itemSelector.sections.frequent'))}
+                  {suggestions!.personalFrequent.filter(keepSuggestion).map((item) => renderRow(item))}
+                </>
+              )}
+              {suggestions!.householdFrequent.filter(keepSuggestion).length > 0 && (
+                <>
+                  {renderSectionHeader(t('itemSelector.sections.householdFrequent'))}
+                  {suggestions!.householdFrequent.filter(keepSuggestion).map((item) => renderRow(item))}
+                </>
+              )}
+              {renderSectionHeader(t('itemSelector.sections.allItems'))}
+            </div>
+          )}
+
           {filteredResults.length > 0 && (
             <div className="p-1">
-              {filteredResults.slice(0, 8).map((item, index) => (
+              {filteredResults.map((item, index) => (
                 <div
                   key={`${item.id}-${index}`}
                   onClick={() => handleItemSelect(item)}
@@ -645,8 +832,15 @@ export const ItemSelector = ({
             </div>
           )}
 
-          {filteredResults.length === 0 && !query.trim() && !hasLoadedHouseholdItems && (
-            <div 
+          {loadingMore && (
+            <div className="flex items-center justify-center p-2 text-xs text-muted-foreground bg-card">
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              {t('itemSelector.searching')}
+            </div>
+          )}
+
+          {filteredResults.length === 0 && !query.trim() && !hasLoadedHouseholdItems && !personalized && (
+            <div
               className="p-4 text-center text-sm text-muted-foreground bg-card cursor-pointer hover:bg-muted/50"
               onClick={() => loadHouseholdItemsOnDemand()}
             >

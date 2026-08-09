@@ -306,6 +306,12 @@
     "consumeWithinDays_other": "À consommer dans les {{count}} jours après ouverture"
   },
   "itemSelector": {
+    "sections": {
+      "recent": "Tes récents",
+      "frequent": "Souvent utilisés",
+      "householdFrequent": "Populaires dans le foyer",
+      "allItems": "Tous les articles"
+    },
     "itemImage": "Image de l'article",
     "itemImagePlaceholder": "Image de l'article (facultatif)",
     "searchOrAddItemPlaceholder": "Rechercher ou ajouter un article...",

@@ -19,6 +19,8 @@ interface AddItemCardProps {
   storageAreaName?: string;
   /** When provided, a barcode-scan button is shown next to the search field. */
   onScan?: () => void;
+  /** Forwarded to the underlying ItemSelector to enable personalized ranking. */
+  personalized?: boolean;
 }
 
 export const AddItemCard = ({
@@ -28,7 +30,8 @@ export const AddItemCard = ({
   buttonText,
   disabled = false,
   storageAreaName,
-  onScan
+  onScan,
+  personalized = false,
 }: AddItemCardProps) => {
   const { t } = useTranslation();
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
@@ -125,6 +128,7 @@ export const AddItemCard = ({
                   selectedItem={selectedItem}
                   className="w-full"
                   autoFocus
+                  personalized={personalized}
                 />
               </div>
               {onScan && (

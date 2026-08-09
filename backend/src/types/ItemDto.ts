@@ -57,6 +57,8 @@ export interface GetItemsQueryDto {
   language?: string;
   limit?: number;
   offset?: number;
+  personalized?: boolean;
+  userId?: string;
 }
 
 export interface CreateShoppingItemDto {

@@ -3,6 +3,18 @@ import { Item, User, Household } from '../models';
 import { CreateItemDto, UpdateItemDto, GetItemsQueryDto } from '../types/ItemDto';
 import { getReverseTranslationMap, getTranslatedName } from '../i18n/itemTranslations';
 import { deleteImageFromCloudinary } from '../utils/imageUploader';
+import { HouseholdActivityRepository } from './HouseholdActivityRepository';
+
+// Personalized-search boost. Deliberately SATURATED so frequency can only
+// re-order ties WITHIN a relevance band, never cross one: the smallest gap
+// between bands (contains=100 → startsWith=500) is 400, and the max boost is
+// 20*3 + 20*1 = 80. This preserves the ticket's rule that textual match stays
+// dominant (a rare item found by full name is never buried by a frequent one).
+const PERSONAL_WEIGHT = 3;
+const HOUSEHOLD_WEIGHT = 1;
+const PERSONAL_CAP = 20;
+const HOUSEHOLD_CAP = 20;
+const ACTIVITY_WINDOW_DAYS = 30;
 
 export class ItemRepository {
   async create(itemData: CreateItemDto): Promise<Item | null> {
@@ -30,6 +42,19 @@ export class ItemRepository {
     });
   }
 
+  // Batch hydrate by id. Missing ids are simply absent from the result —
+  // a suggestion referencing a deleted item is thereby skipped, not an error.
+  async findByIds(ids: string[]): Promise<Item[]> {
+    if (ids.length === 0) return [];
+    return Item.findAll({
+      where: { id: { [Op.in]: ids } },
+      include: [
+        { model: User, as: 'creator', attributes: ['id', 'firstName', 'lastName', 'email'], required: false },
+        { model: Household, as: 'household', attributes: ['id', 'name'], required: false },
+      ],
+    });
+  }
+
   async findAll(query: GetItemsQueryDto = {}): Promise<{ items: Item[]; total: number }> {
     const {
       search,
@@ -37,6 +62,8 @@ export class ItemRepository {
       language,
       limit = 50,
       offset = 0,
+      personalized = false,
+      userId,
     } = query;
 
     const whereClause: any = {};
@@ -104,7 +131,19 @@ export class ItemRepository {
     if (search && allItems.length > 0) {
       const searchTerm = search.toLowerCase();
       const searchWords = searchTerm.split(/\s+/).filter(word => word.length > 0);
-      
+
+      // Personalized boost map (best-effort: on failure, fall back to pure
+      // textual ranking rather than failing the search).
+      let scoreMap = new Map<string, { personalCount: number; householdCount: number }>();
+      if (personalized && userId && householdId) {
+        try {
+          const since = new Date(Date.now() - ACTIVITY_WINDOW_DAYS * 24 * 60 * 60 * 1000);
+          scoreMap = await new HouseholdActivityRepository().getScoreMap(householdId, userId, since);
+        } catch (err) {
+          console.error('ItemRepository: failed to load activity scores, ranking without boost', err);
+        }
+      }
+
       // Calculate relevance score for each item
       const itemsWithScores = allItems.map(item => {
         const itemName = item.name.toLowerCase();
@@ -140,7 +179,14 @@ export class ItemRepository {
         if (isHouseholdItem) {
           relevanceScore += 200;
         }
-        
+
+        const score = scoreMap.get(item.id);
+        if (score) {
+          relevanceScore +=
+            Math.min(score.personalCount, PERSONAL_CAP) * PERSONAL_WEIGHT +
+            Math.min(score.householdCount, HOUSEHOLD_CAP) * HOUSEHOLD_WEIGHT;
+        }
+
         return { item, relevanceScore };
       });
       

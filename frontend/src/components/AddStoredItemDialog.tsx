@@ -403,6 +403,7 @@ export const AddStoredItemDialog = ({
                   selectedItem={selectedItem}
                   className="w-full"
                   autoFocus
+                  personalized
                 />
               </div>
 

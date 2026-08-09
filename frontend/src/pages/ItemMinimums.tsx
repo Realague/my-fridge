@@ -134,15 +134,22 @@ const ItemMinimums = () => {
           </div>
         ) : itemMinimums.length === 0 ? (
           <Card className="bg-card/80 backdrop-blur-sm">
-            <CardContent className="p-8 text-center">
-              <div className="text-4xl mb-4">📊</div>
-              <h3 className="text-lg font-medium mb-2">{t('itemMinimum.noMinimumsYet')}</h3>
-              <p className="text-muted-foreground mb-4">
-                {t('itemMinimum.setMinimumsDescription')}
-              </p>
+            <CardContent className="flex flex-col items-center gap-4 p-8 text-center">
+              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-mf-green-soft">
+                <PackageMinus className="h-8 w-8 text-mf-green-deep" aria-hidden />
+              </span>
+              <div className="max-w-md space-y-1.5">
+                <h3 className="font-display text-lg font-bold text-mf-text">
+                  {t('itemMinimum.noMinimumsYet')}
+                </h3>
+                <p className="text-sm leading-relaxed text-mf-text-soft">
+                  {t('itemMinimum.setMinimumsDescription')}
+                </p>
+              </div>
               <Button
                 onClick={() => setShowDialog(true)}
                 variant="green"
+                className="font-display font-bold"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 {t('itemMinimum.setFirstMinimum')}

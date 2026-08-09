@@ -8,6 +8,16 @@ import { ItemCategory, StockExitType } from '@/types/enums';
 import { getItemDisplayName } from '@/utils/itemUtils';
 import { useHouseholdStore } from './householdStore';
 
+export interface ExitStoredItemOptions {
+  /**
+   * Called after the "undo" action of the exit toast succeeded. The store
+   * restores its own stored-item cache, but callers that derive from another
+   * source (e.g. the dashboard's `expiringNow` list) need this hook to re-sync
+   * — otherwise an undone exit only reappears after a page reload.
+   */
+  onUndone?: () => void;
+}
+
 interface StoredItemStore {
   // State - organized by household ID for efficient caching
   storedItemsByHousehold: Record<string, StoredItem[]>;
@@ -23,8 +33,15 @@ interface StoredItemStore {
   updateStoredItem: (id: string, data: UpdateStoredItemRequest) => Promise<void>;
   deleteStoredItem: (id: string) => Promise<void>;
   markAsOpened: (id: string, openedDate?: string) => Promise<void>;
+  /** Moves an item to the freezer: clears its expiration date and stamps frozenDate. */
+  freezeStoredItem: (id: string, freezerAreaId: string, freezerName: string) => Promise<void>;
   consumePortion: (id: string) => Promise<{ remaining: StoredItem | null }>;
-  exitStoredItem: (storedItemId: string, type: StockExitType, quantity?: number) => Promise<void>;
+  exitStoredItem: (
+    storedItemId: string,
+    type: StockExitType,
+    quantity?: number,
+    options?: ExitStoredItemOptions
+  ) => Promise<void>;
   
   // Internal actions
   setLoading: (loading: boolean) => void;
@@ -368,7 +385,12 @@ export const useStoredItemStore = create<StoredItemStore>()(
         }
       },
 
-      exitStoredItem: async (storedItemId: string, type: StockExitType, quantity = 1) => {
+      exitStoredItem: async (
+        storedItemId: string,
+        type: StockExitType,
+        quantity = 1,
+        options?: ExitStoredItemOptions
+      ) => {
         const householdId = getHouseholdId();
         if (!householdId) {
           throw new Error('No household ID provided');
@@ -423,6 +445,7 @@ export const useStoredItemStore = create<StoredItemStore>()(
                     s.addStoredItemToHousehold(restored);
                   }
                   toast.success(i18n.t('stockExit.undoneToast', { name: itemName }));
+                  options?.onUndone?.();
                 } catch (err) {
                   console.error('stock exit undo failed:', err);
                   toast.error(i18n.t('stockExit.undoFailed'));
@@ -466,6 +489,44 @@ export const useStoredItemStore = create<StoredItemStore>()(
           const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.markAsOpenedFailed');
           set({ error: message });
           toast.error(i18n.t('messages.storedItem.markAsOpenedFailed'));
+          throw error;
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      freezeStoredItem: async (id: string, freezerAreaId: string, freezerName: string) => {
+        const householdId = getHouseholdId();
+        if (!householdId) {
+          throw new Error('No household ID provided');
+        }
+
+        set({ loading: true, error: null });
+        try {
+          // Service called directly (as in markAsOpened) so the generic
+          // 'updated' toast of updateStoredItem does not stack on top of the
+          // specific 'frozen' one below.
+          const updatedItem = await storedItemService.updateStoredItem(householdId, id, {
+            storageAreaId: freezerAreaId,
+            frozenDate: new Date().toISOString().split('T')[0],
+            expirationDate: null,
+          });
+          get().updateStoredItemInHousehold(updatedItem);
+
+          const itemName = updatedItem.item
+            ? getItemDisplayName(updatedItem.item as never, i18n.t.bind(i18n))
+            : i18n.t('messages.storedItem.unnamed');
+
+          toast.success(
+            i18n.t('pages.dashboard.expiringSoon.frozenToast', {
+              name: itemName,
+              freezer: freezerName,
+            })
+          );
+        } catch (error) {
+          const message = error instanceof Error ? error.message : i18n.t('messages.storedItem.updateFailed');
+          set({ error: message });
+          toast.error(i18n.t('messages.storedItem.updateFailed'));
           throw error;
         } finally {
           set({ loading: false });

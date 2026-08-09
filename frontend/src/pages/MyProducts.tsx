@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -9,6 +9,7 @@ import {
   Boxes,
   ChefHat,
   ChevronDown,
+  Clock,
   Filter,
   History,
   Plus,
@@ -86,6 +87,28 @@ interface AreaSection {
   itemCount: number;
 }
 
+/**
+ * True for items due within `alertDays` **and** for items already past their
+ * date — the dashboard card leads with an "expired" group, so "see all" must
+ * not drop those on arrival. Items without a date are never a match.
+ */
+const isWithinExpirationWindow = (
+  expirationDate: string | null | undefined,
+  alertDays: number
+): boolean => {
+  if (!expirationDate) return false;
+  const due = new Date(expirationDate);
+  if (Number.isNaN(due.getTime())) return false;
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const daysLeft = Math.floor(
+    (new Date(due.getFullYear(), due.getMonth(), due.getDate()).getTime() -
+      startOfToday.getTime()) /
+      86_400_000
+  );
+  return daysLeft <= alertDays;
+};
+
 const MyProducts = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -125,6 +148,28 @@ const MyProducts = () => {
    * Becomes a Set as soon as the user toggles a checkbox.
    */
   const [selectedAreaIds, setSelectedAreaIds] = useState<Set<string> | null>(null);
+
+  /**
+   * "Expiring soon" filter — entered from the dashboard card's "see all" button
+   * via `?expiring=1`. Keeps already-expired items too, matching the card's
+   * leading "expired" group.
+   */
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [expiringOnly, setExpiringOnly] = useState(() => searchParams.get('expiring') === '1');
+  /** Household alert window; falls back to a week before the setting has loaded. */
+  const alertDays = useExpirationNotificationStore((s) => s.expiringNow?.alertDays) ?? 7;
+
+  const clearExpiringParam = () => {
+    if (!searchParams.has('expiring')) return;
+    const next = new URLSearchParams(searchParams);
+    next.delete('expiring');
+    setSearchParams(next, { replace: true });
+  };
+
+  const disableExpiringFilter = () => {
+    setExpiringOnly(false);
+    clearExpiringParam();
+  };
 
   const {
     preferences,
@@ -266,6 +311,9 @@ const MyProducts = () => {
       if (categoryFilter !== 'all') {
         if (!item || item.category !== categoryFilter) return false;
       }
+      if (expiringOnly && !isWithinExpirationWindow(si.expirationDate, alertDays)) {
+        return false;
+      }
       if (normalizedSearch) {
         if (!item) return false;
         const name = getItemDisplayName(item, t);
@@ -273,7 +321,7 @@ const MyProducts = () => {
       }
       return true;
     });
-  }, [storedItems, selectedAreaIds, categoryFilter, items, searchQuery, t]);
+  }, [storedItems, selectedAreaIds, categoryFilter, items, searchQuery, expiringOnly, alertDays, t]);
 
   /** Empty state distinguishes "no items in the household" vs. "search/filter returned nothing". */
   const hasAnyItem = storedItems.length > 0;
@@ -281,6 +329,7 @@ const MyProducts = () => {
   const filtersActive =
     searchQuery.trim() !== '' ||
     categoryFilter !== 'all' ||
+    expiringOnly ||
     (selectedAreaIds !== null && selectedAreaIds.size !== sortedAreas.length);
 
   const sections: AreaSection[] = useMemo(() => {
@@ -360,6 +409,7 @@ const MyProducts = () => {
     setSearchQuery('');
     setCategoryFilter('all');
     setSelectedAreaIds(null);
+    disableExpiringFilter();
   };
 
   const renderRow = (row: StorageAreaListRow, key: string | number) => {
@@ -578,6 +628,20 @@ const MyProducts = () => {
                   {t('pages.myProducts.groupByArea')}
                 </Label>
               </div>
+
+              {expiringOnly && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={disableExpiringFilter}
+                  aria-pressed
+                  className="gap-1.5 rounded-full bg-mf-warning-soft font-display font-semibold text-mf-warning hover:bg-mf-warning-soft"
+                >
+                  <Clock className="h-3.5 w-3.5" aria-hidden />
+                  {t('pages.myProducts.filterExpiring')}
+                  <X className="h-3.5 w-3.5" aria-hidden />
+                </Button>
+              )}
 
               {filtersActive && (
                 <Button

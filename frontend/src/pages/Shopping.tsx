@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Users, Filter, Package, PackageCheck, PackageOpen, ShoppingCart, Trash2 } from 'lucide-react';
+import { Users, Filter, ListChecks, Package, PackageCheck, PackageOpen, PartyPopper, ShoppingCart, Trash2 } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { AddItemCard } from '@/components/AddItemCard';
 import { Item } from '@/services/itemService';
@@ -306,8 +306,14 @@ const Shopping = () => {
   const renderToBuySection = () => {
     if (toBuyItems.length === 0) {
       return (
-        <div className="text-center py-8 text-muted-foreground">
-          <div className="text-4xl mb-2">{hasToStore ? '🛒' : categoryFilter === 'all' ? '🎉' : '📋'}</div>
+        <div className="flex flex-col items-center gap-3 py-8 text-center text-mf-text-mute">
+          {hasToStore ? (
+            <ShoppingCart className="h-8 w-8" aria-hidden />
+          ) : categoryFilter === 'all' ? (
+            <PartyPopper className="h-8 w-8" aria-hidden />
+          ) : (
+            <ListChecks className="h-8 w-8" aria-hidden />
+          )}
           <p>
             {hasToStore
               ? t('pages.shopping.allInCart')
@@ -483,10 +489,14 @@ const Shopping = () => {
           <>
             {totalItems === 0 ? (
               <Card variant="elevated">
-                <CardContent className="p-10 text-center">
-                  <div className="text-5xl mb-3">🛒</div>
-                  <h2 className="text-lg font-bold text-foreground">{t('pages.shopping.emptyTitle')}</h2>
-                  <p className="text-sm text-muted-foreground mt-2">{t('pages.shopping.emptyDescription')}</p>
+                <CardContent className="flex flex-col items-center gap-4 p-10 text-center">
+                  <span className="flex h-16 w-16 items-center justify-center rounded-full bg-mf-green-soft">
+                    <ShoppingCart className="h-8 w-8 text-mf-green-deep" aria-hidden />
+                  </span>
+                  <div className="max-w-md space-y-1.5">
+                    <h2 className="font-display text-lg font-bold text-mf-text">{t('pages.shopping.emptyTitle')}</h2>
+                    <p className="text-sm leading-relaxed text-mf-text-soft">{t('pages.shopping.emptyDescription')}</p>
+                  </div>
                 </CardContent>
               </Card>
             ) : (

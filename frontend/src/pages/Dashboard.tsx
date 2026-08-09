@@ -8,7 +8,7 @@ import BottomNavigation from '@/components/BottomNavigation';
 import NotificationDrawer from '@/components/NotificationDrawer';
 import AddStorageAreaDialog from '@/components/AddStorageAreaDialog';
 import { LowStockCard } from '@/components/LowStockCard';
-import { ExpiringSoonCard } from '@/components/ExpiringSoonCard';
+import { ExpiringSoonCard } from '@/components/expiring/ExpiringSoonCard';
 import { RecentActivityCard } from '@/components/RecentActivityCard';
 import { StatsSummaryCards } from '@/components/stats/StatsSummaryCards';
 import { Badge } from '@/components/ui/badge';

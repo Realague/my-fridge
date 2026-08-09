@@ -602,22 +602,11 @@
       "loyaltyCards": "Tarjetas de fidelidad",
       "loyaltyCardsDesc": "Tus tarjetas de tiendas",
       "expiringSoon": {
-        "title": "Consumir pronto",
-        "subtitle_one": "{{count}} artículo se acerca a su fecha",
-        "subtitle_other": "{{count}} artículos se acercan a su fecha",
-        "badgeExpired": "Caducado",
-        "badgeToday": "Hoy",
-        "badgeTomorrow": "Mañana",
-        "badgeInDays_one": "En {{count}} día",
-        "badgeInDays_other": "En {{count}} días",
+        "title": "Caduca pronto",
         "actionDiscard": "Tirar",
         "actionFreeze": "Congelar",
-        "actionRecipes": "Recetas",
         "openedDaysAgo_one": "Abierto hace {{count}} día",
         "openedDaysAgo_other": "Abierto hace {{count}} días",
-        "viewMore_one": "Ver {{count}} más",
-        "viewMore_other": "Ver {{count}} más",
-        "discardedToast": "{{name}} retirado del stock",
         "frozenToast": "{{name}} movido a {{freezer}}",
         "noFreezer": "Añade primero un congelador a tu hogar para poder congelar.",
         "pushOptIn": {
@@ -626,7 +615,28 @@
           "later": "Más tarde",
           "enabledToast": "Notificaciones activadas",
           "deniedToast": "Permiso denegado. Puedes reactivarlo en los ajustes del navegador."
-        }
+        },
+        "summaryAllClear": "Todo bajo control",
+        "summary": {
+          "expired_one": "{{count}} caducado",
+          "expired_other": "{{count}} caducados",
+          "today_one": "{{count}} hoy",
+          "today_other": "{{count}} hoy",
+          "tomorrow_one": "{{count}} mañana",
+          "tomorrow_other": "{{count}} mañana",
+          "soon_one": "{{count}} esta semana",
+          "soon_other": "{{count}} esta semana"
+        },
+        "group": {
+          "expired": "Caducados",
+          "today": "Hoy",
+          "tomorrow": "Mañana",
+          "soon": "Esta semana"
+        },
+        "actionConsume": "Marcar como consumido",
+        "emptyAfterResolution": "Nada más que gestionar por ahora.",
+        "loadError": "No se han podido cargar los artículos que caducan pronto.",
+        "retry": "Reintentar"
       }
     },
     "myProducts": {
@@ -655,7 +665,8 @@
         "title": "Ningún producto coincide con tu búsqueda",
         "description": "Prueba con otra palabra clave o restablece los filtros.",
         "reset": "Restablecer filtros"
-      }
+      },
+      "filterExpiring": "Caduca pronto"
     },
     "shopping": {
       "title": "Lista de Compras",

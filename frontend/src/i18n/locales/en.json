@@ -602,22 +602,11 @@
       "loyaltyCards": "Loyalty cards",
       "loyaltyCardsDesc": "Your store cards",
       "expiringSoon": {
-        "title": "Eat soon",
-        "subtitle_one": "{{count}} item is approaching its date",
-        "subtitle_other": "{{count}} items are approaching their date",
-        "badgeExpired": "Expired",
-        "badgeToday": "Today",
-        "badgeTomorrow": "Tomorrow",
-        "badgeInDays_one": "In {{count}} day",
-        "badgeInDays_other": "In {{count}} days",
+        "title": "Expiring soon",
         "actionDiscard": "Discard",
         "actionFreeze": "Freeze",
-        "actionRecipes": "Recipes",
         "openedDaysAgo_one": "Opened {{count}} day ago",
         "openedDaysAgo_other": "Opened {{count}} days ago",
-        "viewMore_one": "See {{count}} more",
-        "viewMore_other": "See {{count}} more",
-        "discardedToast": "{{name}} removed from stock",
         "frozenToast": "{{name}} moved to {{freezer}}",
         "noFreezer": "Add a freezer to your household first to freeze items.",
         "pushOptIn": {
@@ -626,7 +615,28 @@
           "later": "Later",
           "enabledToast": "Notifications enabled",
           "deniedToast": "Permission denied. You can re-enable it in your browser settings."
-        }
+        },
+        "summaryAllClear": "Everything is under control",
+        "summary": {
+          "expired_one": "{{count}} expired",
+          "expired_other": "{{count}} expired",
+          "today_one": "{{count}} today",
+          "today_other": "{{count}} today",
+          "tomorrow_one": "{{count}} tomorrow",
+          "tomorrow_other": "{{count}} tomorrow",
+          "soon_one": "{{count}} this week",
+          "soon_other": "{{count}} this week"
+        },
+        "group": {
+          "expired": "Expired",
+          "today": "Today",
+          "tomorrow": "Tomorrow",
+          "soon": "This week"
+        },
+        "actionConsume": "Mark as consumed",
+        "emptyAfterResolution": "Nothing left to handle right now.",
+        "loadError": "Could not load expiring items.",
+        "retry": "Try again"
       }
     },
     "myProducts": {
@@ -655,7 +665,8 @@
         "title": "No products match your search",
         "description": "Try a different keyword or reset the filters.",
         "reset": "Reset filters"
-      }
+      },
+      "filterExpiring": "Expiring soon"
     },
     "shopping": {
       "title": "Shopping List",

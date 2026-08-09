@@ -602,22 +602,11 @@
       "loyaltyCards": "Cartes de fidélité",
       "loyaltyCardsDesc": "Tes cartes en magasin",
       "expiringSoon": {
-        "title": "À consommer rapidement",
-        "subtitle_one": "{{count}} article approche de sa date",
-        "subtitle_other": "{{count}} articles approchent de leur date",
-        "badgeExpired": "Expiré",
-        "badgeToday": "Aujourd'hui",
-        "badgeTomorrow": "Demain",
-        "badgeInDays_one": "Dans {{count}} jour",
-        "badgeInDays_other": "Dans {{count}} jours",
+        "title": "Bientôt périmés",
         "actionDiscard": "Jeter",
         "actionFreeze": "Congeler",
-        "actionRecipes": "Recettes",
         "openedDaysAgo_one": "Ouvert il y a {{count}} jour",
         "openedDaysAgo_other": "Ouvert il y a {{count}} jours",
-        "viewMore_one": "Voir le {{count}} autre",
-        "viewMore_other": "Voir les {{count}} autres",
-        "discardedToast": "{{name}} retiré du stock",
         "frozenToast": "{{name}} déplacé vers {{freezer}}",
         "noFreezer": "Ajoute d'abord un congélateur pour congeler des articles.",
         "pushOptIn": {
@@ -626,7 +615,28 @@
           "later": "Plus tard",
           "enabledToast": "Notifications activées",
           "deniedToast": "Permission refusée. Réactive-la dans les paramètres du navigateur."
-        }
+        },
+        "summaryAllClear": "Tout est sous contrôle",
+        "summary": {
+          "expired_one": "{{count}} périmé",
+          "expired_other": "{{count}} périmés",
+          "today_one": "{{count}} aujourd'hui",
+          "today_other": "{{count}} aujourd'hui",
+          "tomorrow_one": "{{count}} demain",
+          "tomorrow_other": "{{count}} demain",
+          "soon_one": "{{count}} cette semaine",
+          "soon_other": "{{count}} cette semaine"
+        },
+        "group": {
+          "expired": "Périmés",
+          "today": "Aujourd'hui",
+          "tomorrow": "Demain",
+          "soon": "Cette semaine"
+        },
+        "actionConsume": "Marquer consommé",
+        "emptyAfterResolution": "Plus rien à traiter pour l'instant.",
+        "loadError": "Impossible de charger les articles bientôt périmés.",
+        "retry": "Réessayer"
       }
     },
     "myProducts": {
@@ -655,7 +665,8 @@
         "title": "Aucun produit ne correspond à ta recherche",
         "description": "Essaie un autre mot-clé ou réinitialise les filtres.",
         "reset": "Réinitialiser les filtres"
-      }
+      },
+      "filterExpiring": "Bientôt périmés"
     },
     "shopping": {
       "title": "Liste de Courses",

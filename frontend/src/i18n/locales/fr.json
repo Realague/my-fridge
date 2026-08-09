@@ -11,7 +11,8 @@
     "recipes": "Recettes",
     "more": "Plus",
     "primary": "Navigation principale",
-    "activity": "Activité du foyer"
+    "activity": "Activité du foyer",
+    "statistics": "Statistiques"
   },
   "a11y": {
     "timer": {
@@ -559,6 +560,9 @@
         "signOut": {
           "title": "Déconnexion",
           "description": "Te déconnecter de ton compte"
+        },
+        "statistics": {
+          "description": "Anti-gaspi, cuisine et contribution du foyer"
         }
       }
     },
@@ -4392,6 +4396,96 @@
       "recipe_servings_changed": "avez modifié les portions de {{target}}",
       "recipe_cooked": "avez cuisiné {{target}}",
       "recipe_unplanned": "avez retiré {{target}} du meal plan"
+    }
+  },
+  "stats": {
+    "title": "Statistiques du foyer",
+    "periodLabel": "Période",
+    "blockLabel": "Section",
+    "loadError": "Impossible de charger les statistiques pour le moment.",
+    "recentHousehold_one": "Ton foyer a {{count}} jour. Reviens dans quelques semaines pour voir tes tendances évoluer !",
+    "recentHousehold_other": "Ton foyer a {{count}} jours. Reviens dans quelques semaines pour voir tes tendances évoluer !",
+    "periods": {
+      "current_month": "Mois en cours",
+      "last_month": "Mois précédent",
+      "last_3_months": "3 derniers mois",
+      "current_year": "Année en cours"
+    },
+    "blocks": {
+      "waste": "Anti-gaspi",
+      "cooking": "Cuisine",
+      "household": "Foyer"
+    },
+    "trend": {
+      "badge": "{{arrow}} {{sign}}{{value}} vs {{month}}",
+      "points_one": "{{count}} pt",
+      "points_other": "{{count}} pts"
+    },
+    "cards": {
+      "waste": {
+        "title": "Anti-gaspi — {{month}}",
+        "caption": "Taux d'utilisation · {{consumed}} articles consommés, {{wasted}} jetés",
+        "gaugeA11y": "Taux d'utilisation : {{value}} %"
+      },
+      "cooking": {
+        "title": "En cuisine — {{month}}",
+        "caption_one": "Recettes cuisinées · {{count}} recette différente essayée",
+        "caption_other": "Recettes cuisinées · {{count}} recettes différentes essayées"
+      }
+    },
+    "empty": {
+      "title": "Rien à se mettre sous la dent",
+      "subtitle": "Ajoute tes premiers articles pour commencer à suivre ton impact ! Les statistiques se rempliront au fil de tes sorties de stock.",
+      "cta": "Ajouter un article"
+    },
+    "waste": {
+      "title": "Anti-gaspillage",
+      "usageRate": "Taux d'utilisation",
+      "consumed": "Articles consommés",
+      "wasted": "Articles jetés",
+      "saved": "Sauvés in extremis",
+      "savedCaption": "Consommés dans les 2 jours avant péremption",
+      "trendTitle": "Évolution du taux d'utilisation",
+      "trendA11y": "Taux d'utilisation, de {{first}} % à {{last}} % sur la période affichée",
+      "topWastedTitle": "Ce que tu jettes le plus",
+      "topWastedInsight_one": "Les {{category}} arrivent en tête — {{count}} article parti à la poubelle.",
+      "topWastedInsight_other": "Les {{category}} arrivent en tête — {{count}} articles partis à la poubelle.",
+      "topWastedEmpty": "Rien de jeté sur cette période. Joli.",
+      "keepTitle": "Temps moyen de conservation — articles consommés",
+      "keepInsight_one": "Tes {{category}} tiennent en moyenne {{count}} jour dans ton stock.",
+      "keepInsight_other": "Tes {{category}} tiennent en moyenne {{count}} jours dans ton stock.",
+      "keepEmpty": "Pas encore assez de sorties pour calculer une durée de conservation.",
+      "days_one": "{{count}} j",
+      "days_other": "{{count}} j"
+    },
+    "cooking": {
+      "title": "Cuisine",
+      "cooked": "Recettes cuisinées",
+      "cookedCaption": "Via « J'ai cuisiné » sur le meal plan",
+      "distinct": "Recettes différentes",
+      "mealPlan": "Meal plan réalisé",
+      "favorite": "Recette fétiche",
+      "favoriteCaption_one": "Cuisinée {{count}} fois sur les 3 derniers mois",
+      "favoriteCaption_other": "Cuisinée {{count}} fois sur les 3 derniers mois",
+      "topDishes": "Top 3 des catégories cuisinées",
+      "topDishesEmpty": "Cuisine quelques recettes pour voir tes catégories préférées apparaître."
+    },
+    "household": {
+      "title": "Foyer",
+      "adds": "Ajouts au stock",
+      "cooks": "Cuissons",
+      "checks": "Courses cochées",
+      "unitItems": "articles",
+      "unitRecipes": "recettes",
+      "addsA11y": "Répartition des {{count}} ajouts au stock entre les membres du foyer",
+      "cooksA11y": "Répartition des {{count}} cuissons entre les membres du foyer",
+      "checksA11y": "Répartition des {{count}} articles de courses cochés entre les membres du foyer",
+      "sharedIntro_one": "Le foyer a ajouté {{count}} article sur cette période, avec la participation de tous les membres.",
+      "sharedIntro_other": "Le foyer a ajouté {{count}} articles sur cette période, avec la participation de tous les membres.",
+      "soloIntro": "Tu as ajouté {{adds}} articles, cuisiné {{cooks}} fois et coché {{checks}} articles de courses.",
+      "disclaimer": "Ces chiffres décrivent la contribution de chacun. Ils ne sont ni classés, ni comparés — juste additionnés.",
+      "teamNudge": "C'est sympa de faire équipe, pensez à impliquer les autres membres du foyer !",
+      "unknownMember": "Membre {{index}}"
     }
   }
 }

@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script>try{localStorage.setItem('i18nextLng','fr')}catch(e){}document.documentElement.lang='fr';</script>
+<script src="./ds-base.js"></script>
+<script src="./image-slot.js"></script>
+<style>*{box-sizing:border-box}html,body{margin:0}body{background:#efe4c4}a{color:var(--mf-green-deep);text-decoration:none}a:hover{color:var(--mf-green)}@keyframes mfRise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}.mfscroll::-webkit-scrollbar{width:6px}.mfscroll::-webkit-scrollbar-thumb{background:rgba(0,0,0,.14);border-radius:99px}</style>
+</helmet>
+<div class="{{ themeClass }}" style="min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:var(--mf-text);background:radial-gradient(1200px 620px at 50% -12%, var(--mf-night-surface), transparent 62%), var(--mf-night);padding:56px 44px 80px">
+  <header style="max-width:1420px;margin:0 auto 30px">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px">
+      <span style="width:22px;height:22px;border-radius:7px;background:var(--mf-green);display:inline-flex;align-items:center;justify-content:center">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+      </span>
+      <span class="mf-eyebrow" style="color:var(--mf-green-deep)">MyFridge · Statistiques de foyer — phase 1</span>
+    </div>
+    <h1 class="font-display" style="margin:0;font-size:41px;font-weight:700;letter-spacing:-.025em;line-height:1.04;color:var(--mf-text)">Ce que fait ton foyer, en chiffres</h1>
+    <p style="margin:14px 0 0;max-width:680px;font-size:17px;line-height:1.55;color:var(--mf-text-soft);text-wrap:pretty">Deux cartes résumé sur le tableau de bord, une page détail en trois blocs. Observation factuelle : pas de classement entre membres, pas d'estimation € ni CO₂.</p>
+  </header>
+  <div style="max-width:1420px;margin:0 auto 34px;display:flex;flex-wrap:wrap;gap:26px;align-items:flex-end;padding:18px 20px;background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-lg)">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Écran</span>
+      <div class="mf-toggle-group">
+        <sc-for list="{{ screenOpts }}" as="o" hint-placeholder-count="2">
+          <button class="{{ o.cls }}" onClick="{{ o.on }}">{{ o.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Variante des cartes</span>
+      <div class="mf-toggle-group">
+        <sc-for list="{{ variantOpts }}" as="o" hint-placeholder-count="2">
+          <button class="{{ o.cls }}" onClick="{{ o.on }}">{{ o.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span class="mf-eyebrow" style="color:var(--mf-text-mute)">État du foyer</span>
+      <div class="mf-toggle-group">
+        <sc-for list="{{ householdOpts }}" as="o" hint-placeholder-count="4">
+          <button class="{{ o.cls }}" onClick="{{ o.on }}">{{ o.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  <div style="max-width:1420px;margin:0 auto;display:flex;flex-wrap:wrap;gap:48px;align-items:flex-start;justify-content:center">
+    <sc-if value="{{ showMobile }}" hint-placeholder-val="{{ true }}">
+    <figure style="margin:0;display:flex;flex-direction:column;align-items:center;gap:18px">
+      <div style="width:392px;background:#0e1014;border-radius:52px;padding:13px;box-shadow:0 50px 90px -34px rgba(45,33,10,.55),0 0 0 1px rgba(0,0,0,.05)">
+        <div style="position:relative;background:var(--mf-night);border-radius:40px;overflow:hidden;height:762px;display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 28px 4px;font-family:'DM Sans';font-weight:600;font-size:14.5px;color:var(--mf-text);flex-shrink:0">
+            <span>9:41</span>
+            <span style="display:flex;align-items:center;gap:7px;color:var(--mf-text)">
+              <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1" opacity=".35"/></svg>
+              <span style="font-size:11.5px;font-weight:700;letter-spacing:.02em">5G</span>
+              <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x=".5" y=".5" width="21" height="12" rx="3.5" stroke="currentColor" opacity=".4"/><rect x="2.4" y="2.4" width="15.5" height="8.2" rx="2" fill="currentColor"/><rect x="23" y="4" width="2.2" height="5" rx="1.1" fill="currentColor" opacity=".4"/></svg>
+            </span>
+          </div>
+          <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px 12px;flex-shrink:0">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--mf-text-soft)">Bonjour, Camille</div>
+              <div class="font-display" style="font-size:21px;font-weight:700;letter-spacing:-.01em;color:var(--mf-text)">{{ householdName }}</div>
+            </div>
+            <div style="width:42px;height:42px;border-radius:999px;background:var(--mf-green-soft);color:var(--mf-green-deep);display:flex;align-items:center;justify-content:center;font-family:'DM Sans';font-weight:700;font-size:14.5px">CD</div>
+          </div>
+          <div class="mfscroll" style="flex:1;overflow-y:auto;padding:2px 16px 16px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;padding:0 2px">
+              <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Tes statistiques</span>
+              <button onClick="{{ goStats }}" style="border:0;background:transparent;color:var(--mf-green-deep);font-family:'DM Sans';font-weight:600;font-size:13px;cursor:pointer;padding:0">Tout voir</button>
+            </div>
+
+            <sc-if value="{{ isVariantA }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ goGaspi }}" style="width:100%;text-align:left;border:1px solid var(--mf-night-line);background:var(--mf-night-surface);border-radius:var(--mf-radius-xl);padding:16px 16px 14px;cursor:pointer;box-shadow:0 1px 2px rgba(20,15,5,.05);display:flex;flex-direction:column;gap:8px;animation:mfRise .45s ease both;font-family:inherit">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Anti-gaspi — {{ dashMonth }}</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mf-text-mute)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </div>
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+                <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 9px;min-width:0">
+                  <span class="font-display" style="font-size:46px;line-height:.9;font-weight:700;letter-spacing:-.03em;color:var(--mf-green-deep)">{{ dashTaux }}<span style="font-size:22px">%</span></span>
+                  <sc-if value="{{ dashShowTrends }}" hint-placeholder-val="{{ true }}">
+                    <span class="mf-badge {{ dashTauxTrendClass }}" style="white-space:nowrap">{{ dashTauxTrendLabel }}</span>
+                  </sc-if>
+                </div>
+                <svg width="104" height="40" viewBox="0 0 120 40" fill="none" style="flex-shrink:1;min-width:64px;opacity:.9">
+                  <path d="{{ sparkTaux.area }}" fill="var(--mf-green-soft)"></path>
+                  <polyline points="{{ sparkTaux.points }}" fill="none" stroke="var(--mf-green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                  <circle cx="{{ sparkTaux.lx }}" cy="{{ sparkTaux.ly }}" r="3.4" fill="var(--mf-green)" stroke="var(--mf-night-surface)" stroke-width="2"></circle>
+                </svg>
+              </div>
+              <div style="font-size:13px;color:var(--mf-text-soft);font-weight:500">Taux d'utilisation · {{ dashConsommes }} articles consommés, {{ dashJetes }} jetés</div>
+            </button>
+            <button onClick="{{ goCuisine }}" style="width:100%;text-align:left;border:1px solid var(--mf-night-line);background:var(--mf-night-surface);border-radius:var(--mf-radius-xl);padding:16px 16px 14px;cursor:pointer;box-shadow:0 1px 2px rgba(20,15,5,.05);display:flex;flex-direction:column;gap:8px;animation:mfRise .55s ease both;font-family:inherit">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                <span class="mf-eyebrow" style="color:var(--mf-text-mute)">En cuisine — {{ dashMonth }}</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mf-text-mute)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </div>
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+                <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 9px;min-width:0">
+                  <span class="font-display" style="font-size:46px;line-height:.9;font-weight:700;letter-spacing:-.03em;color:var(--mf-pink-deep)">{{ dashCuisinees }}</span>
+                  <sc-if value="{{ dashShowTrends }}" hint-placeholder-val="{{ true }}">
+                    <span class="mf-badge {{ dashCuisineTrendClass }}" style="white-space:nowrap">{{ dashCuisineTrendLabel }}</span>
+                  </sc-if>
+                </div>
+                <svg width="104" height="40" viewBox="0 0 120 40" fill="none" style="flex-shrink:1;min-width:64px;opacity:.9">
+                  <path d="{{ sparkCuisine.area }}" fill="var(--mf-pink-soft)"></path>
+                  <polyline points="{{ sparkCuisine.points }}" fill="none" stroke="var(--mf-pink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                  <circle cx="{{ sparkCuisine.lx }}" cy="{{ sparkCuisine.ly }}" r="3.4" fill="var(--mf-pink)" stroke="var(--mf-night-surface)" stroke-width="2"></circle>
+                </svg>
+              </div>
+              <div style="font-size:13px;color:var(--mf-text-soft);font-weight:500">Recettes cuisinées · {{ dashDifferentes }} recettes différentes essayées</div>
+            </button>
+            </sc-if>
+
+            <sc-if value="{{ isVariantB }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ goGaspi }}" style="width:100%;text-align:left;border:1px solid var(--mf-night-line);background:var(--mf-night-surface);border-radius:var(--mf-radius-xl);padding:15px;cursor:pointer;box-shadow:0 1px 2px rgba(20,15,5,.05);display:flex;align-items:center;gap:15px;animation:mfRise .45s ease both;font-family:inherit">
+              <div style="position:relative;flex-shrink:0;width:84px;height:84px">
+                <svg width="84" height="84" viewBox="0 0 84 84">
+                  <circle cx="42" cy="42" r="34" fill="none" stroke="var(--mf-night-elevated)" stroke-width="9"></circle>
+                  <circle cx="42" cy="42" r="34" fill="none" stroke="var(--mf-green)" stroke-width="9" stroke-linecap="round" stroke-dasharray="{{ dashRingTaux }}" transform="rotate(-90 42 42)"></circle>
+                </svg>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column">
+                  <span class="font-display" style="font-size:23px;font-weight:700;letter-spacing:-.02em;color:var(--mf-green-deep);line-height:1">{{ dashTaux }}%</span>
+                </div>
+              </div>
+              <div style="min-width:0;flex:1;display:flex;flex-direction:column;gap:5px">
+                <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Anti-gaspi — {{ dashMonth }}</span>
+                <div class="font-display" style="font-size:16px;font-weight:700;color:var(--mf-text)">Taux d'utilisation</div>
+                <div style="font-size:12.5px;color:var(--mf-text-soft);font-weight:500">{{ dashConsommes }} consommés · {{ dashJetes }} jetés</div>
+                <sc-if value="{{ dashShowTrends }}" hint-placeholder-val="{{ true }}">
+                  <span class="mf-badge {{ dashTauxTrendClass }}" style="align-self:flex-start;white-space:normal">{{ dashTauxTrendLabel }}</span>
+                </sc-if>
+              </div>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--mf-text-mute)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+            <button onClick="{{ goCuisine }}" style="width:100%;text-align:left;border:1px solid var(--mf-night-line);background:var(--mf-night-surface);border-radius:var(--mf-radius-xl);padding:15px;cursor:pointer;box-shadow:0 1px 2px rgba(20,15,5,.05);display:flex;align-items:center;gap:15px;animation:mfRise .55s ease both;font-family:inherit">
+              <div style="position:relative;flex-shrink:0;width:84px;height:84px">
+                <svg width="84" height="84" viewBox="0 0 84 84">
+                  <circle cx="42" cy="42" r="34" fill="none" stroke="var(--mf-night-elevated)" stroke-width="9"></circle>
+                  <circle cx="42" cy="42" r="34" fill="none" stroke="var(--mf-pink)" stroke-width="9" stroke-linecap="round" stroke-dasharray="{{ dashRingMealPlan }}" transform="rotate(-90 42 42)"></circle>
+                </svg>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+                  <span class="font-display" style="font-size:27px;font-weight:700;letter-spacing:-.02em;color:var(--mf-pink-deep);line-height:1">{{ dashCuisinees }}</span>
+                </div>
+              </div>
+              <div style="min-width:0;flex:1;display:flex;flex-direction:column;gap:5px">
+                <span class="mf-eyebrow" style="color:var(--mf-text-mute)">En cuisine — {{ dashMonth }}</span>
+                <div class="font-display" style="font-size:16px;font-weight:700;color:var(--mf-text)">Recettes cuisinées</div>
+                <div style="font-size:12.5px;color:var(--mf-text-soft);font-weight:500">{{ dashMealPlan }} % du meal plan réalisé</div>
+                <sc-if value="{{ dashShowTrends }}" hint-placeholder-val="{{ true }}">
+                  <span class="mf-badge {{ dashCuisineTrendClass }}" style="align-self:flex-start;white-space:normal">{{ dashCuisineTrendLabel }}</span>
+                </sc-if>
+              </div>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--mf-text-mute)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+            </sc-if>
+
+            <sc-if value="{{ isNew }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:12px;align-items:center;padding:13px 15px;background:var(--mf-yellow-soft);border-radius:var(--mf-radius-lg)">
+                <image-slot id="mascot-dash" style="width:68px;height:68px;flex-shrink:0" shape="circle" placeholder="Chef"></image-slot>
+                <p style="margin:0;font-size:12.5px;line-height:1.45;color:var(--mf-text);font-weight:500">Reviens dans quelques semaines pour voir tes tendances évoluer !</p>
+              </div>
+            </sc-if>
+
+            <div style="display:flex;align-items:baseline;justify-content:space-between;padding:8px 2px 0">
+              <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Activité récente</span>
+            </div>
+            <section style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:4px 16px 8px">
+              <div class="divide-y divide-border">
+                <sc-for list="{{ entries }}" as="entry" hint-placeholder-count="3">
+                  <x-import component-from-global-scope="MyFridge.ActivityEntry" entry="{{ entry }}" current-user-id="u1" hint-size="100%,54px"></x-import>
+                </sc-for>
+              </div>
+            </section>
+          </div>
+          </sc-if>
+          <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:12px;padding:8px 16px 10px;flex-shrink:0">
+            <button onClick="{{ goBack }}" style="width:36px;height:36px;border-radius:999px;border:1px solid var(--mf-night-line);background:var(--mf-night-surface);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--mf-text)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <div style="min-width:0">
+              <div class="font-display" style="font-size:19px;font-weight:700;letter-spacing:-.015em;color:var(--mf-text);line-height:1.15">Statistiques</div>
+              <div style="font-size:12px;color:var(--mf-text-mute);font-weight:500">{{ periodRange }}</div>
+            </div>
+          </div>
+          <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 34px;text-align:center">
+              <image-slot id="mascot-empty-m" style="width:132px;height:132px" shape="circle" placeholder="Chef · idontknow"></image-slot>
+              <div class="font-display" style="font-size:20px;font-weight:700;letter-spacing:-.015em;color:var(--mf-text)">Rien à se mettre sous la dent</div>
+              <p style="margin:0;font-size:14px;line-height:1.5;color:var(--mf-text-soft);text-wrap:pretty">Ajoute tes premiers articles pour commencer à suivre ton impact !</p>
+              <button class="mf-btn mf-btn-primary" style="margin-top:2px">Ajouter un article</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:0 16px 10px;flex-shrink:0;display:flex;flex-direction:column;gap:9px">
+            <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:2px">
+              <sc-for list="{{ periodOpts }}" as="o" hint-placeholder-count="4">
+                <button class="{{ o.cls }}" onClick="{{ o.on }}" style="flex-shrink:0;font-size:12px;padding:7px 12px;border-radius:999px">{{ o.label }}</button>
+              </sc-for>
+            </div>
+            <div class="mf-toggle-group" style="width:100%">
+              <sc-for list="{{ blockOpts }}" as="o" hint-placeholder-count="3">
+                <button class="{{ o.cls }}" onClick="{{ o.on }}" style="flex:1;font-size:12.5px;padding:8px 6px">{{ o.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div class="mfscroll" style="flex:1;overflow-y:auto;padding:4px 16px 18px;display:flex;flex-direction:column;gap:12px">
+
+            <sc-if value="{{ isNew }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:12px;align-items:center;padding:13px 15px;background:var(--mf-yellow-soft);border-radius:var(--mf-radius-lg)">
+                <image-slot id="mascot-recent-m" style="width:68px;height:68px;flex-shrink:0" shape="circle" placeholder="Chef"></image-slot>
+                <p style="margin:0;font-size:12.5px;line-height:1.45;color:var(--mf-text);font-weight:500">Ton foyer a 9 jours. Reviens dans quelques semaines pour voir tes tendances évoluer !</p>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ anchorGaspi }}" hint-placeholder-val="{{ true }}">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
+                <div style="grid-column:span 2;background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:15px 16px;display:flex;flex-direction:column;gap:6px">
+                  <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Taux d'utilisation</span>
+                  <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px;min-width:0">
+                    <span class="font-display" style="font-size:42px;line-height:.9;font-weight:700;letter-spacing:-.03em;color:var(--mf-green-deep)">{{ taux }}<span style="font-size:20px">%</span></span>
+                    <sc-if value="{{ showTrends }}" hint-placeholder-val="{{ true }}">
+                      <span class="mf-badge {{ tauxTrendClass }}" style="white-space:nowrap">{{ tauxTrendLabel }}</span>
+                    </sc-if>
+                  </div>
+                  <div style="font-size:12.5px;color:var(--mf-text-soft);font-weight:500">Articles consommés rapportés au total sorti du stock</div>
+                </div>
+                <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-lg);padding:13px 14px;display:flex;flex-direction:column;gap:3px">
+                  <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Consommés</span>
+                  <span class="font-display" style="font-size:27px;font-weight:700;color:var(--mf-text);line-height:1.05">{{ consommes }}</span>
+                </div>
+                <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-lg);padding:13px 14px;display:flex;flex-direction:column;gap:3px">
+                  <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Jetés</span>
+                  <span class="font-display" style="font-size:27px;font-weight:700;color:var(--mf-danger);line-height:1.05">{{ jetes }}</span>
+                </div>
+                <div style="grid-column:span 2;background:var(--mf-green-soft);border-radius:var(--mf-radius-lg);padding:13px 15px;display:flex;align-items:center;gap:12px">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mf-green-deep)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                  <div>
+                    <div class="font-display" style="font-size:20px;font-weight:700;color:var(--mf-green-deep);line-height:1.1">{{ sauves }} sauvés in extremis</div>
+                    <div style="font-size:12px;color:var(--mf-green-deep);opacity:.85;font-weight:500">Consommés dans les 2 jours avant péremption</div>
+                  </div>
+                </div>
+              </div>
+              <sc-if value="{{ showTrends }}" hint-placeholder-val="{{ true }}">
+              <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:15px 16px 10px;display:flex;flex-direction:column;gap:10px">
+                <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Évolution du taux d'utilisation</span>
+                <svg viewBox="0 0 300 112" style="width:100%;height:auto" fill="none">
+                  <path d="{{ trendAreaSm }}" fill="var(--mf-green-soft)" opacity=".6"></path>
+                  <polyline points="{{ trendLineSm }}" fill="none" stroke="var(--mf-green)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                  <sc-for list="{{ trendDotsSm }}" as="pt" hint-placeholder-count="7">
+                    <circle cx="{{ pt.x }}" cy="{{ pt.y }}" r="3" fill="var(--mf-night-surface)" stroke="var(--mf-green)" stroke-width="2.2"></circle>
+                  </sc-for>
+                </svg>
+                <div style="display:flex;justify-content:space-between;padding:0 2px 4px">
+                  <sc-for list="{{ trendDotsSm }}" as="pt" hint-placeholder-count="7">
+                    <span style="font-size:10px;font-weight:600;color:var(--mf-text-mute);font-family:'DM Sans'">{{ pt.m }}</span>
+                  </sc-for>
+                </div>
+              </div>
+              </sc-if>
+              <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:15px 16px;display:flex;flex-direction:column;gap:12px">
+                <div>
+                  <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Ce que tu jettes le plus</span>
+                  <p style="margin:6px 0 0;font-size:14px;line-height:1.45;color:var(--mf-text);font-weight:500;text-wrap:pretty">Les {{ topWaste }} arrivent en tête ce mois-ci — {{ topWasteCount }} articles partis à la poubelle.</p>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:9px">
+                  <sc-for list="{{ wasteBars }}" as="b" hint-placeholder-count="5">
+                    <div style="display:flex;align-items:center;gap:10px">
+                      <span style="width:104px;flex-shrink:0;font-size:12px;color:var(--mf-text-soft);font-weight:500">{{ b.name }}</span>
+                      <span style="flex:1;height:9px;border-radius:999px;background:var(--mf-night-elevated);overflow:hidden;display:block"><span style="display:block;height:100%;border-radius:999px;width:{{ b.pct }}%;background:{{ b.color }}"></span></span>
+                      <span class="font-display" style="width:22px;text-align:right;font-size:12.5px;font-weight:700;color:var(--mf-text)">{{ b.count }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:15px 16px;display:flex;flex-direction:column;gap:12px">
+                <div>
+                  <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Temps moyen de conservation</span>
+                  <p style="margin:6px 0 0;font-size:14px;line-height:1.45;color:var(--mf-text);font-weight:500;text-wrap:pretty">Tes yaourts tiennent en moyenne 12 jours dans ton frigo. Pas mal.</p>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:9px">
+                  <sc-for list="{{ keepBars }}" as="b" hint-placeholder-count="6">
+                    <div style="display:flex;align-items:center;gap:10px">
+                      <span style="width:104px;flex-shrink:0;font-size:12px;color:var(--mf-text-soft);font-weight:500">{{ b.name }}</span>
+                      <span style="flex:1;height:9px;border-radius:999px;background:var(--mf-night-elevated);overflow:hidden;display:block"><span style="display:block;height:100%;border-radius:999px;width:{{ b.pct }}%;background:var(--mf-info)"></span></span>
+                      <span class="font-display" style="width:34px;text-align:right;font-size:12.5px;font-weight:700;color:var(--mf-text)">{{ b.days }} j</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ anchorCuisine }}" hint-placeholder-val="{{ false }}">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
+                <div style="grid-column:span 2;background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:15px 16px;display:flex;flex-direction:column;gap:6px">
+                  <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Recettes cuisinées</span>
+                  <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px;min-width:0">
+                    <span class="font-display" style="font-size:42px;line-height:.9;font-weight:700;letter-spacing:-.03em;color:var(--mf-pink-deep)">{{ cuisinees }}</span>
+                    <sc-if value="{{ showTrends }}" hint-placeholder-val="{{ true }}">
+                      <span class="mf-badge {{ cuisineTrendClass }}" style="white-space:nowrap">{{ cuisineTrendLabel }}</span>
+                    </sc-if>
+                  </div>
+                  <div style="font-size:12.5px;color:var(--mf-text-soft);font-weight:500">Via « J'ai cuisiné » sur le meal plan ou en ajout manuel</div>
+                </div>
+                <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-lg);padding:13px 14px;display:flex;flex-direction:column;gap:3px">
+                  <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Différentes</span>
+                  <span class="font-display" style="font-size:27px;font-weight:700;color:var(--mf-text);line-height:1.05">{{ differentes }}</span>
+                </div>
+                <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-lg);padding:13px 14px;display:flex;flex-direction:column;gap:3px">
+                  <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Batch cooking</span>
+                  <span class="font-display" style="font-size:27px;font-weight:700;color:var(--mf-text);line-height:1.05">{{ batch }} <span style="font-size:13px;font-weight:600;color:var(--mf-text-mute)">portions</span></span>
+                </div>
+                <div style="grid-column:span 2;background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-lg);padding:14px 15px;display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;align-items:baseline;justify-content:space-between">
+                    <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Repas du meal plan réalisés</span>
+                    <span class="font-display" style="font-size:16px;font-weight:700;color:var(--mf-text)">{{ mealPlan }} %</span>
+                  </div>
+                  <span style="height:10px;border-radius:999px;background:var(--mf-night-elevated);overflow:hidden;display:block"><span style="display:block;height:100%;border-radius:999px;width:{{ mealPlan }}%;background:var(--mf-pink)"></span></span>
+                </div>
+              </div>
+              <sc-if value="{{ showTrends }}" hint-placeholder-val="{{ true }}">
+              <div style="background:var(--mf-pink-soft);border-radius:var(--mf-radius-xl);padding:15px 16px;display:flex;align-items:center;gap:14px">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--mf-pink-deep)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 21s-7-4.35-7-9.5A4.5 4.5 0 0 1 12 8a4.5 4.5 0 0 1 7 3.5C19 16.65 12 21 12 21z"/></svg>
+                <div>
+                  <span class="mf-eyebrow" style="color:var(--mf-pink-deep)">Recette fétiche</span>
+                  <div class="font-display" style="font-size:17px;font-weight:700;color:var(--mf-text);line-height:1.2;margin-top:3px">{{ favRecipe }}</div>
+                  <div style="font-size:12px;color:var(--mf-text-soft);font-weight:500">Cuisinée {{ favCount }} fois sur les 3 derniers mois</div>
+                </div>
+              </div>
+              </sc-if>
+              <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:15px 16px;display:flex;flex-direction:column;gap:12px">
+                <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Top 3 des catégories cuisinées</span>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ catBars }}" as="b" hint-placeholder-count="3">
+                    <div style="display:flex;align-items:center;gap:10px">
+                      <span class="font-display" style="width:18px;flex-shrink:0;font-size:12px;font-weight:700;color:var(--mf-text-mute)">{{ b.rank }}</span>
+                      <span style="width:88px;flex-shrink:0;font-size:12.5px;color:var(--mf-text);font-weight:600">{{ b.name }}</span>
+                      <span style="flex:1;height:9px;border-radius:999px;background:var(--mf-night-elevated);overflow:hidden;display:block"><span style="display:block;height:100%;border-radius:999px;width:{{ b.pct }}%;background:var(--mf-green)"></span></span>
+                      <span class="font-display" style="width:22px;text-align:right;font-size:12.5px;font-weight:700;color:var(--mf-text)">{{ b.count }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ anchorFoyer }}" hint-placeholder-val="{{ false }}">
+              <sc-if value="{{ isSolo }}" hint-placeholder-val="{{ false }}">
+                <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:16px;display:flex;flex-direction:column;gap:8px">
+                  <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Ton activité</span>
+                  <p style="margin:0;font-size:14.5px;line-height:1.5;color:var(--mf-text);font-weight:500;text-wrap:pretty">{{ soloIntro }}</p>
+                  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px">
+                    <div style="display:flex;flex-direction:column;gap:4px"><span class="mf-eyebrow" style="color:var(--mf-text-mute)">Ajouts au stock</span><span class="font-display" style="font-size:26px;font-weight:700;letter-spacing:-.025em;color:var(--mf-text);line-height:1.05">{{ soloAdds }}</span></div>
+                    <div style="display:flex;flex-direction:column;gap:4px"><span class="mf-eyebrow" style="color:var(--mf-text-mute)">Recettes cuisinées</span><span class="font-display" style="font-size:26px;font-weight:700;letter-spacing:-.025em;color:var(--mf-text);line-height:1.05">{{ soloCooks }}</span></div>
+                    <div style="display:flex;flex-direction:column;gap:4px"><span class="mf-eyebrow" style="color:var(--mf-text-mute)">Courses cochées</span><span class="font-display" style="font-size:26px;font-weight:700;letter-spacing:-.025em;color:var(--mf-text);line-height:1.05">{{ soloShops }}</span></div>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ showTeamNudge }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;gap:12px;align-items:center;padding:13px 15px;background:var(--mf-green-soft);border-radius:var(--mf-radius-lg)">
+                  <image-slot id="mascot-team-m" style="width:68px;height:68px;flex-shrink:0" shape="circle" placeholder="Chef"></image-slot>
+                  <p style="margin:0;font-size:12.5px;line-height:1.45;color:var(--mf-green-deep);font-weight:600">C'est sympa de faire équipe, pensez à impliquer les autres membres du foyer !</p>
+                </div>
+              </sc-if>
+              <sc-if value="{{ showFoyerShared }}" hint-placeholder-val="{{ true }}">
+              <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:16px;display:flex;flex-direction:column;gap:14px">
+                <p style="margin:0;font-size:14.5px;line-height:1.5;color:var(--mf-text);font-weight:500;text-wrap:pretty">{{ foyerIntro }}</p>
+                <div style="display:flex;align-items:center;gap:16px">
+                  <div style="position:relative;flex-shrink:0;width:118px;height:118px"><svg width="118" height="118" viewBox="0 0 118 118">
+                    <circle cx="59" cy="59" r="46" fill="none" stroke="var(--mf-night-elevated)" stroke-width="15"></circle>
+                    <g transform="rotate(-90 59 59)">
+                      <sc-for list="{{ addSegs }}" as="s" hint-placeholder-count="3">
+                        <circle cx="59" cy="59" r="46" fill="none" stroke="{{ s.color }}" stroke-width="15" stroke-dasharray="{{ s.dash }}" stroke-dashoffset="{{ s.offset }}"></circle>
+                      </sc-for>
+                    </g>
+                    </svg><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none"><span class="font-display" style="font-size:25px;font-weight:700;letter-spacing:-.025em;color:var(--mf-text);line-height:1">{{ totalAjouts }}</span><span class="font-display" style="font-size:10.5px;font-weight:600;color:var(--mf-text-mute);line-height:1">ajouts</span></div></div>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:9px">
+                    <sc-for list="{{ addSegs }}" as="s" hint-placeholder-count="3">
+                      <div style="display:flex;align-items:center;gap:9px">
+                        <span style="width:10px;height:10px;border-radius:3px;flex-shrink:0;background:{{ s.color }}"></span>
+                        <span style="flex:1;font-size:13px;color:var(--mf-text);font-weight:500">{{ s.name }}</span>
+                        <span class="font-display" style="font-size:13.5px;font-weight:700;color:var(--mf-text)">{{ s.value }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+              <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:16px;display:flex;flex-direction:column;gap:15px">
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;align-items:baseline;justify-content:space-between">
+                    <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Répartition des cuissons</span>
+                    <span class="font-display" style="font-size:13px;font-weight:700;color:var(--mf-text)">{{ totalCuissons }}</span>
+                  </div>
+                  <span style="display:flex;height:12px;border-radius:999px;overflow:hidden;gap:2px">
+                    <sc-for list="{{ cookSegs }}" as="s" hint-placeholder-count="3">
+                      <span style="display:block;height:100%;width:{{ s.pct }}%;background:{{ s.color }}"></span>
+                    </sc-for>
+                  </span>
+                  <div style="display:flex;flex-wrap:wrap;gap:12px">
+                    <sc-for list="{{ cookSegs }}" as="s" hint-placeholder-count="3">
+                      <span style="font-size:12px;color:var(--mf-text-soft);font-weight:500">{{ s.name }} {{ s.value }}</span>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;align-items:baseline;justify-content:space-between">
+                    <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Répartition des courses cochées</span>
+                    <span class="font-display" style="font-size:13px;font-weight:700;color:var(--mf-text)">{{ totalCourses }}</span>
+                  </div>
+                  <span style="display:flex;height:12px;border-radius:999px;overflow:hidden;gap:2px">
+                    <sc-for list="{{ shopSegs }}" as="s" hint-placeholder-count="3">
+                      <span style="display:block;height:100%;width:{{ s.pct }}%;background:{{ s.color }}"></span>
+                    </sc-for>
+                  </span>
+                  <div style="display:flex;flex-wrap:wrap;gap:12px">
+                    <sc-for list="{{ shopSegs }}" as="s" hint-placeholder-count="3">
+                      <span style="font-size:12px;color:var(--mf-text-soft);font-weight:500">{{ s.name }} {{ s.value }}</span>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+              </sc-if>
+            </sc-if>
+          </div>
+          </sc-if>
+          </sc-if>
+          <nav style="display:flex;align-items:center;justify-content:space-around;padding:10px 12px 22px;border-top:1px solid var(--mf-night-line);background:var(--mf-night-surface);flex-shrink:0">
+            <span style="display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--mf-green-deep);font-family:'DM Sans';font-weight:600;font-size:10.5px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>Accueil</span>
+            <span style="display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--mf-text-mute);font-family:'DM Sans';font-weight:500;font-size:10.5px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="m3 7 9 5 9-5"/><path d="M12 22V12"/></svg>Stock</span>
+            <span style="display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--mf-text-mute);font-family:'DM Sans';font-weight:500;font-size:10.5px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 2-1.58l1.65-7.42H5.12"/></svg>Courses</span>
+            <span style="display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--mf-text-mute);font-family:'DM Sans';font-weight:500;font-size:10.5px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Recettes</span>
+            <span style="display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--mf-text-mute);font-family:'DM Sans';font-weight:500;font-size:10.5px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Repas</span>
+          </nav>
+        </div>
+      </div>
+      <figcaption class="font-display" style="font-size:13.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mf-text-mute)">Mobile</figcaption>
+    </figure>
+    </sc-if>
+    <sc-if value="{{ showDesktop }}" hint-placeholder-val="{{ true }}">
+    <figure style="margin:0;display:flex;flex-direction:column;align-items:center;gap:18px;flex:1;min-width:700px;max-width:960px">
+      <div style="width:100%;background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:16px;overflow:hidden;box-shadow:0 50px 100px -44px rgba(45,33,10,.55),0 0 0 1px rgba(0,0,0,.03)">
+        <div style="display:flex;align-items:center;gap:14px;padding:13px 16px;background:var(--mf-night-elevated);border-bottom:1px solid var(--mf-night-line)">
+          <div style="display:flex;gap:8px"><span style="width:12px;height:12px;border-radius:999px;background:#ff5f57"></span><span style="width:12px;height:12px;border-radius:999px;background:#febc2e"></span><span style="width:12px;height:12px;border-radius:999px;background:#28c840"></span></div>
+          <div style="flex:1;max-width:440px;margin:0 auto;background:var(--mf-night);border:1px solid var(--mf-night-line);border-radius:999px;padding:7px 15px;font-size:12.5px;color:var(--mf-text-mute);display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            myfridge.app/statistiques
+          </div>
+          <div style="width:60px"></div>
+        </div>
+        <div style="display:flex;height:788px;background:var(--mf-night)">
+          <aside style="width:228px;flex-shrink:0;border-right:1px solid var(--mf-night-line);padding:22px 15px;display:flex;flex-direction:column;background:var(--mf-night-surface)">
+            <div style="display:flex;align-items:center;gap:9px;padding:0 6px 22px">
+              <span style="width:30px;height:30px;border-radius:9px;background:var(--mf-green);display:inline-flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+              <span class="font-display" style="font-size:18px;font-weight:700;letter-spacing:-.02em;color:var(--mf-text)">MyFridge</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <button onClick="{{ goBack }}" style="text-align:left;border:0;cursor:pointer;font-family:'DM Sans';display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;background:{{ dashNavBg }};color:{{ dashNavFg }};font-weight:600;font-size:14px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>Tableau de bord</button>
+              <a href="#" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;color:var(--mf-text-soft);font-family:'DM Sans';font-weight:500;font-size:14px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="m3 7 9 5 9-5"/><path d="M12 22V12"/></svg>Stock</a>
+              <a href="#" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;color:var(--mf-text-soft);font-family:'DM Sans';font-weight:500;font-size:14px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 2-1.58l1.65-7.42H5.12"/></svg>Courses</a>
+              <a href="#" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;color:var(--mf-text-soft);font-family:'DM Sans';font-weight:500;font-size:14px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Recettes</a>
+              <button onClick="{{ goStats }}" style="text-align:left;border:0;cursor:pointer;font-family:'DM Sans';display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;background:{{ statsNavBg }};color:{{ statsNavFg }};font-weight:600;font-size:14px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Statistiques</button>
+            </div>
+            <div style="margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 8px;border-top:1px solid var(--mf-night-line)">
+              <div style="width:34px;height:34px;border-radius:999px;background:var(--mf-green-soft);color:var(--mf-green-deep);display:flex;align-items:center;justify-content:center;font-family:'DM Sans';font-weight:700;font-size:13px">CD</div>
+              <div style="min-width:0"><div class="font-display" style="font-size:13.5px;font-weight:600;color:var(--mf-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Camille Dubois</div><div style="font-size:11.5px;color:var(--mf-text-mute)">{{ householdName }}</div></div>
+            </div>
+          </aside>
+          <main style="flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden">
+
+            <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+            <div class="mfscroll" style="flex:1;overflow-y:auto;padding:28px 32px 32px;display:flex;flex-direction:column;gap:22px">
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px">
+                <div>
+                  <div class="mf-eyebrow" style="color:var(--mf-green-deep)">Vendredi 24 juillet</div>
+                  <h2 class="font-display" style="margin:5px 0 0;font-size:27px;font-weight:700;letter-spacing:-.02em;color:var(--mf-text)">Tableau de bord</h2>
+                </div>
+                <div style="display:flex;align-items:center;gap:11px">
+                  <div style="display:flex">
+                    <sc-for list="{{ members }}" as="m" hint-placeholder-count="3">
+                      <span style="width:34px;height:34px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-family:'DM Sans';font-weight:700;font-size:12.5px;border:2px solid var(--mf-night);margin-left:-8px;background:{{ m.soft }};color:{{ m.ink }}">{{ m.initials }}</span>
+                    </sc-for>
+                  </div>
+                  <span style="font-size:13px;font-weight:500;color:var(--mf-text-soft)">{{ memberCount }} membres</span>
+                </div>
+              </div>
+
+              <sc-if value="{{ isVariantA }}" hint-placeholder-val="{{ true }}">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px">
+                <button onClick="{{ goGaspi }}" style="text-align:left;font-family:inherit;cursor:pointer;border:1px solid var(--mf-night-line);background:var(--mf-night-surface);border-radius:var(--mf-radius-xl);padding:20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 2px rgba(20,15,5,.05);animation:mfRise .45s ease both">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                    <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Anti-gaspi — {{ dashMonth }}</span>
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--mf-text-mute)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                  </div>
+                  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:14px">
+                    <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px;min-width:0">
+                      <span class="font-display" style="font-size:56px;line-height:.88;font-weight:700;letter-spacing:-.035em;color:var(--mf-green-deep)">{{ dashTaux }}<span style="font-size:26px">%</span></span>
+                      <sc-if value="{{ dashShowTrends }}" hint-placeholder-val="{{ true }}">
+                        <span class="mf-badge {{ dashTauxTrendClass }}" style="white-space:nowrap">{{ dashTauxTrendLabel }}</span>
+                      </sc-if>
+                    </div>
+                    <svg width="132" height="46" viewBox="0 0 120 40" fill="none" style="flex-shrink:1;min-width:84px">
+                      <path d="{{ sparkTaux.area }}" fill="var(--mf-green-soft)"></path>
+                      <polyline points="{{ sparkTaux.points }}" fill="none" stroke="var(--mf-green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                      <circle cx="{{ sparkTaux.lx }}" cy="{{ sparkTaux.ly }}" r="3.4" fill="var(--mf-green)" stroke="var(--mf-night-surface)" stroke-width="2"></circle>
+                    </svg>
+                  </div>
+                  <div style="font-size:13.5px;color:var(--mf-text-soft);font-weight:500">Taux d'utilisation · {{ dashConsommes }} articles consommés, {{ dashJetes }} jetés</div>
+                </button>
+                <button onClick="{{ goCuisine }}" style="text-align:left;font-family:inherit;cursor:pointer;border:1px solid var(--mf-night-line);background:var(--mf-night-surface);border-radius:var(--mf-radius-xl);padding:20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 2px rgba(20,15,5,.05);animation:mfRise .55s ease both">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                    <span class="mf-eyebrow" style="color:var(--mf-text-mute)">En cuisine — {{ dashMonth }}</span>
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--mf-text-mute)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                  </div>
+                  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:14px">
+                    <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px;min-width:0">
+                      <span class="font-display" style="font-size:56px;line-height:.88;font-weight:700;letter-spacing:-.035em;color:var(--mf-pink-deep)">{{ dashCuisinees }}</span>
+                      <sc-if value="{{ dashShowTrends }}" hint-placeholder-val="{{ true }}">
+                        <span class="mf-badge {{ dashCuisineTrendClass }}" style="white-space:nowrap">{{ dashCuisineTrendLabel }}</span>
+                      </sc-if>
+                    </div>
+                    <svg width="132" height="46" viewBox="0 0 120 40" fill="none" style="flex-shrink:1;min-width:84px">
+                      <path d="{{ sparkCuisine.area }}" fill="var(--mf-pink-soft)"></path>
+                      <polyline points="{{ sparkCuisine.points }}" fill="none" stroke="var(--mf-pink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                      <circle cx="{{ sparkCuisine.lx }}" cy="{{ sparkCuisine.ly }}" r="3.4" fill="var(--mf-pink)" stroke="var(--mf-night-surface)" stroke-width="2"></circle>
+                    </svg>
+                  </div>
+                  <div style="font-size:13.5px;color:var(--mf-text-soft);font-weight:500">Recettes cuisinées · {{ dashDifferentes }} recettes différentes essayées</div>
+                </button>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ isVariantB }}" hint-placeholder-val="{{ false }}">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px">
+                <button onClick="{{ goGaspi }}" style="text-align:left;font-family:inherit;cursor:pointer;border:1px solid var(--mf-night-line);background:var(--mf-night-surface);border-radius:var(--mf-radius-xl);padding:20px;display:flex;align-items:center;gap:18px;box-shadow:0 1px 2px rgba(20,15,5,.05);animation:mfRise .45s ease both">
+                  <div style="position:relative;flex-shrink:0;width:104px;height:104px">
+                    <svg width="104" height="104" viewBox="0 0 84 84">
+                      <circle cx="42" cy="42" r="34" fill="none" stroke="var(--mf-night-elevated)" stroke-width="9"></circle>
+                      <circle cx="42" cy="42" r="34" fill="none" stroke="var(--mf-green)" stroke-width="9" stroke-linecap="round" stroke-dasharray="{{ dashRingTaux }}" transform="rotate(-90 42 42)"></circle>
+                    </svg>
+                    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+                      <span class="font-display" style="font-size:29px;font-weight:700;letter-spacing:-.02em;color:var(--mf-green-deep);line-height:1">{{ dashTaux }}%</span>
+                    </div>
+                  </div>
+                  <div style="min-width:0;flex:1;display:flex;flex-direction:column;gap:6px">
+                    <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Anti-gaspi — {{ dashMonth }}</span>
+                    <div class="font-display" style="font-size:19px;font-weight:700;color:var(--mf-text)">Taux d'utilisation</div>
+                    <div style="font-size:13px;color:var(--mf-text-soft);font-weight:500">{{ dashConsommes }} consommés · {{ dashJetes }} jetés</div>
+                    <sc-if value="{{ dashShowTrends }}" hint-placeholder-val="{{ true }}">
+                      <span class="mf-badge {{ dashTauxTrendClass }}" style="align-self:flex-start;white-space:normal">{{ dashTauxTrendLabel }}</span>
+                    </sc-if>
+                  </div>
+                </button>
+                <button onClick="{{ goCuisine }}" style="text-align:left;font-family:inherit;cursor:pointer;border:1px solid var(--mf-night-line);background:var(--mf-night-surface);border-radius:var(--mf-radius-xl);padding:20px;display:flex;align-items:center;gap:18px;box-shadow:0 1px 2px rgba(20,15,5,.05);animation:mfRise .55s ease both">
+                  <div style="position:relative;flex-shrink:0;width:104px;height:104px">
+                    <svg width="104" height="104" viewBox="0 0 84 84">
+                      <circle cx="42" cy="42" r="34" fill="none" stroke="var(--mf-night-elevated)" stroke-width="9"></circle>
+                      <circle cx="42" cy="42" r="34" fill="none" stroke="var(--mf-pink)" stroke-width="9" stroke-linecap="round" stroke-dasharray="{{ dashRingMealPlan }}" transform="rotate(-90 42 42)"></circle>
+                    </svg>
+                    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+                      <span class="font-display" style="font-size:33px;font-weight:700;letter-spacing:-.02em;color:var(--mf-pink-deep);line-height:1">{{ dashCuisinees }}</span>
+                    </div>
+                  </div>
+                  <div style="min-width:0;flex:1;display:flex;flex-direction:column;gap:6px">
+                    <span class="mf-eyebrow" style="color:var(--mf-text-mute)">En cuisine — {{ dashMonth }}</span>
+                    <div class="font-display" style="font-size:19px;font-weight:700;color:var(--mf-text)">Recettes cuisinées</div>
+                    <div style="font-size:13px;color:var(--mf-text-soft);font-weight:500">{{ dashMealPlan }} % du meal plan réalisé</div>
+                    <sc-if value="{{ dashShowTrends }}" hint-placeholder-val="{{ true }}">
+                      <span class="mf-badge {{ dashCuisineTrendClass }}" style="align-self:flex-start;white-space:normal">{{ dashCuisineTrendLabel }}</span>
+                    </sc-if>
+                  </div>
+                </button>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ isNew }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;gap:14px;align-items:center;padding:16px 18px;background:var(--mf-yellow-soft);border-radius:var(--mf-radius-lg)">
+                  <image-slot id="mascot-dash-d" style="width:68px;height:68px;flex-shrink:0" shape="circle" placeholder="Chef"></image-slot>
+                  <p style="margin:0;font-size:14px;line-height:1.45;color:var(--mf-text);font-weight:500">Reviens dans quelques semaines pour voir tes tendances évoluer !</p>
+                </div>
+              </sc-if>
+
+              <section style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);overflow:hidden">
+                <header style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px 8px">
+                  <div class="font-display" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:var(--mf-text)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--mf-green)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    Activité récente
+                  </div>
+                </header>
+                <div class="divide-y divide-border" style="padding:0 22px 14px">
+                  <sc-for list="{{ entries }}" as="entry" hint-placeholder-count="3">
+                    <x-import component-from-global-scope="MyFridge.ActivityEntry" entry="{{ entry }}" current-user-id="u1" hint-size="100%,54px"></x-import>
+                  </sc-for>
+                </div>
+              </section>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+              <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:40px 80px;text-align:center">
+                  <image-slot id="mascot-empty-d" style="width:180px;height:180px" shape="circle" placeholder="Chef · idontknow"></image-slot>
+                  <h2 class="font-display" style="margin:0;font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--mf-text)">Rien à se mettre sous la dent</h2>
+                  <p style="margin:0;max-width:420px;font-size:15px;line-height:1.55;color:var(--mf-text-soft);text-wrap:pretty">Ajoute tes premiers articles pour commencer à suivre ton impact ! Les statistiques se rempliront au fil de tes sorties de stock.</p>
+                  <button class="mf-btn mf-btn-primary">Ajouter un article</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:24px 32px 14px;border-bottom:1px solid var(--mf-night-line);display:flex;flex-direction:column;gap:14px;flex-shrink:0;background:var(--mf-night)">
+                <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap">
+                  <div>
+                    <div class="mf-eyebrow" style="color:var(--mf-green-deep)">{{ periodRange }}</div>
+                    <h2 class="font-display" style="margin:5px 0 0;font-size:27px;font-weight:700;letter-spacing:-.02em;color:var(--mf-text)">Statistiques du foyer</h2>
+                  </div>
+                  <div class="mf-toggle-group">
+                    <sc-for list="{{ periodOpts }}" as="o" hint-placeholder-count="4">
+                      <button class="{{ o.cls }}" onClick="{{ o.on }}" style="font-size:12.5px;padding:7px 12px">{{ o.label }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="display:flex;gap:8px">
+                  <sc-for list="{{ blockOpts }}" as="o" hint-placeholder-count="3">
+                    <button class="{{ o.cls }}" onClick="{{ o.on }}" style="border-radius:999px;font-size:12.5px;padding:7px 14px">{{ o.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+              <div class="mfscroll" ref="{{ refScroll }}" style="flex:1;overflow-y:auto;padding:22px 32px 40px;display:flex;flex-direction:column;gap:30px;position:relative">
+
+                <sc-if value="{{ isNew }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;gap:14px;align-items:center;padding:16px 18px;background:var(--mf-yellow-soft);border-radius:var(--mf-radius-lg)">
+                    <image-slot id="mascot-recent-d" style="width:68px;height:68px;flex-shrink:0" shape="circle" placeholder="Chef"></image-slot>
+                    <p style="margin:0;font-size:14px;line-height:1.45;color:var(--mf-text);font-weight:500">Ton foyer a 9 jours : les comparaisons arrivent bientôt. Reviens dans quelques semaines pour voir tes tendances évoluer !</p>
+                  </div>
+                </sc-if>
+
+                <section ref="{{ refGaspi }}" style="display:flex;flex-direction:column;gap:14px">
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <span style="width:30px;height:30px;border-radius:10px;background:var(--mf-green-soft);display:inline-flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--mf-green-deep)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
+                    <h3 class="font-display" style="margin:0;font-size:20px;font-weight:700;letter-spacing:-.015em;color:var(--mf-text)">Anti-gaspillage</h3>
+                  </div>
+                  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+                    <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-lg);padding:15px 16px;display:flex;flex-direction:column;gap:5px">
+                      <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Taux d'utilisation</span>
+                      <span class="font-display" style="font-size:32px;font-weight:700;letter-spacing:-.025em;color:var(--mf-green-deep);line-height:1.05">{{ taux }} %</span>
+                      <sc-if value="{{ showTrends }}" hint-placeholder-val="{{ true }}">
+                        <span class="mf-badge {{ tauxTrendClass }}" style="align-self:flex-start;white-space:normal">{{ tauxTrendLabel }}</span>
+                      </sc-if>
+                    </div>
+                    <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-lg);padding:15px 16px;display:flex;flex-direction:column;gap:5px">
+                      <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Articles consommés</span>
+                      <span class="font-display" style="font-size:32px;font-weight:700;letter-spacing:-.025em;color:var(--mf-text);line-height:1.05">{{ consommes }}</span>
+                    </div>
+                    <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-lg);padding:15px 16px;display:flex;flex-direction:column;gap:5px">
+                      <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Articles jetés</span>
+                      <span class="font-display" style="font-size:32px;font-weight:700;letter-spacing:-.025em;color:var(--mf-danger);line-height:1.05">{{ jetes }}</span>
+                    </div>
+                    <div style="background:var(--mf-green-soft);border-radius:var(--mf-radius-lg);padding:15px 16px;display:flex;flex-direction:column;gap:5px">
+                      <span class="mf-eyebrow" style="color:var(--mf-green-deep)">Sauvés in extremis</span>
+                      <span class="font-display" style="font-size:32px;font-weight:700;letter-spacing:-.025em;color:var(--mf-green-deep);line-height:1.05">{{ sauves }}</span>
+                      <span style="font-size:11.5px;color:var(--mf-green-deep);opacity:.85;font-weight:500;line-height:1.3">Consommés dans les 2 jours avant péremption</span>
+                    </div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:12px;align-items:start">
+                    <sc-if value="{{ showTrends }}" hint-placeholder-val="{{ true }}">
+                    <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:18px 20px 12px;display:flex;flex-direction:column;gap:12px">
+                      <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Évolution du taux d'utilisation</span>
+                      <svg viewBox="0 0 620 160" style="width:100%;height:auto" fill="none">
+                        <path d="{{ trendArea }}" fill="var(--mf-green-soft)" opacity=".6"></path>
+                        <polyline points="{{ trendLine }}" fill="none" stroke="var(--mf-green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                        <sc-for list="{{ trendDots }}" as="pt" hint-placeholder-count="7">
+                          <circle cx="{{ pt.x }}" cy="{{ pt.y }}" r="4.5" fill="var(--mf-night-surface)" stroke="var(--mf-green)" stroke-width="3"></circle>
+                        </sc-for>
+                      </svg>
+                      <div style="display:flex;justify-content:space-between;padding:0 2px 6px">
+                        <sc-for list="{{ trendDots }}" as="pt" hint-placeholder-count="7">
+                          <span style="font-size:11px;font-weight:600;color:var(--mf-text-mute);font-family:'DM Sans'">{{ pt.m }}</span>
+                        </sc-for>
+                      </div>
+                    </div>
+                    </sc-if>
+                    <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:18px 20px;display:flex;flex-direction:column;gap:13px">
+                      <div>
+                        <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Ce que tu jettes le plus</span>
+                        <p style="margin:7px 0 0;font-size:14.5px;line-height:1.45;color:var(--mf-text);font-weight:500;text-wrap:pretty">Les {{ topWaste }} arrivent en tête — {{ topWasteCount }} articles partis à la poubelle.</p>
+                      </div>
+                      <div style="display:flex;flex-direction:column;gap:10px">
+                        <sc-for list="{{ wasteBars }}" as="b" hint-placeholder-count="5">
+                          <div style="display:flex;align-items:center;gap:11px">
+                            <span style="width:112px;flex-shrink:0;font-size:12.5px;color:var(--mf-text-soft);font-weight:500">{{ b.name }}</span>
+                            <span style="flex:1;height:10px;border-radius:999px;background:var(--mf-night-elevated);overflow:hidden;display:block"><span style="display:block;height:100%;border-radius:999px;width:{{ b.pct }}%;background:{{ b.color }}"></span></span>
+                            <span class="font-display" style="width:26px;text-align:right;font-size:13px;font-weight:700;color:var(--mf-text)">{{ b.count }}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:18px 20px;display:flex;flex-direction:column;gap:13px">
+                    <div>
+                      <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Temps moyen de conservation — articles consommés</span>
+                      <p style="margin:7px 0 0;font-size:14.5px;line-height:1.45;color:var(--mf-text);font-weight:500;text-wrap:pretty">Tes yaourts tiennent en moyenne 12 jours dans ton frigo. Tes légumes, six. On sait qui gagne.</p>
+                    </div>
+                    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 26px">
+                      <sc-for list="{{ keepBars }}" as="b" hint-placeholder-count="6">
+                        <div style="display:flex;align-items:center;gap:11px">
+                          <span style="width:88px;flex-shrink:0;font-size:12.5px;color:var(--mf-text-soft);font-weight:500">{{ b.name }}</span>
+                          <span style="flex:1;height:10px;border-radius:999px;background:var(--mf-night-elevated);overflow:hidden;display:block"><span style="display:block;height:100%;border-radius:999px;width:{{ b.pct }}%;background:var(--mf-info)"></span></span>
+                          <span class="font-display" style="width:36px;text-align:right;font-size:13px;font-weight:700;color:var(--mf-text)">{{ b.days }} j</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </section>
+
+                <section ref="{{ refCuisine }}" style="display:flex;flex-direction:column;gap:14px">
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <span style="width:30px;height:30px;border-radius:10px;background:var(--mf-pink-soft);display:inline-flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--mf-pink-deep)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18"/><path d="M12 11V3"/><path d="M5 11a7 7 0 0 1 14 0"/><path d="M5 15h14l-1.2 5.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/></svg></span>
+                    <h3 class="font-display" style="margin:0;font-size:20px;font-weight:700;letter-spacing:-.015em;color:var(--mf-text)">Cuisine</h3>
+                  </div>
+                  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+                    <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-lg);padding:15px 16px;display:flex;flex-direction:column;gap:5px">
+                      <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Recettes cuisinées</span>
+                      <span class="font-display" style="font-size:32px;font-weight:700;letter-spacing:-.025em;color:var(--mf-pink-deep);line-height:1.05">{{ cuisinees }}</span>
+                      <sc-if value="{{ showTrends }}" hint-placeholder-val="{{ true }}">
+                        <span class="mf-badge {{ cuisineTrendClass }}" style="align-self:flex-start;white-space:normal">{{ cuisineTrendLabel }}</span>
+                      </sc-if>
+                    </div>
+                    <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-lg);padding:15px 16px;display:flex;flex-direction:column;gap:5px">
+                      <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Recettes différentes</span>
+                      <span class="font-display" style="font-size:32px;font-weight:700;letter-spacing:-.025em;color:var(--mf-text);line-height:1.05">{{ differentes }}</span>
+                    </div>
+                    <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-lg);padding:15px 16px;display:flex;flex-direction:column;gap:8px">
+                      <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Meal plan réalisé</span>
+                      <span class="font-display" style="font-size:32px;font-weight:700;letter-spacing:-.025em;color:var(--mf-text);line-height:1.05">{{ mealPlan }} %</span>
+                      <span style="height:8px;border-radius:999px;background:var(--mf-night-elevated);overflow:hidden;display:block"><span style="display:block;height:100%;border-radius:999px;width:{{ mealPlan }}%;background:var(--mf-pink)"></span></span>
+                    </div>
+                    <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-lg);padding:15px 16px;display:flex;flex-direction:column;gap:5px">
+                      <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Portions batch cooking</span>
+                      <span class="font-display" style="font-size:32px;font-weight:700;letter-spacing:-.025em;color:var(--mf-text);line-height:1.05">{{ batch }}</span>
+                    </div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:12px">
+                    <sc-if value="{{ showTrends }}" hint-placeholder-val="{{ true }}">
+                    <div style="background:var(--mf-pink-soft);border-radius:var(--mf-radius-xl);padding:20px;display:flex;flex-direction:column;gap:6px;justify-content:center">
+                      <span class="mf-eyebrow" style="color:var(--mf-pink-deep)">Recette fétiche</span>
+                      <div class="font-display" style="font-size:24px;font-weight:700;letter-spacing:-.02em;color:var(--mf-text);line-height:1.15">{{ favRecipe }}</div>
+                      <div style="font-size:13.5px;color:var(--mf-text-soft);font-weight:500">Cuisinée {{ favCount }} fois sur les 3 derniers mois — visiblement, personne ne s'en lasse.</div>
+                    </div>
+                    </sc-if>
+                    <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:18px 20px;display:flex;flex-direction:column;gap:13px">
+                      <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Top 3 des catégories cuisinées</span>
+                      <div style="display:flex;flex-direction:column;gap:11px">
+                        <sc-for list="{{ catBars }}" as="b" hint-placeholder-count="3">
+                          <div style="display:flex;align-items:center;gap:11px">
+                            <span class="font-display" style="width:16px;flex-shrink:0;font-size:12.5px;font-weight:700;color:var(--mf-text-mute)">{{ b.rank }}</span>
+                            <span style="width:92px;flex-shrink:0;font-size:13px;color:var(--mf-text);font-weight:600">{{ b.name }}</span>
+                            <span style="flex:1;height:10px;border-radius:999px;background:var(--mf-night-elevated);overflow:hidden;display:block"><span style="display:block;height:100%;border-radius:999px;width:{{ b.pct }}%;background:var(--mf-green)"></span></span>
+                            <span class="font-display" style="width:26px;text-align:right;font-size:13px;font-weight:700;color:var(--mf-text)">{{ b.count }}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section ref="{{ refFoyer }}" style="display:flex;flex-direction:column;gap:14px">
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <span style="width:30px;height:30px;border-radius:10px;background:var(--mf-blue-soft);display:inline-flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--mf-info)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
+                    <h3 class="font-display" style="margin:0;font-size:20px;font-weight:700;letter-spacing:-.015em;color:var(--mf-text)">Foyer</h3>
+                  </div>
+                  <sc-if value="{{ isSolo }}" hint-placeholder-val="{{ false }}">
+                    <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:18px 20px">
+                      <p style="margin:0;font-size:15px;line-height:1.5;color:var(--mf-text);font-weight:500;text-wrap:pretty">{{ soloIntro }}</p>
+                      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px">
+                        <div style="display:flex;flex-direction:column;gap:4px"><span class="mf-eyebrow" style="color:var(--mf-text-mute)">Ajouts au stock</span><span class="font-display" style="font-size:30px;font-weight:700;letter-spacing:-.025em;color:var(--mf-text);line-height:1.05">{{ soloAdds }}</span></div>
+                        <div style="display:flex;flex-direction:column;gap:4px"><span class="mf-eyebrow" style="color:var(--mf-text-mute)">Recettes cuisinées</span><span class="font-display" style="font-size:30px;font-weight:700;letter-spacing:-.025em;color:var(--mf-text);line-height:1.05">{{ soloCooks }}</span></div>
+                        <div style="display:flex;flex-direction:column;gap:4px"><span class="mf-eyebrow" style="color:var(--mf-text-mute)">Courses cochées</span><span class="font-display" style="font-size:30px;font-weight:700;letter-spacing:-.025em;color:var(--mf-text);line-height:1.05">{{ soloShops }}</span></div>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ showTeamNudge }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;gap:14px;align-items:center;padding:16px 18px;background:var(--mf-green-soft);border-radius:var(--mf-radius-lg)">
+                      <image-slot id="mascot-team-d" style="width:68px;height:68px;flex-shrink:0" shape="circle" placeholder="Chef"></image-slot>
+                      <p style="margin:0;font-size:14px;line-height:1.45;color:var(--mf-green-deep);font-weight:600">C'est sympa de faire équipe, pensez à impliquer les autres membres du foyer !</p>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ showFoyerShared }}" hint-placeholder-val="{{ true }}">
+                  <div style="background:var(--mf-night-surface);border:1px solid var(--mf-night-line);border-radius:var(--mf-radius-xl);padding:20px;display:flex;flex-direction:column;gap:18px">
+                    <p style="margin:0;font-size:15px;line-height:1.5;color:var(--mf-text);font-weight:500;text-wrap:pretty">{{ foyerIntro }}</p>
+                    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px">
+                      <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+                        <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Ajouts au stock</span>
+                        <div style="position:relative;width:132px;height:132px"><svg width="132" height="132" viewBox="0 0 118 118">
+                          <circle cx="59" cy="59" r="46" fill="none" stroke="var(--mf-night-elevated)" stroke-width="15"></circle>
+                          <g transform="rotate(-90 59 59)">
+                            <sc-for list="{{ addSegs }}" as="s" hint-placeholder-count="3">
+                              <circle cx="59" cy="59" r="46" fill="none" stroke="{{ s.color }}" stroke-width="15" stroke-dasharray="{{ s.dash }}" stroke-dashoffset="{{ s.offset }}"></circle>
+                            </sc-for>
+                          </g>
+                        </svg><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none"><span class="font-display" style="font-size:26px;font-weight:700;letter-spacing:-.025em;color:var(--mf-text);line-height:1">{{ totalAjouts }}</span><span class="font-display" style="font-size:10.5px;font-weight:600;color:var(--mf-text-mute);line-height:1">articles</span></div></div>
+                        <div style="width:100%;display:flex;flex-direction:column;gap:7px">
+                          <sc-for list="{{ addSegs }}" as="s" hint-placeholder-count="3">
+                            <div style="display:flex;align-items:center;gap:8px">
+                              <span style="width:9px;height:9px;border-radius:3px;flex-shrink:0;background:{{ s.color }}"></span>
+                              <span style="flex:1;font-size:12.5px;color:var(--mf-text-soft);font-weight:500">{{ s.name }}</span>
+                              <span class="font-display" style="font-size:13px;font-weight:700;color:var(--mf-text)">{{ s.value }}</span>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </div>
+                      <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+                        <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Cuissons</span>
+                        <div style="position:relative;width:132px;height:132px"><svg width="132" height="132" viewBox="0 0 118 118">
+                          <circle cx="59" cy="59" r="46" fill="none" stroke="var(--mf-night-elevated)" stroke-width="15"></circle>
+                          <g transform="rotate(-90 59 59)">
+                            <sc-for list="{{ cookSegs }}" as="s" hint-placeholder-count="3">
+                              <circle cx="59" cy="59" r="46" fill="none" stroke="{{ s.color }}" stroke-width="15" stroke-dasharray="{{ s.dash }}" stroke-dashoffset="{{ s.offset }}"></circle>
+                            </sc-for>
+                          </g>
+                        </svg><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none"><span class="font-display" style="font-size:26px;font-weight:700;letter-spacing:-.025em;color:var(--mf-text);line-height:1">{{ totalCuissons }}</span><span class="font-display" style="font-size:10.5px;font-weight:600;color:var(--mf-text-mute);line-height:1">recettes</span></div></div>
+                        <div style="width:100%;display:flex;flex-direction:column;gap:7px">
+                          <sc-for list="{{ cookSegs }}" as="s" hint-placeholder-count="3">
+                            <div style="display:flex;align-items:center;gap:8px">
+                              <span style="width:9px;height:9px;border-radius:3px;flex-shrink:0;background:{{ s.color }}"></span>
+                              <span style="flex:1;font-size:12.5px;color:var(--mf-text-soft);font-weight:500">{{ s.name }}</span>
+                              <span class="font-display" style="font-size:13px;font-weight:700;color:var(--mf-text)">{{ s.value }}</span>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </div>
+                      <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+                        <span class="mf-eyebrow" style="color:var(--mf-text-mute)">Courses cochées</span>
+                        <div style="position:relative;width:132px;height:132px"><svg width="132" height="132" viewBox="0 0 118 118">
+                          <circle cx="59" cy="59" r="46" fill="none" stroke="var(--mf-night-elevated)" stroke-width="15"></circle>
+                          <g transform="rotate(-90 59 59)">
+                            <sc-for list="{{ shopSegs }}" as="s" hint-placeholder-count="3">
+                              <circle cx="59" cy="59" r="46" fill="none" stroke="{{ s.color }}" stroke-width="15" stroke-dasharray="{{ s.dash }}" stroke-dashoffset="{{ s.offset }}"></circle>
+                            </sc-for>
+                          </g>
+                        </svg><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none"><span class="font-display" style="font-size:26px;font-weight:700;letter-spacing:-.025em;color:var(--mf-text);line-height:1">{{ totalCourses }}</span><span class="font-display" style="font-size:10.5px;font-weight:600;color:var(--mf-text-mute);line-height:1">articles</span></div></div>
+                        <div style="width:100%;display:flex;flex-direction:column;gap:7px">
+                          <sc-for list="{{ shopSegs }}" as="s" hint-placeholder-count="3">
+                            <div style="display:flex;align-items:center;gap:8px">
+                              <span style="width:9px;height:9px;border-radius:3px;flex-shrink:0;background:{{ s.color }}"></span>
+                              <span style="flex:1;font-size:12.5px;color:var(--mf-text-soft);font-weight:500">{{ s.name }}</span>
+                              <span class="font-display" style="font-size:13px;font-weight:700;color:var(--mf-text)">{{ s.value }}</span>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </div>
+                    <p style="margin:0;font-size:12.5px;line-height:1.5;color:var(--mf-text-mute);text-wrap:pretty">Ces chiffres décrivent la contribution de chacun. Ils ne sont ni classés, ni comparés — juste additionnés.</p>
+                  </div>
+                  </sc-if>
+                </section>
+              </div>
+              </sc-if>
+            </sc-if>
+          </main>
+        </div>
+      </div>
+      <figcaption class="font-display" style="font-size:13.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mf-text-mute)">Ordinateur</figcaption>
+    </figure>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1500,&quot;height&quot;:1180},&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Mobile + Ordinateur&quot;,&quot;Mobile&quot;,&quot;Ordinateur&quot;],&quot;default&quot;:&quot;Mobile + Ordinateur&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Affichage&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Clair&quot;,&quot;Sombre&quot;],&quot;default&quot;:&quot;Clair&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Affichage&quot;}}">
+class Component extends DCLogic {
+  state = { screen: "dashboard", period: "mois", variant: "A", household: "nominal", anchor: "gaspi" };
+
+  MEMBERS() {
+    return [
+      { name: "Camille", initials: "CD", color: "#2BB673", soft: "var(--mf-green-soft)", ink: "var(--mf-green-deep)" },
+      { name: "Léa", initials: "LM", color: "#8C6DF0", soft: "var(--mf-purple-soft)", ink: "var(--mf-purple-deep)" },
+      { name: "Thomas", initials: "TB", color: "#4F8EF5", soft: "var(--mf-blue-soft)", ink: "var(--mf-info)" }
+    ];
+  }
+
+  PERIODS() {
+    return [
+      { key: "mois", label: "Mois en cours", range: "1 – 24 juillet 2026" },
+      { key: "prec", label: "Mois précédent", range: "1 – 30 juin 2026" },
+      { key: "trois", label: "3 derniers mois", range: "1 mai – 24 juillet 2026" },
+      { key: "annee", label: "Année en cours", range: "1 janvier – 24 juillet 2026" }
+    ];
+  }
+
+  DATA() {
+    return {
+      mois: { month: "juillet", consommes: 118, jetes: 19, sauves: 12, taux: 86, tauxDelta: 4, ref: "juin",
+        waste: [["Légumes", 7, "#2BB673"], ["Produits laitiers", 4, "#4F8EF5"], ["Pain", 3, "#9C6B43"], ["Fruits", 3, "#FFC839"], ["Viande", 2, "#EF4A5A"]],
+        keep: [["Fromages", 18], ["Yaourts", 12], ["Œufs", 11], ["Légumes", 6], ["Pain", 4], ["Viande", 3]],
+        cuisinees: 23, differentes: 14, mealPlan: 78, batch: 9, cuisineesDelta: 4,
+        topCats: [["Végétarien", 9], ["Viande", 7], ["Poisson", 4]],
+        ajouts: [22, 15, 10], cuissons: [9, 8, 6], courses: [31, 24, 19] },
+      prec: { month: "juin", consommes: 96, jetes: 21, sauves: 8, taux: 82, tauxDelta: 4, ref: "mai",
+        waste: [["Légumes", 8, "#2BB673"], ["Produits laitiers", 5, "#4F8EF5"], ["Fruits", 4, "#FFC839"], ["Pain", 3, "#9C6B43"], ["Viande", 1, "#EF4A5A"]],
+        keep: [["Fromages", 17], ["Yaourts", 11], ["Œufs", 10], ["Légumes", 5], ["Pain", 4], ["Viande", 3]],
+        cuisinees: 19, differentes: 12, mealPlan: 71, batch: 6, cuisineesDelta: 3,
+        topCats: [["Viande", 7], ["Végétarien", 6], ["Poisson", 4]],
+        ajouts: [18, 13, 9], cuissons: [8, 7, 4], courses: [26, 21, 14] },
+      trois: { month: "mai → juillet", consommes: 302, jetes: 65, sauves: 30, taux: 82, tauxDelta: 8, ref: "février – avril",
+        waste: [["Légumes", 24, "#2BB673"], ["Produits laitiers", 14, "#4F8EF5"], ["Fruits", 11, "#FFC839"], ["Pain", 10, "#9C6B43"], ["Viande", 6, "#EF4A5A"]],
+        keep: [["Fromages", 17], ["Yaourts", 12], ["Œufs", 10], ["Légumes", 5], ["Pain", 4], ["Viande", 3]],
+        cuisinees: 58, differentes: 27, mealPlan: 74, batch: 21, cuisineesDelta: 11,
+        topCats: [["Végétarien", 21], ["Viande", 20], ["Poisson", 11]],
+        ajouts: [76, 33, 22], cuissons: [30, 16, 12], courses: [98, 52, 38] },
+      annee: { month: "2026", consommes: 628, jetes: 183, sauves: 71, taux: 77, tauxDelta: null, ref: null,
+        waste: [["Légumes", 68, "#2BB673"], ["Produits laitiers", 39, "#4F8EF5"], ["Fruits", 32, "#FFC839"], ["Pain", 27, "#9C6B43"], ["Viande", 17, "#EF4A5A"]],
+        keep: [["Fromages", 16], ["Yaourts", 11], ["Œufs", 10], ["Légumes", 5], ["Pain", 3], ["Viande", 3]],
+        cuisinees: 118, differentes: 48, mealPlan: 69, batch: 41, cuisineesDelta: null,
+        topCats: [["Viande", 44], ["Végétarien", 41], ["Poisson", 21]],
+        ajouts: [178, 78, 45], cuissons: [61, 34, 23], courses: [201, 118, 103] }
+    };
+  }
+
+  NEWDATA() {
+    return { month: "juillet", consommes: 14, jetes: 2, sauves: 1, taux: 88, tauxDelta: null, ref: null,
+      waste: [["Légumes", 1, "#2BB673"], ["Produits laitiers", 1, "#4F8EF5"]],
+      keep: [["Yaourts", 9], ["Légumes", 4]],
+      cuisinees: 3, differentes: 3, mealPlan: 60, batch: 0, cuisineesDelta: null,
+      topCats: [["Végétarien", 2], ["Poisson", 1]],
+      ajouts: [8, 4, 2], cuissons: [2, 1, 0], courses: [7, 5, 2] };
+  }
+
+  line(vals, w, h, min, max) {
+    const n = vals.length, pad = 5;
+    const step = (w - pad * 2) / (n - 1);
+    const pts = vals.map((v, i) => [pad + i * step, h - pad - ((v - min) / (max - min)) * (h - pad * 2)]);
+    const s = pts.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+    return {
+      points: s,
+      area: "M" + pad + "," + (h - pad) + " L" + pts.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" L") + " L" + (w - pad) + "," + (h - pad) + " Z",
+      lx: pts[n - 1][0].toFixed(1), ly: pts[n - 1][1].toFixed(1),
+      dots: pts.map((p, i) => ({ x: p[0].toFixed(1), y: p[1].toFixed(1), v: vals[i] }))
+    };
+  }
+
+  donut(vals, colors, r) {
+    const C = 2 * Math.PI * r, total = vals.reduce((a, b) => a + b, 0) || 1;
+    let acc = 0;
+    return vals.map((v, i) => {
+      const len = (v / total) * C, gap = total > 0 && vals.length > 1 ? 3 : 0;
+      const draw = Math.max(len - gap, 0.5);
+      const seg = { dash: draw.toFixed(2) + " " + (C - draw).toFixed(2), offset: (-acc).toFixed(2), color: colors[i], pct: Math.round((v / total) * 100), circ: C.toFixed(2) };
+      acc += len;
+      return seg;
+    });
+  }
+
+  entries() {
+    const now = Date.now(), iso = m => new Date(now - m * 60000).toISOString();
+    const c = { id: "u1", name: "Camille Dubois", isFormerMember: false };
+    const l = { id: "u3", name: "Léa Martin", isFormerMember: false };
+    const t = { id: "u4", name: "Thomas Bernard", isFormerMember: false };
+    return [
+      { id: "a1", action: "recipe_cooked", targetType: "recipe", targetId: "r1", itemNameSnapshot: null, metadata: { recipeName: "Gratin de courgettes", deductedIngredientCount: 5 }, actor: c, createdAt: iso(24) },
+      { id: "a2", action: "item_consumed", targetType: "stored_item", targetId: "s3", itemNameSnapshot: "Lait demi-écrémé", metadata: { quantity: 1, unit: "l" }, actor: l, createdAt: iso(96) },
+      { id: "a3", action: "item_thrown", targetType: "stored_item", targetId: "s2", itemNameSnapshot: "Salade verte", metadata: { quantity: 1, unit: "piece" }, actor: t, createdAt: iso(180) }
+    ];
+  }
+
+  opts(list, current, setter) {
+    return list.map(o => ({ ...o, cls: "mf-toggle-opt" + (o.key === current ? " is-active" : ""), on: () => setter(o.key) }));
+  }
+
+  componentDidUpdate() {
+    if (this.state.screen !== "detail") { this._lastAnchor = null; return; }
+    const el = this._blocks && this._blocks[this.state.anchor];
+    if (el && this._scroller && this._lastAnchor !== this.state.anchor) {
+      this._scroller.scrollTop = Math.max(0, el.offsetTop - 10);
+    }
+    this._lastAnchor = this.state.anchor;
+  }
+
+  renderVals() {
+    const p = this.props || {};
+    if (!this._blocks) this._blocks = {};
+    const st = this.state;
+    const household = st.household;
+    const isEmpty = household === "vide";
+    const isNew = household === "recent";
+    const isSolo = household === "solo";
+    const periodKey = isNew || isEmpty ? "mois" : st.period;
+    const d = isNew ? this.NEWDATA() : this.DATA()[periodKey];
+    const per = this.PERIODS().find(x => x.key === periodKey);
+    const showTrends = !isNew && !isEmpty && d.tauxDelta !== null;
+
+    const members = isSolo ? this.MEMBERS().slice(0, 1) : this.MEMBERS();
+    const cut = arr => (isSolo ? [arr.reduce((a, b) => a + b, 0)] : arr);
+    const ajouts = cut(d.ajouts), cuissons = cut(d.cuissons), courses = cut(d.courses);
+    const sum = a => a.reduce((x, y) => x + y, 0);
+    const colors = members.map(m => m.color);
+    const mk = (vals) => {
+      const segs = this.donut(vals, colors, 46);
+      return members.map((m, i) => ({ ...m, value: vals[i], pct: segs[i].pct, dash: segs[i].dash, offset: segs[i].offset }));
+    };
+    const addSegs = mk(ajouts), cookSegs = mk(cuissons), shopSegs = mk(courses);
+    const topShare = Math.max(...ajouts) / (sum(ajouts) || 1);
+
+    const trendVals = [71, 74, 73, 76, 78, 82, 86];
+    const cookVals = [13, 15, 14, 18, 16, 19, 23];
+    const trendMonths = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil"];
+    const big = this.line(trendVals, 620, 160, 66, 92);
+    const small = this.line(trendVals, 300, 112, 66, 92);
+
+    const wasteMax = Math.max(...d.waste.map(w => w[1]));
+    const keepMax = Math.max(...d.keep.map(k => k[1]));
+    const catMax = Math.max(...d.topCats.map(c => c[1]));
+
+    const tDelta = d.tauxDelta, cDelta = d.cuisineesDelta;
+    const pos = v => v > 0;
+
+    const dd = isNew ? this.NEWDATA() : this.DATA().mois;
+    const dashTrends = !isNew && !isEmpty && dd.tauxDelta !== null;
+    const pill = (v, unit, ref) => v === null ? { l: "", cls: "" }
+      : { l: (v > 0 ? "↑ +" : "↓ ") + v + unit + " vs " + ref, cls: v > 0 ? "mf-badge-green" : "mf-badge-danger" };
+    const dTaux = pill(dd.tauxDelta, " pts", dd.ref), dCuis = pill(dd.cuisineesDelta, "", dd.ref);
+
+    return {
+      themeClass: (p.theme || "Clair") === "Sombre" ? "dark" : "",
+      showMobile: (p.layout || "Mobile + Ordinateur") !== "Ordinateur",
+      showDesktop: (p.layout || "Mobile + Ordinateur") !== "Mobile",
+      householdName: isSolo ? "Chez Camille" : "Foyer Dubois",
+      isDashboard: st.screen === "dashboard",
+      isDetail: st.screen === "detail",
+      dashNavBg: st.screen === "dashboard" ? "var(--mf-green-soft)" : "transparent",
+      dashNavFg: st.screen === "dashboard" ? "var(--mf-green-deep)" : "var(--mf-text-soft)",
+      statsNavBg: st.screen === "detail" ? "var(--mf-green-soft)" : "transparent",
+      statsNavFg: st.screen === "detail" ? "var(--mf-green-deep)" : "var(--mf-text-soft)",
+      isVariantA: st.variant === "A",
+      isVariantB: st.variant === "B",
+      isEmpty, isNew, isSolo,
+      hasData: !isEmpty,
+      showFoyerShared: !isSolo,
+      dashMonth: dd.month, dashTaux: dd.taux, dashConsommes: dd.consommes, dashJetes: dd.jetes,
+      dashCuisinees: dd.cuisinees, dashDifferentes: dd.differentes, dashMealPlan: dd.mealPlan,
+      dashShowTrends: dashTrends,
+      dashTauxTrendLabel: dTaux.l, dashTauxTrendClass: dTaux.cls,
+      dashCuisineTrendLabel: dCuis.l, dashCuisineTrendClass: dCuis.cls,
+      dashRingTaux: ((dd.taux / 100) * 2 * Math.PI * 34).toFixed(1) + " " + (2 * Math.PI * 34).toFixed(1),
+      dashRingMealPlan: ((dd.mealPlan / 100) * 2 * Math.PI * 34).toFixed(1) + " " + (2 * Math.PI * 34).toFixed(1),
+      screenOpts: this.opts([{ key: "dashboard", label: "Tableau de bord" }, { key: "detail", label: "Page détail" }], st.screen, k => this.setState({ screen: k })),
+      variantOpts: this.opts([{ key: "A", label: "A · Chiffre dominant" }, { key: "B", label: "B · Jauge" }], st.variant, k => this.setState({ variant: k })),
+      householdOpts: this.opts([{ key: "nominal", label: "Nominal" }, { key: "recent", label: "Foyer récent" }, { key: "vide", label: "Foyer vide" }, { key: "solo", label: "Solo" }], household, k => this.setState({ household: k })),
+      periodOpts: this.opts(this.PERIODS().map(x => ({ key: x.key, label: x.label })), periodKey, k => this.setState({ period: k })),
+      periodRange: per.range,
+      periodLabel: per.label,
+      monthLabel: d.month,
+      taux: d.taux, consommes: d.consommes, jetes: d.jetes, sauves: d.sauves,
+      cuisinees: d.cuisinees, differentes: d.differentes, mealPlan: d.mealPlan, batch: d.batch,
+      showTrends,
+      tauxTrendLabel: tDelta === null ? "" : (pos(tDelta) ? "↑ +" : "↓ ") + tDelta + " pts vs " + d.ref,
+      tauxTrendClass: tDelta === null ? "" : pos(tDelta) ? "mf-badge-green" : "mf-badge-danger",
+      cuisineTrendLabel: cDelta === null ? "" : (pos(cDelta) ? "↑ +" : "↓ ") + cDelta + " vs " + d.ref,
+      cuisineTrendClass: cDelta === null ? "" : pos(cDelta) ? "mf-badge-green" : "mf-badge-danger",
+      sparkTaux: this.line(trendVals.slice(-6), 120, 40, 66, 92),
+      sparkCuisine: this.line(cookVals.slice(-6), 120, 40, 10, 26),
+      ringTaux: ((d.taux / 100) * 2 * Math.PI * 34).toFixed(1) + " " + (2 * Math.PI * 34).toFixed(1),
+      ringMealPlan: ((d.mealPlan / 100) * 2 * Math.PI * 34).toFixed(1) + " " + (2 * Math.PI * 34).toFixed(1),
+      trendLine: big.points, trendArea: big.area,
+      trendDots: big.dots.map((pt, i) => ({ ...pt, m: trendMonths[i], lx: (pt.x - 14).toFixed(1), ly: (pt.y - 14).toFixed(1) })),
+      trendLineSm: small.points, trendAreaSm: small.area,
+      trendDotsSm: small.dots.map((pt, i) => ({ ...pt, m: trendMonths[i] })),
+      anchorFoyer: st.anchor === "foyer",
+      blockOpts: this.opts([{ key: "gaspi", label: "Anti-gaspi" }, { key: "cuisine", label: "Cuisine" }, { key: "foyer", label: "Foyer" }], st.anchor, k => this.setState({ anchor: k })),
+      favRecipe: "Gratin de courgettes",
+      favCount: 6,
+      soloIntro: "Tu as ajouté " + ajouts[0] + " articles, cuisiné " + cuissons[0] + " fois et coché " + courses[0] + " articles de courses.",
+      foyerIntro: "Le foyer a ajouté " + sum(ajouts) + " articles" + (periodKey === "mois" ? " ce mois" : "") + ", avec la participation de tous les membres.",
+      wasteBars: d.waste.map(w => ({ name: w[0], count: w[1], color: w[2], pct: Math.round((w[1] / wasteMax) * 100) })),
+      topWaste: d.waste[0][0].toLowerCase(),
+      topWasteCount: d.waste[0][1],
+      keepBars: d.keep.map(k => ({ name: k[0], days: k[1], pct: Math.round((k[1] / keepMax) * 100) })),
+      catBars: d.topCats.map((c, i) => ({ name: c[0], count: c[1], pct: Math.round((c[1] / catMax) * 100), rank: i + 1 })),
+      totalAjouts: sum(ajouts), totalCuissons: sum(cuissons), totalCourses: sum(courses),
+      addSegs, cookSegs, shopSegs, members,
+      memberCount: members.length,
+      soloAdds: ajouts[0], soloCooks: cuissons[0], soloShops: courses[0],
+      showTeamNudge: !isSolo && !isEmpty && topShare > 0.55,
+      addListText: members.map((m, i) => m.name + " " + ajouts[i]).join(" · "),
+      entries: this.entries(),
+      refScroll: el => { this._scroller = el; },
+      refGaspi: el => { this._blocks.gaspi = el; },
+      refCuisine: el => { this._blocks.cuisine = el; },
+      refFoyer: el => { this._blocks.foyer = el; },
+      goStats: () => this.setState({ screen: "detail", anchor: "gaspi" }),
+      goGaspi: () => this.setState({ screen: "detail", anchor: "gaspi" }),
+      goCuisine: () => this.setState({ screen: "detail", anchor: "cuisine" }),
+      goBack: () => this.setState({ screen: "dashboard" }),
+      anchorGaspi: st.anchor === "gaspi",
+      anchorCuisine: st.anchor === "cuisine"
+    };
+  }
+}
+</script>
+</body>
+</html>

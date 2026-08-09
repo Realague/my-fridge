@@ -254,7 +254,12 @@ export class RecipeConsumeService {
           where: { id: deduction.storedItemId, householdId },
           include: [{ model: StorageArea, as: 'storageArea' }],
           transaction,
-          lock: transaction.LOCK.UPDATE,
+          // Lock the stored item only. A bare FOR UPDATE covers every table in
+          // the FROM list, and Postgres rejects locking the nullable side of
+          // the LEFT JOIN on storage_areas ("FOR UPDATE cannot be applied to
+          // the nullable side of an outer join"). The storage area is read for
+          // the exit snapshot and never mutated here, so it needs no lock.
+          lock: { level: transaction.LOCK.UPDATE, of: StoredItem },
         });
 
         if (!storedItem) {

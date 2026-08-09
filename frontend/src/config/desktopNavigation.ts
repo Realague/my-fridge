@@ -1,6 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   Activity,
+  BarChart3,
   BookOpen,
   Boxes,
   CalendarDays,
@@ -65,6 +66,12 @@ export const DESKTOP_NAV_ITEMS: DesktopNavItem[] = [
     labelKey: 'pages.more.features.loyaltyCards.title',
     icon: CreditCard,
     to: '/loyalty-cards',
+  },
+  {
+    id: 'statistics',
+    labelKey: 'navigation.statistics',
+    icon: BarChart3,
+    to: '/statistics',
   },
   {
     id: 'activity',

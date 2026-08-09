@@ -10,6 +10,7 @@ import AddStorageAreaDialog from '@/components/AddStorageAreaDialog';
 import { LowStockCard } from '@/components/LowStockCard';
 import { ExpiringSoonCard } from '@/components/ExpiringSoonCard';
 import { RecentActivityCard } from '@/components/RecentActivityCard';
+import { StatsSummaryCards } from '@/components/stats/StatsSummaryCards';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -247,6 +248,10 @@ const Dashboard = () => {
 
         {/* Low Stock Alert */}
         <LowStockCard />
+
+        {/* Household statistics — the two summary cards hide themselves
+            (StatsSummaryCards returns null) until the household has data. */}
+        <StatsSummaryCards householdId={selectedHouseholdId} />
 
         {/* Storage Areas — Fresh "card with header + grid" pattern */}
         <Card className="border-0 bg-mf-night-surface shadow-none">

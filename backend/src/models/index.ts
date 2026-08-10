@@ -19,6 +19,8 @@ import { Brand } from './Brand';
 import { StockExit } from './StockExit';
 import { BarcodeMapping } from './BarcodeMapping';
 import { HouseholdActivity } from './HouseholdActivity';
+import { CatalogRecipe } from './CatalogRecipe';
+import { CatalogRecipeIngredient } from './CatalogRecipeIngredient';
 
 // Define associations
 User.hasMany(Household, { foreignKey: 'createdBy', as: 'createdHouseholds' });
@@ -180,6 +182,35 @@ BarcodeMapping.belongsTo(Item, { foreignKey: 'itemId', as: 'item' });
 User.hasMany(BarcodeMapping, { foreignKey: 'createdBy', as: 'createdBarcodeMappings' });
 BarcodeMapping.belongsTo(User, { foreignKey: 'createdBy', as: 'creator' });
 
+// Catalog Recipe associations.
+// La recette catalogue est une COPIE FIGÉE et INDÉPENDANTE de la recette perso :
+// tous les liens vers l'origine (auteur, foyer, recette source) sont en SET NULL,
+// jamais en CASCADE. Supprimer la recette perso ou le compte de l'auteur ne doit
+// pas faire disparaître la publication.
+CatalogRecipe.hasMany(CatalogRecipeIngredient, {
+  foreignKey: 'catalogRecipeId',
+  as: 'ingredients',
+  onDelete: 'CASCADE',
+});
+CatalogRecipeIngredient.belongsTo(CatalogRecipe, {
+  foreignKey: 'catalogRecipeId',
+  as: 'catalogRecipe',
+});
+
+Item.hasMany(CatalogRecipeIngredient, { foreignKey: 'itemId', as: 'catalogRecipeIngredients' });
+CatalogRecipeIngredient.belongsTo(Item, { foreignKey: 'itemId', as: 'item' });
+
+User.hasMany(CatalogRecipe, { foreignKey: 'authorUserId', as: 'publishedRecipes' });
+CatalogRecipe.belongsTo(User, { foreignKey: 'authorUserId', as: 'author' });
+
+Household.hasMany(CatalogRecipe, { foreignKey: 'authorHouseholdId', as: 'publishedRecipes' });
+CatalogRecipe.belongsTo(Household, { foreignKey: 'authorHouseholdId', as: 'authorHousehold' });
+
+// hasOne et non hasMany : un index unique partiel garantit une seule publication
+// vivante (status <> 'removed') par recette perso.
+Recipe.hasOne(CatalogRecipe, { foreignKey: 'sourceRecipeId', as: 'catalogPublication' });
+CatalogRecipe.belongsTo(Recipe, { foreignKey: 'sourceRecipeId', as: 'sourceRecipe' });
+
 // Export models
 export {
   sequelize,
@@ -202,5 +233,7 @@ export {
   Brand,
   StockExit,
   BarcodeMapping,
-  HouseholdActivity
+  HouseholdActivity,
+  CatalogRecipe,
+  CatalogRecipeIngredient
 };

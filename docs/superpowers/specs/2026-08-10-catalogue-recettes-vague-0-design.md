@@ -200,8 +200,12 @@ l'essentiel des tests.
 
 `backend/src/repositories/CatalogRecipeRepository.ts`, deux méthodes seulement :
 
-- `createFromRecipe(recipe, authorUserId)` — appelle le builder, insère la
-  recette puis les ingrédients (`bulkCreate`) **dans une transaction**.
+- `createFromRecipe(recipeId, authorUserId)` — charge la recette perso avec ses
+  ingrédients et leurs articles, appelle le builder, insère la recette puis les
+  ingrédients (`bulkCreate`) **dans une transaction**. Prend un identifiant
+  plutôt qu'une instance déjà chargée : la copie a besoin du `householdId` de
+  chaque article pour décider quels `itemId` sont publiables, et c'est au
+  repository de garantir que ces données sont bien présentes.
 - `findByIdWithIngredients(id)` — lecture avec `ingredients` et `item` inclus.
 
 Pas de service applicatif, pas de contrôleur, pas de route : la Vague 1 les

@@ -202,6 +202,17 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+// Naive French/English singular form, word by word ("pilons de poulet" →
+// "pilon de poulet"). Applied to both sides of a comparison, so words that
+// are invariably plural ("pois", "ananas") still compare equal.
+function singularize(value: string): string {
+  return value
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word) => (word.length > 3 && /[sx]$/u.test(word) ? word.slice(0, -1) : word))
+    .join(' ');
+}
+
 export class IngredientMatchingService {
   /**
    * Parse a raw ingredient string to extract quantity, unit, item name, and
@@ -409,7 +420,9 @@ export class IngredientMatchingService {
     // Free-quantity keywords go first ("une pincée de sel" → "de sel"),
     // then leading connectors ("de sel" → "sel"), then descriptor words.
     // ------------------------------------------------------------------
-    let itemName = workingText;
+    // Parenthesised remarks ("(fermier de préférence)") are not part of the
+    // ingredient name; an unclosed "(" drops everything after it.
+    let itemName = workingText.replace(/\([^)]*\)/g, ' ').replace(/\(.*$/, ' ');
     for (const { regex } of FREE_QUANTITY_KEYWORD_PATTERNS) {
       itemName = itemName.replace(regex, ' ');
     }
@@ -509,10 +522,11 @@ export class IngredientMatchingService {
     ];
     
     // Find potential nameKeys from translation
-    const searchTerm = itemName.toLowerCase();
+    const searchTerm = singularize(itemName);
     const matchingNameKeys: string[] = [];
     for (const [translatedName, nameKeys] of Object.entries(reverseTranslationMap)) {
-      if (translatedName.includes(searchTerm) || searchTerm.includes(translatedName)) {
+      const singularName = singularize(translatedName);
+      if (singularName.includes(searchTerm) || searchTerm.includes(singularName)) {
         matchingNameKeys.push(...nameKeys);
       }
     }
@@ -528,24 +542,31 @@ export class IngredientMatchingService {
     // Fetch potential matches
     const items = await Item.findAll({
       where: whereClause,
-      limit: 50, // Get more items to score
+      // Candidates are cheap to score; a low cap drops exact matches when a
+      // common word ("citron") pulls in many items before ranking
+      limit: 500,
     });
     
     // Score and rank matches
     const matches: IngredientMatch[] = [];
-    
+    const translatedScores = new Map<string, number>();
+
     for (const item of items) {
       const translatedName = getTranslatedName(item.name, language);
       
       // Calculate similarity scores
       const nameKeyScore = this.calculateSimilarity(itemName, item.name);
-      const translatedScore = this.calculateSimilarity(itemName, translatedName);
+      const translatedScore = Math.max(
+        this.calculateSimilarity(itemName, translatedName),
+        this.calculateSimilarity(searchTerm, singularize(translatedName))
+      );
       
       // Take the best score
       const confidence = Math.max(nameKeyScore, translatedScore);
       
       // Only include if above threshold
       if (confidence >= 0.3) {
+        translatedScores.set(item.id, translatedScore);
         matches.push({
           itemId: item.id,
           itemName: item.name,
@@ -558,8 +579,14 @@ export class IngredientMatchingService {
       }
     }
     
-    // Sort by confidence descending
-    matches.sort((a, b) => b.confidence - a.confidence);
+    // Sort by confidence descending; on ties prefer the translated-name match
+    // (searching "citron" in French must rank Citron above Cédrat, whose
+    // English nameKey happens to be "citron")
+    matches.sort(
+      (a, b) =>
+        b.confidence - a.confidence ||
+        (translatedScores.get(b.itemId) ?? 0) - (translatedScores.get(a.itemId) ?? 0)
+    );
     
     return matches.slice(0, limit);
   }

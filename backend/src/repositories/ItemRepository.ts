@@ -102,9 +102,9 @@ export class ItemRepository {
         
         // Find matching nameKeys for the search term
         const matchingNameKeys: string[] = [];
-        for (const [translatedName, nameKey] of Object.entries(reverseTranslationMap)) {
+        for (const [translatedName, nameKeys] of Object.entries(reverseTranslationMap)) {
           if (translatedName.includes(searchTerm)) {
-            matchingNameKeys.push(nameKey);
+            matchingNameKeys.push(...nameKeys);
           }
         }
 

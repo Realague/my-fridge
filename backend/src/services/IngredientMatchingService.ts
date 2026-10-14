@@ -511,9 +511,9 @@ export class IngredientMatchingService {
     // Find potential nameKeys from translation
     const searchTerm = itemName.toLowerCase();
     const matchingNameKeys: string[] = [];
-    for (const [translatedName, nameKey] of Object.entries(reverseTranslationMap)) {
+    for (const [translatedName, nameKeys] of Object.entries(reverseTranslationMap)) {
       if (translatedName.includes(searchTerm) || searchTerm.includes(translatedName)) {
-        matchingNameKeys.push(nameKey);
+        matchingNameKeys.push(...nameKeys);
       }
     }
     
